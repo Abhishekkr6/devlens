@@ -4,6 +4,7 @@ import crypto from "crypto";
 import logger from "../utils/logger";
 import { UserModel } from "../models/user.model";
 import { Types } from "mongoose";
+import { verifyRepositoryExists } from "../services/github.service";
 
 export const connectRepo = async (req: any, res: Response) => {
   try {
@@ -26,6 +27,32 @@ export const connectRepo = async (req: any, res: Response) => {
         .json({ success: false, error: "Valid organization id required" });
     }
 
+    // Get user's GitHub token
+    const userId = req.user?.id || req.user?._id;
+    if (!userId || !Types.ObjectId.isValid(String(userId))) {
+      return res
+        .status(401)
+        .json({ success: false, error: "User not authenticated" });
+    }
+
+    const user = await UserModel.findById(userId);
+    if (!user || !user.githubAccessToken) {
+      return res
+        .status(401)
+        .json({ success: false, error: "GitHub token not found" });
+    }
+
+    // Verify that the repository exists on GitHub
+    const verifyResult = await verifyRepositoryExists(repoFullName, user.githubAccessToken);
+    if (!verifyResult.exists) {
+      return res
+        .status(404)
+        .json({ 
+          success: false, 
+          error: `Repository not found: ${verifyResult.reason || "The specified repository does not exist on GitHub"}` 
+        });
+    }
+
     const secret = process.env.WEBHOOK_SECRET!;
     const hashed = crypto.createHash("sha256").update(secret).digest("hex");
 
@@ -40,7 +67,6 @@ export const connectRepo = async (req: any, res: Response) => {
       connectedAt: new Date(),
     });
 
-    const userId = req.user?.id || req.user?._id;
     if (userId && Types.ObjectId.isValid(String(userId))) {
       await UserModel.findByIdAndUpdate(
         userId,

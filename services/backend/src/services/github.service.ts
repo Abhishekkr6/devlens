@@ -63,3 +63,40 @@ export const getGithubEmail = async (token: string) => {
     throw new Error(`GitHub email fetch failed${status ? ` (status ${status})` : ""}: ${data ? JSON.stringify(data) : error?.message}`);
   }
 };
+
+export const verifyRepositoryExists = async (repoFullName: string, token: string) => {
+  if (!repoFullName) throw new Error("Missing repository name");
+  if (!token) throw new Error("Missing GitHub access token");
+  
+  try {
+    const res = await axios.get(`https://api.github.com/repos/${repoFullName}`, {
+      headers: { Authorization: `token ${token}` },
+    });
+    return {
+      exists: true,
+      repo: res.data,
+    };
+  } catch (error: any) {
+    const status = error?.response?.status;
+    
+    // 404 means repo doesn't exist
+    if (status === 404) {
+      return {
+        exists: false,
+        reason: "Repository not found",
+      };
+    }
+    
+    // 403 means forbidden (might be permission issue)
+    if (status === 403) {
+      return {
+        exists: false,
+        reason: "Access denied. Make sure you have permission to access this repository.",
+      };
+    }
+    
+    // Other errors
+    const data = error?.response?.data;
+    throw new Error(`GitHub repository verification failed${status ? ` (status ${status})` : ""}: ${data ? JSON.stringify(data) : error?.message}`);
+  }
+};
