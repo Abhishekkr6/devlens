@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { OrgModel } from "../models/org.model";
-import { UserModel } from "../models/user.model";  // adjust path if needed
+import { UserModel } from "../models/user.model"; // adjust path if needed
 
 export const createOrg = async (req: any, res: Response) => {
   try {
@@ -23,10 +23,17 @@ export const createOrg = async (req: any, res: Response) => {
 
     // 1) Create Org
     const creatorId = new Types.ObjectId(String(userId));
+
     const org = await OrgModel.create({
       name,
       slug,
       createdBy: creatorId,
+      members: [
+        {
+          userId: creatorId,
+          role: "ADMIN",
+        },
+      ],
     });
 
     // 2) Update User: defaultOrgId + orgIds
