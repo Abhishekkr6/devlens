@@ -14,6 +14,8 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
   const [repoFullName, setRepoFullName] = useState("");
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   const activeOrgId = useUserStore((state) => state.activeOrgId);
   const userLoading = useUserStore((state) => state.loading);
@@ -50,21 +52,38 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
     const trimmed = repoFullName.trim();
 
     if (!currentOrgId) {
-      console.warn("Missing orgId while attempting to connect repo");
+      setError("Organization ID is missing");
       return;
     }
 
     if (!trimmed.includes("/")) {
-      alert("Invalid repo format. Use owner/repo");
+      setError("Invalid repo format. Use owner/repo");
       return;
     }
 
-    await api.post(`/orgs/${currentOrgId}/repos/connect`, {
-      repoFullName: trimmed,
-    });
+    try {
+      setIsConnecting(true);
+      setError(null);
+      
+      const response = await api.post(`/orgs/${currentOrgId}/repos/connect`, {
+        repoFullName: trimmed,
+      });
 
-    await fetchRepos();
-    setRepoFullName("");
+      if (!response.data.success) {
+        setError(response.data.error || "Failed to connect repository");
+        return;
+      }
+
+      await fetchRepos();
+      setRepoFullName("");
+      setError(null);
+    } catch (err: any) {
+      const errorMessage = err?.response?.data?.error || err?.message || "Failed to connect repository";
+      setError(errorMessage);
+      console.error("Repo connect failed", err);
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   return (
@@ -94,14 +113,22 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
                 placeholder="owner/repo"
                 value={repoFullName}
                 onChange={(e) => setRepoFullName(e.target.value)}
+                disabled={isConnecting}
               />
             </div>
 
+            {error && (
+              <div className="rounded-lg border border-red-200 bg-red-50 p-3">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
             <button
               onClick={connectRepo}
-              className="w-full rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700"
+              disabled={isConnecting}
+              className="w-full rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Connect repository
+              {isConnecting ? "Connecting..." : "Connect repository"}
             </button>
           </div>
         </Card>
