@@ -110,6 +110,7 @@ export const githubCallback = async (req: Request, res: Response) => {
             name: `${ghUser.login ?? user.name}'s Team`,
             slug: baseSlug,
             createdBy: user._id,
+            members: [{ userId: user._id, role: "ADMIN" }],
           });
         } catch (createErr: any) {
           const isDup =
@@ -125,6 +126,7 @@ export const githubCallback = async (req: Request, res: Response) => {
                 name: `${ghUser.login ?? user.name}'s Team`,
                 slug: candidate,
                 createdBy: user._id,
+                members: [{ userId: user._id, role: "ADMIN" }],
               });
               break;
             }
