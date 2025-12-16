@@ -4,7 +4,11 @@ export const requireOrgRole =
   (allowedRoles: ("ADMIN" | "MEMBER" | "VIEWER")[]) =>
   async (req: any, res: any, next: any) => {
     const { orgId } = req.params;
-    const userId = req.user.id;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({ error: "User not found in request" });
+    }
 
     const org = await OrgModel.findById(orgId);
     if (!org) {
@@ -12,7 +16,7 @@ export const requireOrgRole =
     }
 
     const member = org.members.find(
-      (m: any) => m.userId.toString() === userId
+      (m: any) => String(m.userId) === String(userId)
     );
 
     if (!member) {
