@@ -12,22 +12,27 @@ export const getDashboardStats = async (req: Request, res: Response) => {
     const last7 = new Date();
     last7.setDate(last7.getDate() - 7);
 
-    // Total commits
+    // Total commits for this org
     const commitsCount = await CommitModel.countDocuments({
+      orgId,
       timestamp: { $gte: last7 }
     });
 
-    // Active developers (unique commit authors)
+    // Active developers (unique commit authors) in this org
     const activeDevs = await CommitModel.distinct("authorGithubId", {
+      orgId,
       timestamp: { $gte: last7 }
     });
 
-    // Open PRs
-    const openPRs = await PRModel.countDocuments({ state: "open" });
+    // Open PRs in this org
+    const openPRs = await PRModel.countDocuments({ 
+      orgId,
+      state: "open" 
+    });
 
-    // Avg PR merge time (merged PRs only)
+    // Avg PR merge time (merged PRs only) in this org
     const merged = await PRModel.aggregate([
-      { $match: { mergedAt: { $ne: null } } },
+      { $match: { orgId, mergedAt: { $ne: null } } },
       {
         $project: {
           diffHours: {
