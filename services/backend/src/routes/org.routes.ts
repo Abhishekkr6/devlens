@@ -2,10 +2,12 @@ import { Router } from "express";
 import { createOrg } from "../controllers/org.controller";
 import { getRepoDetail, getRepos } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
+import { getAlertSummary } from "../controllers/alertSummary.controller";
 import { validate } from "../middlewares/validate";
 import { createOrgSchema } from "../validators/org.validator";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { requireOrgAccess } from "../middlewares/authOrg";
+import { requireOrgRole } from "../middlewares/requireOrgRole";
 
 const router = Router();
 
@@ -19,6 +21,19 @@ router.get("/orgs/:orgId/repos", authMiddleware, requireOrgAccess, getRepos);
 router.get("/orgs/:orgId/repos/:repoId", authMiddleware, requireOrgAccess, getRepoDetail);
 
 // Connect repo
-router.post("/orgs/:orgId/repos/connect", authMiddleware, requireOrgAccess, connectRepo);
+router.post(
+  "/orgs/:orgId/repos/connect",
+  authMiddleware,
+  requireOrgRole(["ADMIN"]),
+  connectRepo
+);
+
+// Org alerts
+router.get(
+  "/orgs/:orgId/alerts",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER"]),
+  getAlertSummary
+);
 
 export default router;

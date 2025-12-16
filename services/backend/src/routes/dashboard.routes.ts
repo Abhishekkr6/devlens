@@ -6,10 +6,16 @@ import { listPRs } from "../controllers/prList.controller";
 import { getAlertSummary } from "../controllers/alertSummary.controller";
 import { requireOrgAccess } from "../middlewares/authOrg";
 import { authMiddleware } from "../middlewares/auth.middleware";
+import { requireOrgRole } from "../middlewares/requireOrgRole";
 
 const router = Router();
 
-router.get("/orgs/:orgId/dashboard", authMiddleware, requireOrgAccess, getDashboardStats);
+router.get(
+  "/orgs/:orgId/dashboard",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  getDashboardStats
+);
 
 router.get("/activity/commits", getCommitTimeline);
 
