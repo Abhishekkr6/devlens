@@ -192,3 +192,36 @@ export const inviteUser = async (req: any, res: Response) => {
     });
   }
 };
+
+
+/**
+ * GET ORGANIZATIONS FOR LOGGED-IN USER
+ * - Returns orgs where user is a member
+ */
+export const getUserOrgs = async (req: any, res: Response) => {
+  try {
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: { message: "Unauthorized" },
+      });
+    }
+
+    const orgs = await OrgModel.find({
+      "members.userId": userId,
+    }).select("_id name slug");
+
+    return res.status(200).json({
+      success: true,
+      data: orgs,
+    });
+  } catch (error) {
+    console.error("GET USER ORGS ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      error: { message: "Failed to fetch organizations" },
+    });
+  }
+};

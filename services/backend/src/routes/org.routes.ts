@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createOrg } from "../controllers/org.controller";
+import { createOrg, getUserOrgs } from "../controllers/org.controller";
 import { getRepoDetail, getRepos } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
 import { getAlertSummary } from "../controllers/alertSummary.controller";
@@ -44,5 +44,7 @@ router.post(
   requireOrgRole(["ADMIN"]),
   inviteUser
 );
+
+router.get("/orgs", authMiddleware, getUserOrgs);
 
 export default router;
