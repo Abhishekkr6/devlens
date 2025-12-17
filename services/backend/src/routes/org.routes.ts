@@ -3,6 +3,7 @@ import { createOrg } from "../controllers/org.controller";
 import { getRepoDetail, getRepos } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
 import { getAlertSummary } from "../controllers/alertSummary.controller";
+import { inviteUser } from "../controllers/org.controller";
 import { validate } from "../middlewares/validate";
 import { createOrgSchema } from "../validators/org.validator";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -34,6 +35,14 @@ router.get(
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER"]),
   getAlertSummary
+);
+
+// Invite user to org
+router.post(
+  "/orgs/:orgId/invite",
+  authMiddleware,
+  requireOrgRole(["ADMIN"]),
+  inviteUser
 );
 
 export default router;
