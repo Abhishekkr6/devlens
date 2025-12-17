@@ -45,6 +45,7 @@ export const createOrg = async (req: any, res: Response) => {
     const org = await OrgModel.create({
       name,
       slug,
+      createdBy: creatorId,
       members: [
         {
           userId: creatorId,
