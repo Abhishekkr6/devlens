@@ -10,7 +10,7 @@ interface TeamPageProps {
 }
 
 export default function TeamPage({ params }: TeamPageProps) {
-  const { orgId } = params;
+  const  orgId  = params.id;
 
   // 🔥 DEBUG LINE
   console.log("TEAM PAGE ORG ID = ", orgId);
