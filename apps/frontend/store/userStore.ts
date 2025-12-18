@@ -34,7 +34,10 @@ const normaliseOrgId = (value: unknown): string | null => {
 
   const toStringSafe = (v: unknown): string | null => {
     if (typeof v === "string") return v;
-    if (v != null && typeof (v as { toString?: () => string }).toString === "function") {
+    if (
+      v != null &&
+      typeof (v as { toString?: () => string }).toString === "function"
+    ) {
       const s = (v as { toString: () => string }).toString();
       return typeof s === "string" ? s : null;
     }
@@ -67,9 +70,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       const rawUser = payload.user ?? null;
 
       const defaultOrgCandidate =
-        payload.defaultOrgId ??
-        rawUser?.defaultOrgId ??
-        null;
+        payload.defaultOrgId ?? rawUser?.defaultOrgId ?? null;
 
       const orgIdsRaw: unknown[] = Array.isArray(payload.orgIds)
         ? (payload.orgIds as unknown[])
@@ -90,10 +91,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
       // keep previous selection when it still exists, then fall back to defaults
       const derivedActiveOrgId =
-        activeFromExisting ??
-        normalisedDefault ??
-        normalisedOrgIds[0] ??
-        null;
+        activeFromExisting ?? normalisedDefault ?? normalisedOrgIds[0] ?? null;
 
       set({
         user: rawUser
@@ -106,6 +104,13 @@ export const useUserStore = create<UserState>((set, get) => ({
         activeOrgId: derivedActiveOrgId,
         loading: false,
       });
+
+      // ⭐️ write active org to localStorage for pages that rely on it
+      if (derivedActiveOrgId) {
+        try {
+          localStorage.setItem("orgId", derivedActiveOrgId);
+        } catch {}
+      }
     } catch (err) {
       if (isAxiosError(err)) {
         const status = err.response?.status;

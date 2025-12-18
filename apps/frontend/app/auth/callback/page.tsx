@@ -10,16 +10,19 @@ export default function AuthCallbackPage() {
 
   useEffect(() => {
     const finalize = async () => {
-      // give a tiny delay for cookie to be stored via proxy
       await new Promise((r) => setTimeout(r, 250));
 
       try {
-        // This call goes to /api/v1/me which Next rewrites to backend.
-        // axios has withCredentials=true so cookie will be forwarded.
         await useUserStore.getState().fetchUser();
+
+        // ⭐️ THIS IS THE IMPORTANT PART ⭐️
+        const user = useUserStore.getState().user;
+        if (user?.defaultOrgId) {
+          localStorage.setItem("orgId", user.defaultOrgId);
+        }
+
         router.replace("/dashboard");
       } catch (err) {
-        // fallback: go to login
         router.replace("/");
       }
     };
