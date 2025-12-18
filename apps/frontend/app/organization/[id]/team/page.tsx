@@ -11,12 +11,24 @@ interface TeamPageProps {
 
 export default function TeamPage({ params }: TeamPageProps) {
   const { orgId } = params;
+
+  // 🔥 DEBUG LINE
+  console.log("TEAM PAGE ORG ID = ", orgId);
+
   const [email, setEmail] = useState("");
   const [role, setRole] = useState("VIEWER");
 
   const invite = async () => {
+
+    // 🔥 DEBUG LINE
+    console.log("INVITE CLICKED WITH ORG ID = ", orgId);
+
+    if (!orgId) {
+      alert("ORG ID is missing. Routing is wrong.");
+      return;
+    }
+
     await api.post(`/orgs/${orgId}/invite`, { email, role });
-    console.log("ORG ID →", orgId);
     alert("User invited");
   };
 
@@ -45,58 +57,3 @@ export default function TeamPage({ params }: TeamPageProps) {
     </div>
   );
 }
-
-
-// "use client";
-
-// import { useState } from "react";
-// import { api } from "../../../../lib/api";
-
-// export default function TeamPage({ params }: any) {
-//   const { orgId } = params;
-//   const [email, setEmail] = useState("");
-//   const [role, setRole] = useState("VIEWER");
-//   const [loading, setLoading] = useState(false);
-
-//   const invite = async () => {
-//     if (!email) {
-//       alert("Email is required");
-//       return;
-//     }
-
-//     if (loading) return;
-//     setLoading(true);
-
-//     try {
-//       await api.post(`/orgs/${orgId}/invite`, { email, role });
-//       alert("User invited successfully");
-//       setEmail("");
-//     } catch (err: any) {
-//       alert(err.response?.data?.error || "Invite failed");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <h1>Invite Member</h1>
-
-//       <input
-//         placeholder="User email"
-//         value={email}
-//         onChange={(e) => setEmail(e.target.value)}
-//       />
-
-//       <select value={role} onChange={(e) => setRole(e.target.value)}>
-//         <option value="ADMIN">Admin</option>
-//         <option value="MEMBER">Member</option>
-//         <option value="VIEWER">Viewer</option>
-//       </select>
-
-//       <button disabled={loading} onClick={invite}>
-//         {loading ? "Inviting..." : "Invite"}
-//       </button>
-//     </div>
-//   );
-// }
