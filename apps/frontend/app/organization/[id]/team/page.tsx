@@ -16,6 +16,7 @@ export default function TeamPage({ params }: TeamPageProps) {
 
   const invite = async () => {
     await api.post(`/orgs/${orgId}/invite`, { email, role });
+    console.log("ORG ID →", orgId);
     alert("User invited");
   };
 
