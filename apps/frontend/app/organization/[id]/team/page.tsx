@@ -126,7 +126,7 @@ export default function TeamPage() {
       setMembers([]);
       const axiosError = err as { response?: { status?: number } };
       if (axiosError.response?.status === 403 || axiosError.response?.status === 404) {
-        router.push("/dashboard");
+        router.push(`/organization/${orgId}/dashboard`);
       }
     } finally {
       setLoading(false);

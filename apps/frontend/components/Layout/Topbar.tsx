@@ -32,7 +32,7 @@ type User = {
   email?: string;
 };
 
-const navLinks = [
+const baseNavLinks = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Activity", href: "/dashboard/activity", icon: Activity },
   { name: "Pull Requests", href: "/dashboard/prs", icon: GitPullRequest },
@@ -55,13 +55,22 @@ type TeamMember = {
 };
 
 export default function Topbar() {
-  const { user, loading, activeOrgId } = useUserStore() as { 
-    user: User | null; 
+  const { user, loading, activeOrgId } = useUserStore() as {
+    user: User | null;
     loading: boolean;
     activeOrgId: string | null;
   };
   const pathname = usePathname();
   const router = useRouter();
+
+  // Extract orgId from pathname if it matches /organization/[id]/*
+  const orgMatch = pathname.match(/^\/organization\/([^\/]+)/);
+  const orgId = orgMatch ? orgMatch[1] : null;
+
+  const navLinks = baseNavLinks.map((l) => ({
+    ...l,
+    href: orgId ? l.href.replace("/dashboard", `/organization/${orgId}/dashboard`) : l.href,
+  }));
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
