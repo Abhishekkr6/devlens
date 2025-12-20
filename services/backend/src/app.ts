@@ -89,9 +89,40 @@ if (!mongoUrl) {
    process.exit(1);
 }
 
+// Database name - use environment variable or default to 'teampulse'
+// If you want to use 'admin' database, set MONGO_DB_NAME=admin in your .env file
+const dbName = process.env.MONGO_DB_NAME || "teampulse";
+
+// Ensure database name is in connection string
+// MongoDB URL format: mongodb://[username:password@]host[:port]/[database][?options]
+let finalMongoUrl = mongoUrl;
+
+// Check if URL has a database name after the last slash (before query params)
+const urlWithoutQuery = mongoUrl.split("?")[0];
+const urlParts = urlWithoutQuery.split("/");
+const lastPart = urlParts[urlParts.length - 1];
+
+// If last part is empty or looks like a host/port (contains : or is empty), add database name
+if (!lastPart || lastPart.includes(":") || lastPart === "") {
+   // No database name found, add it
+   const queryString = mongoUrl.includes("?") ? mongoUrl.substring(mongoUrl.indexOf("?")) : "";
+   const baseUrl = urlWithoutQuery.endsWith("/") ? urlWithoutQuery.slice(0, -1) : urlWithoutQuery;
+   finalMongoUrl = `${baseUrl}/${dbName}${queryString}`;
+   logger.info({ 
+      original: mongoUrl, 
+      updated: finalMongoUrl, 
+      database: dbName 
+   }, "MongoDB URL updated with database name");
+} else {
+   logger.info({ database: lastPart }, "MongoDB URL already contains database name");
+}
+
 mongoose
-   .connect(mongoUrl)
-   .then(() => logger.info("MongoDB connected"))
+   .connect(finalMongoUrl)
+   .then(() => {
+      const connectedDbName = mongoose.connection.db?.databaseName || dbName;
+      logger.info({ database: connectedDbName }, "MongoDB connected successfully");
+   })
    .catch((err) => {
       logger.error({ err }, "MongoDB connection error");
       process.exit(1);
