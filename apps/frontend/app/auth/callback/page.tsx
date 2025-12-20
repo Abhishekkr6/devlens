@@ -14,7 +14,8 @@ export default function AuthCallbackPage() {
 
       try {
         await useUserStore.getState().fetchUser();
-        const { user, activeOrgId, setActiveOrganization } = useUserStore.getState();
+        const { user, activeOrgId, setActiveOrganization } =
+          useUserStore.getState();
 
         if (!activeOrgId && user?.orgIds?.length) {
           setActiveOrganization(user.orgIds[0].id);
