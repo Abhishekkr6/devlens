@@ -7,7 +7,12 @@ export const attachWebSocket = (server: any) => {
 
   logger.info("[WS] WebSocket attached to Express server");
 
-  const redis = new Redis(process.env.REDIS_URL || "");
+  const redisUrl = process.env.REDIS_URL;
+  if (!redisUrl) {
+    logger.warn("[WS] REDIS_URL not set, WebSocket real-time features may not work");
+    return;
+  }
+  const redis = new Redis(redisUrl);
 
   redis.subscribe("events", () => {
     logger.info("[WS] Subscribed to Redis events");

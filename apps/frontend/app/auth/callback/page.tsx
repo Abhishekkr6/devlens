@@ -2,8 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { api } from "../../..//lib/api";
-import { useUserStore } from "../../..//store/userStore";
+import { api } from "../../../lib/api";
+import { useUserStore } from "../../../store/userStore";
 
 export default function AuthCallbackPage() {
   const router = useRouter();

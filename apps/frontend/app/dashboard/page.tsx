@@ -78,8 +78,8 @@ export default function DashboardPage() {
         api.get("/prs"),
       ]);
 
-      setStats(dashRes.data.data);
-      setTimeline(timelineRes.data.data);
+      setStats(dashRes.data?.data ?? null);
+      setTimeline(Array.isArray(timelineRes.data?.data) ? timelineRes.data.data : []);
 
       const prs = prsRes.data?.data?.items || [];
       const buckets: RiskBucket[] = [

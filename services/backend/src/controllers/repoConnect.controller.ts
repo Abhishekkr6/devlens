@@ -53,7 +53,13 @@ export const connectRepo = async (req: any, res: Response) => {
         });
     }
 
-    const secret = process.env.WEBHOOK_SECRET!;
+    const secret = process.env.WEBHOOK_SECRET;
+    if (!secret) {
+      return res.status(500).json({ 
+        success: false, 
+        error: "Server configuration error: WEBHOOK_SECRET not set" 
+      });
+    }
     const hashed = crypto.createHash("sha256").update(secret).digest("hex");
 
     const orgObjectId = new Types.ObjectId(orgId);

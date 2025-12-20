@@ -67,7 +67,13 @@ export const prAnalysisHandler = async (job: Job) => {
     pr.processed = true;
     await pr.save();
 
-    const redis = new Redis(process.env.REDIS_URL!, {
+    const redisUrl = process.env.REDIS_URL;
+    if (!redisUrl) {
+      logger.error("REDIS_URL environment variable is not set");
+      throw new Error("REDIS_URL not configured");
+    }
+
+    const redis = new Redis(redisUrl, {
       tls: { rejectUnauthorized: false },
       maxRetriesPerRequest: null,
     });

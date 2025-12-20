@@ -37,6 +37,9 @@ export const connectWS = () => {
   socket = new WebSocket(resolveWsUrl());
 
   socket.onopen = () => console.log("[WS] Connected");
+  socket.onerror = (error) => {
+    console.error("[WS] Connection error:", error);
+  };
   socket.onclose = () => {
     console.log("[WS] Disconnected. Reconnecting...");
     setTimeout(() => {
@@ -49,7 +52,9 @@ export const connectWS = () => {
     try {
       const data = JSON.parse(msg.data);
       listeners.forEach((cb) => cb(data));
-    } catch {}
+    } catch (err) {
+      console.error("[WS] Failed to parse message:", err);
+    }
   };
 
   return socket;

@@ -10,7 +10,12 @@ import logger from "../utils/logger";
 /* -------------------------------------------
    FIXED REDIS CONNECTION FOR UPSTASH
 -------------------------------------------- */
-const redis = new IORedis(process.env.REDIS_URL!, {
+const redisUrl = process.env.REDIS_URL;
+if (!redisUrl) {
+  throw new Error("REDIS_URL environment variable is not set");
+}
+
+const redis = new IORedis(redisUrl, {
   tls: { rejectUnauthorized: false },
   maxRetriesPerRequest: null,
 });
@@ -60,8 +65,14 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
       return res.status(200).send("OK");
     }
 
+    const webhookSecret = process.env.WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      logger.error("WEBHOOK_SECRET environment variable is not set");
+      return res.status(500).json({ success: false, error: "Server configuration error" });
+    }
+
     const ok = verifyGithubSignature(
-      process.env.WEBHOOK_SECRET!,
+      webhookSecret,
       rawBody,
       signature
     );

@@ -6,7 +6,13 @@ import { prAnalysisHandler } from "./processors/prAnalysis";
 import logger from "./utils/logger";
 
 // Redis connection
-const connection = new Redis(process.env.REDIS_URL!, {
+const redisUrl = process.env.REDIS_URL;
+if (!redisUrl) {
+  logger.error("REDIS_URL environment variable is not set");
+  process.exit(1);
+}
+
+const connection = new Redis(redisUrl, {
   tls: { rejectUnauthorized: false },
   maxRetriesPerRequest: null,
 });

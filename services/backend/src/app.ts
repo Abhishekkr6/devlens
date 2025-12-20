@@ -83,8 +83,14 @@ app.use(errorHandler);
 /* -----------------------------------------------------
    5) MONGO CONNECT
 ------------------------------------------------------ */
+const mongoUrl = process.env.MONGO_URL;
+if (!mongoUrl) {
+   logger.error("MONGO_URL environment variable is not set");
+   process.exit(1);
+}
+
 mongoose
-   .connect(process.env.MONGO_URL!)
+   .connect(mongoUrl)
    .then(() => logger.info("MongoDB connected"))
    .catch((err) => {
       logger.error({ err }, "MongoDB connection error");

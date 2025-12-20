@@ -78,7 +78,7 @@ export default function PRDetailPage() {
       try {
         const res = await api.get<ApiResponse<PRDetailResponse>>(`/prs/${id}`);
         if (!cancelled) {
-          setData(res.data.data);
+          setData(res.data?.data ?? null);
         }
       } catch (err) {
         console.error("PR detail failed", err);

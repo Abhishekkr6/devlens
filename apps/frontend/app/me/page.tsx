@@ -11,7 +11,9 @@ export default function MePage() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     const { fetchUser } = useUserStore.getState();
-    fetchUser();
+    fetchUser().catch((err) => {
+      console.error("Failed to fetch user:", err);
+    });
   }, []);
 
   // Narrow unknown user fields without using 'any'
