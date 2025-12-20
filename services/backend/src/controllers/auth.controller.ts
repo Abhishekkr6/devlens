@@ -137,6 +137,19 @@ export const githubCallback = async (req: Request, res: Response) => {
             );
           }
         }
+      } else {
+        // 🔥 FIX: If org exists, ensure user is a member
+        const members = Array.isArray(org.members) ? org.members : [];
+        const isMember = members.some(
+          (m: any) => m && m.userId && String(m.userId) === String(user._id)
+        );
+
+        if (!isMember) {
+          // Add user as ADMIN if they created the org, otherwise as MEMBER
+          const userRole = String(org.createdBy) === String(user._id) ? "ADMIN" : "MEMBER";
+          org.members.push({ userId: user._id, role: userRole });
+          await org.save();
+        }
       }
 
       // Save ObjectId references reliably
