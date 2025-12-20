@@ -21,7 +21,7 @@ export default function AuthCallbackPage() {
           localStorage.setItem("orgId", user.defaultOrgId);
         }
 
-        router.replace("/organization");
+        router.replace("/dashboard");
       } catch (err) {
         router.replace("/");
       }

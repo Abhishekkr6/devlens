@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutDashboard, Users, GitPullRequest, Bell, Activity, Settings } from "lucide-react";
 
-const baseLinks = [
+const links = [
   { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
   { name: "Activity", href: "/dashboard/activity", icon: Activity },
   { name: "PRs", href: "/dashboard/prs", icon: GitPullRequest },
@@ -15,15 +15,6 @@ const baseLinks = [
 
 export default function Sidebar() {
   const pathname = usePathname();
-
-  // Extract orgId from pathname if it matches /organization/[id]/*
-  const orgMatch = pathname.match(/^\/organization\/([^\/]+)/);
-  const orgId = orgMatch ? orgMatch[1] : null;
-
-  const links = baseLinks.map((l) => ({
-    ...l,
-    href: orgId ? l.href.replace("/dashboard", `/organization/${orgId}/dashboard`) : l.href,
-  }));
 
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col">

@@ -115,7 +115,7 @@ export default function OrganizationPage() {
                     <button
                       onClick={() => {
                         setActiveOrgId(o._id);
-                        router.push(`/organization/${o._id}/dashboard`);
+                        router.push(`/organization/${o._id}/repos`);
                       }}
                       className="rounded-md bg-indigo-600 px-3 py-1 text-xs text-white"
                     >
