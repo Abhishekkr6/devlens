@@ -1,9 +1,8 @@
 import { Router } from "express";
-import { createOrg, getUserOrgs } from "../controllers/org.controller";
+import { createOrg, getUserOrgs, getOrgMembers, inviteUser } from "../controllers/org.controller";
 import { getRepoDetail, getRepos } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
 import { getAlertSummary } from "../controllers/alertSummary.controller";
-import { inviteUser } from "../controllers/org.controller";
 import { validate } from "../middlewares/validate";
 import { createOrgSchema } from "../validators/org.validator";
 import { authMiddleware } from "../middlewares/auth.middleware";
@@ -46,5 +45,13 @@ router.post(
 );
 
 router.get("/orgs", authMiddleware, getUserOrgs);
+
+// Get organization members
+router.get(
+  "/orgs/:orgId/members",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  getOrgMembers
+);
 
 export default router;

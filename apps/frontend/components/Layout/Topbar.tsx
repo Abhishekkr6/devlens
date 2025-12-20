@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   Activity,
   Bell,
@@ -16,10 +16,15 @@ import {
   Users,
   X,
   Settings as SettingsIcon,
+  UserPlus,
+  Shield,
+  Eye,
+  Code,
 } from "lucide-react";
 import { FloatingDock } from "../Ui/floating-dock";
 import { useUserStore } from "../../store/userStore";
 import { getBackendBase } from "../../lib/api";
+import { api } from "../../lib/api";
 
 type User = {
   name: string;
@@ -37,10 +42,31 @@ const navLinks = [
   { name: "Settings", href: "/settings", icon: SettingsIcon },
 ];
 
+type TeamMember = {
+  userId: string;
+  role: "ADMIN" | "MEMBER" | "VIEWER";
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    avatarUrl: string;
+    githubId?: number;
+  } | null;
+};
+
 export default function Topbar() {
-  const { user, loading } = useUserStore() as { user: User | null; loading: boolean };
+  const { user, loading, activeOrgId } = useUserStore() as { 
+    user: User | null; 
+    loading: boolean;
+    activeOrgId: string | null;
+  };
   const pathname = usePathname();
+  const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
+  const [loadingMembers, setLoadingMembers] = useState(false);
+  const teamDropdownRef = useRef<HTMLDivElement>(null);
 
   const toggleMobileNav = () => setMobileNavOpen((prev) => !prev);
   const closeMobileNav = () => setMobileNavOpen(false);
@@ -73,6 +99,72 @@ export default function Topbar() {
     const { fetchUser } = useUserStore.getState();
     fetchUser();
   }, []);
+
+  // Fetch team members when dropdown opens and orgId is available
+  useEffect(() => {
+    if (teamDropdownOpen && activeOrgId) {
+      fetchTeamMembers();
+    }
+  }, [teamDropdownOpen, activeOrgId]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        teamDropdownRef.current &&
+        !teamDropdownRef.current.contains(event.target as Node)
+      ) {
+        setTeamDropdownOpen(false);
+      }
+    };
+
+    if (teamDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      return () => document.removeEventListener("mousedown", handleClickOutside);
+    }
+  }, [teamDropdownOpen]);
+
+  const fetchTeamMembers = async () => {
+    if (!activeOrgId) return;
+    
+    try {
+      setLoadingMembers(true);
+      const res = await api.get(`/orgs/${activeOrgId}/members`);
+      const members = res.data?.data?.members || [];
+      setTeamMembers(members);
+    } catch (err) {
+      console.error("Failed to fetch team members:", err);
+      setTeamMembers([]);
+    } finally {
+      setLoadingMembers(false);
+    }
+  };
+
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "ADMIN":
+        return <Shield className="h-3 w-3 text-indigo-600" />;
+      case "MEMBER":
+        return <Code className="h-3 w-3 text-slate-600" />;
+      case "VIEWER":
+        return <Eye className="h-3 w-3 text-slate-400" />;
+      default:
+        return null;
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "ADMIN":
+        return "Admin";
+      case "MEMBER":
+        return "Member";
+      case "VIEWER":
+        return "Viewer";
+      default:
+        return role;
+    }
+  };
 
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -140,13 +232,98 @@ export default function Topbar() {
               <span className="absolute right-2 top-2 inline-flex h-2 w-2 rounded-full bg-rose-500" />
             </button>
 
-            <button
-              type="button"
-              className="hidden items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600 md:flex"
-            >
-              Team
-              <ChevronDown className="h-4 w-4" />
-            </button>
+            <div className="relative hidden md:block" ref={teamDropdownRef}>
+              <button
+                type="button"
+                onClick={() => setTeamDropdownOpen(!teamDropdownOpen)}
+                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600"
+              >
+                <Users className="h-4 w-4" />
+                Team
+                <ChevronDown className={`h-4 w-4 transition-transform ${teamDropdownOpen ? "rotate-180" : ""}`} />
+              </button>
+
+              {teamDropdownOpen && (
+                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 bg-white shadow-lg z-50">
+                  <div className="p-4 border-b border-slate-100">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-slate-900">Team Members</h3>
+                      {activeOrgId && (
+                        <Link
+                          href={`/organization/${activeOrgId}/team`}
+                          onClick={() => setTeamDropdownOpen(false)}
+                          className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                        >
+                          Manage
+                        </Link>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="max-h-96 overflow-y-auto">
+                    {loadingMembers ? (
+                      <div className="p-4 text-center text-sm text-slate-500">
+                        Loading members...
+                      </div>
+                    ) : teamMembers.length === 0 ? (
+                      <div className="p-4 text-center text-sm text-slate-500">
+                        {activeOrgId ? "No members found" : "Select an organization"}
+                      </div>
+                    ) : (
+                      <div className="p-2">
+                        {teamMembers.map((member) => (
+                          <div
+                            key={member.userId}
+                            className="flex items-center gap-3 rounded-lg p-2 hover:bg-slate-50 transition-colors"
+                          >
+                            {member.user?.avatarUrl ? (
+                              <Image
+                                src={member.user.avatarUrl}
+                                alt={member.user.name}
+                                width={32}
+                                height={32}
+                                className="h-8 w-8 rounded-full"
+                              />
+                            ) : (
+                              <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600">
+                                {member.user?.name?.[0]?.toUpperCase() || "?"}
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-medium text-slate-900 truncate">
+                                {member.user?.name || "Unknown User"}
+                              </p>
+                              <p className="text-xs text-slate-500 truncate">
+                                {member.user?.email || "No email"}
+                              </p>
+                            </div>
+                            <div className="flex items-center gap-1.5">
+                              {getRoleIcon(member.role)}
+                              <span className="text-xs text-slate-600">
+                                {getRoleLabel(member.role)}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  {activeOrgId && (
+                    <div className="p-3 border-t border-slate-100">
+                      <Link
+                        href={`/organization/${activeOrgId}/team`}
+                        onClick={() => setTeamDropdownOpen(false)}
+                        className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
+                      >
+                        <UserPlus className="h-4 w-4" />
+                        Invite Member
+                      </Link>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
 
             {user ? (
               <Link
@@ -261,6 +438,17 @@ export default function Topbar() {
 
               <nav className="flex flex-col gap-2 text-sm font-medium text-slate-600">
                 {renderNavLinks("w-full")}
+                
+                {activeOrgId && (
+                  <Link
+                    href={`/organization/${activeOrgId}/team`}
+                    onClick={closeMobileNav}
+                    className="flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors text-slate-600 hover:bg-slate-100 hover:text-indigo-600 w-full"
+                  >
+                    <Users className="h-4 w-4" />
+                    Team Management
+                  </Link>
+                )}
               </nav>
 
               {user ? (

@@ -225,3 +225,74 @@ export const getUserOrgs = async (req: any, res: Response) => {
     });
   }
 };
+
+/**
+ * GET ORGANIZATION MEMBERS
+ * - Returns all members of an organization with their user details
+ */
+export const getOrgMembers = async (req: any, res: Response) => {
+  try {
+    const { orgId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: { message: "Unauthorized" },
+      });
+    }
+
+    const org = await OrgModel.findById(orgId).lean();
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        error: { message: "Organization not found" },
+      });
+    }
+
+    // Get member user IDs
+    const memberIds = Array.isArray(org.members)
+      ? org.members.map((m: any) => m.userId).filter(Boolean)
+      : [];
+
+    // Fetch user details
+    const users = await UserModel.find({
+      _id: { $in: memberIds },
+    }).select("_id name email avatarUrl githubId login").lean();
+
+    // Map members with their roles and user details
+    const membersWithDetails = org.members.map((member: any) => {
+      const user = users.find(
+        (u: any) => String(u._id) === String(member.userId)
+      );
+      return {
+        userId: String(member.userId),
+        role: member.role,
+        user: user
+          ? {
+              id: String(user._id),
+              name: user.name || user.login || "Unknown",
+              email: user.email || "",
+              avatarUrl: user.avatarUrl || "",
+              githubId: user.githubId,
+            }
+          : null,
+      };
+    });
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        members: membersWithDetails,
+        orgName: org.name,
+        orgSlug: org.slug,
+      },
+    });
+  } catch (error) {
+    console.error("GET ORG MEMBERS ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      error: { message: "Failed to fetch organization members" },
+    });
+  }
+};
