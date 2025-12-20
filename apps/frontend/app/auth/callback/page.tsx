@@ -14,14 +14,14 @@ export default function AuthCallbackPage() {
 
       try {
         await useUserStore.getState().fetchUser();
+        const { user, activeOrgId, setActiveOrganization } = useUserStore.getState();
 
-        // ⭐️ THIS IS THE IMPORTANT PART ⭐️
-        const user = useUserStore.getState().user;
-        if (user?.defaultOrgId) {
-          localStorage.setItem("orgId", user.defaultOrgId);
+        if (!activeOrgId && user?.orgIds?.length) {
+          setActiveOrganization(user.orgIds[0].id);
         }
 
-        router.replace("/dashboard");
+        // ⭐️ THIS IS THE IMPORTANT PART ⭐️
+        router.replace("/organization");
       } catch (err) {
         router.replace("/");
       }

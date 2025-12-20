@@ -14,6 +14,7 @@ import {
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import { Card } from "../../../components/Ui/Card";
 import { api } from "../../../lib/api";
+import { useUserStore } from "../../../store/userStore";
 
 interface Developer {
   githubId: string;
@@ -82,18 +83,23 @@ const getInitials = (name: string) => {
     .join("")
     .slice(0, 2) || "?";
 };
-
 export default function DevelopersPage() {
   const [developers, setDevelopers] = useState<Developer[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [activityFilter, setActivityFilter] = useState<string>("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
+  const { activeOrgId } = useUserStore();
 
   useEffect(() => {
     const fetchDevelopers = async () => {
+      if (!activeOrgId) {
+        setLoading(false);
+        setDevelopers([]);
+        return;
+      }
       try {
-        const response = await api.get("/developers");
+        const response = await api.get(`/orgs/${activeOrgId}/developers`);
         const payload: Developer[] = Array.isArray(response.data?.data) ? response.data.data : [];
         setDevelopers(payload);
       } catch (error) {
@@ -105,7 +111,7 @@ export default function DevelopersPage() {
     };
 
     fetchDevelopers();
-  }, []);
+  }, [activeOrgId]);
 
   const roleOptions = useMemo(() => {
     const uniqueRoles = new Set<string>();
