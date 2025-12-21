@@ -13,7 +13,7 @@ export default function OrganizationPage() {
   const [loading, setLoading] = useState(false);
 
   const router = useRouter();
-  const setActiveOrgId = (id: string) => useUserStore.setState({ activeOrgId: id });
+  const { setActiveOrganization } = useUserStore();
 
   const fetchOrgs = async () => {
     try {
@@ -42,7 +42,7 @@ export default function OrganizationPage() {
       throw new Error("Invalid organization response");
     }
 
-    setActiveOrgId(activeOrgId.toString());
+    setActiveOrganization(activeOrgId.toString());
     await fetchOrgs();
     router.push(`/organization/${org._id}/repos`);
   };
@@ -111,7 +111,7 @@ export default function OrganizationPage() {
                   </div>
                   <button
                     onClick={() => {
-                      setActiveOrgId(o._id);
+                      setActiveOrganization(o._id);
                       router.push(`/organization/${o._id}/repos`);
                     }}
                     className="rounded-md bg-indigo-600 px-3 py-1 text-xs text-white"
