@@ -15,7 +15,7 @@ export const getMe = async (req: Request, res: Response) => {
       });
     }
 
-    const user = await UserModel.findById(userId).lean();
+    const user = await UserModel.findById(userId).populate("orgIds").lean();
 
     if (!user) {
       // IMPORTANT:
@@ -32,8 +32,11 @@ export const getMe = async (req: Request, res: Response) => {
     const defaultOrgId =
       user.defaultOrgId ? String(user.defaultOrgId) : null;
 
-    const orgIds = Array.isArray(user.orgIds)
-      ? user.orgIds.map((o: any) => String(o))
+    const orgs = Array.isArray(user.orgIds)
+      ? user.orgIds.map((o: any) => ({
+          id: String(o._id),
+          name: o.name,
+        }))
       : [];
 
     return res.json({
@@ -47,7 +50,7 @@ export const getMe = async (req: Request, res: Response) => {
           githubId: user.githubId,
         },
         defaultOrgId,
-        orgIds,
+        orgs,
       },
     });
   } catch (err) {

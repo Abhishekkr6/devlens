@@ -4,13 +4,18 @@ import { create } from "zustand";
 import { api } from "../lib/api";
 import { isAxiosError } from "axios";
 
+export interface Org {
+  id: string;
+  name: string;
+}
+
 interface User {
   id?: string;
   _id?: string;
   name?: string;
   email?: string;
   avatarUrl?: string;
-  orgIds?: unknown[];
+  orgIds?: Org[];
   defaultOrgId?: string | null;
 }
 
@@ -45,6 +50,10 @@ export const useUserStore = create<UserState>((set, get) => ({
       const res = await api.get("/me");
       const payload = res.data?.data ?? {};
       const rawUser = payload.user ?? null;
+
+      if (rawUser) {
+        rawUser.orgIds = payload.orgs;
+      }
 
       set({
         user: rawUser,

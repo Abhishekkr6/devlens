@@ -1,25 +1,36 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '@/store/userStore';
+import { useUserStore, Org } from '@/store/userStore';
 import { Button } from '@/components/Ui/Button';
 import { Card } from '@/components/Ui/Card';
 
 const OrganizationSelectionPage = () => {
   const router = useRouter();
   const { user, setActiveOrganization } = useUserStore();
-  const [organizations, setOrganizations] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (user) {
-      setOrganizations(user.orgIds || []);
-      setLoading(false);
-    }
+  
+  // Remove unnecessary state derivation
+  const organizations: Org[] = useMemo(() => {
+    if (!user || !Array.isArray(user.orgIds)) return [];
+    
+    return user.orgIds.filter(
+      (org): org is Org =>
+        org &&
+        typeof org.id === 'string' &&
+        typeof org.name === 'string'
+    );
   }, [user]);
 
-  const handleOrgSelection = (orgId) => {
+  // Single auto-select effect
+  useEffect(() => {
+    if (organizations.length === 1) {
+      setActiveOrganization(organizations[0].id);
+      router.push('/dashboard');
+    }
+  }, [organizations]);
+
+  const handleOrgSelection = (orgId: string) => {
     setActiveOrganization(orgId);
     router.push('/dashboard');
   };
@@ -28,13 +39,8 @@ const OrganizationSelectionPage = () => {
     router.push('/organization/new');
   };
 
-  useEffect(() => {
-    if (!loading && organizations.length === 1) {
-      handleOrgSelection(organizations[0].id);
-    }
-  }, [loading, organizations]);
-
-  if (loading) {
+  // No loading state needed
+  if (!user) {
     return <div className="flex flex-col items-center justify-center min-h-screen">Loading...</div>;
   }
 
