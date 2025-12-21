@@ -25,22 +25,13 @@ interface UserState {
   activeOrgId: string | null;
   fetchUser: (opts?: { silent?: boolean }) => Promise<void>;
   logout: () => Promise<void>;
-  setActiveOrganization: (orgId: string) => void;
 }
 
 
 export const useUserStore = create<UserState>((set, get) => ({
   user: null,
   loading: true,
-  activeOrgId:
-    typeof window !== "undefined"
-      ? localStorage.getItem("activeOrgId")
-      : null,
-
-  setActiveOrganization: (orgId: string) => {
-    localStorage.setItem("activeOrgId", orgId);
-    set({ activeOrgId: orgId });
-  },
+  activeOrgId: null,
 
   fetchUser: async (opts) => {
     try {
@@ -51,14 +42,54 @@ export const useUserStore = create<UserState>((set, get) => ({
       const payload = res.data?.data ?? {};
       const rawUser = payload.user ?? null;
 
+<<<<<<< HEAD
       if (rawUser) {
         rawUser.orgIds = payload.orgs;
       }
+=======
+      const defaultOrgCandidate =
+        payload.defaultOrgId ?? rawUser?.defaultOrgId ?? null;
+
+      const orgIdsRaw: unknown[] = Array.isArray(payload.orgIds)
+        ? (payload.orgIds as unknown[])
+        : Array.isArray(rawUser?.orgIds)
+        ? (rawUser.orgIds as unknown[])
+        : [];
+
+      const normalisedOrgIds = orgIdsRaw
+        .map((value) => normaliseOrgId(value))
+        .filter((value): value is string => Boolean(value));
+
+      const normalisedDefault = normaliseOrgId(defaultOrgCandidate);
+      const existingActive = get().activeOrgId;
+      const activeFromExisting =
+        existingActive && normalisedOrgIds.includes(existingActive)
+          ? existingActive
+          : null;
+
+      // keep previous selection when it still exists, then fall back to defaults
+      const derivedActiveOrgId =
+        activeFromExisting ?? normalisedDefault ?? normalisedOrgIds[0] ?? null;
+>>>>>>> parent of 6a1c355 (org changes #2)
 
       set({
-        user: rawUser,
+        user: rawUser
+          ? {
+              ...rawUser,
+              orgIds: normalisedOrgIds,
+              defaultOrgId: normalisedDefault,
+            }
+          : null,
+        activeOrgId: derivedActiveOrgId,
         loading: false,
       });
+
+      // ⭐️ write active org to localStorage for pages that rely on it
+      if (derivedActiveOrgId) {
+        try {
+          localStorage.setItem("orgId", derivedActiveOrgId);
+        } catch {}
+      }
     } catch (err) {
       if (isAxiosError(err)) {
         const status = err.response?.status;
@@ -88,7 +119,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     // logout is the ONLY place we hard reset
     try {
-      localStorage.removeItem("activeOrgId");
+      localStorage.clear();
       sessionStorage.clear();
     } catch {}
 

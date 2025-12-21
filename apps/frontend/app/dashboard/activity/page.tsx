@@ -11,7 +11,6 @@ import {
   MessageSquare,
   Search,
 } from "lucide-react";
-import { useUserStore } from "../../../store/userStore";
 
 type Commit = {
   date: string;
@@ -35,24 +34,18 @@ type ActivityEvent = {
   timestamp: string;
   kind: "commit" | "pr" | "review";
 };
+
 export default function ActivityPage() {
   const [timeline, setTimeline] = useState<Commit[]>([]);
   const [prs, setPrs] = useState<PR[]>([]);
   const [loading, setLoading] = useState(true);
-  const { activeOrgId } = useUserStore();
 
   useEffect(() => {
     const loadActivity = async () => {
-      if (!activeOrgId) {
-        setLoading(false);
-        setTimeline([]);
-        setPrs([]);
-        return;
-      }
       try {
         const [timelineRes, prsRes] = await Promise.all([
-          api.get(`/orgs/${activeOrgId}/activity/commits`),
-          api.get(`/orgs/${activeOrgId}/prs`),
+          api.get("/activity/commits"),
+          api.get("/prs"),
         ]);
 
         setTimeline(timelineRes.data?.data || []);
@@ -67,7 +60,7 @@ export default function ActivityPage() {
     };
 
     loadActivity();
-  }, [activeOrgId]);
+  }, []);
 
   const formatTimeAgo = (input?: string) => {
     if (!input) return "Just now";

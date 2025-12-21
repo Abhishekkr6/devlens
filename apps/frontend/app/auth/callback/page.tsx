@@ -15,6 +15,7 @@ export default function AuthCallbackPage() {
 
       try {
         await useUserStore.getState().fetchUser();
+<<<<<<< HEAD
         const { user, activeOrgId, setActiveOrganization } =
           useUserStore.getState();
 
@@ -42,6 +43,16 @@ export default function AuthCallbackPage() {
           }
           router.replace("/organization");
         }
+=======
+
+        // ⭐️ THIS IS THE IMPORTANT PART ⭐️
+        const user = useUserStore.getState().user;
+        if (user?.defaultOrgId) {
+          localStorage.setItem("orgId", user.defaultOrgId);
+        }
+
+        router.replace("/dashboard");
+>>>>>>> parent of 6a1c355 (org changes #2)
       } catch (err) {
         router.replace("/");
       }

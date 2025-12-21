@@ -15,7 +15,6 @@ import { Card } from "../../../components/Ui/Card";
 import { Button } from "../../../components/Ui/Button";
 import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
-import { useUserStore } from "../../../store/userStore";
 
 interface Alert {
   _id?: string;
@@ -160,19 +159,13 @@ export default function AlertsPage() {
 
   const lastEvent = useLiveStore((state) => state.lastEvent);
   const init = useLiveStore((state) => state.init);
-  const { activeOrgId } = useUserStore();
 
   useEffect(() => {
     init();
 
     const loadAlerts = async () => {
-      if (!activeOrgId) {
-        setLoading(false);
-        setAlerts([]);
-        return;
-      }
       try {
-        const response = await api.get(`/orgs/${activeOrgId}/alerts`);
+        const response = await api.get("/alerts");
         const payload: Alert[] = Array.isArray(response.data?.data) ? response.data.data : [];
         setAlerts(payload);
       } catch (error) {
@@ -184,7 +177,7 @@ export default function AlertsPage() {
     };
 
     loadAlerts();
-  }, [init, activeOrgId]);
+  }, [init]);
 
   useEffect(() => {
     if (!lastEvent || lastEvent.type !== "NEW_ALERT") return;

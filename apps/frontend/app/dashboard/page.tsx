@@ -74,8 +74,8 @@ export default function DashboardPage() {
 
       const [dashRes, timelineRes, prsRes] = await Promise.all([
         api.get(`/orgs/${activeOrgId}/dashboard`),
-        api.get(`/orgs/${activeOrgId}/activity/commits`),
-        api.get(`/orgs/${activeOrgId}/prs`),
+        api.get("/activity/commits"),
+        api.get("/prs"),
       ]);
 
       setStats(dashRes.data?.data ?? null);

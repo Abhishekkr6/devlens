@@ -2,8 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useUserStore } from "../../../../store/userStore";
+import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
 import DashboardLayout from "../../../../components/Layout/DashboardLayout";
 import { Card } from "../../../../components/Ui/Card";
@@ -88,8 +87,9 @@ const getInitials = (name: string) => {
 };
 
 export default function TeamPage() {
+  const params = useParams();
   const router = useRouter();
-  const { activeOrgId: orgId } = useUserStore();
+  const orgId = params?.id as string;
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null);

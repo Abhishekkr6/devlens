@@ -7,7 +7,6 @@ import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
 import { Button } from "../../../components/Ui/Button";
 import { Card } from "../../../components/Ui/Card";
-import { useUserStore } from "../../../store/userStore";
 
 interface Reviewer {
   login?: string;
@@ -158,6 +157,7 @@ type TableRow = {
   reviewersCount: number;
   createdAtLabel: string;
 };
+
 export default function PRsPage() {
   const [prs, setPrs] = useState<PR[]>([]);
   const [loading, setLoading] = useState(true);
@@ -167,18 +167,12 @@ export default function PRsPage() {
   const [repoFilter, setRepoFilter] = useState<string>("all");
   const [selectedPrId, setSelectedPrId] = useState<string | null>(null);
   const lastEvent = useLiveStore((state) => state.lastEvent);
-  const { activeOrgId } = useUserStore();
 
   useEffect(() => {
     let isMounted = true;
-    if (!activeOrgId) {
-      setLoading(false);
-      setPrs([]);
-      return;
-    }
 
     api
-      .get(`/orgs/${activeOrgId}/prs`)
+      .get("/prs")
       .then((res) => {
         if (!isMounted) return;
         setPrs(res.data?.data?.items || []);
@@ -195,7 +189,7 @@ export default function PRsPage() {
     return () => {
       isMounted = false;
     };
-  }, [activeOrgId]);
+  }, []);
 
   useEffect(() => {
     if (!lastEvent) return;
