@@ -53,7 +53,10 @@ export default function AuthCallbackPage() {
 
         router.replace("/dashboard");
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> parent of 6a1c355 (org changes #2)
+=======
+>>>>>>> parent of a8e0611 (org changes #1)
 =======
 >>>>>>> parent of a8e0611 (org changes #1)
       } catch (err) {
