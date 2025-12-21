@@ -16,7 +16,6 @@ interface User {
   email?: string;
   avatarUrl?: string;
   orgIds?: Org[];
-  defaultOrgId?: string | null;
 }
 
 interface UserState {
@@ -25,8 +24,8 @@ interface UserState {
   activeOrgId: string | null;
   fetchUser: (opts?: { silent?: boolean }) => Promise<void>;
   logout: () => Promise<void>;
+  setActiveOrganization: (id: string) => void;
 }
-
 
 export const useUserStore = create<UserState>((set, get) => ({
   user: null,
@@ -35,73 +34,29 @@ export const useUserStore = create<UserState>((set, get) => ({
 
   fetchUser: async (opts) => {
     try {
-      // prevent double calls
       if (get().loading === false && opts?.silent) return;
 
       const res = await api.get("/me");
       const payload = res.data?.data ?? {};
       const rawUser = payload.user ?? null;
 
-<<<<<<< HEAD
-      if (rawUser) {
-        rawUser.orgIds = payload.orgs;
-      }
-=======
-      const defaultOrgCandidate =
-        payload.defaultOrgId ?? rawUser?.defaultOrgId ?? null;
-
-      const orgIdsRaw: unknown[] = Array.isArray(payload.orgIds)
-        ? (payload.orgIds as unknown[])
-        : Array.isArray(rawUser?.orgIds)
-        ? (rawUser.orgIds as unknown[])
-        : [];
-
-      const normalisedOrgIds = orgIdsRaw
-        .map((value) => normaliseOrgId(value))
-        .filter((value): value is string => Boolean(value));
-
-      const normalisedDefault = normaliseOrgId(defaultOrgCandidate);
-      const existingActive = get().activeOrgId;
-      const activeFromExisting =
-        existingActive && normalisedOrgIds.includes(existingActive)
-          ? existingActive
-          : null;
-
-      // keep previous selection when it still exists, then fall back to defaults
-      const derivedActiveOrgId =
-        activeFromExisting ?? normalisedDefault ?? normalisedOrgIds[0] ?? null;
->>>>>>> parent of 6a1c355 (org changes #2)
+      // backend returns org objects (id + name)
+      const orgs = Array.isArray(payload.orgs) ? payload.orgs : [];
 
       set({
         user: rawUser
           ? {
               ...rawUser,
-              orgIds: normalisedOrgIds,
-              defaultOrgId: normalisedDefault,
+              orgIds: orgs,
             }
           : null,
-        activeOrgId: derivedActiveOrgId,
+        activeOrgId: get().activeOrgId ?? (orgs[0]?.id ?? null),
         loading: false,
       });
-
-      // ⭐️ write active org to localStorage for pages that rely on it
-      if (derivedActiveOrgId) {
-        try {
-          localStorage.setItem("orgId", derivedActiveOrgId);
-        } catch {}
-      }
     } catch (err) {
-      if (isAxiosError(err)) {
-        const status = err.response?.status;
-
-        // 🚫 DO NOT logout on first 401
-        if (status === 401) {
-          set((s) => ({
-            ...s,
-            loading: false,
-          }));
-          return;
-        }
+      if (isAxiosError(err) && err.response?.status === 401) {
+        set({ loading: false });
+        return;
       }
 
       set({
@@ -112,12 +67,19 @@ export const useUserStore = create<UserState>((set, get) => ({
     }
   },
 
+  setActiveOrganization: (id) => {
+    set({ activeOrgId: id });
+
+    try {
+      localStorage.setItem("orgId", id);
+    } catch {}
+  },
+
   logout: async () => {
     try {
       await api.delete("/auth/logout");
     } catch {}
 
-    // logout is the ONLY place we hard reset
     try {
       localStorage.clear();
       sessionStorage.clear();
