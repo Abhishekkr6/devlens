@@ -53,7 +53,19 @@ export const useUserStore = create<UserState>((set, get) => ({
       const rawUser = payload.user ?? null;
 
       // backend returns org objects (id + name)
-      const orgs = Array.isArray(payload.orgs) ? payload.orgs : [];
+      const rawOrgs = Array.isArray(payload.orgs) ? payload.orgs : [];
+      const orgs = rawOrgs.map((o: any) => ({
+        ...o,
+        id: o.id || o._id,
+      }));
+
+      const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);
+
+      if (activeId) {
+        try {
+          localStorage.setItem("orgId", String(activeId));
+        } catch { }
+      }
 
       set({
         user: rawUser
@@ -62,7 +74,7 @@ export const useUserStore = create<UserState>((set, get) => ({
             orgIds: orgs,
           }
           : null,
-        activeOrgId: get().activeOrgId ?? (orgs[0]?.id ?? null),
+        activeOrgId: activeId,
         loading: false,
       });
     } catch (err) {
