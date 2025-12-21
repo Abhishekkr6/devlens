@@ -14,42 +14,14 @@ export default function AuthCallbackPage() {
 
       try {
         await useUserStore.getState().fetchUser();
-        const { user, activeOrgId, setActiveOrganization } =
-          useUserStore.getState();
+        const { user } = useUserStore.getState();
 
         if (!user) {
           router.replace("/");
           return;
         }
 
-        const orgs = user.orgIds || [];
-
-        // no organization at all -> force create
-        if (orgs.length === 0) {
-          router.replace("/organization/new");
-          return;
-        }
-
-        // exactly one organization -> auto-select & go dashboard
-        if (orgs.length === 1) {
-          const orgId = normaliseOrgId(orgs[0]);
-          if (orgId) {
-            setActiveOrganization(orgId);
-          }
-
-          router.replace("/dashboard");
-          return;
-        }
-
-        // multiple orgs -> ensure activeOrgId is valid
-        const orgIds = orgs.map(normaliseOrgId).filter(Boolean) as string[];
-
-        if (!activeOrgId || !orgIds.includes(activeOrgId)) {
-          if (orgIds.length > 0) {
-            setActiveOrganization(orgIds[0]);
-          }
-        }
-
+        // Always redirect to the organizations page to allow switching/selecting
         router.replace("/organization");
       } catch (err) {
         router.replace("/");

@@ -30,6 +30,7 @@ type User = {
   name: string;
   avatarUrl: string;
   email?: string;
+  orgIds?: { id: string; name: string }[];
 };
 
 const navLinks = [
@@ -55,8 +56,8 @@ type TeamMember = {
 };
 
 export default function Topbar() {
-  const { user, loading, activeOrgId } = useUserStore() as { 
-    user: User | null; 
+  const { user, loading, activeOrgId } = useUserStore() as {
+    user: User | null;
     loading: boolean;
     activeOrgId: string | null;
   };
@@ -107,6 +108,16 @@ export default function Topbar() {
     }
   }, [teamDropdownOpen, activeOrgId]);
 
+  const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
+  const orgDropdownRef = useRef<HTMLDivElement>(null);
+  const { setActiveOrganization } = useUserStore();
+
+  const handleOrgSwitch = (orgId: string) => {
+    setActiveOrganization(orgId);
+    setOrgDropdownOpen(false);
+    router.push(`/organization/${orgId}/repos`);
+  };
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -116,17 +127,23 @@ export default function Topbar() {
       ) {
         setTeamDropdownOpen(false);
       }
+      if (
+        orgDropdownRef.current &&
+        !orgDropdownRef.current.contains(event.target as Node)
+      ) {
+        setOrgDropdownOpen(false);
+      }
     };
 
-    if (teamDropdownOpen) {
+    if (teamDropdownOpen || orgDropdownOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [teamDropdownOpen]);
+  }, [teamDropdownOpen, orgDropdownOpen]);
 
   const fetchTeamMembers = async () => {
     if (!activeOrgId) return;
-    
+
     try {
       setLoadingMembers(true);
       const res = await api.get(`/orgs/${activeOrgId}/members`);
@@ -139,6 +156,8 @@ export default function Topbar() {
       setLoadingMembers(false);
     }
   };
+
+  const currentOrg = user?.orgIds?.find((o) => o.id === activeOrgId);
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -177,11 +196,10 @@ export default function Topbar() {
           key={href}
           href={href}
           onClick={closeMobileNav}
-          className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${
-            active
-              ? "bg-indigo-100 text-indigo-700"
-              : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
-          } ${className ?? ""}`.trim()}
+          className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${active
+            ? "bg-indigo-100 text-indigo-700"
+            : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
+            } ${className ?? ""}`.trim()}
         >
           <Icon className="h-4 w-4" />
           {name}
@@ -213,6 +231,70 @@ export default function Topbar() {
               <p className="hidden text-xs text-slate-500 sm:block">Developer Activity</p>
             </div>
           </Link>
+
+          {/* Org Switcher */}
+          {user && user.orgIds && user.orgIds.length > 0 && (
+            <div className="relative ml-2" ref={orgDropdownRef}>
+              <button
+                onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
+                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-indigo-500 hover:text-indigo-600 shadow-sm"
+              >
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 text-xs font-bold text-indigo-700">
+                  {currentOrg?.name?.[0]?.toUpperCase() || "O"}
+                </div>
+                <span className="max-w-[100px] truncate sm:max-w-[140px]">
+                  {currentOrg?.name || "Select Organization"}
+                </span>
+                <ChevronDown
+                  className={`h-4 w-4 text-slate-400 transition-transform ${orgDropdownOpen ? "rotate-180" : ""
+                    }`}
+                />
+              </button>
+
+              {orgDropdownOpen && (
+                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-slate-200 bg-white p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                  <div className="mb-2 border-b border-slate-100 px-2 pb-2">
+                    <p className="text-xs font-medium text-slate-500">Switch Organization</p>
+                  </div>
+
+                  <div className="space-y-1">
+                    {user.orgIds.map((org) => (
+                      <button
+                        key={org.id}
+                        onClick={() => handleOrgSwitch(org.id)}
+                        className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${activeOrgId === org.id
+                            ? "bg-indigo-50 text-indigo-700"
+                            : "text-slate-700 hover:bg-slate-50"
+                          }`}
+                      >
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${activeOrgId === org.id ? "bg-indigo-200 text-indigo-800" : "bg-slate-100 text-slate-600"
+                          }`}>
+                          {org.name[0]?.toUpperCase()}
+                        </div>
+                        <div className="flex-1 truncate">
+                          <p className="font-medium">{org.name}</p>
+                        </div>
+                        {activeOrgId === org.id && (
+                          <div className="h-2 w-2 rounded-full bg-indigo-600" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="mt-2 border-t border-slate-100 pt-2">
+                    <Link
+                      href="/organization"
+                      onClick={() => setOrgDropdownOpen(false)}
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                    >
+                      <LayoutDashboard className="h-4 w-4" />
+                      Manage Organizations
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
           <div className="ml-auto hidden items-center gap-3 md:flex">
             <div className="relative hidden md:block md:w-48 lg:w-64">
               <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
@@ -438,7 +520,7 @@ export default function Topbar() {
 
               <nav className="flex flex-col gap-2 text-sm font-medium text-slate-600">
                 {renderNavLinks("w-full")}
-                
+
                 {activeOrgId && (
                   <Link
                     href={`/organization/${activeOrgId}/team`}
