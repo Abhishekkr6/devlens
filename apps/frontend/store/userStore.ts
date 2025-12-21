@@ -46,9 +46,9 @@ export const useUserStore = create<UserState>((set, get) => ({
       set({
         user: rawUser
           ? {
-              ...rawUser,
-              orgIds: orgs,
-            }
+            ...rawUser,
+            orgIds: orgs,
+          }
           : null,
         activeOrgId: get().activeOrgId ?? (orgs[0]?.id ?? null),
         loading: false,
@@ -68,22 +68,29 @@ export const useUserStore = create<UserState>((set, get) => ({
   },
 
   setActiveOrganization: (id) => {
-    set({ activeOrgId: id });
+    // Safety check: ensure id is a string
+    let safeId = id;
+    if (typeof id === 'object' && id !== null) {
+      // @ts-ignore
+      safeId = id.id || id._id || String(id);
+    }
+
+    set({ activeOrgId: String(safeId) });
 
     try {
-      localStorage.setItem("orgId", id);
-    } catch {}
+      localStorage.setItem("orgId", String(safeId));
+    } catch { }
   },
 
   logout: async () => {
     try {
       await api.delete("/auth/logout");
-    } catch {}
+    } catch { }
 
     try {
       localStorage.clear();
       sessionStorage.clear();
-    } catch {}
+    } catch { }
 
     set({
       user: null,
