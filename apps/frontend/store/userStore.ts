@@ -33,6 +33,18 @@ export const useUserStore = create<UserState>((set, get) => ({
   activeOrgId: null,
 
   fetchUser: async (opts) => {
+    // 1. Recover/Clean orgId from localStorage
+    try {
+      const stored = localStorage.getItem("orgId");
+      if (stored && (stored === "[object Object]" || stored === "undefined" || stored === "null")) {
+        console.warn("Cleaning corrupted orgId from localStorage");
+        localStorage.removeItem("orgId");
+      } else if (stored && !get().activeOrgId) {
+        // Hydrate if valid and not already set
+        set({ activeOrgId: stored });
+      }
+    } catch { }
+
     try {
       if (get().loading === false && opts?.silent) return;
 
