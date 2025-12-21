@@ -4,6 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "../../../lib/api";
 import { useUserStore } from "../../../store/userStore";
+import { normaliseOrgId } from "../../../lib/utils";
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -27,13 +28,13 @@ export default function AuthCallbackPage() {
         if (orgs.length === 0) {
           router.replace("/organization/new");
         } else if (orgs.length === 1) {
-          const orgId = orgs[0]?.id;
+          const orgId = normaliseOrgId(orgs[0]);
           if (orgId) {
             setActiveOrganization(orgId);
           }
           router.replace("/dashboard");
         } else {
-          const orgIds = orgs.map((o) => o.id).filter(Boolean);
+          const orgIds = orgs.map(normaliseOrgId).filter(Boolean) as string[];
           if (!activeOrgId || !orgIds.includes(activeOrgId)) {
             if (orgIds.length > 0) {
               setActiveOrganization(orgIds[0]);
