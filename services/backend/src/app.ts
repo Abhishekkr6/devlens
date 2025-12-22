@@ -9,7 +9,13 @@ import { apiLimiter } from "./middlewares/rateLimit";
 import { errorHandler } from "./middlewares/errorHandler";
 import healthRoutes from "./routes/health.routes";
 
+
 const app = express();
+
+// Health check for Render (required to pass deployment health checks)
+app.get("/", (req, res) => {
+   res.status(200).send("TeamPulse Backend is running 🚀");
+});
 
 /* -----------------------------------------------------
    1) RAW BODY FOR GITHUB → MUST BE FIRST
@@ -108,10 +114,10 @@ if (!lastPart || lastPart.includes(":") || lastPart === "") {
    const queryString = mongoUrl.includes("?") ? mongoUrl.substring(mongoUrl.indexOf("?")) : "";
    const baseUrl = urlWithoutQuery.endsWith("/") ? urlWithoutQuery.slice(0, -1) : urlWithoutQuery;
    finalMongoUrl = `${baseUrl}/${dbName}${queryString}`;
-   logger.info({ 
-      original: mongoUrl, 
-      updated: finalMongoUrl, 
-      database: dbName 
+   logger.info({
+      original: mongoUrl,
+      updated: finalMongoUrl,
+      database: dbName
    }, "MongoDB URL updated with database name");
 } else {
    logger.info({ database: lastPart }, "MongoDB URL already contains database name");
