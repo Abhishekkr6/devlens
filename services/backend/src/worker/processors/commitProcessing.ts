@@ -21,8 +21,20 @@ export const commitProcessingHandler = async (job: Job) => {
     for (const c of commits) {
         if (!c.message) continue;
 
-        const modulePaths: string[] = [];
-        c.modulePaths = modulePaths;
+        const files = c.files || [];
+        const moduleSet = new Set<string>();
+
+        // Simple heuristic to identify modules
+        files.forEach((f) => {
+            if (f.startsWith("apps/frontend")) moduleSet.add("frontend");
+            if (f.startsWith("services/backend")) moduleSet.add("backend");
+            if (f.includes("auth")) moduleSet.add("auth");
+            if (f.includes("database") || f.includes("models")) moduleSet.add("database");
+            if (f.includes("components")) moduleSet.add("ui");
+            if (f.includes("worker")) moduleSet.add("worker");
+        });
+
+        c.modulePaths = Array.from(moduleSet);
         c.processed = true;
         await c.save();
     }

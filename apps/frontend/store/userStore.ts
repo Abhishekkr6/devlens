@@ -7,6 +7,7 @@ import { isAxiosError } from "axios";
 export interface Org {
   id: string;
   name: string;
+  role: "ADMIN" | "MEMBER" | "VIEWER";
 }
 
 interface User {
@@ -57,6 +58,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       const orgs = rawOrgs.map((o: any) => ({
         ...o,
         id: o.id || o._id,
+        role: o.role || "VIEWER",
       }));
 
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);

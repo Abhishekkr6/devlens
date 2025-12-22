@@ -96,9 +96,10 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
               authorName: c.author.name,
               message: c.message,
               timestamp: c.timestamp,
-              filesChangedCount: c.modified.length,
+              filesChangedCount: c.modified.length + c.added.length + c.removed.length,
               additions: c.added.length,
               deletions: c.removed.length,
+              files: [...c.modified, ...c.added, ...c.removed],
             },
             { upsert: true, new: true }
           )

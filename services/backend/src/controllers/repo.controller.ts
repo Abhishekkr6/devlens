@@ -149,14 +149,14 @@ export const getRepos = async (req: Request, res: Response) => {
           typeof (repo as any)?.language === "string"
             ? (repo as any).language
             : typeof (repo as any)?.metadata?.primaryLanguage === "string"
-            ? (repo as any).metadata.primaryLanguage
-            : undefined,
+              ? (repo as any).metadata.primaryLanguage
+              : undefined,
         description:
           typeof (repo as any)?.description === "string"
             ? (repo as any).description
             : typeof (repo as any)?.metadata?.description === "string"
-            ? (repo as any).metadata.description
-            : "",
+              ? (repo as any).metadata.description
+              : "",
         health,
         stats: {
           commits: totalCommits,
@@ -460,8 +460,8 @@ export const getRepoDetail = async (req: Request, res: Response) => {
 
     const users = userIds.size
       ? await UserModel.find({ githubId: { $in: Array.from(userIds) } })
-          .select("githubId name login avatarUrl")
-          .lean()
+        .select("githubId name login avatarUrl")
+        .lean()
       : [];
 
     const userMap = new Map(
@@ -485,10 +485,10 @@ export const getRepoDetail = async (req: Request, res: Response) => {
     const alertsSummary =
       Array.isArray(alertAgg) && alertAgg[0]
         ? {
-            total: alertAgg[0].total ?? 0,
-            open: alertAgg[0].open ?? 0,
-            criticalOpen: alertAgg[0].criticalOpen ?? 0,
-          }
+          total: alertAgg[0].total ?? 0,
+          open: alertAgg[0].open ?? 0,
+          criticalOpen: alertAgg[0].criticalOpen ?? 0,
+        }
         : { total: 0, open: 0, criticalOpen: 0 };
 
     const health = (() => {
@@ -581,5 +581,46 @@ export const getRepoDetail = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ success: false, error: "Failed to load repository" });
+  }
+};
+
+export const deleteRepo = async (req: Request, res: Response) => {
+  try {
+    const { orgId, repoId } = req.params;
+
+    if (!repoId || !Types.ObjectId.isValid(repoId)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid repository identifier" });
+    }
+
+    // Verify repo belongs to org
+    const repo = await RepoModel.findOne({
+      _id: repoId,
+      orgId: new Types.ObjectId(orgId),
+    });
+
+    if (!repo) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Repository not found" });
+    }
+
+    // Delete related data
+    await Promise.all([
+      CommitModel.deleteMany({ repoId: repo._id }),
+      PRModel.deleteMany({ repoId: repo._id }),
+      AlertModel.deleteMany({ repoId: repo._id }),
+    ]);
+
+    // Delete repo
+    await RepoModel.deleteOne({ _id: repo._id });
+
+    return res.json({ success: true, message: "Repository deleted successfully" });
+  } catch (error) {
+    console.error("DELETE REPO ERROR:", error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to delete repository" });
   }
 };

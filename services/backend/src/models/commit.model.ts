@@ -12,6 +12,7 @@ export interface ICommit extends Document {
   filesChangedCount?: number;
   additions?: number;
   deletions?: number;
+  files?: string[];
   modulePaths?: string[];
   processed?: boolean;
 }
@@ -27,6 +28,7 @@ const CommitSchema = new Schema<ICommit>(
     filesChangedCount: Number,
     additions: Number,
     deletions: Number,
+    files: [String],
     modulePaths: [String],
     processed: { type: Boolean, default: false },
   },

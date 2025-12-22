@@ -270,12 +270,12 @@ export const getOrgMembers = async (req: any, res: Response) => {
         role: member.role,
         user: user
           ? {
-              id: String(user._id),
-              name: user.name || user.login || "Unknown",
-              email: user.email || "",
-              avatarUrl: user.avatarUrl || "",
-              githubId: user.githubId,
-            }
+            id: String(user._id),
+            name: user.name || user.login || "Unknown",
+            email: user.email || "",
+            avatarUrl: user.avatarUrl || "",
+            githubId: user.githubId,
+          }
           : null,
       };
     });
@@ -289,10 +289,57 @@ export const getOrgMembers = async (req: any, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("GET ORG MEMBERS ERROR:", error);
     return res.status(500).json({
       success: false,
       error: { message: "Failed to fetch organization members" },
     });
+  }
+};
+
+export const removeMember = async (req: any, res: Response) => {
+  try {
+    const { orgId, userId } = req.params;
+
+    const org = await OrgModel.findById(orgId);
+    if (!org) return res.status(404).json({ error: "Org not found" });
+
+    // Remove from members array
+    org.members = org.members.filter(m => String(m.userId) !== String(userId));
+    await org.save();
+
+    // Remove from user's orgIds
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { orgIds: org._id }
+    });
+
+    return res.json({ success: true, message: "Member removed" });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to remove member" });
+  }
+};
+
+export const updateMemberRole = async (req: any, res: Response) => {
+  try {
+    const { orgId, userId } = req.params;
+    const { role } = req.body;
+
+    if (!["ADMIN", "MEMBER", "VIEWER"].includes(role)) {
+      return res.status(400).json({ error: "Invalid role" });
+    }
+
+    const org = await OrgModel.findById(orgId);
+    if (!org) return res.status(404).json({ error: "Org not found" });
+
+    const memberIndex = org.members.findIndex(m => String(m.userId) === String(userId));
+    if (memberIndex === -1) {
+      return res.status(404).json({ error: "User not in org" });
+    }
+
+    org.members[memberIndex].role = role;
+    await org.save();
+
+    return res.json({ success: true, message: "Role updated" });
+  } catch (error) {
+    return res.status(500).json({ error: "Failed to update role" });
   }
 };

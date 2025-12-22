@@ -7,6 +7,7 @@ import { api } from "../../../../lib/api";
 import DashboardLayout from "../../../../components/Layout/DashboardLayout";
 import { Card } from "../../../../components/Ui/Card";
 import { Button } from "../../../../components/Ui/Button";
+import { useUserStore } from "../../../../store/userStore";
 import {
   UserPlus,
   Shield,
@@ -102,6 +103,15 @@ export default function TeamPage() {
   const [inviteSuccess, setInviteSuccess] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
 
+  const user = useUserStore((state) => state.user);
+  const activeOrgId = useUserStore((state) => state.activeOrgId); // fallback
+
+  // Logic to determine if current user is admin
+  // We need to find the user's role in the *current* organization (orgId from params)
+  const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));
+  const userRole = currentOrg?.role || "VIEWER";
+  const isAdmin = userRole === "ADMIN";
+
   useEffect(() => {
     if (orgId) {
       fetchMembers();
@@ -150,7 +160,7 @@ export default function TeamPage() {
       setInviteSuccess(true);
       setInviteEmail("");
       setInviteRole("MEMBER");
-      
+
       // Refresh members list
       await fetchMembers();
 
@@ -174,6 +184,31 @@ export default function TeamPage() {
     }
   };
 
+  const handleRemoveMember = async (userId: string) => {
+    if (!confirm("Are you sure you want to remove this member?")) return;
+    try {
+      await api.delete(`/orgs/${orgId}/members/${userId}`);
+      // Optimistic update
+      setMembers(members.filter(m => m.userId !== userId));
+      // Or refetch
+      // await fetchMembers();
+    } catch (err) {
+      console.error("Remove failed", err);
+      alert("Failed to remove member");
+    }
+  };
+
+  const handleRoleUpdate = async (userId: string, newRole: string) => {
+    if (!newRole) return;
+    try {
+      await api.patch(`/orgs/${orgId}/members/${userId}`, { role: newRole });
+      setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as "ADMIN" | "MEMBER" | "VIEWER" } : m));
+    } catch (err) {
+      console.error("Update role failed", err);
+      alert("Failed to update role");
+    }
+  };
+
   const filteredMembers = members.filter((member) => {
     if (!searchTerm.trim()) return true;
     const keyword = searchTerm.toLowerCase();
@@ -194,13 +229,15 @@ export default function TeamPage() {
               {orgInfo?.orgName ? `Manage team for ${orgInfo.orgName}` : "Manage your organization team"}
             </p>
           </div>
-          <Button
-            onClick={() => setShowInviteForm(!showInviteForm)}
-            className="mt-4 sm:mt-0 w-full sm:w-auto"
-          >
-            <UserPlus className="h-4 w-4 mr-2" />
-            Invite Member
-          </Button>
+          {isAdmin && (
+            <Button
+              onClick={() => setShowInviteForm(!showInviteForm)}
+              className="mt-4 sm:mt-0 w-full sm:w-auto"
+            >
+              <UserPlus className="h-4 w-4 mr-2" />
+              Invite Member
+            </Button>
+          )}
         </header>
 
         {/* Invite Form */}
@@ -331,7 +368,14 @@ export default function TeamPage() {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {filteredMembers.map((member) => (
-              <MemberCard key={member.userId} member={member} />
+              <MemberCard
+                key={member.userId}
+                member={member}
+                isAdmin={isAdmin}
+                currentUserId={user?.id}
+                onRemove={handleRemoveMember}
+                onUpdateRole={handleRoleUpdate}
+              />
             ))}
           </div>
         )}
@@ -347,8 +391,21 @@ export default function TeamPage() {
   );
 }
 
-function MemberCard({ member }: { member: TeamMember }) {
+function MemberCard({
+  member,
+  isAdmin,
+  currentUserId,
+  onRemove,
+  onUpdateRole
+}: {
+  member: TeamMember;
+  isAdmin: boolean;
+  currentUserId?: string;
+  onRemove: (id: string) => void;
+  onUpdateRole: (id: string, role: string) => void;
+}) {
   const user = member.user;
+  const isSelf = String(member.userId) === String(currentUserId);
 
   return (
     <Card className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
@@ -358,7 +415,7 @@ function MemberCard({ member }: { member: TeamMember }) {
           {user?.avatarUrl ? (
             <Image
               src={user.avatarUrl}
-              alt={user.name || "User"}
+              alt={user?.name || "User"}
               width={48}
               height={48}
               className="h-full w-full object-cover"
@@ -375,7 +432,7 @@ function MemberCard({ member }: { member: TeamMember }) {
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0 flex-1">
               <p className="truncate text-sm font-semibold text-slate-900">
-                {user?.name || "Unknown User"}
+                {user?.name || "Unknown User"} {isSelf && "(You)"}
               </p>
               <p className="mt-0.5 truncate text-xs text-slate-500">
                 {user?.email || "No email"}
@@ -383,12 +440,33 @@ function MemberCard({ member }: { member: TeamMember }) {
             </div>
           </div>
 
-          {/* Role Badge */}
-          <div className="mt-3 flex items-center gap-2">
+          {/* Role Badge & Actions */}
+          <div className="mt-3 flex items-center justify-between">
             <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
               {getRoleIcon(member.role)}
               {getRoleLabel(member.role)}
             </span>
+
+            {isAdmin && !isSelf && (
+              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                <select
+                  className="text-xs border rounded p-1 bg-slate-50 outline-none focus:ring-1 focus:ring-indigo-500"
+                  value={member.role}
+                  onChange={(e) => onUpdateRole(member.userId, e.target.value)}
+                >
+                  <option value="ADMIN">Admin</option>
+                  <option value="MEMBER">Member</option>
+                  <option value="VIEWER">Viewer</option>
+                </select>
+                <button
+                  onClick={() => onRemove(member.userId)}
+                  className="text-slate-400 hover:text-red-600 transition-colors"
+                  title="Remove member"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>

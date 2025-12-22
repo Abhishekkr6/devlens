@@ -33,10 +33,20 @@ export const getMe = async (req: Request, res: Response) => {
       user.defaultOrgId ? String(user.defaultOrgId) : null;
 
     const orgs = Array.isArray(user.orgIds)
-      ? user.orgIds.map((o: any) => ({
+      ? user.orgIds.map((o: any) => {
+        // Find user's role in this org
+        const member = Array.isArray(o.members)
+          ? o.members.find(
+            (m: any) => String(m.userId) === String(user._id)
+          )
+          : null;
+
+        return {
           id: String(o._id),
           name: o.name,
-        }))
+          role: member?.role || "VIEWER", // Fallback
+        };
+      })
       : [];
 
     return res.json({
