@@ -2,6 +2,7 @@ import "dotenv/config";
 import http from "http";
 import { app } from "./app";
 import { attachWebSocket } from "./realtime/wsServer";
+import { initWorker } from "./worker/init";
 import logger from "./utils/logger";
 
 const PORT = process.env.PORT || 4000;
@@ -13,6 +14,7 @@ server.listen(PORT, () => {
 });
 
 attachWebSocket(server);
+initWorker();
 
 process.on("uncaughtException", (err) => {
   logger.error({ err }, "💥 Uncaught Exception — backend crashed");
