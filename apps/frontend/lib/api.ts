@@ -3,7 +3,7 @@
 import axios from "axios";
 
 const DEFAULT_LOCAL_BASE = "http://localhost:4000/api/v1";
-const DEFAULT_REMOTE_BASE = "https://teampulse-production.up.railway.app/api/v1";
+const DEFAULT_REMOTE_BASE = "https://teampulse-w2s8.onrender.com/api/v1";
 
 const pickEnvBase = (): string | undefined => {
   const candidates = [
@@ -42,8 +42,8 @@ const resolveBaseURL = (): string => {
 };
 
 export const api = axios.create({
-  baseURL: "/api/v1", 
-  withCredentials: true 
+  baseURL: "/api/v1",
+  withCredentials: true
 });
 
 // Remove localStorage token usage; rely on httpOnly cookie only

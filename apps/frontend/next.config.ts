@@ -13,7 +13,7 @@ const nextConfig = {
     // IMPORTANT: no /api/v1 here
     const prodBase = (
       process.env.NEXT_PUBLIC_BACKEND_URL ||
-      "https://teampulse-production.up.railway.app"
+      "https://teampulse-w2s8.onrender.com"
     ).replace(/\/$/, "");
 
     return [

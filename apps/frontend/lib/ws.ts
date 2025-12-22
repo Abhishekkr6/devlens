@@ -3,7 +3,7 @@
 let socket: WebSocket | null = null;
 const listeners: ((event: unknown) => void)[] = [];
 
-const DEFAULT_REMOTE_WS = "wss://teampulse-production.up.railway.app";
+const DEFAULT_REMOTE_WS = "wss://teampulse-w2s8.onrender.com";
 
 const resolveWsUrl = () => {
   const envUrl = process.env.NEXT_PUBLIC_WS_URL;
