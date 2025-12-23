@@ -84,92 +84,6 @@ export const githubCallback = async (req: Request, res: Response) => {
       await user.save();
     }
 
-    // Ensure default org exists and is valid. If user's defaultOrgId references a missing org, recreate.
-    const ensureOrgForUser = async () => {
-      // If user has a defaultOrgId, verify it exists
-      if (user.defaultOrgId) {
-        try {
-          const existing = await OrgModel.findById(user.defaultOrgId).lean();
-          if (existing) return existing;
-          // If referenced org was deleted, fallthrough to create new
-        } catch {
-          // ignore and create new
-        }
-      }
-
-      // Create or find by slug
-      const baseSlug =
-        (ghUser.login && String(ghUser.login).toLowerCase()) ||
-        `user-${String(user._id)}`;
-      let org = await OrgModel.findOne({ slug: baseSlug });
-
-      if (!org) {
-        // Try create; if duplicate occurs, attempt suffixes
-        try {
-          org = await OrgModel.create({
-            name: `${ghUser.login ?? user.name}'s Team`,
-            slug: baseSlug,
-            createdBy: user._id,
-            members: [{ userId: user._id, role: "ADMIN" }],
-          });
-        } catch (createErr: any) {
-          const isDup =
-            typeof createErr?.message === "string" &&
-            createErr.message.includes("E11000");
-          if (!isDup) throw createErr;
-
-          for (let i = 2; i <= 100; i++) {
-            const candidate = `${baseSlug}-${i}`;
-            const exists = await OrgModel.findOne({ slug: candidate });
-            if (!exists) {
-              org = await OrgModel.create({
-                name: `${ghUser.login ?? user.name}'s Team`,
-                slug: candidate,
-                createdBy: user._id,
-                members: [{ userId: user._id, role: "ADMIN" }],
-              });
-              break;
-            }
-          }
-          if (!org) {
-            throw new Error(
-              "Unable to allocate unique org slug after multiple attempts"
-            );
-          }
-        }
-      } else {
-        // 🔥 FIX: If org exists, ensure user is a member
-        const members = Array.isArray(org.members) ? org.members : [];
-        const isMember = members.some(
-          (m: any) => m && m.userId && String(m.userId) === String(user._id)
-        );
-
-        if (!isMember) {
-          // Add user as ADMIN if they created the org, otherwise as MEMBER
-          const userRole = String(org.createdBy) === String(user._id) ? "ADMIN" : "MEMBER";
-          org.members.push({ userId: user._id, role: userRole });
-          await org.save();
-        }
-      }
-
-      // Save ObjectId references reliably
-      const orgId = org._id as Types.ObjectId;
-      user.defaultOrgId = orgId;
-      if (!Array.isArray(user.orgIds)) user.orgIds = [];
-      const already = (user.orgIds as any[]).some(
-        (entry) =>
-          String(entry) === String(orgId) ||
-          (entry &&
-            typeof entry === "object" &&
-            String(entry._id) === String(orgId))
-      );
-      if (!already) user.orgIds.push(orgId as any);
-      await user.save();
-      return org;
-    };
-
-    await ensureOrgForUser();
-
     // Create application JWT (payload minimal: user id as string)
     const token = createToken({ id: String(user._id) });
 
@@ -259,8 +173,8 @@ export const logoutAndDelete = async (req: any, res: Response) => {
 
     const orgIds = Array.isArray(user.orgIds)
       ? user.orgIds
-          .map(toObjectId)
-          .filter((value): value is Types.ObjectId => Boolean(value))
+        .map(toObjectId)
+        .filter((value): value is Types.ObjectId => Boolean(value))
       : [];
 
     const repoIds: Types.ObjectId[] = [];
