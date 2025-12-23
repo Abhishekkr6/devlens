@@ -123,5 +123,9 @@ export const useUserStore = create<UserState>((set, get) => ({
       activeOrgId: null,
       loading: false,
     });
+
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   },
 }));
