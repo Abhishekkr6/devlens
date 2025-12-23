@@ -54,6 +54,7 @@ export const getMe = async (req: Request, res: Response) => {
       data: {
         user: {
           id: String(user._id),
+          login: user.login || "",
           name: user.name || "",
           email: user.email || "",
           avatarUrl: user.avatarUrl || "",

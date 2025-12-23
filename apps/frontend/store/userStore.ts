@@ -13,6 +13,7 @@ export interface Org {
 interface User {
   id?: string;
   _id?: string;
+  login?: string;
   name?: string;
   email?: string;
   avatarUrl?: string;

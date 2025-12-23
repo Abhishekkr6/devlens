@@ -4,6 +4,8 @@ import Image from "next/image";
 import DashboardLayout from "../../components/Layout/DashboardLayout";
 import { useEffect } from "react";
 import { useUserStore } from "../../store/userStore";
+import { Card, CardBody, CardHeader, CardTitle } from "../../components/Ui/Card";
+import { Mail, Shield, User, Code, Eye, Globe } from "lucide-react";
 
 export default function MePage() {
   const { user, loading } = useUserStore();
@@ -16,80 +18,172 @@ export default function MePage() {
     });
   }, []);
 
-  // Narrow unknown user fields without using 'any'
-  const userRecord: Record<string, unknown> | null =
-    user && typeof user === "object" ? (user as Record<string, unknown>) : null;
-  const userId: string =
-    typeof userRecord?._id === "string"
-      ? userRecord._id
-      : typeof userRecord?.id === "string"
-        ? userRecord.id
-        : "N/A";
-  const orgIdsValue = userRecord?.orgIds;
-  const orgIds: unknown[] | undefined = Array.isArray(orgIdsValue) ? orgIdsValue : undefined;
+  const getRoleIcon = (role: string) => {
+    switch (role) {
+      case "ADMIN":
+        return <Shield className="h-4 w-4 text-indigo-600" />;
+      case "MEMBER":
+        return <Code className="h-4 w-4 text-slate-600" />;
+      case "VIEWER":
+        return <Eye className="h-4 w-4 text-slate-400" />;
+      default:
+        return <Globe className="h-4 w-4 text-slate-400" />;
+    }
+  };
+
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "ADMIN":
+        return "Administrator";
+      case "MEMBER":
+        return "Member";
+      case "VIEWER":
+        return "Viewer";
+      default:
+        return role;
+    }
+  };
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <header className="flex items-center justify-between border-b pb-4">
+      <div className="space-y-8">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-6">
           <div className="space-y-1">
-            <h1 className="text-3xl font-semibold text-slate-900">Account</h1>
-            <p className="text-sm text-slate-500">Your profile and organization context</p>
+            <h1 className="text-4xl font-semibold text-slate-900">Account Settings</h1>
+            <p className="text-base text-slate-500">Manage your profile and organization access</p>
           </div>
           <button
             onClick={() => useUserStore.getState().logout()}
-            className="flex items-center gap-2 rounded-xl bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 border border-rose-100 transition-colors hover:bg-rose-100"
+            className="flex items-center justify-center gap-2 rounded-xl bg-rose-50 px-6 py-2.5 text-sm font-semibold text-rose-600 border border-rose-100 transition-all hover:bg-rose-100 hover:shadow-sm active:scale-95"
           >
             Log Out
           </button>
         </header>
 
         {loading ? (
-          <div className="rounded-2xl bg-white p-6 text-sm text-slate-500 shadow-sm">Loading…</div>
-        ) : !user ? (
-          <div className="rounded-2xl bg-white p-6 text-sm text-rose-600 shadow-sm">Not authenticated</div>
-        ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-              <div className="flex items-center gap-4">
-                <Image
-                  src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAQAIBRAA7"
-                  alt={typeof userRecord?.name === "string" ? `${userRecord.name}'s avatar` : "User avatar"}
-                  width={64}
-                  height={64}
-                  className="h-16 w-16 rounded-full border border-slate-200"
-                />
-                <div>
-                  <p className="text-lg font-semibold text-slate-900">{user.name || "Unknown"}</p>
-                  {user.email && <p className="text-sm text-slate-500">{user.email}</p>}
-                  <p>
-                    <span className="font-medium">User ID:</span> {userId}
+            {[1, 2, 3].map((i) => (
+              <Card key={i} className="animate-pulse h-48 bg-slate-50 border-dashed" />
+            ))}
+          </div>
+        ) : !user ? (
+          <Card className="border-rose-100 bg-rose-50/30">
+            <CardBody className="flex flex-col items-center justify-center py-12 text-center">
+              <div className="h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center mb-4">
+                <User className="h-6 w-6 text-rose-600" />
+              </div>
+              <h2 className="text-lg font-semibold text-slate-900">Not Authenticated</h2>
+              <p className="text-sm text-slate-500 mt-1">Please log in to view your account details.</p>
+            </CardBody>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
+            {/* Profile Card */}
+            <div className="lg:col-span-1 space-y-6">
+              <Card className="overflow-hidden">
+                <div className="h-24 bg-linear-to-br from-indigo-600 to-indigo-400" />
+                <CardBody className="relative pt-0">
+                  <div className="flex flex-col items-center -translate-y-12">
+                    <div className="relative inline-block">
+                      <Image
+                        src={user.avatarUrl || "https://github.com/identicons/null.png"}
+                        alt={user.name || "User"}
+                        width={96}
+                        height={96}
+                        className="h-24 w-24 rounded-2xl border-4 border-white bg-white shadow-md object-cover"
+                      />
+                      <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-white" />
+                    </div>
+                    <div className="mt-4 text-center">
+                      <h2 className="text-xl font-bold text-slate-900">{user.name || "Anonymous User"}</h2>
+                      <p className="text-sm text-slate-500 font-medium">@{user.login || "user"}</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-4 border-t border-slate-100 pt-2">
+                    <div className="flex items-center gap-3 text-sm">
+                      <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center">
+                        <Mail className="h-4 w-4 text-slate-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Email Address</p>
+                        <p className="text-slate-700 truncate">{user.email || "No email provided"}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-3 text-sm">
+                      <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center">
+                        <User className="h-4 w-4 text-slate-400" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Account ID</p>
+                        <p className="text-slate-700 truncate font-mono text-xs">{user.id || user._id || "N/A"}</p>
+                      </div>
+                    </div>
+                  </div>
+                </CardBody>
+              </Card>
+            </div>
+
+            {/* Organizations Card */}
+            <div className="lg:col-span-2 space-y-6">
+              <Card>
+                <CardHeader className="flex items-center justify-between py-4">
+                  <CardTitle className="text-lg">Your Organizations</CardTitle>
+                  <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-bold text-indigo-700">
+                    {user.orgIds?.length || 0} Total
+                  </span>
+                </CardHeader>
+                <CardBody className="p-0">
+                  {user.orgIds && user.orgIds.length > 0 ? (
+                    <div className="divide-y divide-slate-100">
+                      {user.orgIds.map((org: any) => (
+                        <div key={org.id || org._id} className="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors">
+                          <div className="flex items-center gap-4">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-sm">
+                              {org.name?.[0]?.toUpperCase() || "O"}
+                            </div>
+                            <div>
+                              <p className="font-semibold text-slate-900">{org.name}</p>
+                              <p className="text-xs text-slate-500 font-medium uppercase tracking-tight">ID: {org.id || org._id}</p>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end gap-1.5">
+                            <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1">
+                              {getRoleIcon(org.role)}
+                              <span className="text-xs font-bold text-slate-700">
+                                {getRoleLabel(org.role)}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center justify-center py-12 text-center text-slate-500">
+                      < Globe className="h-10 w-10 text-slate-200 mb-2" />
+                      <p className="text-sm">No organizations linked to this account.</p>
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
+
+              <Card className="bg-indigo-600 border-none text-white overflow-hidden relative">
+                <CardBody className="py-8 px-8 relative z-10">
+                  <h3 className="text-xl font-bold mb-2">Need a new organization?</h3>
+                  <p className="text-indigo-100 text-sm mb-6 max-w-md">
+                    You can create a new organization to isolate your projects and team members, or ask an administrator to invite you to an existing one.
                   </p>
-                </div>
-              </div>
-              <div className="mt-3 text-sm text-slate-600">
-                {Array.isArray(orgIds) && orgIds.length ? (
-                  <ul className="list-disc pl-5">
-                    {orgIds.map((orgId: unknown, idx: number) => (
-                      <li key={idx} className="break-all">{String(orgId)}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No organizations linked.</p>
-                )}
-              </div>
-              <h2 className="text-base font-semibold text-slate-900">Organizations</h2>
-              <div className="mt-3 text-sm text-slate-600">
-                {Array.isArray(orgIds) && orgIds.length ? (
-                  <ul className="list-disc pl-5">
-                    {orgIds.map((orgId: unknown, idx: number) => (
-                      <li key={idx} className="break-all">{String(orgId)}</li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p>No organizations linked.</p>
-                )}
-              </div>
+                  <a
+                    href="/organization"
+                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-2.5 text-sm font-bold text-indigo-600 transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95"
+                  >
+                    Manage Organizations
+                  </a>
+                </CardBody>
+                {/* Decorative background element */}
+                <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-white/10 blur-3xl opacity-50" />
+                <div className="absolute bottom-0 left-0 -ml-8 -mb-8 h-32 w-32 rounded-full bg-white/5 blur-2xl opacity-30" />
+              </Card>
             </div>
           </div>
         )}
