@@ -17,12 +17,25 @@ router.get(
   getDashboardStats
 );
 
-router.get("/activity/commits", getCommitTimeline);
+router.get(
+  "/orgs/:orgId/activity/commits",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  getCommitTimeline
+);
 
-router.get("/developers", getDevelopers);
+router.get(
+  "/orgs/:orgId/developers",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  getDevelopers
+);
 
-router.get("/prs", listPRs);
-
-router.get("/alerts", getAlertSummary);
+router.get(
+  "/orgs/:orgId/prs",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  listPRs
+);
 
 export default router;

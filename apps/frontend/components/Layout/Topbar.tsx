@@ -34,13 +34,13 @@ type User = {
 };
 
 const navLinks = [
-  { name: "Overview", href: "/dashboard", icon: LayoutDashboard },
-  { name: "Activity", href: "/dashboard/activity", icon: Activity },
-  { name: "Pull Requests", href: "/dashboard/prs", icon: GitPullRequest },
-  { name: "Alerts", href: "/dashboard/alerts", icon: Bell },
-  { name: "Developers", href: "/dashboard/developers", icon: Users },
-  { name: "Repositories", href: "/dashboard/repos", icon: FolderGit2 },
-  { name: "Settings", href: "/settings", icon: SettingsIcon },
+  { name: "Overview", href: (id: string) => `/organization/${id}`, icon: LayoutDashboard },
+  { name: "Activity", href: (id: string) => `/organization/${id}/activity`, icon: Activity },
+  { name: "Pull Requests", href: (id: string) => `/organization/${id}/prs`, icon: GitPullRequest },
+  { name: "Alerts", href: (id: string) => `/organization/${id}/alerts`, icon: Bell },
+  { name: "Developers", href: (id: string) => `/organization/${id}/developers`, icon: Users },
+  { name: "Repositories", href: (id: string) => `/organization/${id}/repos`, icon: FolderGit2 },
+  { name: "Settings", href: (id: string) => `/organization/${id}/settings`, icon: SettingsIcon },
 ];
 
 type TeamMember = {
@@ -190,11 +190,12 @@ export default function Topbar() {
 
   const renderNavLinks = (className?: string) =>
     navLinks.map(({ name, href, icon: Icon }) => {
-      const active = isActive(href);
+      const resolvedHref = activeOrgId ? href(activeOrgId) : "/organization";
+      const active = isActive(resolvedHref);
       return (
         <Link
-          key={href}
-          href={href}
+          key={resolvedHref}
+          href={resolvedHref}
           onClick={closeMobileNav}
           className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${active
             ? "bg-indigo-100 text-indigo-700"
@@ -207,12 +208,15 @@ export default function Topbar() {
       );
     });
 
-  const dockItems = navLinks.map(({ name, href, icon: Icon }) => ({
-    title: name,
-    href,
-    icon: <Icon className="h-4 w-4" />,
-    isActive: isActive(href),
-  }));
+  const dockItems = navLinks.map(({ name, href, icon: Icon }) => {
+    const resolvedHref = activeOrgId ? href(activeOrgId) : "/organization";
+    return {
+      title: name,
+      href: resolvedHref,
+      icon: <Icon className="h-4 w-4" />,
+      isActive: isActive(resolvedHref),
+    };
+  });
 
   return (
     <header className="sticky top-0 z-40 border-b border-slate-200 bg-white/90 backdrop-blur">
@@ -263,8 +267,8 @@ export default function Topbar() {
                         key={org.id}
                         onClick={() => handleOrgSwitch(org.id)}
                         className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${activeOrgId === org.id
-                            ? "bg-indigo-50 text-indigo-700"
-                            : "text-slate-700 hover:bg-slate-50"
+                          ? "bg-indigo-50 text-indigo-700"
+                          : "text-slate-700 hover:bg-slate-50"
                           }`}
                       >
                         <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${activeOrgId === org.id ? "bg-indigo-200 text-indigo-800" : "bg-slate-100 text-slate-600"

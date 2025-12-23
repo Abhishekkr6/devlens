@@ -1,10 +1,16 @@
 import { Request, Response } from "express";
+import { Types } from "mongoose";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
 import { UserModel } from "../models/user.model";
 
 export const getDevelopers = async (req: Request, res: Response) => {
   try {
+    const { orgId } = req.params;
+    if (!orgId) {
+      return res.status(400).json({ success: false, message: "orgId is required" });
+    }
+
     const now = new Date();
     const last30 = new Date(now);
     last30.setDate(last30.getDate() - 30);
@@ -12,10 +18,13 @@ export const getDevelopers = async (req: Request, res: Response) => {
     const last7 = new Date(now);
     last7.setDate(last7.getDate() - 7);
 
+    const orgObjectId = new Types.ObjectId(orgId);
+
     const [commits30Agg, commits7Agg, prAgg, reviewDocs] = await Promise.all([
       CommitModel.aggregate([
         {
           $match: {
+            orgId: orgObjectId,
             timestamp: { $gte: last30 },
             authorGithubId: { $ne: null },
           },
@@ -30,6 +39,7 @@ export const getDevelopers = async (req: Request, res: Response) => {
       CommitModel.aggregate([
         {
           $match: {
+            orgId: orgObjectId,
             timestamp: { $gte: last7 },
             authorGithubId: { $ne: null },
           },
@@ -44,6 +54,7 @@ export const getDevelopers = async (req: Request, res: Response) => {
       PRModel.aggregate([
         {
           $match: {
+            orgId: orgObjectId,
             authorGithubId: { $ne: null },
             createdAt: { $gte: last30 },
           },
@@ -56,6 +67,7 @@ export const getDevelopers = async (req: Request, res: Response) => {
         },
       ]),
       PRModel.find({
+        orgId: orgObjectId,
         reviewers: { $exists: true, $ne: [] },
         updatedAt: { $gte: last30 },
       })
@@ -89,10 +101,10 @@ export const getDevelopers = async (req: Request, res: Response) => {
           typeof reviewer === "string"
             ? reviewer
             : typeof reviewer?.login === "string"
-            ? reviewer.login
-            : typeof reviewer?.githubId === "string"
-            ? reviewer.githubId
-            : undefined;
+              ? reviewer.login
+              : typeof reviewer?.githubId === "string"
+                ? reviewer.githubId
+                : undefined;
 
         if (!candidate) return;
         const key = String(candidate);
@@ -111,8 +123,8 @@ export const getDevelopers = async (req: Request, res: Response) => {
 
     const users = developerIds.length
       ? await UserModel.find({ githubId: { $in: developerIds } })
-          .select("githubId name login avatarUrl role")
-          .lean()
+        .select("githubId name login avatarUrl role")
+        .lean()
       : [];
 
     const userMap = new Map(users.map((u: any) => [String(u.githubId), u]));
