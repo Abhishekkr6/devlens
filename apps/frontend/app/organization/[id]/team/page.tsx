@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
-import DashboardLayout from "../../../../components/Layout/DashboardLayout";
+import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "../../../../components/Ui/Card";
 import { Button } from "../../../../components/Ui/Button";
 import { useUserStore } from "../../../../store/userStore";
@@ -87,10 +87,9 @@ const getInitials = (name: string) => {
     .slice(0, 2) || "?";
 };
 
-export default function TeamPage() {
-  const params = useParams();
+export default function TeamPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: orgId } = use(params);
   const router = useRouter();
-  const orgId = params?.id as string;
 
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null);
@@ -104,10 +103,7 @@ export default function TeamPage() {
   const [inviteError, setInviteError] = useState<string | null>(null);
 
   const user = useUserStore((state) => state.user);
-  const activeOrgId = useUserStore((state) => state.activeOrgId); // fallback
 
-  // Logic to determine if current user is admin
-  // We need to find the user's role in the *current* organization (orgId from params)
   const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));
   const userRole = currentOrg?.role || "VIEWER";
   const isAdmin = userRole === "ADMIN";
@@ -116,12 +112,10 @@ export default function TeamPage() {
     if (orgId) {
       fetchMembers();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orgId]);
 
   const fetchMembers = async () => {
     if (!orgId) return;
-
     try {
       setLoading(true);
       const res = await api.get(`/orgs/${orgId}/members`);
@@ -129,26 +123,17 @@ export default function TeamPage() {
       setMembers(data?.members || []);
       setOrgInfo({
         orgName: data?.orgName || "Organization",
-        orgSlug: data?.orgSlug || "",
+        orgSlug: data?.orgSlug || "org",
       });
-    } catch (err: unknown) {
-      console.error("Failed to fetch team members:", err);
-      setMembers([]);
-      const axiosError = err as { response?: { status?: number } };
-      if (axiosError.response?.status === 403 || axiosError.response?.status === 404) {
-        router.push("/dashboard");
-      }
+    } catch (err) {
+      console.error("Failed to fetch members", err);
     } finally {
       setLoading(false);
     }
   };
 
   const handleInvite = async () => {
-    if (!orgId || !inviteEmail.trim()) {
-      setInviteError("Email is required");
-      return;
-    }
-
+    if (!inviteEmail.trim() || !orgId) return;
     try {
       setInviting(true);
       setInviteError(null);
@@ -156,320 +141,132 @@ export default function TeamPage() {
         email: inviteEmail.trim(),
         role: inviteRole,
       });
-
       setInviteSuccess(true);
       setInviteEmail("");
       setInviteRole("MEMBER");
-
-      // Refresh members list
       await fetchMembers();
-
-      // Reset success message after 3 seconds
       setTimeout(() => {
         setInviteSuccess(false);
         setShowInviteForm(false);
       }, 3000);
-    } catch (err: unknown) {
-      const axiosError = err as {
-        response?: { data?: { error?: { message?: string } } };
-        message?: string;
-      };
-      const errorMsg =
-        axiosError.response?.data?.error?.message ||
-        axiosError.message ||
-        "Failed to invite user. Please try again.";
-      setInviteError(errorMsg);
+    } catch (err: any) {
+      setInviteError(err.response?.data?.error?.message || "Failed to invite user");
     } finally {
       setInviting(false);
     }
   };
 
   const handleRemoveMember = async (userId: string) => {
-    if (!confirm("Are you sure you want to remove this member?")) return;
+    if (!confirm("Are you sure?")) return;
     try {
       await api.delete(`/orgs/${orgId}/members/${userId}`);
-      // Optimistic update
       setMembers(members.filter(m => m.userId !== userId));
-      // Or refetch
-      // await fetchMembers();
     } catch (err) {
       console.error("Remove failed", err);
-      alert("Failed to remove member");
     }
   };
 
   const handleRoleUpdate = async (userId: string, newRole: string) => {
-    if (!newRole) return;
     try {
       await api.patch(`/orgs/${orgId}/members/${userId}`, { role: newRole });
-      setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as "ADMIN" | "MEMBER" | "VIEWER" } : m));
+      setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as any } : m));
     } catch (err) {
       console.error("Update role failed", err);
-      alert("Failed to update role");
     }
   };
 
   const filteredMembers = members.filter((member) => {
     if (!searchTerm.trim()) return true;
     const keyword = searchTerm.toLowerCase();
-    const name = member.user?.name?.toLowerCase() || "";
-    const email = member.user?.email?.toLowerCase() || "";
-    const role = getRoleLabel(member.role).toLowerCase();
-    return name.includes(keyword) || email.includes(keyword) || role.includes(keyword);
+    return (member.user?.name?.toLowerCase() || "").includes(keyword) ||
+      (member.user?.email?.toLowerCase() || "").includes(keyword);
   });
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        {/* Header */}
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold text-slate-900 sm:text-4xl">Team Members</h1>
-            <p className="mt-1 text-sm text-slate-500 sm:text-base">
-              {orgInfo?.orgName ? `Manage team for ${orgInfo.orgName}` : "Manage your organization team"}
-            </p>
+            <h1 className="text-3xl font-semibold text-slate-900">Team Members</h1>
+            <p className="mt-1 text-sm text-slate-500">{orgInfo?.orgName}</p>
           </div>
           {isAdmin && (
-            <Button
-              onClick={() => setShowInviteForm(!showInviteForm)}
-              className="mt-4 sm:mt-0 w-full sm:w-auto"
-            >
+            <Button onClick={() => setShowInviteForm(!showInviteForm)}>
               <UserPlus className="h-4 w-4 mr-2" />
               Invite Member
             </Button>
           )}
         </header>
 
-        {/* Invite Form */}
         {showInviteForm && (
-          <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg font-semibold text-slate-900">Invite New Member</h2>
-              <button
-                onClick={() => {
-                  setShowInviteForm(false);
-                  setInviteEmail("");
-                  setInviteRole("MEMBER");
-                  setInviteError(null);
-                  setInviteSuccess(false);
-                }}
-                className="text-slate-400 hover:text-slate-600 transition-colors"
-                aria-label="Close invite form"
+          <Card className="p-6">
+            <h2 className="text-lg font-semibold mb-4">Invite New Member</h2>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <input
+                className="flex-1 border rounded-xl px-4 py-2"
+                placeholder="email@example.com"
+                value={inviteEmail}
+                onChange={(e) => setInviteEmail(e.target.value)}
+              />
+              <select
+                className="border rounded-xl px-4 py-2"
+                value={inviteRole}
+                onChange={(e) => setInviteRole(e.target.value as any)}
               >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-
-            {inviteSuccess && (
-              <div className="mb-4 flex items-center gap-2 rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-700">
-                <CheckCircle2 className="h-4 w-4" />
-                <span>User invited successfully!</span>
-              </div>
-            )}
-
-            {inviteError && (
-              <div className="mb-4 flex items-center gap-2 rounded-lg bg-rose-50 border border-rose-200 p-3 text-sm text-rose-700">
-                <AlertCircle className="h-4 w-4" />
-                <span>{inviteError}</span>
-              </div>
-            )}
-
-            <div className="space-y-4">
-              <div>
-                <label htmlFor="invite-email" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Email Address
-                </label>
-                <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
-                  <input
-                    id="invite-email"
-                    type="email"
-                    value={inviteEmail}
-                    onChange={(e) => setInviteEmail(e.target.value)}
-                    placeholder="user@example.com"
-                    className="w-full rounded-xl border border-slate-200 bg-white pl-10 pr-4 py-2.5 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="invite-role" className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Role
-                </label>
-                <select
-                  id="invite-role"
-                  value={inviteRole}
-                  onChange={(e) => setInviteRole(e.target.value as "ADMIN" | "MEMBER" | "VIEWER")}
-                  className="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
-                >
-                  <option value="VIEWER">Viewer - Read-only access</option>
-                  <option value="MEMBER">Member - Can contribute</option>
-                  <option value="ADMIN">Admin - Full access</option>
-                </select>
-              </div>
-
-              <Button
-                onClick={handleInvite}
-                disabled={inviting || !inviteEmail.trim()}
-                className="w-full sm:w-auto"
-              >
-                {inviting ? "Inviting..." : "Send Invitation"}
+                <option value="MEMBER">Member</option>
+                <option value="ADMIN">Admin</option>
+                <option value="VIEWER">Viewer</option>
+              </select>
+              <Button onClick={handleInvite} disabled={inviting}>
+                {inviting ? "Sending..." : "Send Invite"}
               </Button>
             </div>
+            {inviteError && <p className="text-red-500 mt-2 text-sm">{inviteError}</p>}
+            {inviteSuccess && <p className="text-green-500 mt-2 text-sm">Invite sent!</p>}
           </Card>
         )}
 
-        {/* Search */}
         <div className="relative">
-          <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
           <input
-            type="search"
-            placeholder="Search members by name, email, or role..."
+            className="w-full pl-10 pr-4 py-2 border rounded-xl bg-white"
+            placeholder="Search members..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
           />
         </div>
 
-        {/* Members List */}
-        {loading ? (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {Array.from({ length: 6 }).map((_, index) => (
-              <Card key={index} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-                <div className="flex animate-pulse items-center gap-4">
-                  <div className="h-12 w-12 rounded-full bg-slate-200" />
-                  <div className="flex-1 space-y-2">
-                    <div className="h-4 w-3/4 rounded bg-slate-200" />
-                    <div className="h-3 w-1/2 rounded bg-slate-100" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredMembers.map((member) => (
+            <Card key={member.userId} className="p-4 group">
+              <div className="flex items-center gap-4">
+                <div className="h-12 w-12 rounded-full overflow-hidden bg-slate-200">
+                  {member.user?.avatarUrl ? (
+                    <Image src={member.user.avatarUrl} alt="" width={48} height={48} />
+                  ) : (
+                    <div className="h-full w-full flex items-center justify-center font-bold">
+                      {getInitials(member.user?.name || "?")}
+                    </div>
+                  )}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-bold truncate">{member.user?.name}</p>
+                  <p className="text-xs text-slate-500 truncate">{member.user?.email}</p>
+                  <div className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${getRoleBadgeColor(member.role)}`}>
+                    {getRoleIcon(member.role)}
+                    {getRoleLabel(member.role)}
                   </div>
                 </div>
-              </Card>
-            ))}
-          </div>
-        ) : filteredMembers.length === 0 ? (
-          <Card className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-8 text-center shadow-none">
-            {searchTerm ? (
-              <>
-                <p className="text-sm font-medium text-slate-600">No members found</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Try adjusting your search terms
-                </p>
-              </>
-            ) : (
-              <>
-                <Users className="mx-auto h-12 w-12 text-slate-400" />
-                <p className="mt-4 text-sm font-medium text-slate-600">No team members yet</p>
-                <p className="mt-1 text-xs text-slate-500">
-                  Invite your first team member to get started
-                </p>
-              </>
-            )}
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {filteredMembers.map((member) => (
-              <MemberCard
-                key={member.userId}
-                member={member}
-                isAdmin={isAdmin}
-                currentUserId={user?.id}
-                onRemove={handleRemoveMember}
-                onUpdateRole={handleRoleUpdate}
-              />
-            ))}
-          </div>
-        )}
-
-        {/* Member Count */}
-        {!loading && members.length > 0 && (
-          <div className="text-center text-sm text-slate-500">
-            Showing {filteredMembers.length} of {members.length} member{members.length !== 1 ? "s" : ""}
-          </div>
-        )}
+                {isAdmin && member.userId !== user?._id && (
+                  <button onClick={() => handleRemoveMember(member.userId)} className="text-slate-300 hover:text-red-500">
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+            </Card>
+          ))}
+        </div>
       </div>
     </DashboardLayout>
-  );
-}
-
-function MemberCard({
-  member,
-  isAdmin,
-  currentUserId,
-  onRemove,
-  onUpdateRole
-}: {
-  member: TeamMember;
-  isAdmin: boolean;
-  currentUserId?: string;
-  onRemove: (id: string) => void;
-  onUpdateRole: (id: string, role: string) => void;
-}) {
-  const user = member.user;
-  const isSelf = String(member.userId) === String(currentUserId);
-
-  return (
-    <Card className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
-      <div className="flex items-start gap-4">
-        {/* Avatar */}
-        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-indigo-500 to-indigo-400">
-          {user?.avatarUrl ? (
-            <Image
-              src={user.avatarUrl}
-              alt={user?.name || "User"}
-              width={48}
-              height={48}
-              className="h-full w-full object-cover"
-            />
-          ) : (
-            <span className="flex h-full w-full items-center justify-center text-sm font-semibold text-white">
-              {user?.name ? getInitials(user.name) : "?"}
-            </span>
-          )}
-        </div>
-
-        {/* Info */}
-        <div className="min-w-0 flex-1">
-          <div className="flex items-start justify-between gap-2">
-            <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-semibold text-slate-900">
-                {user?.name || "Unknown User"} {isSelf && "(You)"}
-              </p>
-              <p className="mt-0.5 truncate text-xs text-slate-500">
-                {user?.email || "No email"}
-              </p>
-            </div>
-          </div>
-
-          {/* Role Badge & Actions */}
-          <div className="mt-3 flex items-center justify-between">
-            <span className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs font-medium ${getRoleBadgeColor(member.role)}`}>
-              {getRoleIcon(member.role)}
-              {getRoleLabel(member.role)}
-            </span>
-
-            {isAdmin && !isSelf && (
-              <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <select
-                  className="text-xs border rounded p-1 bg-slate-50 outline-none focus:ring-1 focus:ring-indigo-500"
-                  value={member.role}
-                  onChange={(e) => onUpdateRole(member.userId, e.target.value)}
-                >
-                  <option value="ADMIN">Admin</option>
-                  <option value="MEMBER">Member</option>
-                  <option value="VIEWER">Viewer</option>
-                </select>
-                <button
-                  onClick={() => onRemove(member.userId)}
-                  className="text-slate-400 hover:text-red-600 transition-colors"
-                  title="Remove member"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-    </Card>
   );
 }

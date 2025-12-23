@@ -1,11 +1,11 @@
 import RepoPageClient from "./RepoPageClient";
+import DashboardLayout from "@/components/Layout/DashboardLayout";
 
-interface RepoPageWrapperProps {
-  params: { id: string };
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  return (
+    <DashboardLayout>
+      <RepoPageClient orgId={id} />
+    </DashboardLayout>
+  );
 }
-
-export default function RepoPageWrapper({ params }: RepoPageWrapperProps) {
-  const orgId = params.id;
-  return <RepoPageClient orgId={orgId} />;
-}
-

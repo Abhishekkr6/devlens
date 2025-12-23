@@ -1,10 +1,11 @@
 import ActivityClient from "./ActivityClient";
-import DashboardLayout from "../../../../components/Layout/DashboardLayout";
+import DashboardLayout from "@/components/Layout/DashboardLayout";
 
-export default function ActivityPage({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     return (
         <DashboardLayout>
-            <ActivityClient orgId={params.id} />
+            <ActivityClient orgId={id} />
         </DashboardLayout>
     );
 }

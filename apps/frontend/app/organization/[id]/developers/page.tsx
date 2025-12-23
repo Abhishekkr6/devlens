@@ -1,10 +1,11 @@
 import DevelopersClient from "./DevelopersClient";
-import DashboardLayout from "../../../../components/Layout/DashboardLayout";
+import DashboardLayout from "@/components/Layout/DashboardLayout";
 
-export default function DevelopersPage({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     return (
         <DashboardLayout>
-            <DevelopersClient orgId={params.id} />
+            <DevelopersClient orgId={id} />
         </DashboardLayout>
     );
 }

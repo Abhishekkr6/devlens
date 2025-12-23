@@ -1,10 +1,11 @@
 import PRsClient from "./PRsClient";
-import DashboardLayout from "../../../../components/Layout/DashboardLayout";
+import DashboardLayout from "@/components/Layout/DashboardLayout";
 
-export default function PRsPage({ params }: { params: { id: string } }) {
+export default async function Page({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     return (
         <DashboardLayout>
-            <PRsClient orgId={params.id} />
+            <PRsClient orgId={id} />
         </DashboardLayout>
     );
 }
