@@ -23,17 +23,25 @@ export default function MePage() {
     typeof userRecord?._id === "string"
       ? userRecord._id
       : typeof userRecord?.id === "string"
-      ? userRecord.id
-      : "N/A";
+        ? userRecord.id
+        : "N/A";
   const orgIdsValue = userRecord?.orgIds;
   const orgIds: unknown[] | undefined = Array.isArray(orgIdsValue) ? orgIdsValue : undefined;
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <header className="space-y-2">
-          <h1 className="text-3xl font-semibold text-slate-900">Account</h1>
-          <p className="text-sm text-slate-500">Your profile and organization context</p>
+        <header className="flex items-center justify-between border-b pb-4">
+          <div className="space-y-1">
+            <h1 className="text-3xl font-semibold text-slate-900">Account</h1>
+            <p className="text-sm text-slate-500">Your profile and organization context</p>
+          </div>
+          <button
+            onClick={() => useUserStore.getState().logout()}
+            className="flex items-center gap-2 rounded-xl bg-rose-50 px-4 py-2 text-sm font-semibold text-rose-600 border border-rose-100 transition-colors hover:bg-rose-100"
+          >
+            Log Out
+          </button>
         </header>
 
         {loading ? (

@@ -412,22 +412,32 @@ export default function Topbar() {
             </div>
 
             {user ? (
-              <Link
-                href="/me"
-                className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm transition hover:border-indigo-500 hover:bg-indigo-50"
-              >
-                <Image
-                  src={user.avatarUrl}
-                  alt={`${user.name}'s avatar`}
-                  width={32}
-                  height={32}
-                  className="h-8 w-8 rounded-full"
-                />
-                <div className="hidden text-left sm:block">
-                  <p className="text-sm font-semibold text-slate-900">{user.name}</p>
-                  {user.email && <p className="text-xs text-slate-500">{user.email}</p>}
-                </div>
-              </Link>
+              <div className="flex items-center">
+                <Link
+                  href="/me"
+                  className="flex items-center gap-3 rounded-l-full border border-r-0 border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm transition hover:border-indigo-500 hover:bg-indigo-50"
+                >
+                  <Image
+                    src={user.avatarUrl}
+                    alt={`${user.name}'s avatar`}
+                    width={32}
+                    height={32}
+                    className="h-8 w-8 rounded-full"
+                  />
+                  <div className="hidden text-left sm:block">
+                    <p className="text-sm font-semibold text-slate-900">{user.name}</p>
+                    {user.email && <p className="text-xs text-slate-500">{user.email}</p>}
+                  </div>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => useUserStore.getState().logout()}
+                  className="flex items-center gap-2 rounded-r-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
+                >
+                  <X className="h-3 w-3" />
+                  Log Out
+                </button>
+              </div>
             ) : (
               <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm">
                 <div className="h-8 w-8 rounded-full bg-slate-200 animate-pulse" />

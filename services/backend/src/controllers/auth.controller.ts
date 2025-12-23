@@ -132,8 +132,32 @@ export const githubCallback = async (req: Request, res: Response) => {
 };
 
 /**
- * Delete user and cleanup all related data (repos, commits, PRs, alerts, orgs).
- * Clears cookies on success.
+ * Standard logout: clear cookies without deleting account
+ */
+export const logout = async (req: Request, res: Response) => {
+  try {
+    const isProd = String(process.env.NODE_ENV).toLowerCase() === "production";
+    const sameSite = isProd ? "none" : "lax";
+
+    res.clearCookie("teampulse_token", {
+      path: "/",
+      secure: isProd,
+      sameSite: sameSite as any,
+    });
+    res.clearCookie("token", {
+      path: "/",
+      secure: isProd,
+      sameSite: sameSite as any,
+    });
+
+    return res.json({ success: true, message: "Logged out successfully" });
+  } catch (err) {
+    return res.status(500).json({ success: false, error: { message: "Logout failed" } });
+  }
+};
+
+/**
+ * Delete user and cleanup all related data...
  */
 export const logoutAndDelete = async (req: any, res: Response) => {
   try {

@@ -47,17 +47,29 @@ export const api = axios.create({
 });
 
 // Remove localStorage token usage; rely on httpOnly cookie only
-
 api.interceptors.request.use((config) => {
   if (!config.baseURL) {
     config.baseURL = resolveBaseURL();
   }
-
-  // Always include credentials; backend reads httpOnly cookie
   config.withCredentials = true;
-
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 401) {
+      if (typeof window !== "undefined") {
+        // Clear everything locally
+        localStorage.clear();
+        sessionStorage.clear();
+        // Redirect to login
+        window.location.href = "/";
+      }
+    }
+    return Promise.reject(error);
+  }
+);
 
 export const getBackendBase = (): string => resolveBaseURL();
 

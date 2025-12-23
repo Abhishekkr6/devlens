@@ -110,7 +110,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
   logout: async () => {
     try {
-      await api.delete("/auth/logout");
+      await api.post("/auth/logout");
     } catch { }
 
     try {
