@@ -92,6 +92,7 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
             {
               sha: c.id,
               repoId: repo._id,
+              orgId: repo.orgId,
               authorGithubId: c.author.username,
               authorName: c.author.name,
               message: c.message,
@@ -134,6 +135,7 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
         {
           providerPrId: pr.id,
           repoId: repo._id,
+          orgId: repo.orgId,
           number: pr.number,
           title: pr.title,
           authorGithubId: pr.user.login,

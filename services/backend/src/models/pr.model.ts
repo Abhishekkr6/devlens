@@ -3,6 +3,7 @@ import { Schema, model, Document } from "mongoose";
 export interface IPR extends Document {
   providerPrId: string;
   repoId: Schema.Types.ObjectId | string;
+  orgId: Schema.Types.ObjectId | string;
   number: number;
   title: string;
   authorGithubId?: string;
@@ -25,6 +26,7 @@ const PRSchema = new Schema<IPR>(
   {
     providerPrId: { type: String, required: true, unique: true },
     repoId: { type: Schema.Types.ObjectId, ref: "Repo" },
+    orgId: { type: Schema.Types.ObjectId, ref: "Org" },
     number: Number,
     title: String,
     authorGithubId: String,
@@ -45,6 +47,7 @@ const PRSchema = new Schema<IPR>(
   { timestamps: true }
 );
 
+PRSchema.index({ orgId: 1, state: 1, createdAt: -1 });
 PRSchema.index({ repoId: 1, state: 1, createdAt: -1 });
 PRSchema.index({ riskScore: -1 });
 PRSchema.index({ providerPrId: 1 }, { unique: true });

@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 export interface ICommit extends Document {
   sha: string;
   repoId: Types.ObjectId;
+  orgId: Types.ObjectId;
   authorGithubId?: string;
   authorName?: string;
   message?: string;
@@ -21,6 +22,7 @@ const CommitSchema = new Schema<ICommit>(
   {
     sha: { type: String, required: true, unique: true },
     repoId: { type: Schema.Types.ObjectId, ref: "Repo" },
+    orgId: { type: Schema.Types.ObjectId, ref: "Org" },
     authorGithubId: String,
     authorName: String,
     message: String,
@@ -35,6 +37,7 @@ const CommitSchema = new Schema<ICommit>(
   { timestamps: true }
 );
 
+CommitSchema.index({ orgId: 1, timestamp: -1 });
 CommitSchema.index({ repoId: 1, timestamp: -1 });
 CommitSchema.index({ authorGithubId: 1, timestamp: -1 });
 CommitSchema.index({ sha: 1 }, { unique: true });
