@@ -31,9 +31,7 @@ function Navbar() {
   }, []);
 
   const handleLogin = () => {
-    // Placeholder handler as requested
-    console.log("Redirecting to GitHub login...");
-    // window.location.href = "/api/auth/github"; 
+    window.location.href = "/auth/github/login";
   };
 
   return (
@@ -64,7 +62,7 @@ function Navbar() {
           </button>
           <button
             onClick={handleLogin}
-            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
           >
             <Github className="w-4 h-4" />
             Login with GitHub
@@ -91,7 +89,7 @@ function Navbar() {
           </button>
           <button
             onClick={handleLogin}
-            className="flex items-center justify-center gap-2 bg-slate-900 text-white px-4 py-3 rounded-lg text-sm font-medium w-full"
+            className="flex items-center justify-center gap-2 bg-slate-900 text-white px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer"
           >
             <Github className="w-4 h-4" />
             Login with GitHub
@@ -106,6 +104,10 @@ function Hero() {
   const { scrollY } = useScroll();
   const y1 = useTransform(scrollY, [0, 500], [0, 200]);
   const y2 = useTransform(scrollY, [0, 500], [0, -150]);
+
+  const handleLogin = () => {
+    window.location.href = "/auth/github/login";
+  };
 
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
@@ -150,11 +152,14 @@ function Hero() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="flex flex-col sm:flex-row gap-4"
           >
-            <button className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-indigo-200 shadow-xl hover:-translate-y-1">
+            <button
+              onClick={handleLogin}
+              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-indigo-200 shadow-xl hover:-translate-y-1 cursor-pointer"
+            >
               <Github className="w-5 h-5" />
               Continue with GitHub
             </button>
-            <button className="flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl text-lg font-medium hover:bg-slate-50 transition-colors">
+            <button className="flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl text-lg font-medium hover:bg-slate-50 transition-colors cursor-pointer">
               <LayoutDashboard className="w-5 h-5 text-slate-500" />
               View Dashboard Demo
             </button>
@@ -400,6 +405,10 @@ function HowItWorks() {
 }
 
 function CTA() {
+  const handleLogin = () => {
+    window.location.href = "/auth/github/login";
+  };
+
   return (
     <section className="py-24 bg-slate-900 overflow-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_50%)]" />
@@ -412,7 +421,10 @@ function CTA() {
         <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
           Join high-performing engineering teams who use TeamPulse to deliver better software, faster.
         </p>
-        <button className="bg-white text-slate-900 hover:bg-slate-50 px-10 py-4 rounded-xl text-lg font-bold transition-transform hover:-translate-y-1 shadow-2xl flex items-center gap-2 mx-auto">
+        <button
+          onClick={handleLogin}
+          className="bg-white text-slate-900 hover:bg-slate-50 px-10 py-4 rounded-xl text-lg font-bold transition-transform hover:-translate-y-1 shadow-2xl flex items-center gap-2 mx-auto cursor-pointer"
+        >
           <Github className="w-5 h-5" />
           Get Started with GitHub
         </button>
