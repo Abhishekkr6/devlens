@@ -6,8 +6,8 @@ import { ShieldAlert, Activity, CheckCircle2 } from "lucide-react";
 export function HeroVisual() {
     return (
         <div className="relative z-10 w-full font-sans">
-            {/* Main Glass Card */}
-            <div className="relative bg-white/90 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white/20 p-6 md:p-8 w-full max-w-xl mx-auto">
+            {/* Main Card */}
+            <div className="relative z-10 bg-white rounded-2xl shadow-2xl border border-slate-200/60 p-6 w-full max-w-lg mx-auto rotate-1 transition-transform hover:rotate-0 duration-500">
 
                 {/* Top Header - Activity Icon */}
                 <div className="flex items-center gap-4 mb-8">
@@ -24,7 +24,7 @@ export function HeroVisual() {
                         { label: "Active Developers", value: "17" },
                         { label: "Commits Today", value: "24" },
                     ].map((stat, i) => (
-                        <div key={i} className="bg-slate-50/50 rounded-2xl p-4 border border-slate-100/50">
+                        <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-100">
                             <p className="text-[10px] sm:text-xs font-medium text-slate-500 mb-1">{stat.label}</p>
                             <p className="text-xl sm:text-2xl font-bold text-slate-900">{stat.value}</p>
                         </div>
