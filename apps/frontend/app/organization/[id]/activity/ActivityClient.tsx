@@ -145,7 +145,7 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                 </Card>
             ) : (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-                    <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+                    <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                         <h2 className="text-lg font-semibold text-slate-900">Recent Activity</h2>
                         <p className="text-sm text-slate-500 mb-6">Latest updates from your team</p>
 
@@ -187,7 +187,7 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                     </Card>
 
                     <div className="space-y-6">
-                        <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+                        <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                             <h2 className="text-lg font-semibold text-slate-900">Weekly Summary</h2>
                             <p className="text-sm text-slate-500 mb-6">Snapshot of the last 30 days</p>
 

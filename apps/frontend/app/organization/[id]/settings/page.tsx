@@ -14,7 +14,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                     <p className="mt-1 text-sm text-slate-500">Manage your organization preferences</p>
                 </header>
 
-                <Card className="p-8 text-center text-slate-500 border-dashed">
+                <Card className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center text-sm text-slate-500 shadow-none">
                     Organization settings are coming soon. You can manage repositories and team members in their respective tabs.
                 </Card>
             </div>

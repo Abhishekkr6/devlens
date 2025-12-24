@@ -59,7 +59,7 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
     if (loading) return <div className="p-8 text-center text-slate-500">Loading alerts...</div>;
 
     return (
-        <div className="min-h-screen bg-slate-100 px-4 py-12">
+        <div className="flex flex-col gap-6">
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
                 <div className="flex items-center justify-between">
                     <h1 className="text-3xl font-semibold text-slate-900">Alerts</h1>
@@ -78,7 +78,7 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
                                         <div className="flex items-center gap-2">
                                             <span className="font-bold text-slate-800 uppercase text-xs tracking-wider">{alert.type}</span>
                                             <span className={`px-2 py-0.5 rounded text-xs font-semibold ${alert.severity === 'high' ? 'bg-red-100 text-red-700' :
-                                                    alert.severity === 'medium' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'
+                                                alert.severity === 'medium' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'
                                                 }`}>
                                                 {alert.severity}
                                             </span>

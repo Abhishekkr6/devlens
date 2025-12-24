@@ -88,7 +88,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-12">
+    <div className="flex flex-col gap-6">
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
@@ -106,7 +106,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
         </div>
 
         {showForm && (
-          <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+          <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="mb-4 text-lg font-medium text-slate-900">Connect a GitHub Repository</h3>
             <div className="space-y-4">
               <div>
@@ -147,7 +147,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
           </Card>
         )}
 
-        <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+        <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
           {loading ? (
             <p className="mt-3 text-sm text-slate-500">Loading repositories…</p>
           ) : repos.length === 0 ? (
