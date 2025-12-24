@@ -78,7 +78,7 @@ export const prAnalysisHandler = async (job: Job) => {
             maxRetriesPerRequest: null,
         });
 
-        redis.publish(
+        await redis.publish(
             "events",
             JSON.stringify({
                 type: "PR_UPDATED",
@@ -90,6 +90,7 @@ export const prAnalysisHandler = async (job: Job) => {
                 timestamp: Date.now(),
             })
         );
+        await redis.quit();
 
         logger.info({ prNumber: pr.number, riskScore: pr.riskScore }, "[pr-analysis] risk calculated");
 
@@ -116,7 +117,7 @@ export const prAnalysisHandler = async (job: Job) => {
                 },
             });
 
-            redis.publish(
+            await redis.publish(
                 "events",
                 JSON.stringify({
                     type: "NEW_ALERT",
@@ -128,6 +129,7 @@ export const prAnalysisHandler = async (job: Job) => {
                     timestamp: Date.now(),
                 })
             );
+            await redis.quit();
 
             logger.info({ prNumber: pr.number }, "[alert] ALERT CREATED SUCCESSFULLY");
         } else {

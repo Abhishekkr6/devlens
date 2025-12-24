@@ -2,7 +2,7 @@
 
 import Topbar from "./Topbar";
 import { useEffect } from "react";
-import { useUserStore } from "../../store/userStore";
+import { useLiveStore } from "../../store/liveStore";
 let hasBootstrapped = false;
 
 export default function DashboardLayout({
@@ -14,6 +14,7 @@ export default function DashboardLayout({
     if (hasBootstrapped) return;
     hasBootstrapped = true;
 
+    useLiveStore.getState().init();
     // Intentionally not auto-fetching user here to prevent update loops
   }, []);
 

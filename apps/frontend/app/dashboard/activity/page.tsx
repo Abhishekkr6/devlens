@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import { api } from "../../../lib/api";
 import { Card } from "../../../components/Ui/Card";
@@ -11,6 +11,7 @@ import {
   MessageSquare,
   Search,
 } from "lucide-react";
+import { useLiveStore } from "../../../store/liveStore";
 
 type Commit = {
   date: string;
@@ -39,28 +40,48 @@ export default function ActivityPage() {
   const [timeline, setTimeline] = useState<Commit[]>([]);
   const [prs, setPrs] = useState<PR[]>([]);
   const [loading, setLoading] = useState(true);
+  const [lastRefresh, setLastRefresh] = useState(0);
+
+  const lastEvent = useLiveStore((state) => state.lastEvent);
+
+  const loadActivity = useCallback(async () => {
+    try {
+      const [timelineRes, prsRes] = await Promise.all([
+        api.get("/activity/commits"),
+        api.get("/prs"),
+      ]);
+
+      setTimeline(timelineRes.data?.data || []);
+      setPrs(prsRes.data?.data?.items || []);
+    } catch (err) {
+      console.error("Activity load failed", err);
+      setTimeline([]);
+      setPrs([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   useEffect(() => {
-    const loadActivity = async () => {
-      try {
-        const [timelineRes, prsRes] = await Promise.all([
-          api.get("/activity/commits"),
-          api.get("/prs"),
-        ]);
+    loadActivity();
+  }, [loadActivity]);
 
-        setTimeline(timelineRes.data?.data || []);
-        setPrs(prsRes.data?.data?.items || []);
-      } catch (err) {
-        console.error("Activity load failed", err);
-        setTimeline([]);
-        setPrs([]);
-      } finally {
-        setLoading(false);
-      }
-    };
+  useEffect(() => {
+    if (!lastEvent) return;
+    if (
+      lastEvent.type !== "PR_UPDATED" &&
+      lastEvent.type !== "COMMIT_PROCESSED" &&
+      lastEvent.type !== "NEW_ALERT"
+    )
+      return;
+
+    const now = Date.now();
+    if (now - lastRefresh < 5000) return;
 
     loadActivity();
-  }, []);
+    setLastRefresh(now);
+  }, [lastEvent, lastRefresh, loadActivity]);
+
 
   const formatTimeAgo = (input?: string) => {
     if (!input) return "Just now";

@@ -44,6 +44,11 @@ export const useLiveStore = create<LiveState>((set, get) => ({
           alerts: [liveEvent, ...get().alerts],
         });
       }
+
+      if (liveEvent.type === "COMMIT_PROCESSED") {
+        // We can just set it as lastEvent, which already happens at line 31.
+        // If we want to store them in a list, we could, but lastEvent is enough for simple refreshes.
+      }
     });
   },
 

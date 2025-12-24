@@ -110,7 +110,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
     useEffect(() => {
         if (!orgId || !lastEvent) return;
-        if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT") return;
+        if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT" && lastEvent.type !== "COMMIT_PROCESSED") return;
 
         const now = Date.now();
         if (now - lastRefresh < 5000) return;

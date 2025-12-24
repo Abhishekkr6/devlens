@@ -2,6 +2,7 @@ import { Job } from "bullmq";
 import mongoose from "mongoose";
 import { CommitModel } from "../../models/commit.model";
 import "dotenv/config";
+import Redis from "ioredis";
 import logger from "../../utils/logger";
 
 const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/teampulse";
@@ -40,4 +41,22 @@ export const commitProcessingHandler = async (job: Job) => {
     }
 
     logger.info({ repoId, commitCount: commits.length }, "[commit-processing] commits processed");
+
+    const redisUrl = process.env.REDIS_URL;
+    if (redisUrl) {
+        const redis = new Redis(redisUrl, {
+            tls: { rejectUnauthorized: false },
+            maxRetriesPerRequest: null,
+        });
+        await redis.publish(
+            "events",
+            JSON.stringify({
+                type: "COMMIT_PROCESSED",
+                repoId,
+                commitCount: commits.length,
+                timestamp: Date.now(),
+            })
+        );
+        await redis.quit();
+    }
 };
