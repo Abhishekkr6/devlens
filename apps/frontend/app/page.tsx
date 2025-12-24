@@ -17,6 +17,7 @@ import {
   Code2,
   Cpu
 } from "lucide-react";
+import { HeroVisual } from "../components/Landing/HeroVisual";
 
 // --- Components ---
 
@@ -37,8 +38,8 @@ function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? "bg-white/80 backdrop-blur-md border-b border-slate-200 py-3 shadow-sm"
-          : "bg-transparent py-5"
+        ? "bg-white/80 backdrop-blur-md border-b border-slate-200 py-3 shadow-sm"
+        : "bg-transparent py-5"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -193,58 +194,7 @@ function Hero() {
           transition={{ duration: 0.7 }}
           className="relative hidden lg:block"
         >
-          <div className="relative z-10 bg-white rounded-2xl shadow-2xl border border-slate-200/60 p-6 w-full max-w-lg mx-auto rotate-1 transition-transform hover:rotate-0 duration-500">
-            {/* Header Mockup */}
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-indigo-100 flex items-center justify-center">
-                  <Activity className="w-5 h-5 text-indigo-600" />
-                </div>
-                <div>
-                  <div className="h-2.5 w-24 bg-slate-200 rounded mb-1.5" />
-                  <div className="h-2 w-16 bg-slate-100 rounded" />
-                </div>
-              </div>
-              <div className="h-8 w-8 rounded-full bg-slate-100" />
-            </div>
-
-            {/* Metrics Grid */}
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <div className="h-2 w-12 bg-slate-200 rounded mb-3" />
-                  <div className="h-6 w-20 bg-indigo-100/50 rounded" />
-                </div>
-              ))}
-            </div>
-
-            {/* Activity List */}
-            <div className="space-y-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-50 transition-colors">
-                  <div className="w-2 h-2 rounded-full bg-emerald-500" />
-                  <div className="flex-1">
-                    <div className="h-2 w-3/4 bg-slate-200 rounded mb-1.5" />
-                    <div className="h-1.5 w-1/2 bg-slate-100 rounded" />
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Floating Badge */}
-            <motion.div
-              style={{ y: y2 }}
-              className="absolute -right-8 top-1/2 bg-white p-4 rounded-xl shadow-xl border border-slate-100 flex items-center gap-3 animate-pulse"
-            >
-              <div className="p-2 bg-rose-100 rounded-lg">
-                <ShieldAlert className="w-5 h-5 text-rose-600" />
-              </div>
-              <div>
-                <p className="text-xs font-bold text-slate-800">High Risk PR Detected</p>
-                <p className="text-[10px] text-slate-500">Just now</p>
-              </div>
-            </motion.div>
-          </div>
+          <HeroVisual />
         </motion.div>
       </div>
     </section>
