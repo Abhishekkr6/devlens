@@ -24,7 +24,7 @@ const resolveWsUrl = () => {
   if (typeof window !== "undefined") {
     const origin = window.location.origin;
     if (/localhost|127\.0\.0\.1/i.test(origin)) {
-      return "ws://localhost:4001";
+      return "ws://localhost:4000";
     }
   }
 
@@ -51,6 +51,7 @@ export const connectWS = () => {
   socket.onmessage = (msg) => {
     try {
       const data = JSON.parse(msg.data);
+      console.log("[WS] Event received:", data.type, data);
       listeners.forEach((cb) => cb(data));
     } catch (err) {
       console.error("[WS] Failed to parse message:", err);

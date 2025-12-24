@@ -28,6 +28,7 @@ export const useLiveStore = create<LiveState>((set, get) => ({
     connectWS();
     subscribeWS((event: unknown) => {
       const liveEvent = event as LiveEvent;
+      console.log("[LiveStore] Processing event:", liveEvent.type, liveEvent);
       set({ lastEvent: liveEvent });
 
       if (liveEvent.type === "PR_UPDATED") {
