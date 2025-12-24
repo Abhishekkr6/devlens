@@ -50,79 +50,97 @@ export default function OrganizationPage() {
   const disabled = !name.trim() || !slug.trim();
 
   return (
-    <div className="min-h-screen bg-slate-100 px-4 py-12">
-      <div className="mx-auto flex w-full max-w-3xl flex-col gap-6">
+    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+      <div className="w-full max-w-2xl space-y-8">
         <div className="text-center">
-          <h1 className="text-3xl font-semibold text-slate-900">Organizations</h1>
-          <p className="mt-2 text-sm text-slate-500">
-            Create a new organization or select from existing ones.
+          <div className="mx-auto h-12 w-12 rounded-xl bg-indigo-600 flex items-center justify-center mb-4 shadow-lg shadow-indigo-200">
+            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          </div>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Choose Organization</h1>
+          <p className="mt-2 text-slate-500">
+            Select an existing organization or create a new one to get started.
           </p>
         </div>
 
-        <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
-          <div className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-slate-700">Organization name</label>
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                placeholder="Acme Engineering"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-              />
+        <div className="grid gap-6">
+          {/* Create Org Card */}
+          <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Create New Organization</h2>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Organization Name</label>
+                <input
+                  className="w-full rounded-xl border-slate-200 bg-slate-50 px-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                  placeholder="e.g. Acme Inc"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Slug URL</label>
+                <div className="relative">
+                  <span className="absolute left-4 top-2.5 text-slate-400 text-sm">/</span>
+                  <input
+                    className="w-full rounded-xl border-slate-200 bg-slate-50 pl-7 pr-4 py-2.5 text-sm outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition-all"
+                    placeholder="acme-inc"
+                    value={slug}
+                    onChange={(e) => setSlug(e.target.value)}
+                  />
+                </div>
+              </div>
             </div>
-
-            <div>
-              <label className="text-sm font-medium text-slate-700">Slug (unique)</label>
-              <input
-                className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm"
-                placeholder="acme-dev"
-                value={slug}
-                onChange={(e) => setSlug(e.target.value)}
-              />
-            </div>
-
             <button
               onClick={createOrg}
               disabled={disabled}
-              className="w-full rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
+              className="mt-4 w-full rounded-xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-200 hover:bg-slate-800 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none"
             >
-              Create organization
+              Create Organization
             </button>
-          </div>
-        </Card>
+          </Card>
 
-        <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
-          <h2 className="text-lg font-semibold text-slate-900">All organizations</h2>
+          {/* List Orgs Card */}
+          <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Your Organizations</h2>
 
-          {loading ? (
-            <p className="mt-3 text-sm text-slate-500">Loading…</p>
-          ) : orgs.length === 0 ? (
-            <p className="mt-3 text-sm text-slate-500">No organizations yet.</p>
-          ) : (
-            <ul className="mt-4 space-y-3 text-sm text-slate-700">
-              {orgs.map((o) => (
-                <li
-                  key={o._id}
-                  className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 flex justify-between items-center"
-                >
-                  <div>
-                    <div className="font-medium">{o.name}</div>
-                    <div className="text-xs text-slate-500">{o.slug}</div>
-                  </div>
-                  <button
-                    onClick={() => {
-                      setActiveOrganization(o._id);
-                      router.push(`/organization/${o._id}/repos`);
-                    }}
-                    className="rounded-md bg-indigo-600 px-3 py-1 text-xs text-white"
+            {loading ? (
+              <div className="flex justify-center py-8">
+                <div className="h-6 w-6 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+              </div>
+            ) : orgs.length === 0 ? (
+              <div className="text-center py-8 bg-slate-50 rounded-xl border border-dashed border-slate-200">
+                <p className="text-sm text-slate-500">No organizations found. Create one above!</p>
+              </div>
+            ) : (
+              <ul className="space-y-3">
+                {orgs.map((o) => (
+                  <li
+                    key={o._id}
+                    className="group flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 p-4 transition-all hover:border-indigo-200 hover:bg-indigo-50/30 hover:shadow-sm"
                   >
-                    Open
-                  </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </Card>
+                    <div className="flex items-center gap-4">
+                      <div className="h-10 w-10 text-lg rounded-lg bg-white border border-slate-200 flex items-center justify-center font-bold text-slate-700 shadow-sm group-hover:border-indigo-200 group-hover:text-indigo-600">
+                        {o.name[0]?.toUpperCase()}
+                      </div>
+                      <div>
+                        <div className="font-semibold text-slate-900">{o.name}</div>
+                        <div className="text-xs text-slate-500 font-mono">{o.slug}</div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setActiveOrganization(o._id);
+                        router.push(`/organization/${o._id}/repos`);
+                      }}
+                      className="rounded-lg bg-white border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:border-indigo-500 hover:text-indigo-600 transition-colors shadow-sm"
+                    >
+                      Launch
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </Card>
+        </div>
       </div>
     </div>
   );

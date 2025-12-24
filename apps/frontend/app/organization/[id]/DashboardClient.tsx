@@ -179,7 +179,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
             <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {statCards.map(({ label, value, icon: Icon, trend, helper }) => (
-                    <Card key={label} className="rounded-2xl border-0 bg-white p-6 shadow-md">
+                    <Card key={label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                             <div>
                                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
@@ -199,11 +199,12 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                             </span>
                         ) : <p className="mt-4 text-xs text-slate-500">{helper}</p>}
                     </Card>
-                ))}
+                ))
+                }
             </section>
 
             <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <Card className="lg:col-span-2 rounded-2xl border-0 bg-white p-6 shadow-md">
+                <Card className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div>
                             <h2 className="text-lg font-semibold text-slate-900">Weekly Activity</h2>
@@ -221,7 +222,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                     </div>
                 </Card>
 
-                <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+                <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h2 className="text-lg font-semibold text-slate-900 mb-6">PR Status</h2>
                     <ul className="space-y-4">
                         {[{ label: "Open", value: prStatusCounts.open }, { label: "Review", value: prStatusCounts.review }, { label: "Merged", value: prStatusCounts.merged }].map((item) => (
@@ -238,12 +239,12 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
             </section>
 
             <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+                <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h2 className="text-lg font-semibold text-slate-900 mb-6">PR Risk Distribution</h2>
                     <PRRiskBarChart data={riskBuckets} />
                 </Card>
 
-                <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+                <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
                     <h2 className="text-lg font-semibold text-slate-900 mb-4">Top Contributors</h2>
                     <div className="space-y-4">
                         {data.charts.contributorBreakdown.map((c, i) => (
