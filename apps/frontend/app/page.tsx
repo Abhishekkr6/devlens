@@ -15,9 +15,12 @@ import {
   Menu,
   X,
   Code2,
-  Cpu
+  Cpu,
+  GitCommit
 } from "lucide-react";
 import { HeroVisual } from "../components/Landing/HeroVisual";
+import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/CommitTrackingVisual";
+import { WorkerArchitectureVisual } from "../components/Landing/FeatureVisuals/WorkerArchitectureVisual";
 
 // --- Components ---
 
@@ -222,12 +225,7 @@ function FeatureCard({
 }
 
 function FeatureSection() {
-  const features = [
-    {
-      title: "Real-time Tracking",
-      desc: "Watch commits and PRs flow in as they happen. No refreshing required.",
-      icon: Activity,
-    },
+  const genericFeatures = [
     {
       title: "PR Risk Scoring",
       desc: "Automatically analyze PR size, complexity, and file changes to identify risks.",
@@ -237,6 +235,11 @@ function FeatureSection() {
       title: "Worker Architecture",
       desc: "Heavy processing happens in the background, ensuring the dashboard stays fast.",
       icon: Cpu,
+    },
+    {
+      title: "Team Velocity",
+      desc: "Track how fast your team is shipping and spot bottlenecks early.",
+      icon: Zap,
     },
   ];
 
@@ -252,8 +255,9 @@ function FeatureSection() {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {features.map((f, i) => (
+        {/* Generic Grid */}
+        <div className="grid md:grid-cols-3 gap-8 mb-24 mx-auto">
+          {genericFeatures.map((f, i) => (
             <FeatureCard
               key={i}
               icon={f.icon}
@@ -261,6 +265,27 @@ function FeatureSection() {
               description={f.desc}
             />
           ))}
+        </div>
+
+        {/* Detailed Visual Sections */}
+        <div className="space-y-0">
+          <DetailedFeature
+            title="Real-time Commit Tracking"
+            desc="Gain full visibility into every commit as it happens. Track velocity, code churn, and impact across your entire organization."
+            icon={GitCommit}
+            align="left"
+            visual={<CommitTrackingVisual />}
+            listItems={["Live WebSockets updates", "Role-based access control", "Instant notifications"]}
+          />
+
+          <DetailedFeature
+            title="Asynchronous Processing"
+            desc="Our distributed worker architecture handles massive scale. Webhooks are processed asynchronously to ensure 100% reliability."
+            icon={Cpu}
+            align="right"
+            visual={<WorkerArchitectureVisual />}
+            listItems={["Live WebSockets updates", "Role-based access control", "Instant notifications"]}
+          />
         </div>
       </div>
     </section>
@@ -272,11 +297,15 @@ function DetailedFeature({
   desc,
   icon: Icon,
   align = "left",
+  visual,
+  listItems,
 }: {
   title: string;
   desc: string;
   icon: any;
   align?: "left" | "right";
+  visual?: React.ReactNode;
+  listItems?: string[];
 }) {
   return (
     <div className={`flex flex-col ${align === "right" ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 py-16`}>
@@ -288,7 +317,7 @@ function DetailedFeature({
         <h3 className="text-3xl font-bold text-slate-900">{title}</h3>
         <p className="text-lg text-slate-600 leading-relaxed">{desc}</p>
         <ul className="space-y-3">
-          {["Live WebSockets updates", "Role-based access control", "Instant notifications"].map((item, i) => (
+          {(listItems || ["Live WebSockets updates", "Role-based access control", "Instant notifications"]).map((item, i) => (
             <li key={i} className="flex items-center gap-3 text-slate-700">
               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
               {item}
@@ -297,8 +326,14 @@ function DetailedFeature({
         </ul>
       </div>
       <div className="flex-1 w-full bg-slate-100 rounded-2xl h-[400px] flex items-center justify-center border border-slate-200 relative overflow-hidden group">
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200/50" />
-        <Icon className="w-32 h-32 text-slate-300 group-hover:scale-110 transition-transform duration-500" />
+        {visual ? (
+          <div className="relative z-10 w-full h-full p-6 flex items-center justify-center">{visual}</div>
+        ) : (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200/50" />
+            <Icon className="w-32 h-32 text-slate-300 group-hover:scale-110 transition-transform duration-500" />
+          </>
+        )}
       </div>
     </div>
   );
@@ -416,23 +451,6 @@ export default function LandingPage() {
       <Navbar />
       <Hero />
       <FeatureSection />
-
-      {/* Detailed Features / Features Section */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <DetailedFeature
-          title="Real-time Commit Tracking"
-          desc="Gain full visibility into every commit as it happens. Track velocity, code churn, and impact across your entire organization."
-          icon={GitPullRequest}
-          align="left"
-        />
-        <DetailedFeature
-          title="Asynchronous Processing"
-          desc="Our distributed worker architecture handles massive scale. Webhooks are processed asynchronously to ensure 100% reliability."
-          icon={Zap}
-          align="right"
-        />
-      </section>
-
       <HowItWorks />
       <CTA />
       <Footer />
