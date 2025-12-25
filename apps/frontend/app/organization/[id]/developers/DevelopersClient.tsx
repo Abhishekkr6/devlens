@@ -59,10 +59,10 @@ const getActivityLevel = (weeklyActivity: number): ActivityLevel => {
 };
 
 const getActivityColor = (weeklyActivity: number) => {
-    if (weeklyActivity >= 80) return "text-emerald-600";
-    if (weeklyActivity >= 50) return "text-blue-600";
-    if (weeklyActivity >= 25) return "text-amber-600";
-    return "text-slate-500";
+    if (weeklyActivity >= 80) return "text-emerald-600 dark:text-emerald-400";
+    if (weeklyActivity >= 50) return "text-blue-600 dark:text-blue-400";
+    if (weeklyActivity >= 25) return "text-amber-600 dark:text-amber-400";
+    return "text-slate-500 dark:text-slate-400";
 };
 
 const getProgressColor = (weeklyActivity: number) => {

@@ -187,7 +187,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                                 </p>
                                 <p className="mt-3 text-3xl font-semibold text-text-primary">{value}</p>
                             </div>
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 dark:bg-brand/20 text-brand">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 dark:bg-brand/20 text-brand dark:text-indigo-400">
                                 <Icon className="h-5 w-5" />
                             </span>
                         </div>
@@ -250,7 +250,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                         {data.charts.contributorBreakdown.map((c, i) => (
                             <div key={i} className="flex items-center justify-between border-b border-border pb-2 last:border-0">
                                 <span className="text-sm font-medium text-text-secondary">{c.name}</span>
-                                <span className="text-sm font-bold text-brand">{c.commits} commits</span>
+                                <span className="text-sm font-bold text-brand dark:text-indigo-400">{c.commits} commits</span>
                             </div>
                         ))}
                         {data.charts.contributorBreakdown.length === 0 && (

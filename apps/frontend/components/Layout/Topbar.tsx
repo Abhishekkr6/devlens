@@ -198,8 +198,8 @@ export default function Topbar() {
           href={resolvedHref}
           onClick={closeMobileNav}
           className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${active
-            ? "bg-indigo-100 dark:bg-brand/20 text-brand"
-            : "text-text-secondary hover:bg-surface hover:text-brand"
+            ? "bg-indigo-100 dark:bg-brand/20 text-indigo-700 dark:text-brand"
+            : "text-text-secondary hover:bg-surface hover:text-indigo-600 dark:hover:text-brand"
             } ${className ?? ""}`.trim()}
         >
           <Icon className="h-4 w-4" />
@@ -243,7 +243,7 @@ export default function Topbar() {
                 onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
                 className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-brand">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-indigo-700 dark:text-brand">
                   {currentOrg?.name?.[0]?.toUpperCase() || "O"}
                 </div>
                 <span className="max-w-[100px] truncate sm:max-w-[140px]">
@@ -267,7 +267,7 @@ export default function Topbar() {
                         key={org.id}
                         onClick={() => handleOrgSwitch(org.id)}
                         className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${activeOrgId === org.id
-                          ? "bg-indigo-50 dark:bg-brand/20 text-brand"
+                          ? "bg-indigo-50 dark:bg-brand/20 text-indigo-700 dark:text-brand"
                           : "text-text-secondary hover:bg-surface"
                           }`}
                       >

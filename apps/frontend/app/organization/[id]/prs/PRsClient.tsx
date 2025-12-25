@@ -34,9 +34,9 @@ const getRiskAccent = (value?: number) => {
     if (value === undefined || value === null || !Number.isFinite(value)) {
         return "text-slate-400";
     }
-    if (value >= 70) return "text-rose-600 font-semibold";
-    if (value >= 40) return "text-amber-600 font-medium";
-    return "text-emerald-600 font-medium";
+    if (value >= 70) return "text-rose-600 dark:text-rose-400 font-semibold";
+    if (value >= 40) return "text-amber-600 dark:text-amber-400 font-medium";
+    return "text-emerald-600 dark:text-emerald-400 font-medium";
 };
 
 const toRiskLevel = (value?: number): RiskLevel => {
@@ -53,11 +53,11 @@ const STATUS_BADGE = (state?: string): { text: string; className: string; key: S
 
     switch (key) {
         case "open":
-            return { text: "open", className: "bg-blue-500/10 text-blue-700", key: "open" };
+            return { text: "open", className: "bg-blue-500/10 text-blue-700 dark:text-blue-400", key: "open" };
         case "review":
-            return { text: "review", className: "bg-orange-500/10 text-orange-700", key: "review" };
+            return { text: "review", className: "bg-orange-500/10 text-orange-700 dark:text-orange-400", key: "review" };
         case "merged":
-            return { text: "merged", className: "bg-purple-500/10 text-purple-700", key: "merged" };
+            return { text: "merged", className: "bg-purple-500/10 text-purple-700 dark:text-purple-400", key: "merged" };
         case "draft":
             return { text: "draft", className: "bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300", key: "draft" };
         default:
