@@ -48,8 +48,8 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="bg-brand p-1.5 rounded-lg">
-            <Activity className="text-white w-5 h-5" />
+          <div className="bg-slate-900 dark:bg-white p-1.5 rounded-lg">
+            <Activity className="text-white dark:text-slate-900 w-5 h-5" />
           </div>
           <span className="text-xl font-bold text-text-primary tracking-tight">
             TeamPulse
@@ -66,7 +66,7 @@ function Navbar() {
           </button>
           <button
             onClick={handleLogin}
-            className="flex items-center gap-2 bg-slate-900 hover:bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+            className="flex items-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
           >
             <Github className="w-4 h-4" />
             Login with GitHub
@@ -93,7 +93,7 @@ function Navbar() {
           </button>
           <button
             onClick={handleLogin}
-            className="flex items-center justify-center gap-2 bg-slate-900 text-white px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer"
+            className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer"
           >
             <Github className="w-4 h-4" />
             Login with GitHub
@@ -131,7 +131,7 @@ function Hero() {
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary leading-[1.15] tracking-tight mb-6">
               Understand Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-blue-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-blue-600 dark:from-indigo-300 dark:to-cyan-300 pb-2">
                 Engineering Team
               </span>{" "}
               <br />
@@ -158,7 +158,7 @@ function Hero() {
           >
             <button
               onClick={handleLogin}
-              className="flex items-center justify-center gap-2 bg-brand hover:opacity-90 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-indigo-200/50 shadow-xl hover:-translate-y-1 cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-xl hover:-translate-y-1 cursor-pointer"
             >
               <Github className="w-5 h-5" />
               Continue with GitHub
@@ -173,16 +173,16 @@ function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-8 flex items-center gap-4 text-sm text-slate-500"
+            className="mt-8 flex items-center gap-4 text-sm text-text-secondary"
           >
             <div className="flex -space-x-2">
               {[1, 2, 3, 4].map((i) => (
-                <div
+                <img
                   key={i}
-                  className="w-8 h-8 rounded-full border-2 border-background bg-slate-200 flex items-center justify-center text-xs font-bold text-text-secondary"
-                >
-                  {/* Avatar Placeholder */}
-                </div>
+                  src={`https://i.pravatar.cc/100?u=user${i}`}
+                  alt={`User ${i}`}
+                  className="w-8 h-8 rounded-full border-2 border-background object-cover"
+                />
               ))}
             </div>
             <p>Trusted by modern engineering teams</p>
@@ -215,8 +215,8 @@ function FeatureCard({
 }) {
   return (
     <div className="bg-background p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
-      <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6 text-brand" />
+      <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center mb-4">
+        <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-300" />
       </div>
       <h3 className="text-lg font-bold text-text-primary mb-2">{title}</h3>
       <p className="text-text-secondary text-sm leading-relaxed">{description}</p>
@@ -310,7 +310,7 @@ function DetailedFeature({
   return (
     <div className={`flex flex-col ${align === "right" ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 py-16`}>
       <div className="flex-1 space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-brand text-xs font-semibold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 text-xs font-semibold uppercase tracking-wider">
           <Zap className="w-3 h-3" />
           Feature
         </div>
@@ -399,7 +399,7 @@ function CTA() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_50%)]" />
 
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-        <h2 className="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">
+        <h2 className="text-3xl md:text-5xl font-bold !text-white mb-6 tracking-tight">
           Stop guessing. <br />
           Start understanding your engineering team.
         </h2>
@@ -423,7 +423,7 @@ function Footer() {
     <footer className="bg-background border-t border-border py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <div className="bg-slate-900 text-white p-1 rounded-md">
+          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-1 rounded-md">
             <Activity className="w-4 h-4" />
           </div>
           <span className="font-bold text-text-primary">TeamPulse</span>

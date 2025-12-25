@@ -16,8 +16,8 @@ export function CommitTrackingVisual() {
             {/* Header with Pulse */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface">
                 <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-lg">
-                        <GitCommit className="w-4 h-4 text-brand" />
+                    <div className="bg-indigo-100 dark:bg-indigo-500/20 p-1.5 rounded-lg">
+                        <GitCommit className="w-4 h-4 text-indigo-600 dark:text-indigo-300" />
                     </div>
                     <h3 className="text-sm font-bold text-text-primary">Real-time Tracking</h3>
                 </div>

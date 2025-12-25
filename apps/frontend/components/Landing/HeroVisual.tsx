@@ -7,14 +7,14 @@ export function HeroVisual() {
     return (
         <div className="relative z-10 w-full font-sans">
             {/* Main Card */}
-            <div className="relative z-10 bg-background rounded-2xl shadow-2xl border border-border p-6 w-full max-w-lg mx-auto rotate-1 transition-transform hover:rotate-0 duration-500">
+            <div className="relative z-10 bg-background/80 dark:bg-background/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-border p-6 w-full max-w-lg mx-auto rotate-1 transition-transform hover:rotate-0 duration-500">
 
                 {/* Top Header - Activity Icon */}
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 text-brand flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 flex items-center justify-center">
                         <Activity className="w-6 h-6" />
                     </div>
-                    <div className="h-3 w-32 bg-surface rounded-full" />
+                    <span className="text-xl font-bold text-text-primary tracking-tight">TeamPulse</span>
                 </div>
 
                 {/* Metrics Row */}

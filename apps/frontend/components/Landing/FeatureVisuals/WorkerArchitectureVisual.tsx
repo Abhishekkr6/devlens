@@ -9,8 +9,8 @@ export function WorkerArchitectureVisual() {
             {/* Header */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface">
                 <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-lg">
-                        <Cpu className="w-4 h-4 text-brand" />
+                    <div className="bg-indigo-100 dark:bg-indigo-500/20 p-1.5 rounded-lg">
+                        <Cpu className="w-4 h-4 text-indigo-600 dark:text-indigo-300" />
                     </div>
                     <h3 className="text-sm font-bold text-text-primary">Worker Architecture</h3>
                 </div>
@@ -79,8 +79,8 @@ function Node({ icon: Icon, label }: { icon: any, label: string, delay: number }
 
 function FlowArrow({ delay }: { delay: number }) {
     return (
-        <div className="hidden md:flex flex-1 items-center justify-center text-slate-300 relative px-1">
-            <div className="h-0.5 w-full bg-slate-100 rounded-full overflow-hidden max-w-[40px]">
+        <div className="hidden md:flex flex-1 items-center justify-center text-slate-300 dark:text-slate-600 relative px-1">
+            <div className="h-0.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden max-w-[40px]">
                 <motion.div
                     initial={{ x: "-100%" }}
                     animate={{ x: "100%" }}
