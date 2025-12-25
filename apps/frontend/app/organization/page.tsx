@@ -92,7 +92,7 @@ export default function OrganizationPage() {
             <button
               onClick={createOrg}
               disabled={disabled}
-              className="mt-4 w-full rounded-xl bg-text-primary px-4 py-3 text-sm font-semibold text-background shadow-lg hover:opacity-90 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none"
+              className="mt-6 w-full rounded-xl bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-400 px-4 py-3 text-sm font-bold text-white shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none cursor-pointer"
             >
               Create Organization
             </button>
@@ -131,7 +131,7 @@ export default function OrganizationPage() {
                         setActiveOrganization(o._id);
                         router.push(`/organization/${o._id}/repos`);
                       }}
-                      className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm"
+                      className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
                     >
                       Launch
                     </button>
