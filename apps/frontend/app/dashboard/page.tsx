@@ -22,8 +22,8 @@ export default function DashboardPage() {
   }, [activeOrgId, loading, router]);
 
   return (
-    <div className="flex h-screen w-full items-center justify-center bg-slate-50">
-      <div className="text-sm text-slate-500 animate-pulse">Redirecting to organization...</div>
+    <div className="flex h-screen w-full items-center justify-center bg-background">
+      <div className="text-sm text-text-secondary animate-pulse">Redirecting to organization...</div>
     </div>
   );
 }

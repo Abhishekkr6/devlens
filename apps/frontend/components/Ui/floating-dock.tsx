@@ -91,7 +91,7 @@ const FloatingDockMobile = ({
   return (
     <nav
       className={cn(
-        "relative block w-full rounded-2xl border border-slate-200 bg-white px-2 py-2 shadow-sm md:hidden",
+        "relative block w-full rounded-2xl border border-border bg-background px-2 py-2 shadow-sm md:hidden",
         className,
       )}
       aria-label="Secondary navigation"
@@ -107,11 +107,11 @@ const FloatingDockMobile = ({
             className={cn(
               "flex h-10 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-medium transition-colors",
               item.isActive
-                ? "bg-indigo-100 text-indigo-700"
-                : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600",
+                ? "bg-indigo-100 dark:bg-brand/20 text-brand"
+                : "text-text-secondary hover:bg-surface hover:text-brand",
             )}
           >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-slate-600 ring-1 ring-inset ring-slate-200">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-background text-text-secondary ring-1 ring-inset ring-border">
               {item.icon}
             </span>
             <span className="whitespace-nowrap">{item.title}</span>
@@ -119,12 +119,12 @@ const FloatingDockMobile = ({
         ))}
       </div>
       {showLeftHint && (
-        <div className="pointer-events-none absolute inset-y-2 left-2 flex w-12 items-center justify-start rounded-xl bg-linear-to-r from-white via-white/80 to-transparent pl-2 pr-6">
+        <div className="pointer-events-none absolute inset-y-2 left-2 flex w-12 items-center justify-start rounded-xl bg-linear-to-r from-background via-background/80 to-transparent pl-2 pr-6">
           <ArrowIcon direction="left" />
         </div>
       )}
       {showRightHint && (
-        <div className="pointer-events-none absolute inset-y-2 right-2 flex w-12 items-center justify-end rounded-xl bg-linear-to-l from-white via-white/80 to-transparent pl-6 pr-2">
+        <div className="pointer-events-none absolute inset-y-2 right-2 flex w-12 items-center justify-end rounded-xl bg-linear-to-l from-background via-background/80 to-transparent pl-6 pr-2">
           <ArrowIcon direction="right" />
         </div>
       )}
@@ -136,7 +136,7 @@ function ArrowIcon({ direction }: { direction: "left" | "right" }) {
   return (
     <svg
       viewBox="0 0 24 24"
-      className="h-4 w-4 text-slate-400"
+      className="h-4 w-4 text-text-secondary"
       fill="none"
       stroke="currentColor"
       strokeWidth="2"
@@ -171,7 +171,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(event) => mouseX.set(event.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex dark:bg-neutral-900",
+        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-surface/50 px-4 pb-3 md:flex",
         className,
       )}
     >
@@ -241,9 +241,9 @@ function IconContainer({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={cn(
-          "relative flex aspect-square items-center justify-center rounded-full bg-gray-200 transition-colors dark:bg-neutral-800",
-          hovered && "bg-gray-300 dark:bg-neutral-700",
-          isActive && "ring-2 ring-indigo-500 ring-offset-2 ring-offset-gray-50 dark:ring-offset-neutral-900",
+          "relative flex aspect-square items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors",
+          hovered && "bg-slate-300 dark:bg-slate-700",
+          isActive && "ring-2 ring-brand ring-offset-2 ring-offset-background",
         )}
       >
         <AnimatePresence>
@@ -252,7 +252,7 @@ function IconContainer({
               initial={{ opacity: 0, y: 10, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 2, x: "-50%" }}
-              className="absolute -top-8 left-1/2 w-fit whitespace-pre rounded-md border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs text-neutral-700 dark:border-neutral-900 dark:bg-neutral-800 dark:text-white"
+              className="absolute -top-8 left-1/2 w-fit whitespace-pre rounded-md border border-border bg-surface px-2 py-0.5 text-xs text-text-primary"
             >
               {title}
             </motion.div>
@@ -260,7 +260,7 @@ function IconContainer({
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center text-slate-700 dark:text-neutral-100"
+          className="flex items-center justify-center text-text-secondary"
         >
           {icon}
         </motion.div>

@@ -162,11 +162,11 @@ export default function Topbar() {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "ADMIN":
-        return <Shield className="h-3 w-3 text-indigo-600" />;
+        return <Shield className="h-3 w-3 text-brand" />;
       case "MEMBER":
-        return <Code className="h-3 w-3 text-slate-600" />;
+        return <Code className="h-3 w-3 text-text-secondary" />;
       case "VIEWER":
-        return <Eye className="h-3 w-3 text-slate-400" />;
+        return <Eye className="h-3 w-3 text-text-secondary" />;
       default:
         return null;
     }
@@ -198,8 +198,8 @@ export default function Topbar() {
           href={resolvedHref}
           onClick={closeMobileNav}
           className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${active
-            ? "bg-indigo-100 text-indigo-700"
-            : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
+            ? "bg-indigo-100 dark:bg-brand/20 text-brand"
+            : "text-text-secondary hover:bg-surface hover:text-brand"
             } ${className ?? ""}`.trim()}
         >
           <Icon className="h-4 w-4" />
@@ -219,20 +219,20 @@ export default function Topbar() {
   });
 
   return (
-    <header className="sticky top-0 z-40 border-b border-slate-200 bg-white">
+    <header className="sticky top-0 z-40 border-b border-border bg-background">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex w-full flex-wrap items-center gap-3 py-3">
           <Link
             href="/dashboard"
-            className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-slate-100/80"
+            className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
             aria-label="TeamPulse home"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-sm font-semibold text-white shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white shadow-sm">
               TP
             </div>
             <div className="min-w-0 text-left">
-              <p className="truncate text-sm font-semibold text-slate-900">TeamPulse</p>
-              <p className="hidden text-xs text-slate-500 sm:block">Developer Activity</p>
+              <p className="truncate text-sm font-semibold text-text-primary">TeamPulse</p>
+              <p className="hidden text-xs text-text-secondary sm:block">Developer Activity</p>
             </div>
           </Link>
 
@@ -241,24 +241,24 @@ export default function Topbar() {
             <div className="relative ml-2" ref={orgDropdownRef}>
               <button
                 onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
-                className="flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 transition hover:border-indigo-500 hover:text-indigo-600 shadow-sm"
+                className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm"
               >
-                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 text-xs font-bold text-indigo-700">
+                <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-brand">
                   {currentOrg?.name?.[0]?.toUpperCase() || "O"}
                 </div>
                 <span className="max-w-[100px] truncate sm:max-w-[140px]">
                   {currentOrg?.name || "Select Organization"}
                 </span>
                 <ChevronDown
-                  className={`h-4 w-4 text-slate-400 transition-transform ${orgDropdownOpen ? "rotate-180" : ""
+                  className={`h-4 w-4 text-text-secondary transition-transform ${orgDropdownOpen ? "rotate-180" : ""
                     }`}
                 />
               </button>
 
               {orgDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-slate-200 bg-white p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-                  <div className="mb-2 border-b border-slate-100 px-2 pb-2">
-                    <p className="text-xs font-medium text-slate-500">Switch Organization</p>
+                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-border bg-background p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                  <div className="mb-2 border-b border-border px-2 pb-2">
+                    <p className="text-xs font-medium text-text-secondary">Switch Organization</p>
                   </div>
 
                   <div className="space-y-1">
@@ -267,11 +267,11 @@ export default function Topbar() {
                         key={org.id}
                         onClick={() => handleOrgSwitch(org.id)}
                         className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${activeOrgId === org.id
-                          ? "bg-indigo-50 text-indigo-700"
-                          : "text-slate-700 hover:bg-slate-50"
+                          ? "bg-indigo-50 dark:bg-brand/20 text-brand"
+                          : "text-text-secondary hover:bg-surface"
                           }`}
                       >
-                        <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${activeOrgId === org.id ? "bg-indigo-200 text-indigo-800" : "bg-slate-100 text-slate-600"
+                        <div className={`flex h-8 w-8 items-center justify-center rounded-lg text-xs font-bold ${activeOrgId === org.id ? "bg-indigo-200 dark:bg-brand/40 text-brand" : "bg-surface text-text-secondary"
                           }`}>
                           {org.name[0]?.toUpperCase()}
                         </div>
@@ -279,17 +279,17 @@ export default function Topbar() {
                           <p className="font-medium">{org.name}</p>
                         </div>
                         {activeOrgId === org.id && (
-                          <div className="h-2 w-2 rounded-full bg-indigo-600" />
+                          <div className="h-2 w-2 rounded-full bg-brand" />
                         )}
                       </button>
                     ))}
                   </div>
 
-                  <div className="mt-2 border-t border-slate-100 pt-2">
+                  <div className="mt-2 border-t border-border pt-2">
                     <Link
                       href="/organization"
                       onClick={() => setOrgDropdownOpen(false)}
-                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-indigo-600"
+                      className="flex w-full items-center gap-2 rounded-lg px-2 py-2 text-sm font-medium text-text-secondary hover:bg-surface hover:text-brand"
                     >
                       <LayoutDashboard className="h-4 w-4" />
                       Manage Organizations
@@ -301,17 +301,17 @@ export default function Topbar() {
           )}
           <div className="ml-auto hidden items-center gap-3 md:flex">
             <div className="relative hidden md:block md:w-48 lg:w-64">
-              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
               <input
                 type="search"
                 placeholder="Search..."
-                className="h-10 w-full rounded-full border border-slate-200 bg-slate-50 pl-9 pr-4 text-sm text-slate-700 transition-colors placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-4 text-sm text-text-primary transition-colors placeholder:text-text-secondary focus:border-brand focus:bg-background focus:outline-none focus:ring-2 focus:ring-brand/20"
               />
             </div>
 
             <button
               type="button"
-              className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600 md:flex"
+              className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand md:flex"
               aria-label="Notifications"
             >
               <Bell className="h-4 w-4" />
@@ -322,7 +322,7 @@ export default function Topbar() {
               <button
                 type="button"
                 onClick={() => setTeamDropdownOpen(!teamDropdownOpen)}
-                className="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600"
+                className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:border-brand hover:text-brand"
               >
                 <Users className="h-4 w-4" />
                 Team
@@ -330,15 +330,15 @@ export default function Topbar() {
               </button>
 
               {teamDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-slate-200 bg-white shadow-lg z-50">
-                  <div className="p-4 border-b border-slate-100">
+                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-background shadow-lg z-50">
+                  <div className="p-4 border-b border-border">
                     <div className="flex items-center justify-between">
-                      <h3 className="text-sm font-semibold text-slate-900">Team Members</h3>
+                      <h3 className="text-sm font-semibold text-text-primary">Team Members</h3>
                       {activeOrgId && (
                         <Link
                           href={`/organization/${activeOrgId}/team`}
                           onClick={() => setTeamDropdownOpen(false)}
-                          className="text-xs text-indigo-600 hover:text-indigo-700 font-medium"
+                          className="text-xs text-brand hover:text-brand/80 font-medium"
                         >
                           Manage
                         </Link>
@@ -348,11 +348,11 @@ export default function Topbar() {
 
                   <div className="max-h-96 overflow-y-auto">
                     {loadingMembers ? (
-                      <div className="p-4 text-center text-sm text-slate-500">
+                      <div className="p-4 text-center text-sm text-text-secondary">
                         Loading members...
                       </div>
                     ) : teamMembers.length === 0 ? (
-                      <div className="p-4 text-center text-sm text-slate-500">
+                      <div className="p-4 text-center text-sm text-text-secondary">
                         {activeOrgId ? "No members found" : "Select an organization"}
                       </div>
                     ) : (
@@ -360,7 +360,7 @@ export default function Topbar() {
                         {teamMembers.map((member) => (
                           <div
                             key={member.userId}
-                            className="flex items-center gap-3 rounded-lg p-2 hover:bg-slate-50 transition-colors"
+                            className="flex items-center gap-3 rounded-lg p-2 hover:bg-surface transition-colors"
                           >
                             {member.user?.avatarUrl ? (
                               <Image
@@ -371,21 +371,21 @@ export default function Topbar() {
                                 className="h-8 w-8 rounded-full"
                               />
                             ) : (
-                              <div className="h-8 w-8 rounded-full bg-slate-200 flex items-center justify-center text-xs font-medium text-slate-600">
+                              <div className="h-8 w-8 rounded-full bg-surface flex items-center justify-center text-xs font-medium text-text-secondary">
                                 {member.user?.name?.[0]?.toUpperCase() || "?"}
                               </div>
                             )}
                             <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-slate-900 truncate">
+                              <p className="text-sm font-medium text-text-primary truncate">
                                 {member.user?.name || "Unknown User"}
                               </p>
-                              <p className="text-xs text-slate-500 truncate">
+                              <p className="text-xs text-text-secondary truncate">
                                 {member.user?.email || "No email"}
                               </p>
                             </div>
                             <div className="flex items-center gap-1.5">
                               {getRoleIcon(member.role)}
-                              <span className="text-xs text-slate-600">
+                              <span className="text-xs text-text-secondary">
                                 {getRoleLabel(member.role)}
                               </span>
                             </div>
@@ -396,11 +396,11 @@ export default function Topbar() {
                   </div>
 
                   {activeOrgId && (
-                    <div className="p-3 border-t border-slate-100">
+                    <div className="p-3 border-t border-border">
                       <Link
                         href={`/organization/${activeOrgId}/team`}
                         onClick={() => setTeamDropdownOpen(false)}
-                        className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-50 transition-colors"
+                        className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-brand hover:bg-brand/10 transition-colors"
                       >
                         <UserPlus className="h-4 w-4" />
                         Invite Member
@@ -415,7 +415,7 @@ export default function Topbar() {
               <div className="flex items-center">
                 <Link
                   href="/me"
-                  className="flex items-center gap-3 rounded-l-full border border-r-0 border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm transition hover:border-indigo-500 hover:bg-indigo-50"
+                  className="flex items-center gap-3 rounded-l-full border border-r-0 border-border bg-background px-3 py-1.5 text-sm shadow-sm transition hover:border-brand hover:bg-brand/10"
                 >
                   <Image
                     src={user.avatarUrl}
@@ -425,25 +425,25 @@ export default function Topbar() {
                     className="h-8 w-8 rounded-full"
                   />
                   <div className="hidden text-left sm:block">
-                    <p className="text-sm font-semibold text-slate-900">{user.name}</p>
-                    {user.email && <p className="text-xs text-slate-500">{user.email}</p>}
+                    <p className="text-sm font-semibold text-text-primary">{user.name}</p>
+                    {user.email && <p className="text-xs text-text-secondary">{user.email}</p>}
                   </div>
                 </Link>
                 <button
                   type="button"
                   onClick={() => useUserStore.getState().logout()}
-                  className="flex items-center gap-2 rounded-r-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-500 transition-colors hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200"
+                  className="flex items-center gap-2 rounded-r-full border border-border bg-background px-3 py-2 text-xs font-semibold text-text-secondary transition-colors hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 hover:border-rose-200 transform border-l-0"
                 >
                   <X className="h-3 w-3" />
                   Log Out
                 </button>
               </div>
             ) : (
-              <div className="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-sm shadow-sm">
-                <div className="h-8 w-8 rounded-full bg-slate-200 animate-pulse" />
+              <div className="flex items-center gap-3 rounded-full border border-border bg-background px-3 py-1.5 text-sm shadow-sm">
+                <div className="h-8 w-8 rounded-full bg-surface animate-pulse" />
                 <div className="hidden sm:block">
-                  <div className="h-3 w-24 rounded bg-slate-200 animate-pulse mb-1" />
-                  <div className="h-2 w-32 rounded bg-slate-100 animate-pulse" />
+                  <div className="h-3 w-24 rounded bg-surface animate-pulse mb-1" />
+                  <div className="h-2 w-32 rounded bg-surface animate-pulse" />
                 </div>
               </div>
             )}
@@ -452,7 +452,7 @@ export default function Topbar() {
           <div className="ml-auto flex items-center gap-2 md:hidden">
             <button
               type="button"
-              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600"
+              className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand"
               aria-label="Notifications"
             >
               <Bell className="h-4 w-4" />
@@ -466,16 +466,16 @@ export default function Topbar() {
                   alt={`${user.name}'s avatar`}
                   width={32}
                   height={32}
-                  className="h-9 w-9 rounded-full border border-slate-200"
+                  className="h-9 w-9 rounded-full border border-border"
                 />
               </Link>
             ) : (
-              <div className="h-9 w-9 rounded-full bg-slate-200 animate-pulse" />
+              <div className="h-9 w-9 rounded-full bg-surface animate-pulse" />
             )}
 
             <button
               type="button"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600"
+              className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand"
               onClick={toggleMobileNav}
               aria-label={mobileNavOpen ? "Close navigation" : "Open navigation"}
             >
@@ -485,11 +485,11 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="border-t border-slate-200 bg-white">
+      <div className="border-t border-border bg-background">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8">
           <FloatingDock
             items={dockItems}
-            desktopClassName="h-14 bg-white/90 px-6 pb-3 shadow-sm ring-1 ring-slate-200"
+            desktopClassName="h-14 bg-background/90 px-6 pb-3 shadow-sm ring-1 ring-border"
             mobileClassName="w-full"
           />
         </div>
@@ -501,21 +501,21 @@ export default function Topbar() {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={closeMobileNav}
           />
-          <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-white shadow-2xl">
+          <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-background shadow-2xl">
             <div className="flex h-full w-full flex-col gap-6 p-6" id="mobile-navigation">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-600 text-sm font-semibold text-white shadow-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white shadow-sm">
                     TP
                   </div>
                   <div className="text-left">
-                    <p className="text-sm font-semibold text-slate-900">TeamPulse</p>
-                    <p className="text-xs text-slate-500">Developer Activity</p>
+                    <p className="text-sm font-semibold text-text-primary">TeamPulse</p>
+                    <p className="text-xs text-text-secondary">Developer Activity</p>
                   </div>
                 </div>
                 <button
                   type="button"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-600 transition-colors hover:border-indigo-500 hover:text-indigo-600"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:border-brand hover:text-brand"
                   onClick={closeMobileNav}
                   aria-label="Close navigation"
                 >
@@ -524,22 +524,22 @@ export default function Topbar() {
               </div>
 
               <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
                 <input
                   type="search"
                   placeholder="Search..."
-                  className="h-10 w-full rounded-full border border-slate-200 bg-slate-50 pl-9 pr-3 text-sm text-slate-700 transition-colors placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                  className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text-secondary transition-colors placeholder:text-text-secondary focus:border-brand focus:bg-background focus:outline-none focus:ring-2 focus:ring-brand/20"
                 />
               </div>
 
-              <nav className="flex flex-col gap-2 text-sm font-medium text-slate-600">
+              <nav className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
                 {renderNavLinks("w-full")}
 
                 {activeOrgId && (
                   <Link
                     href={`/organization/${activeOrgId}/team`}
                     onClick={closeMobileNav}
-                    className="flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors text-slate-600 hover:bg-slate-100 hover:text-indigo-600 w-full"
+                    className="flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors text-text-secondary hover:bg-surface hover:text-brand w-full"
                   >
                     <Users className="h-4 w-4" />
                     Team Management
@@ -548,25 +548,25 @@ export default function Topbar() {
               </nav>
 
               {user ? (
-                <div className="mt-auto flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
+                <div className="mt-auto flex items-center gap-3 rounded-xl border border-border bg-surface p-3">
                   <Image
                     src={user.avatarUrl}
                     alt={`${user.name}'s avatar`}
                     width={40}
                     height={40}
-                    className="h-10 w-10 rounded-full border border-slate-200"
+                    className="h-10 w-10 rounded-full border border-border"
                   />
                   <div>
-                    <p className="text-sm font-semibold text-slate-900">{user.name}</p>
-                    {user.email && <p className="text-xs text-slate-500">{user.email}</p>}
+                    <p className="text-sm font-semibold text-text-primary">{user.name}</p>
+                    {user.email && <p className="text-xs text-text-secondary">{user.email}</p>}
                   </div>
                 </div>
               ) : (
-                <div className="mt-auto flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3">
-                  <div className="h-10 w-10 rounded-full bg-slate-200 animate-pulse" />
+                <div className="mt-auto flex items-center gap-3 rounded-xl border border-border bg-surface p-3">
+                  <div className="h-10 w-10 rounded-full bg-border/20 animate-pulse" />
                   <div className="flex-1">
-                    <div className="h-3 w-24 rounded bg-slate-200 animate-pulse mb-1" />
-                    <div className="h-2 w-32 rounded bg-slate-100 animate-pulse" />
+                    <div className="h-3 w-24 rounded bg-border/20 animate-pulse mb-1" />
+                    <div className="h-2 w-32 rounded bg-surface-200 animate-pulse" />
                   </div>
                 </div>
               )}

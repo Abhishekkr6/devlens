@@ -22,7 +22,7 @@ export const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(function
 	{ lines = 1, radius = "md", inline = false, className = "", lineClassName = "h-3 w-full", ...rest },
 	ref,
 ) {
-	const baseSkeletonClass = `animate-pulse bg-gray-200 ${radiusClasses[radius]}`;
+	const baseSkeletonClass = `animate-pulse bg-slate-200 dark:bg-slate-800 ${radiusClasses[radius]}`;
 
 	if (lines <= 1) {
 		return <div ref={ref} className={`${baseSkeletonClass} ${className}`} {...rest} />;

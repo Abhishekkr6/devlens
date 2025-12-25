@@ -33,11 +33,11 @@ const UNKNOWN_LABEL = "N/A";
 
 const getRiskAccent = (value?: number) => {
   if (value === undefined || value === null || !Number.isFinite(value)) {
-    return "text-slate-400";
+    return "text-text-secondary";
   }
-  if (value >= 70) return "text-rose-600 font-semibold";
-  if (value >= 40) return "text-amber-600 font-medium";
-  return "text-emerald-600 font-medium";
+  if (value >= 70) return "text-rose-600 dark:text-rose-400 font-semibold";
+  if (value >= 40) return "text-amber-600 dark:text-amber-400 font-medium";
+  return "text-emerald-600 dark:text-emerald-400 font-medium";
 };
 
 const toRiskLevel = (value?: number): RiskLevel => {
@@ -54,17 +54,17 @@ const STATUS_BADGE = (state?: string): { text: string; className: string; key: S
 
   switch (key) {
     case "open":
-      return { text: "open", className: "bg-blue-500/10 text-blue-700", key: "open" };
+      return { text: "open", className: "bg-blue-500/10 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400", key: "open" };
     case "review":
-      return { text: "review", className: "bg-orange-500/10 text-orange-700", key: "review" };
+      return { text: "review", className: "bg-orange-500/10 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400", key: "review" };
     case "merged":
-      return { text: "merged", className: "bg-purple-500/10 text-purple-700", key: "merged" };
+      return { text: "merged", className: "bg-purple-500/10 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400", key: "merged" };
     case "draft":
-      return { text: "draft", className: "bg-slate-200/80 text-slate-600", key: "draft" };
+      return { text: "draft", className: "bg-surface-200 text-text-secondary", key: "draft" };
     default:
       return {
         text: state || "unknown",
-        className: "bg-slate-200/80 text-slate-600",
+        className: "bg-surface-200 text-text-secondary",
         key: "other",
       };
   }
@@ -127,17 +127,17 @@ const FilterSelect = ({ label, value, options, onChange }: FilterSelectProps) =>
   <div className="relative">
     <select
       aria-label={label}
-      className="h-10 appearance-none rounded-full border border-slate-200 bg-white px-4 pr-10 text-sm font-semibold text-slate-600 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+      className="h-10 appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary shadow-sm transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
       value={value}
       onChange={(event) => onChange(event.target.value)}
     >
       {options.map((option) => (
-        <option key={option.value} value={option.value}>
+        <option key={option.value} value={option.value} className="bg-background text-text-primary">
           {option.label}
         </option>
       ))}
     </select>
-    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+    <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary">
       <ChevronDown className="h-4 w-4" />
     </span>
   </div>
@@ -215,8 +215,8 @@ export default function PRsPage() {
         rawRisk === undefined || rawRisk === null
           ? undefined
           : rawRisk <= 1
-          ? Math.round(rawRisk * 100)
-          : Math.round(rawRisk);
+            ? Math.round(rawRisk * 100)
+            : Math.round(rawRisk);
 
       const repo = pr.repoName?.trim() || pr.repoId || UNKNOWN_LABEL;
       const author = pr.authorName?.trim() || pr.authorGithubId || UNKNOWN_LABEL;
@@ -292,7 +292,7 @@ export default function PRsPage() {
     if (loading) {
       return (
         <tr>
-          <td colSpan={7} className="px-6 py-10 text-center text-sm text-slate-500">
+          <td colSpan={7} className="px-6 py-10 text-center text-sm text-text-secondary">
             Loading pull requests...
           </td>
         </tr>
@@ -302,7 +302,7 @@ export default function PRsPage() {
     if (!filteredRows.length) {
       return (
         <tr>
-          <td colSpan={7} className="px-6 py-10 text-center text-sm text-slate-500">
+          <td colSpan={7} className="px-6 py-10 text-center text-sm text-text-secondary">
             No pull requests match the current filters.
           </td>
         </tr>
@@ -315,19 +315,18 @@ export default function PRsPage() {
       return (
         <tr
           key={row.id}
-          className={`group border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50 ${
-            isSelected ? "bg-slate-50" : ""
-          }`}
+          className={`group border-b border-border transition-colors last:border-0 hover:bg-surface ${isSelected ? "bg-surface" : ""
+            }`}
           onClick={() => setSelectedPrId(row.id)}
         >
           <td className="px-6 py-4 align-middle">
-            <div className="text-sm font-semibold text-slate-900">{row.title}</div>
-            <div className="mt-1 text-xs text-slate-500">
+            <div className="text-sm font-semibold text-text-primary">{row.title}</div>
+            <div className="mt-1 text-xs text-text-secondary">
               #{row.number} - {row.createdAtLabel}
             </div>
           </td>
-          <td className="px-6 py-4 align-middle text-sm text-slate-600">{row.repo}</td>
-          <td className="px-6 py-4 align-middle text-sm text-slate-600">{row.author}</td>
+          <td className="px-6 py-4 align-middle text-sm text-text-secondary">{row.repo}</td>
+          <td className="px-6 py-4 align-middle text-sm text-text-secondary">{row.author}</td>
           <td className={`px-6 py-4 align-middle font-mono text-sm ${getRiskAccent(row.riskValue)}`}>
             {row.riskValue === undefined ? UNKNOWN_LABEL : row.riskValue}
           </td>
@@ -336,11 +335,11 @@ export default function PRsPage() {
               {row.statusText}
             </span>
           </td>
-          <td className="px-6 py-4 align-middle text-sm font-semibold text-slate-700">{row.reviewersCount}</td>
+          <td className="px-6 py-4 align-middle text-sm font-semibold text-text-secondary">{row.reviewersCount}</td>
           <td className="px-6 py-4 align-middle text-right">
             <Button
               aria-label="View pull request"
-              className="h-8 w-8 rounded-full px-0 py-0 text-slate-400 transition group-hover:text-slate-600"
+              className="h-8 w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary"
               onClick={(event) => {
                 event.stopPropagation();
                 setSelectedPrId(row.id);
@@ -359,18 +358,18 @@ export default function PRsPage() {
     <DashboardLayout>
       <div className="flex h-full flex-col gap-6">
         <header className="space-y-2">
-          <h1 className="text-3xl font-semibold text-slate-900">Pull Requests</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-3xl font-semibold text-text-primary">Pull Requests</h1>
+          <p className="text-sm text-text-secondary">
             Team pull requests with risk scoring and review metrics
           </p>
         </header>
 
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full lg:max-w-md">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             <input
               aria-label="Search pull requests"
-              className="h-11 w-full rounded-full border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              className="h-11 w-full rounded-full border border-border bg-background pl-10 pr-4 text-sm text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
               placeholder="Search pull requests"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
@@ -400,10 +399,10 @@ export default function PRsPage() {
           </div>
         </div>
 
-        <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+        <Card className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
           <div className="overflow-x-auto">
-            <table className="min-w-full table-auto text-sm text-slate-700">
-              <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <table className="min-w-full table-auto text-sm text-text-primary">
+              <thead className="bg-surface text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                 <tr>
                   <th className="px-6 py-4 font-semibold">Title</th>
                   <th className="px-6 py-4 font-semibold">Repo</th>

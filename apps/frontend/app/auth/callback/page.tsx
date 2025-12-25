@@ -31,5 +31,5 @@ export default function AuthCallbackPage() {
     finalize();
   }, [router]);
 
-  return <div className="p-6 text-lg">Finishing login…</div>;
+  return <div className="p-6 text-lg text-text-primary bg-background min-h-screen flex items-center justify-center">Finishing login…</div>;
 }

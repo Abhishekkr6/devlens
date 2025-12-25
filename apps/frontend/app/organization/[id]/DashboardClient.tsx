@@ -136,7 +136,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     }, [timeline]);
 
     if (loading || !data) {
-        return <div className="p-8 text-center text-slate-500">Loading dashboard...</div>;
+        return <div className="p-8 text-center text-text-secondary">Loading dashboard...</div>;
     }
 
     const statCards = [
@@ -173,47 +173,47 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     return (
         <div className="space-y-6">
             <header>
-                <h1 className="text-3xl font-semibold text-slate-900">Overview</h1>
-                <p className="mt-1 text-sm text-slate-500">Real-time team activity and metrics for your organization</p>
+                <h1 className="text-3xl font-semibold text-text-primary">Overview</h1>
+                <p className="mt-1 text-sm text-text-secondary">Real-time team activity and metrics for your organization</p>
             </header>
 
             <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {statCards.map(({ label, value, icon: Icon, trend, helper }) => (
-                    <Card key={label} className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <Card key={label} className="rounded-2xl border border-border bg-background p-6 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                                <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
                                     {label}
                                 </p>
-                                <p className="mt-3 text-3xl font-semibold text-slate-900">{value}</p>
+                                <p className="mt-3 text-3xl font-semibold text-text-primary">{value}</p>
                             </div>
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-50 dark:bg-brand/20 text-brand">
                                 <Icon className="h-5 w-5" />
                             </span>
                         </div>
                         {trend !== null ? (
-                            <span className={`mt-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${trend >= 0 ? "bg-emerald-50 text-emerald-600" : "bg-rose-50 text-rose-600"
+                            <span className={`mt-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${trend >= 0 ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400"
                                 }`}>
                                 {trend >= 0 ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
                                 {Math.abs(trend).toFixed(1)}% {trend >= 0 ? "increase" : "decrease"}
                             </span>
-                        ) : <p className="mt-4 text-xs text-slate-500">{helper}</p>}
+                        ) : <p className="mt-4 text-xs text-text-secondary">{helper}</p>}
                     </Card>
                 ))
                 }
             </section>
 
             <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <Card className="lg:col-span-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <Card className="lg:col-span-2 rounded-2xl border border-border bg-background p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-6">
                         <div>
-                            <h2 className="text-lg font-semibold text-slate-900">Weekly Activity</h2>
-                            <p className="text-sm text-slate-500">Commit trend for the past month</p>
+                            <h2 className="text-lg font-semibold text-text-primary">Weekly Activity</h2>
+                            <p className="text-sm text-text-secondary">Commit trend for the past month</p>
                         </div>
                     </div>
                     <div className="h-64">
                         {timeline.length === 0 ? (
-                            <div className="flex h-full items-center justify-center rounded-xl bg-slate-50 text-sm text-slate-400">
+                            <div className="flex h-full items-center justify-center rounded-xl bg-surface text-sm text-text-secondary">
                                 No activity recorded.
                             </div>
                         ) : (
@@ -222,39 +222,39 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                     </div>
                 </Card>
 
-                <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-6">PR Status</h2>
+                <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                    <h2 className="text-lg font-semibold text-text-primary mb-6">PR Status</h2>
                     <ul className="space-y-4">
                         {[{ label: "Open", value: prStatusCounts.open }, { label: "Review", value: prStatusCounts.review }, { label: "Merged", value: prStatusCounts.merged }].map((item) => (
-                            <li key={item.label} className="flex items-center justify-between rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
-                                <span className="text-sm font-medium text-slate-600">{item.label}</span>
-                                <span className="text-lg font-semibold text-slate-900">{item.value}</span>
+                            <li key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                                <span className="text-sm font-medium text-text-secondary">{item.label}</span>
+                                <span className="text-lg font-semibold text-text-primary">{item.value}</span>
                             </li>
                         ))}
                     </ul>
-                    <div className="mt-6 rounded-xl border border-indigo-100 bg-indigo-50 px-4 py-3 text-xs text-indigo-700">
+                    <div className="mt-6 rounded-xl border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 px-4 py-3 text-xs text-indigo-700 dark:text-indigo-400">
                         Average merge time is {data.kpis.avgPRTimeHours}h.
                     </div>
                 </Card>
             </section>
 
             <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-6">PR Risk Distribution</h2>
+                <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                    <h2 className="text-lg font-semibold text-text-primary mb-6">PR Risk Distribution</h2>
                     <PRRiskBarChart data={riskBuckets} />
                 </Card>
 
-                <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-slate-900 mb-4">Top Contributors</h2>
+                <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                    <h2 className="text-lg font-semibold text-text-primary mb-4">Top Contributors</h2>
                     <div className="space-y-4">
                         {data.charts.contributorBreakdown.map((c, i) => (
-                            <div key={i} className="flex items-center justify-between border-b border-slate-50 pb-2 last:border-0">
-                                <span className="text-sm font-medium text-slate-700">{c.name}</span>
-                                <span className="text-sm font-bold text-indigo-600">{c.commits} commits</span>
+                            <div key={i} className="flex items-center justify-between border-b border-border pb-2 last:border-0">
+                                <span className="text-sm font-medium text-text-secondary">{c.name}</span>
+                                <span className="text-sm font-bold text-brand">{c.commits} commits</span>
                             </div>
                         ))}
                         {data.charts.contributorBreakdown.length === 0 && (
-                            <p className="text-sm text-slate-400">No contributor data</p>
+                            <p className="text-sm text-text-secondary">No contributor data</p>
                         )}
                     </div>
                 </Card>

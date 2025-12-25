@@ -41,27 +41,27 @@ function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-        ? "bg-white/80 backdrop-blur-md border-b border-slate-200 py-3 shadow-sm"
+        ? "bg-background/80 backdrop-blur-md border-b border-border py-3 shadow-sm"
         : "bg-transparent py-5"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="bg-indigo-600 p-1.5 rounded-lg">
+          <div className="bg-brand p-1.5 rounded-lg">
             <Activity className="text-white w-5 h-5" />
           </div>
-          <span className="text-xl font-bold text-slate-900 tracking-tight">
+          <span className="text-xl font-bold text-text-primary tracking-tight">
             TeamPulse
           </span>
         </div>
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-6">
-          <button className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+          <button className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
             Features
           </button>
-          <button className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors">
+          <button className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
             How it works
           </button>
           <button
@@ -75,7 +75,7 @@ function Navbar() {
 
         {/* Mobile Menu Button */}
         <button
-          className="md:hidden p-2 text-slate-600"
+          className="md:hidden p-2 text-text-secondary"
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
         >
           {mobileMenuOpen ? <X /> : <Menu />}
@@ -84,11 +84,11 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-white border-b border-slate-100 p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-5">
-          <button className="text-left text-sm font-medium text-slate-600">
+        <div className="md:hidden absolute top-full left-0 right-0 bg-background border-b border-border p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-5">
+          <button className="text-left text-sm font-medium text-text-secondary">
             Features
           </button>
-          <button className="text-left text-sm font-medium text-slate-600">
+          <button className="text-left text-sm font-medium text-text-secondary">
             How it works
           </button>
           <button
@@ -129,9 +129,9 @@ function Hero() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 leading-[1.15] tracking-tight mb-6">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary leading-[1.15] tracking-tight mb-6">
               Understand Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-blue-600">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand to-blue-600">
                 Engineering Team
               </span>{" "}
               <br />
@@ -143,7 +143,7 @@ function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="text-lg md:text-xl text-slate-600 mb-8 leading-relaxed max-w-lg"
+            className="text-lg md:text-xl text-text-secondary mb-8 leading-relaxed max-w-lg"
           >
             TeamPulse gives engineering teams real-time insights into commits,
             pull requests, risk signals, and developer activity — all in one
@@ -158,13 +158,13 @@ function Hero() {
           >
             <button
               onClick={handleLogin}
-              className="flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-indigo-200 shadow-xl hover:-translate-y-1 cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-brand hover:opacity-90 text-white px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-indigo-200/50 shadow-xl hover:-translate-y-1 cursor-pointer"
             >
               <Github className="w-5 h-5" />
               Continue with GitHub
             </button>
-            <button className="flex items-center justify-center gap-2 bg-white text-slate-700 border border-slate-200 px-8 py-4 rounded-xl text-lg font-medium hover:bg-slate-50 transition-colors cursor-pointer">
-              <LayoutDashboard className="w-5 h-5 text-slate-500" />
+            <button className="flex items-center justify-center gap-2 bg-surface text-text-primary border border-border px-8 py-4 rounded-xl text-lg font-medium hover:brightness-95 transition-colors cursor-pointer">
+              <LayoutDashboard className="w-5 h-5 text-text-secondary" />
               View Dashboard Demo
             </button>
           </motion.div>
@@ -179,7 +179,7 @@ function Hero() {
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="w-8 h-8 rounded-full border-2 border-white bg-slate-200 flex items-center justify-center text-xs font-bold text-slate-500"
+                  className="w-8 h-8 rounded-full border-2 border-background bg-slate-200 flex items-center justify-center text-xs font-bold text-text-secondary"
                 >
                   {/* Avatar Placeholder */}
                 </div>
@@ -214,12 +214,12 @@ function FeatureCard({
   description: string;
 }) {
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
-      <div className="w-12 h-12 rounded-xl bg-indigo-50 flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6 text-indigo-600" />
+    <div className="bg-background p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
+      <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-900/20 flex items-center justify-center mb-4">
+        <Icon className="w-6 h-6 text-brand" />
       </div>
-      <h3 className="text-lg font-bold text-slate-900 mb-2">{title}</h3>
-      <p className="text-slate-600 text-sm leading-relaxed">{description}</p>
+      <h3 className="text-lg font-bold text-text-primary mb-2">{title}</h3>
+      <p className="text-text-secondary text-sm leading-relaxed">{description}</p>
     </div>
   );
 }
@@ -244,13 +244,13 @@ function FeatureSection() {
   ];
 
   return (
-    <section className="py-20 bg-slate-50/50">
+    <section className="py-20 bg-surface">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl font-bold text-slate-900 mb-4">
+          <h2 className="text-3xl font-bold text-text-primary mb-4">
             Built for modern engineering teams
           </h2>
-          <p className="text-slate-600">
+          <p className="text-text-secondary">
             Stop relying on standups to know what's happening. detailed insights into your team's development lifecycle.
           </p>
         </div>
@@ -310,28 +310,28 @@ function DetailedFeature({
   return (
     <div className={`flex flex-col ${align === "right" ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 py-16`}>
       <div className="flex-1 space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 text-indigo-700 text-xs font-semibold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-900/30 text-brand text-xs font-semibold uppercase tracking-wider">
           <Zap className="w-3 h-3" />
           Feature
         </div>
-        <h3 className="text-3xl font-bold text-slate-900">{title}</h3>
-        <p className="text-lg text-slate-600 leading-relaxed">{desc}</p>
+        <h3 className="text-3xl font-bold text-text-primary">{title}</h3>
+        <p className="text-lg text-text-secondary leading-relaxed">{desc}</p>
         <ul className="space-y-3">
           {(listItems || ["Live WebSockets updates", "Role-based access control", "Instant notifications"]).map((item, i) => (
-            <li key={i} className="flex items-center gap-3 text-slate-700">
+            <li key={i} className="flex items-center gap-3 text-text-secondary">
               <CheckCircle2 className="w-5 h-5 text-emerald-500" />
               {item}
             </li>
           ))}
         </ul>
       </div>
-      <div className="flex-1 w-full bg-slate-100 rounded-2xl h-[400px] flex items-center justify-center border border-slate-200 relative overflow-hidden group">
+      <div className="flex-1 w-full bg-surface rounded-2xl h-[400px] flex items-center justify-center border border-border relative overflow-hidden group">
         {visual ? (
           <div className="relative z-10 w-full h-full p-6 flex items-center justify-center">{visual}</div>
         ) : (
           <>
-            <div className="absolute inset-0 bg-gradient-to-br from-slate-100 to-slate-200/50" />
-            <Icon className="w-32 h-32 text-slate-300 group-hover:scale-110 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-surface to-slate-200/50 dark:to-slate-800/50" />
+            <Icon className="w-32 h-32 text-slate-300 dark:text-slate-600 group-hover:scale-110 transition-transform duration-500" />
           </>
         )}
       </div>
@@ -364,23 +364,23 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="py-24 bg-white">
+    <section className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16 md:text-center">
-          <h2 className="text-3xl font-bold text-slate-900">How TeamPulse Works</h2>
+          <h2 className="text-3xl font-bold text-text-primary">How TeamPulse Works</h2>
         </div>
 
         <div className="grid md:grid-cols-4 gap-8 relative">
           {/* Connector Line (Desktop) */}
-          <div className="hidden md:block absolute top-8 left-0 w-full h-0.5 bg-slate-100 -z-10" />
+          <div className="hidden md:block absolute top-8 left-0 w-full h-0.5 bg-border -z-10" />
 
           {steps.map((s, i) => (
             <div key={i} className="relative pt-4 md:pt-0">
-              <div className="w-16 h-16 rounded-2xl bg-white border-2 border-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold mb-6 shadow-sm mx-auto md:mx-0 z-10">
+              <div className="w-16 h-16 rounded-2xl bg-background border-2 border-indigo-100 dark:border-indigo-900 text-brand flex items-center justify-center text-xl font-bold mb-6 shadow-sm mx-auto md:mx-0 z-10">
                 {s.step}
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-3 md:pr-4">{s.title}</h3>
-              <p className="text-slate-600 text-sm leading-relaxed">{s.desc}</p>
+              <h3 className="text-xl font-bold text-text-primary mb-3 md:pr-4">{s.title}</h3>
+              <p className="text-text-secondary text-sm leading-relaxed">{s.desc}</p>
             </div>
           ))}
         </div>
@@ -420,23 +420,23 @@ function CTA() {
 
 function Footer() {
   return (
-    <footer className="bg-white border-t border-slate-200 py-12">
+    <footer className="bg-background border-t border-border py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <div className="bg-slate-900 p-1 rounded-md">
-            <Activity className="text-white w-4 h-4" />
+          <div className="bg-slate-900 text-white p-1 rounded-md">
+            <Activity className="w-4 h-4" />
           </div>
-          <span className="font-bold text-slate-900">TeamPulse</span>
+          <span className="font-bold text-text-primary">TeamPulse</span>
         </div>
 
-        <p className="text-slate-500 text-sm">
+        <p className="text-text-secondary text-sm">
           © {new Date().getFullYear()} TeamPulse. Built for engineers.
         </p>
 
-        <div className="flex gap-6 text-sm text-slate-500">
-          <a href="#" className="hover:text-slate-900">Privacy</a>
-          <a href="#" className="hover:text-slate-900">Terms</a>
-          <a href="#" className="hover:text-slate-900">GitHub</a>
+        <div className="flex gap-6 text-sm text-text-secondary">
+          <a href="#" className="hover:text-text-primary">Privacy</a>
+          <a href="#" className="hover:text-text-primary">Terms</a>
+          <a href="#" className="hover:text-text-primary">GitHub</a>
         </div>
       </div>
     </footer>
@@ -447,7 +447,7 @@ function Footer() {
 
 export default function LandingPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen bg-background">
       <Navbar />
       <Hero />
       <FeatureSection />

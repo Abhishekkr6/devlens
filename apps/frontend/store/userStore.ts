@@ -98,7 +98,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     // Safety check: ensure id is a string
     let safeId = id;
     if (typeof id === 'object' && id !== null) {
-      // @ts-ignore
+      // @ts-expect-error - Runtime safety check for legacy/incorrect calls
       safeId = id.id || id._id || String(id);
     }
 

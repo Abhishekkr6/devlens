@@ -59,11 +59,11 @@ const STATUS_BADGE = (state?: string): { text: string; className: string; key: S
         case "merged":
             return { text: "merged", className: "bg-purple-500/10 text-purple-700", key: "merged" };
         case "draft":
-            return { text: "draft", className: "bg-slate-200/80 text-slate-600", key: "draft" };
+            return { text: "draft", className: "bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300", key: "draft" };
         default:
             return {
                 text: state || "unknown",
-                className: "bg-slate-200/80 text-slate-600",
+                className: "bg-slate-200/80 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300",
                 key: "other",
             };
     }
@@ -126,7 +126,7 @@ const FilterSelect = ({ label, value, options, onChange }: FilterSelectProps) =>
     <div className="relative">
         <select
             aria-label={label}
-            className="h-10 appearance-none rounded-full border border-slate-200 bg-white px-4 pr-10 text-sm font-semibold text-slate-600 shadow-sm transition focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+            className="h-10 appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary shadow-sm transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
             value={value}
             onChange={(event) => onChange(event.target.value)}
         >
@@ -136,7 +136,7 @@ const FilterSelect = ({ label, value, options, onChange }: FilterSelectProps) =>
                 </option>
             ))}
         </select>
-        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">
+        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary">
             <ChevronDown className="h-4 w-4" />
         </span>
     </div>
@@ -293,7 +293,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         if (loading) {
             return (
                 <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-sm text-slate-500">
+                    <td colSpan={7} className="px-6 py-10 text-center text-sm text-text-secondary">
                         Loading pull requests...
                     </td>
                 </tr>
@@ -303,7 +303,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         if (!filteredRows.length) {
             return (
                 <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-sm text-slate-500">
+                    <td colSpan={7} className="px-6 py-10 text-center text-sm text-text-secondary">
                         No pull requests match the current filters.
                     </td>
                 </tr>
@@ -316,18 +316,18 @@ export default function PRsClient({ orgId }: { orgId: string }) {
             return (
                 <tr
                     key={row.id}
-                    className={`group border-b border-slate-100 transition-colors last:border-0 hover:bg-slate-50 ${isSelected ? "bg-slate-50" : ""
+                    className={`group border-b border-border transition-colors last:border-0 hover:bg-surface/50 ${isSelected ? "bg-surface" : ""
                         }`}
                     onClick={() => setSelectedPrId(row.id)}
                 >
                     <td className="px-6 py-4 align-middle">
-                        <div className="text-sm font-semibold text-slate-900">{row.title}</div>
-                        <div className="mt-1 text-xs text-slate-500">
+                        <div className="text-sm font-semibold text-text-primary">{row.title}</div>
+                        <div className="mt-1 text-xs text-text-secondary">
                             #{row.number} - {row.createdAtLabel}
                         </div>
                     </td>
-                    <td className="px-6 py-4 align-middle text-sm text-slate-600">{row.repo}</td>
-                    <td className="px-6 py-4 align-middle text-sm text-slate-600">{row.author}</td>
+                    <td className="px-6 py-4 align-middle text-sm text-text-secondary">{row.repo}</td>
+                    <td className="px-6 py-4 align-middle text-sm text-text-secondary">{row.author}</td>
                     <td className={`px-6 py-4 align-middle font-mono text-sm ${getRiskAccent(row.riskValue)}`}>
                         {row.riskValue === undefined ? UNKNOWN_LABEL : row.riskValue}
                     </td>
@@ -336,11 +336,11 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                             {row.statusText}
                         </span>
                     </td>
-                    <td className="px-6 py-4 align-middle text-sm font-semibold text-slate-700">{row.reviewersCount}</td>
+                    <td className="px-6 py-4 align-middle text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
                     <td className="px-6 py-4 align-middle text-right">
                         <Button
                             aria-label="View pull request"
-                            className="h-8 w-8 rounded-full px-0 py-0 text-slate-400 transition group-hover:text-slate-600"
+                            className="h-8 w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary"
                             onClick={(event) => {
                                 event.stopPropagation();
                                 setSelectedPrId(row.id);
@@ -358,18 +358,18 @@ export default function PRsClient({ orgId }: { orgId: string }) {
     return (
         <div className="flex h-full flex-col gap-6">
             <header className="space-y-2">
-                <h1 className="text-3xl font-semibold text-slate-900">Pull Requests</h1>
-                <p className="text-sm text-slate-500">
+                <h1 className="text-3xl font-semibold text-text-primary">Pull Requests</h1>
+                <p className="text-sm text-text-secondary">
                     Team pull requests with risk scoring and review metrics for this organization
                 </p>
             </header>
 
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="relative w-full lg:max-w-md">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
                     <input
                         aria-label="Search pull requests"
-                        className="h-11 w-full rounded-full border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                        className="h-11 w-full rounded-full border border-border bg-background pl-10 pr-4 text-sm text-text-secondary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                         placeholder="Search pull requests"
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
@@ -399,10 +399,10 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                 </div>
             </div>
 
-            <Card className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <Card className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
                 <div className="overflow-x-auto">
-                    <table className="min-w-full table-auto text-sm text-slate-700">
-                        <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <table className="min-w-full table-auto text-sm text-text-secondary">
+                        <thead className="bg-surface text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                             <tr>
                                 <th className="px-6 py-4 font-semibold">Title</th>
                                 <th className="px-6 py-4 font-semibold">Repo</th>

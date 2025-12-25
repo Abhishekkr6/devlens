@@ -4,8 +4,8 @@ type DivProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>;
 
 export function Card({ children, className, ...rest }: DivProps) {
   const combinedClassName = className
-    ? `bg-white border border-gray-200 rounded-xl shadow-sm ${className}`
-    : "bg-white border border-gray-200 rounded-xl shadow-sm";
+    ? `bg-background border border-border rounded-xl shadow-sm ${className}`
+    : "bg-background border border-border rounded-xl shadow-sm";
 
   return (
     <div className={combinedClassName} {...rest}>
@@ -16,8 +16,8 @@ export function Card({ children, className, ...rest }: DivProps) {
 
 export function CardHeader({ children, className, ...rest }: DivProps) {
   const combinedClassName = className
-    ? `px-4 py-3 border-b border-gray-100 ${className}`
-    : "px-4 py-3 border-b border-gray-100";
+    ? `px-4 py-3 border-b border-border ${className}`
+    : "px-4 py-3 border-b border-border";
 
   return (
     <div className={combinedClassName} {...rest}>
@@ -38,8 +38,8 @@ export function CardBody({ children, className, ...rest }: DivProps) {
 
 export function CardFooter({ children, className, ...rest }: DivProps) {
   const combinedClassName = className
-    ? `px-4 py-3 border-t border-gray-100 ${className}`
-    : "px-4 py-3 border-t border-gray-100";
+    ? `px-4 py-3 border-t border-border ${className}`
+    : "px-4 py-3 border-t border-border";
 
   return (
     <div className={combinedClassName} {...rest}>
@@ -52,8 +52,8 @@ type HeadingProps = React.PropsWithChildren<React.HTMLAttributes<HTMLHeadingElem
 
 export function CardTitle({ children, className, ...rest }: HeadingProps) {
   const combinedClassName = className
-    ? `text-sm font-semibold text-gray-700 ${className}`
-    : "text-sm font-semibold text-gray-700";
+    ? `text-sm font-semibold text-text-secondary ${className}`
+    : "text-sm font-semibold text-text-secondary";
 
   return (
     <h2 className={combinedClassName} {...rest}>
@@ -66,8 +66,8 @@ type ParagraphProps = React.PropsWithChildren<React.HTMLAttributes<HTMLParagraph
 
 export function CardValue({ children, className, ...rest }: ParagraphProps) {
   const combinedClassName = className
-    ? `text-2xl font-bold text-gray-900 ${className}`
-    : "text-2xl font-bold text-gray-900";
+    ? `text-2xl font-bold text-text-primary ${className}`
+    : "text-2xl font-bold text-text-primary";
 
   return (
     <p className={combinedClassName} {...rest}>

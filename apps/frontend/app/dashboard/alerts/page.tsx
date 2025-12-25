@@ -36,23 +36,23 @@ interface EnrichedAlert extends Alert {
 
 const SEVERITY_STYLES: Record<string, { card: string; pill: string; label: string }> = {
   low: {
-    card: "border-sky-200 bg-sky-50 text-sky-900",
-    pill: "bg-sky-100 text-sky-700",
+    card: "border-sky-200 dark:border-sky-900/50 bg-sky-50 dark:bg-sky-900/30 text-sky-900 dark:text-sky-300",
+    pill: "bg-sky-100 dark:bg-sky-900/50 text-sky-700 dark:text-sky-300",
     label: "low",
   },
   medium: {
-    card: "border-amber-200 bg-amber-50 text-amber-900",
-    pill: "bg-amber-100 text-amber-700",
+    card: "border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/30 text-amber-900 dark:text-amber-300",
+    pill: "bg-amber-100 dark:bg-amber-900/50 text-amber-700 dark:text-amber-300",
     label: "medium",
   },
   high: {
-    card: "border-rose-200 bg-rose-50 text-rose-900",
-    pill: "bg-rose-100 text-rose-700",
+    card: "border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-900/30 text-rose-900 dark:text-rose-300",
+    pill: "bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300",
     label: "critical",
   },
   critical: {
-    card: "border-rose-200 bg-rose-50 text-rose-900",
-    pill: "bg-rose-100 text-rose-700",
+    card: "border-rose-200 dark:border-rose-900/50 bg-rose-50 dark:bg-rose-900/30 text-rose-900 dark:text-rose-300",
+    pill: "bg-rose-100 dark:bg-rose-900/50 text-rose-700 dark:text-rose-300",
     label: "critical",
   },
 };
@@ -275,8 +275,8 @@ export default function AlertsPage() {
   const renderSeverityPill = (alert: Alert) => {
     const key = normaliseType(alert.severity);
     const palette = SEVERITY_STYLES[key] ?? {
-      card: "border-slate-200 bg-slate-50 text-slate-900",
-      pill: "bg-slate-200 text-slate-700",
+      card: "border-border bg-surface text-text-primary",
+      pill: "bg-surface-200 text-text-secondary",
       label: key || "unknown",
     };
 
@@ -293,7 +293,7 @@ export default function AlertsPage() {
   if (loading) {
     return (
       <DashboardLayout>
-        <Card className="rounded-2xl border-0 bg-white p-6 text-sm text-slate-500 shadow-md">
+        <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
           Loading alerts...
         </Card>
       </DashboardLayout>
@@ -305,14 +305,14 @@ export default function AlertsPage() {
       <div className="flex h-full flex-col gap-6">
         <header className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
           <div>
-            <h1 className="text-4xl font-semibold text-slate-900">Alerts</h1>
-            <p className="mt-1 text-base text-slate-500">Team alerts, risks, and notifications</p>
+            <h1 className="text-4xl font-semibold text-text-primary">Alerts</h1>
+            <p className="mt-1 text-base text-text-secondary">Team alerts, risks, and notifications</p>
           </div>
           <div className="relative w-full max-w-xs lg:max-w-sm">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             <input
               aria-label="Search alerts"
-              className="h-11 w-full rounded-full border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100"
+              className="h-11 w-full rounded-full border border-border bg-background pl-10 pr-4 text-sm text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search..."
               type="search"
@@ -328,18 +328,18 @@ export default function AlertsPage() {
                 Filter by severity
               </label>
               <select
-                className="h-11 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 pr-10 text-sm font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                 id="alerts-severity-filter"
                 onChange={(event) => setSeverityFilter(event.target.value)}
                 value={severityFilter}
               >
                 {availableSeverities.map((option) => (
-                  <option key={option} value={option}>
+                  <option key={option} value={option} className="bg-background text-text-primary">
                     {option === "all" ? "Severity" : formatTypeLabel(option)}
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             </div>
 
             <div className="relative min-w-[160px]">
@@ -347,31 +347,31 @@ export default function AlertsPage() {
                 Filter by type
               </label>
               <select
-                className="h-11 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 pr-10 text-sm font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                 id="alerts-type-filter"
                 onChange={(event) => setTypeFilter(event.target.value)}
                 value={typeFilter}
               >
                 {availableTypes.map((option) => (
-                  <option key={option} value={option}>
+                  <option key={option} value={option} className="bg-background text-text-primary">
                     {option === "all" ? "Type" : formatTypeLabel(option)}
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             </div>
           </div>
 
-          <div className="inline-flex h-11 items-center rounded-full bg-rose-100 px-4 text-sm font-semibold text-rose-700">
+          <div className="inline-flex h-11 items-center rounded-full bg-rose-100 dark:bg-rose-900/30 px-4 text-sm font-semibold text-rose-700 dark:text-rose-400">
             {unresolvedCount} Unresolved
           </div>
         </div>
 
         <section className="space-y-4">
-          <h2 className="text-lg font-semibold text-slate-900">Active Alerts</h2>
+          <h2 className="text-lg font-semibold text-text-primary">Active Alerts</h2>
 
           {filteredActiveAlerts.length === 0 ? (
-            <Card className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500 shadow-none">
+            <Card className="rounded-2xl border border-dashed border-border bg-surface p-6 text-sm text-text-secondary shadow-none">
               No alerts match your filters yet.
             </Card>
           ) : (
@@ -400,7 +400,7 @@ export default function AlertsPage() {
                     <div className="flex items-start gap-3">
                       {pill}
                       <Button
-                        className="h-8 rounded-full px-4 text-xs font-semibold text-rose-700 hover:text-rose-800"
+                        className="h-8 rounded-full px-4 text-xs font-semibold text-rose-700 dark:text-rose-400 hover:text-rose-800 dark:hover:text-rose-300"
                         onClick={() => handleResolve(alert.clientId)}
                         type="button"
                         variant="ghost"
@@ -424,8 +424,8 @@ export default function AlertsPage() {
 
         {resolvedAlerts.length > 0 && (
           <section className="space-y-4">
-            <div className="flex items-center justify-between text-sm text-slate-500">
-              <h2 className="font-semibold text-slate-600">Resolved ({resolvedAlerts.length})</h2>
+            <div className="flex items-center justify-between text-sm text-text-secondary">
+              <h2 className="font-semibold text-text-secondary">Resolved ({resolvedAlerts.length})</h2>
               <span>Most recent first</span>
             </div>
 

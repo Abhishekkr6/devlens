@@ -5,17 +5,17 @@ import { Github, Webhook, Layers, Cpu, LayoutDashboard, CheckCircle2 } from "luc
 
 export function WorkerArchitectureVisual() {
     return (
-        <div className="w-full h-full min-h-[320px] font-sans bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden flex flex-col relative">
+        <div className="w-full h-full min-h-[320px] font-sans bg-background rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col relative">
             {/* Header */}
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface">
                 <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 p-1.5 rounded-lg">
-                        <Cpu className="w-4 h-4 text-indigo-600" />
+                    <div className="bg-indigo-100 dark:bg-indigo-900/30 p-1.5 rounded-lg">
+                        <Cpu className="w-4 h-4 text-brand" />
                     </div>
-                    <h3 className="text-sm font-bold text-slate-900">Worker Architecture</h3>
+                    <h3 className="text-sm font-bold text-text-primary">Worker Architecture</h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 border border-blue-100">
-                    <span className="text-[10px] font-bold text-blue-700 uppercase tracking-wide">Async</span>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
+                    <span className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide">Async</span>
                 </div>
             </div>
 
@@ -37,13 +37,13 @@ export function WorkerArchitectureVisual() {
                             <motion.div
                                 animate={{ y: [0, -4, 0] }}
                                 transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                                className="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white shadow-lg z-10 relative"
+                                className="w-10 h-10 bg-brand rounded-lg flex items-center justify-center text-white shadow-lg z-10 relative"
                             >
                                 <Cpu className="w-5 h-5" />
                             </motion.div>
                             <div className="absolute top-1 -right-1 w-10 h-10 bg-indigo-400 rounded-lg -z-10 opacity-50" />
                         </div>
-                        <span className="text-[10px] font-semibold text-slate-600">Processing</span>
+                        <span className="text-[10px] font-semibold text-text-secondary">Processing</span>
                     </div>
                     <FlowArrow delay={1} />
 
@@ -57,8 +57,8 @@ export function WorkerArchitectureVisual() {
                 </div>
             </div>
 
-            <div className="px-6 py-3 bg-slate-50 border-t border-slate-100">
-                <p className="text-xs text-slate-500">
+            <div className="px-6 py-3 bg-surface border-t border-border">
+                <p className="text-xs text-text-secondary">
                     Heavy processing happens in the background.
                 </p>
             </div>
@@ -69,10 +69,10 @@ export function WorkerArchitectureVisual() {
 function Node({ icon: Icon, label }: { icon: any, label: string, delay: number }) {
     return (
         <div className="flex flex-col items-center gap-1.5">
-            <div className="w-10 h-10 bg-white border border-slate-200 rounded-lg flex items-center justify-center text-slate-700 shadow-sm">
+            <div className="w-10 h-10 bg-background border border-border rounded-lg flex items-center justify-center text-text-secondary shadow-sm">
                 <Icon className="w-5 h-5" />
             </div>
-            <span className="text-[10px] font-semibold text-slate-500">{label}</span>
+            <span className="text-[10px] font-semibold text-text-secondary">{label}</span>
         </div>
     )
 }
@@ -94,8 +94,8 @@ function FlowArrow({ delay }: { delay: number }) {
 
 function Badge({ text, color }: { text: string, color: string }) {
     const colors: Record<string, string> = {
-        emerald: "bg-emerald-50 text-emerald-700 border-emerald-100",
-        blue: "bg-blue-50 text-blue-700 border-blue-100",
+        emerald: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
+        blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-800",
     }
     return (
         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full border ${colors[color]} shadow-sm`}>

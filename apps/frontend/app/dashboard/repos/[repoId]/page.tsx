@@ -106,21 +106,21 @@ const EMPTY_DETAIL: RepoDetailResponse = {
 };
 
 const HEALTH_LABELS: Record<RepoHealth, { label: string; className: string }> = {
-	healthy: { label: "good", className: "bg-emerald-100 text-emerald-700" },
-	attention: { label: "watch", className: "bg-amber-100 text-amber-700" },
-	warning: { label: "critical", className: "bg-rose-100 text-rose-700" },
+	healthy: { label: "good", className: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400" },
+	attention: { label: "watch", className: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" },
+	warning: { label: "critical", className: "bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400" },
 };
 
 const LANGUAGE_COLORS: Record<string, string> = {
-	javascript: "bg-amber-100 text-amber-700",
-	typescript: "bg-indigo-100 text-indigo-700",
-	python: "bg-sky-100 text-sky-700",
-	java: "bg-orange-100 text-orange-700",
-	ruby: "bg-rose-100 text-rose-700",
-	go: "bg-lime-100 text-lime-700",
-	rust: "bg-stone-100 text-stone-700",
-	react: "bg-teal-100 text-teal-700",
-	"c#": "bg-purple-100 text-purple-700",
+	javascript: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400",
+	typescript: "bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-400",
+	python: "bg-sky-100 dark:bg-sky-900/30 text-sky-700 dark:text-sky-400",
+	java: "bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400",
+	ruby: "bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-400",
+	go: "bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-400",
+	rust: "bg-stone-100 dark:bg-stone-900/30 text-stone-700 dark:text-stone-400",
+	react: "bg-teal-100 dark:bg-teal-900/30 text-teal-700 dark:text-teal-400",
+	"c#": "bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400",
 };
 
 const METRIC_DEFINITIONS: Array<{
@@ -129,11 +129,11 @@ const METRIC_DEFINITIONS: Array<{
 	icon: typeof GitCommit;
 	format: "number" | "percent";
 }> = [
-	{ key: "totalCommits", label: "Total Commits", icon: GitCommit, format: "number" },
-	{ key: "openPRs", label: "Open PRs", icon: GitPullRequest, format: "number" },
-	{ key: "contributors", label: "Contributors", icon: Users, format: "number" },
-	{ key: "churnRate", label: "Churn Rate", icon: Activity, format: "percent" },
-];
+		{ key: "totalCommits", label: "Total Commits", icon: GitCommit, format: "number" },
+		{ key: "openPRs", label: "Open PRs", icon: GitPullRequest, format: "number" },
+		{ key: "contributors", label: "Contributors", icon: Users, format: "number" },
+		{ key: "churnRate", label: "Churn Rate", icon: Activity, format: "percent" },
+	];
 
 export default function RepoDetailPage() {
 	const params = useParams();
@@ -235,13 +235,13 @@ export default function RepoDetailPage() {
 				{loading ? (
 					<RepoDetailSkeleton />
 				) : !hasRepo ? (
-					<Card className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600 shadow-none">
+					<Card className="rounded-2xl border border-dashed border-border bg-surface p-6 text-sm text-text-secondary shadow-none">
 						{error ?? "We could not find this repository."}
 					</Card>
 				) : (
 					<div className="space-y-7">
 						{error ? (
-							<Card className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm text-amber-700 shadow-none">
+							<Card className="rounded-2xl border border-amber-200 dark:border-amber-900/50 bg-amber-50 dark:bg-amber-900/30 p-4 text-sm text-amber-700 dark:text-amber-400 shadow-none">
 								{error}
 							</Card>
 						) : null}
@@ -265,12 +265,12 @@ export default function RepoDetailPage() {
 
 function HeroSection({ repo }: { repo: RepoInfo }) {
 	const languageKey = repo.language ? repo.language.toLowerCase() : "";
-	const languageStyle = LANGUAGE_COLORS[languageKey] ?? "bg-slate-100 text-slate-600";
+	const languageStyle = LANGUAGE_COLORS[languageKey] ?? "bg-surface text-text-secondary";
 	const languageLabel = repo.language ?? (languageKey ? capitalize(languageKey) : "Unknown language");
 	const health = HEALTH_LABELS[repo.health] ?? HEALTH_LABELS.healthy;
 
 	return (
-		<div className="overflow-hidden rounded-3xl border border-transparent bg-linear-to-r from-indigo-50 via-slate-50 to-blue-50 p-6 shadow-sm">
+		<div className="overflow-hidden rounded-3xl border border-transparent bg-linear-to-r from-indigo-50 via-slate-50 to-blue-50 dark:from-indigo-950/20 dark:via-slate-900/40 dark:to-blue-950/20 p-6 shadow-sm">
 			<div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
 				<div className="space-y-4">
 					<div className="flex flex-wrap gap-3 text-xs font-semibold">
@@ -282,12 +282,12 @@ function HeroSection({ repo }: { repo: RepoInfo }) {
 						</span>
 					</div>
 					<div className="space-y-2">
-						<h1 className="text-4xl font-semibold text-slate-900">{repo.name || "Repository"}</h1>
-						<p className="max-w-3xl text-base text-slate-500">{repo.description || "No description provided yet."}</p>
+						<h1 className="text-4xl font-semibold text-text-primary">{repo.name || "Repository"}</h1>
+						<p className="max-w-3xl text-base text-text-secondary">{repo.description || "No description provided yet."}</p>
 					</div>
 				</div>
 				<div className="flex items-start justify-end">
-					<button className="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+					<button className="inline-flex items-center gap-2 rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90">
 						<Settings2 className="h-4 w-4" /> Configure
 					</button>
 				</div>
@@ -298,11 +298,11 @@ function HeroSection({ repo }: { repo: RepoInfo }) {
 
 function RepositoryMetrics({ metrics }: { metrics: RepoMetrics }) {
 	return (
-		<Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+		<Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
 			<div className="flex items-center justify-between">
 				<div>
-					<h2 className="text-xl font-semibold text-slate-900">Repository Metrics</h2>
-					<p className="text-sm text-slate-500">Rolling 7-day performance compared to the prior week</p>
+					<h2 className="text-xl font-semibold text-text-primary">Repository Metrics</h2>
+					<p className="text-sm text-text-secondary">Rolling 7-day performance compared to the prior week</p>
 				</div>
 			</div>
 
@@ -328,15 +328,15 @@ function MetricCard({
 	const deltaClass = deltaTextClass(value.change);
 
 	return (
-		<div className="flex h-full flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50/70 p-5">
+		<div className="flex h-full flex-col justify-between rounded-2xl border border-border bg-surface p-5">
 			<div className="flex items-center gap-3">
-				<span className="rounded-full bg-white p-2 text-indigo-500 shadow-sm">
+				<span className="rounded-full bg-background p-2 text-brand shadow-sm">
 					<Icon className="h-4 w-4" />
 				</span>
-				<span className="text-sm font-medium text-slate-500">{definition.label}</span>
+				<span className="text-sm font-medium text-text-secondary">{definition.label}</span>
 			</div>
 			<div className="mt-5 space-y-1">
-				<div className="text-3xl font-semibold text-slate-900">{formattedValue}</div>
+				<div className="text-3xl font-semibold text-text-primary">{formattedValue}</div>
 				<div className={`text-xs font-semibold ${deltaClass}`}>{deltaLabel}</div>
 			</div>
 		</div>
@@ -345,21 +345,21 @@ function MetricCard({
 
 function TopContributorsCard({ contributors }: { contributors: RepoContributor[] }) {
 	return (
-		<Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-			<h2 className="text-xl font-semibold text-slate-900">Top Contributors</h2>
+		<Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
+			<h2 className="text-xl font-semibold text-text-primary">Top Contributors</h2>
 			<ul className="mt-5 space-y-4">
 				{contributors.length === 0 ? (
-					<li className="text-sm text-slate-500">No recent contributor data yet.</li>
+					<li className="text-sm text-text-secondary">No recent contributor data yet.</li>
 				) : (
 					contributors.map((contributor, index) => (
 						<li key={contributor.githubId ?? contributor.name} className="flex items-center justify-between">
 							<div>
-								<p className="text-sm font-semibold text-slate-900">{contributor.name}</p>
-								<p className="text-xs text-slate-500">
+								<p className="text-sm font-semibold text-text-primary">{contributor.name}</p>
+								<p className="text-xs text-text-secondary">
 									{formatNumber(contributor.commits)} commits • {formatNumber(contributor.prs)} PRs
 								</p>
 							</div>
-							<span className="text-xs font-semibold text-slate-400">#{index + 1}</span>
+							<span className="text-xs font-semibold text-text-secondary">#{index + 1}</span>
 						</li>
 					))
 				)}
@@ -370,16 +370,16 @@ function TopContributorsCard({ contributors }: { contributors: RepoContributor[]
 
 function RecentPullRequestsCard({ pullRequests, repoName }: { pullRequests: RepoPullRequest[]; repoName: string }) {
 	return (
-		<Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+		<Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
 			<div className="flex items-center justify-between">
-				<h2 className="text-xl font-semibold text-slate-900">Recent Pull Requests</h2>
-				<span className="text-xs font-semibold text-slate-400">Past 30 days</span>
+				<h2 className="text-xl font-semibold text-text-primary">Recent Pull Requests</h2>
+				<span className="text-xs font-semibold text-text-secondary">Past 30 days</span>
 			</div>
 
 			<div className="mt-5 overflow-x-auto">
-				<table className="min-w-full divide-y divide-slate-100 text-left text-sm">
+				<table className="min-w-full divide-y divide-border text-left text-sm">
 					<thead>
-						<tr className="text-xs uppercase tracking-wide text-slate-400">
+						<tr className="text-xs uppercase tracking-wide text-text-secondary">
 							<th className="py-3 pr-4 font-medium">Title</th>
 							<th className="py-3 pr-4 font-medium">Repo</th>
 							<th className="py-3 pr-4 font-medium">Author</th>
@@ -388,29 +388,29 @@ function RecentPullRequestsCard({ pullRequests, repoName }: { pullRequests: Repo
 							<th className="py-3 pr-4 font-medium text-right">Reviewers</th>
 						</tr>
 					</thead>
-					<tbody className="divide-y divide-slate-100 text-slate-600">
+					<tbody className="divide-y divide-border text-text-secondary">
 						{pullRequests.length === 0 ? (
 							<tr>
-								<td className="py-5 text-sm text-slate-500" colSpan={6}>
+								<td className="py-5 text-sm text-text-secondary" colSpan={6}>
 									No pull requests recorded yet.
 								</td>
 							</tr>
 						) : (
 							pullRequests.map((pr) => (
-								<tr key={pr.id} className="transition hover:bg-slate-50/80">
-									<td className="py-4 pr-4 text-sm font-medium text-slate-900">
+								<tr key={pr.id} className="transition hover:bg-surface">
+									<td className="py-4 pr-4 text-sm font-medium text-text-primary">
 										{pr.title}
-										{pr.number ? <span className="ml-2 text-xs text-slate-400">#{pr.number}</span> : null}
+										{pr.number ? <span className="ml-2 text-xs text-text-secondary">#{pr.number}</span> : null}
 									</td>
-									<td className="py-4 pr-4 text-sm text-slate-500">{repoName}</td>
-									<td className="py-4 pr-4 text-sm text-slate-500">{pr.authorName}</td>
+									<td className="py-4 pr-4 text-sm text-text-secondary">{repoName}</td>
+									<td className="py-4 pr-4 text-sm text-text-secondary">{pr.authorName}</td>
 									<td className="py-4 pr-4 text-sm">
 										<RiskBadge value={pr.risk} />
 									</td>
 									<td className="py-4 pr-4 text-sm">
 										<StatusBadge state={pr.state} />
 									</td>
-									<td className="py-4 text-right text-sm text-slate-500">{formatNumber(pr.reviewers)}</td>
+									<td className="py-4 text-right text-sm text-text-secondary">{formatNumber(pr.reviewers)}</td>
 								</tr>
 							))
 						)}
@@ -425,18 +425,18 @@ function RepoActions({ repo }: { repo: RepoInfo }) {
 	return (
 		<div className="space-y-4">
 			<Link
-				className="flex items-center justify-center gap-2 rounded-3xl bg-indigo-600 px-6 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+				className="flex items-center justify-center gap-2 rounded-3xl bg-brand px-6 py-4 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90"
 				href={repo.url || "#"}
 				target={repo.url ? "_blank" : undefined}
 			>
 				View on GitHub <ArrowUpRight className="h-4 w-4" />
 			</Link>
-			<Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-				<h3 className="text-base font-semibold text-slate-900">Repository Settings</h3>
-				<p className="mt-2 text-sm text-slate-500">
+			<Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
+				<h3 className="text-base font-semibold text-text-primary">Repository Settings</h3>
+				<p className="mt-2 text-sm text-text-secondary">
 					Manage branch protections, alerts, and notification settings tailored to this repository.
 				</p>
-				<button className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+				<button className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-brand hover:text-brand/80">
 					<Settings2 className="h-4 w-4" /> Manage
 				</button>
 			</Card>
@@ -480,10 +480,10 @@ function RiskBadge({ value }: { value: number }) {
 	const severity = value >= 70 ? "high" : value >= 30 ? "medium" : "low";
 	const className =
 		severity === "high"
-			? "bg-rose-100 text-rose-600"
+			? "bg-rose-100 dark:bg-rose-900/30 text-rose-600 dark:text-rose-400"
 			: severity === "medium"
-			? "bg-amber-100 text-amber-600"
-			: "bg-emerald-100 text-emerald-600";
+				? "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"
+				: "bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400";
 
 	return (
 		<span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${className}`}>
@@ -496,10 +496,10 @@ function StatusBadge({ state }: { state: string }) {
 	const normalized = state?.toLowerCase() ?? "open";
 	const config =
 		normalized === "merged"
-			? { label: "merged", className: "bg-violet-100 text-violet-700" }
+			? { label: "merged", className: "bg-violet-100 dark:bg-violet-900/30 text-violet-700 dark:text-violet-400" }
 			: normalized === "closed"
-			? { label: "closed", className: "bg-slate-100 text-slate-600" }
-			: { label: "review", className: "bg-amber-100 text-amber-700" };
+				? { label: "closed", className: "bg-surface text-text-secondary" }
+				: { label: "review", className: "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400" };
 
 	return <span className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${config.className}`}>{config.label}</span>;
 }
@@ -541,9 +541,9 @@ function formatDelta(change: number) {
 
 function deltaTextClass(change: number) {
 	if (!Number.isFinite(change) || change === 0) {
-		return "text-slate-500";
+		return "text-text-secondary";
 	}
-	return change > 0 ? "text-emerald-600" : "text-rose-600";
+	return change > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
 }
 
 function capitalize(value: string) {

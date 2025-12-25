@@ -41,11 +41,11 @@ type OrgInfo = {
 const getRoleIcon = (role: string) => {
   switch (role) {
     case "ADMIN":
-      return <Shield className="h-4 w-4 text-indigo-600" />;
+      return <Shield className="h-4 w-4 text-brand" />;
     case "MEMBER":
-      return <Code className="h-4 w-4 text-slate-600" />;
+      return <Code className="h-4 w-4 text-text-secondary" />;
     case "VIEWER":
-      return <Eye className="h-4 w-4 text-slate-400" />;
+      return <Eye className="h-4 w-4 text-text-secondary" />;
     default:
       return null;
   }
@@ -67,13 +67,13 @@ const getRoleLabel = (role: string) => {
 const getRoleBadgeColor = (role: string) => {
   switch (role) {
     case "ADMIN":
-      return "bg-indigo-100 text-indigo-700 border-indigo-200";
+      return "bg-indigo-100 dark:bg-brand/20 text-brand border-brand/20";
     case "MEMBER":
-      return "bg-slate-100 text-slate-700 border-slate-200";
+      return "bg-surface text-text-secondary border-border";
     case "VIEWER":
-      return "bg-slate-50 text-slate-500 border-slate-100";
+      return "bg-surface/50 text-text-secondary border-border";
     default:
-      return "bg-slate-100 text-slate-700 border-slate-200";
+      return "bg-surface text-text-secondary border-border";
   }
 };
 
@@ -187,8 +187,8 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       <div className="space-y-6">
         <header className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="text-3xl font-semibold text-slate-900">Team Members</h1>
-            <p className="mt-1 text-sm text-slate-500">{orgInfo?.orgName}</p>
+            <h1 className="text-3xl font-semibold text-text-primary">Team Members</h1>
+            <p className="mt-1 text-sm text-text-secondary">{orgInfo?.orgName}</p>
           </div>
           {isAdmin && (
             <Button onClick={() => setShowInviteForm(!showInviteForm)}>
@@ -203,13 +203,13 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
             <h2 className="text-lg font-semibold mb-4">Invite New Member</h2>
             <div className="flex flex-col sm:flex-row gap-4">
               <input
-                className="flex-1 border rounded-xl px-4 py-2"
+                className="flex-1 border border-border bg-background text-text-primary rounded-xl px-4 py-2 focus:border-brand focus:outline-none"
                 placeholder="email@example.com"
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
               />
               <select
-                className="border rounded-xl px-4 py-2"
+                className="border border-border bg-background text-text-primary rounded-xl px-4 py-2 focus:border-brand focus:outline-none"
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value as any)}
               >
@@ -227,9 +227,9 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
         )}
 
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-text-secondary" />
           <input
-            className="w-full pl-10 pr-4 py-2 border rounded-xl bg-white"
+            className="w-full pl-10 pr-4 py-2 border border-border rounded-xl bg-background text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
             placeholder="Search members..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
@@ -240,7 +240,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
           {filteredMembers.map((member) => (
             <Card key={member.userId} className="p-4 group">
               <div className="flex items-center gap-4">
-                <div className="h-12 w-12 rounded-full overflow-hidden bg-slate-200">
+                <div className="h-12 w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
                   {member.user?.avatarUrl ? (
                     <Image src={member.user.avatarUrl} alt="" width={48} height={48} />
                   ) : (
@@ -250,15 +250,15 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold truncate">{member.user?.name}</p>
-                  <p className="text-xs text-slate-500 truncate">{member.user?.email}</p>
-                  <div className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold ${getRoleBadgeColor(member.role)}`}>
+                  <p className="font-bold truncate text-text-primary">{member.user?.name}</p>
+                  <p className="text-xs text-text-secondary truncate">{member.user?.email}</p>
+                  <div className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${getRoleBadgeColor(member.role)}`}>
                     {getRoleIcon(member.role)}
                     {getRoleLabel(member.role)}
                   </div>
                 </div>
                 {isAdmin && member.userId !== user?._id && (
-                  <button onClick={() => handleRemoveMember(member.userId)} className="text-slate-300 hover:text-red-500">
+                  <button onClick={() => handleRemoveMember(member.userId)} className="text-text-secondary hover:text-red-500">
                     <X className="h-4 w-4" />
                   </button>
                 )}

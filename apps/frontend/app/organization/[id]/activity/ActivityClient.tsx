@@ -129,40 +129,40 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
     return (
         <div className="space-y-6">
             <header className="space-y-2">
-                <h1 className="text-3xl font-semibold text-slate-900">Activity</h1>
-                <p className="text-sm text-slate-500">
+                <h1 className="text-3xl font-semibold text-text-primary">Activity</h1>
+                <p className="text-sm text-text-secondary">
                     Recent commits and pull requests for this organization.
                 </p>
             </header>
 
             {loading ? (
-                <Card className="rounded-2xl border-0 bg-white p-6 text-sm text-slate-500 shadow-md">
+                <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
                     Loading activity…
                 </Card>
             ) : recentEvents.length === 0 ? (
-                <Card className="rounded-2xl border-0 bg-white p-6 text-sm text-slate-500 shadow-md">
+                <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
                     No activity recorded yet for this organization.
                 </Card>
             ) : (
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-                    <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                        <h2 className="text-lg font-semibold text-slate-900">Recent Activity</h2>
-                        <p className="text-sm text-slate-500 mb-6">Latest updates from your team</p>
+                    <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                        <h2 className="text-lg font-semibold text-text-primary">Recent Activity</h2>
+                        <p className="text-sm text-text-secondary mb-6">Latest updates from your team</p>
 
                         <div className="space-y-4">
                             {recentEvents.map((event) => {
                                 const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl";
                                 const baseIconStyles =
                                     event.kind === "commit"
-                                        ? "bg-indigo-50 text-indigo-600"
+                                        ? "bg-indigo-50 dark:bg-brand/20 text-brand"
                                         : event.kind === "review"
-                                            ? "bg-emerald-50 text-emerald-600"
-                                            : "bg-amber-50 text-amber-600";
+                                            ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
+                                            : "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400";
 
                                 return (
                                     <div
                                         key={event.id}
-                                        className="flex flex-col gap-3 rounded-2xl border border-slate-100 p-4 sm:flex-row sm:items-center sm:gap-4"
+                                        className="flex flex-col gap-3 rounded-2xl border border-border p-4 sm:flex-row sm:items-center sm:gap-4"
                                     >
                                         <span className={`${iconClasses} ${baseIconStyles}`}>
                                             {event.kind === "commit" && <GitCommit className="h-5 w-5" />}
@@ -172,10 +172,10 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
 
                                         <div className="flex-1 space-y-1">
                                             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                                                <div className="text-sm font-semibold text-slate-900">{event.title}</div>
-                                                <div className="text-xs text-slate-500">{formatTimeAgo(event.timestamp)}</div>
+                                                <div className="text-sm font-semibold text-text-primary">{event.title}</div>
+                                                <div className="text-xs text-text-secondary">{formatTimeAgo(event.timestamp)}</div>
                                             </div>
-                                            <p className="text-xs uppercase tracking-wide text-slate-400">{event.subtitle}</p>
+                                            <p className="text-xs uppercase tracking-wide text-text-secondary">{event.subtitle}</p>
                                             <Badge type={event.kind === "review" ? "success" : event.kind === "commit" ? "info" : "warning"}>
                                                 {event.tag}
                                             </Badge>
@@ -187,24 +187,24 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                     </Card>
 
                     <div className="space-y-6">
-                        <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <h2 className="text-lg font-semibold text-slate-900">Weekly Summary</h2>
-                            <p className="text-sm text-slate-500 mb-6">Snapshot of the last 30 days</p>
+                        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                            <h2 className="text-lg font-semibold text-text-primary">Weekly Summary</h2>
+                            <p className="text-sm text-text-secondary mb-6">Snapshot of the last 30 days</p>
 
                             <div className="space-y-5">
                                 <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Commits</p>
-                                    <p className="text-3xl font-semibold text-slate-900">{summary.commits}</p>
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
+                                    <p className="text-3xl font-semibold text-text-primary">{summary.commits}</p>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">PRs opened</p>
-                                    <p className="text-3xl font-semibold text-slate-900">{summary.prsOpened}</p>
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs opened</p>
+                                    <p className="text-3xl font-semibold text-text-primary">{summary.prsOpened}</p>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Reviews/Merged</p>
-                                    <p className="text-3xl font-semibold text-slate-900">{summary.reviews}</p>
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Reviews/Merged</p>
+                                    <p className="text-3xl font-semibold text-text-primary">{summary.reviews}</p>
                                 </div>
                             </div>
                         </Card>

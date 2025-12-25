@@ -150,43 +150,43 @@ export default function ActivityPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <header className="space-y-2">
-          <h1 className="text-3xl font-semibold text-slate-900">Activity</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-3xl font-semibold text-text-primary">Activity</h1>
+          <p className="text-sm text-text-secondary">
             Recent commits, pull requests, and reviews.
           </p>
         </header>
 
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
           <div className="relative w-full sm:max-w-md">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             <input
               type="search"
               placeholder="Search activity..."
-              className="h-11 w-full rounded-full border border-slate-200 bg-white pl-10 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+              className="h-11 w-full rounded-full border border-border bg-background pl-10 pr-4 text-sm text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
               disabled
             />
           </div>
         </div>
 
         {loading ? (
-          <Card className="rounded-2xl border-0 bg-white p-6 text-sm text-slate-500 shadow-md">
+          <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
             Loading activity…
           </Card>
         ) : recentEvents.length === 0 ? (
-          <Card className="rounded-2xl border-0 bg-white p-6 text-sm text-slate-500 shadow-md">
+          <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
             No activity recorded yet. Once commits or pull requests are created they will appear here.
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-            <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+            <Card className="rounded-2xl border-0 bg-background p-6 shadow-md">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900">Recent Activity</h2>
-                  <p className="text-sm text-slate-500">Latest updates from your team</p>
+                  <h2 className="text-lg font-semibold text-text-primary">Recent Activity</h2>
+                  <p className="text-sm text-text-secondary">Latest updates from your team</p>
                 </div>
                 <button
                   type="button"
-                  className="text-sm font-semibold text-indigo-600 hover:text-indigo-700"
+                  className="text-sm font-semibold text-brand hover:text-brand/80"
                   disabled
                 >
                   View timeline
@@ -198,15 +198,15 @@ export default function ActivityPage() {
                   const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl";
                   const baseIconStyles =
                     event.kind === "commit"
-                      ? "bg-indigo-50 text-indigo-600"
+                      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
                       : event.kind === "review"
-                        ? "bg-emerald-50 text-emerald-600"
-                        : "bg-amber-50 text-amber-600";
+                        ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
+                        : "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400";
 
                   return (
                     <div
                       key={event.id}
-                      className="flex flex-col gap-3 rounded-2xl border border-slate-100 p-4 sm:flex-row sm:items-center sm:gap-4"
+                      className="flex flex-col gap-3 rounded-2xl border border-border p-4 sm:flex-row sm:items-center sm:gap-4 transition hover:bg-surface"
                     >
                       <span className={`${iconClasses} ${baseIconStyles}`}>
                         {event.kind === "commit" && <GitCommit className="h-5 w-5" />}
@@ -216,10 +216,10 @@ export default function ActivityPage() {
 
                       <div className="flex-1 space-y-1">
                         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                          <div className="text-sm font-semibold text-slate-900">{event.title}</div>
-                          <div className="text-xs text-slate-500">{formatTimeAgo(event.timestamp)}</div>
+                          <div className="text-sm font-semibold text-text-primary">{event.title}</div>
+                          <div className="text-xs text-text-secondary">{formatTimeAgo(event.timestamp)}</div>
                         </div>
-                        <p className="text-xs uppercase tracking-wide text-slate-400">{event.subtitle}</p>
+                        <p className="text-xs uppercase tracking-wide text-text-secondary">{event.subtitle}</p>
                         <Badge type={event.kind === "review" ? "success" : event.kind === "commit" ? "info" : "warning"}>
                           {event.tag}
                         </Badge>
@@ -230,29 +230,29 @@ export default function ActivityPage() {
               </div>
             </Card>
 
-            <Card className="rounded-2xl border-0 bg-white p-6 shadow-md">
+            <Card className="rounded-2xl border-0 bg-background p-6 shadow-md">
               <div>
-                <h2 className="text-lg font-semibold text-slate-900">Weekly Summary</h2>
-                <p className="text-sm text-slate-500">Snapshot of the last 7 days</p>
+                <h2 className="text-lg font-semibold text-text-primary">Weekly Summary</h2>
+                <p className="text-sm text-text-secondary">Snapshot of the last 7 days</p>
               </div>
 
               <div className="mt-6 space-y-5">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Commits</p>
-                  <p className="text-3xl font-semibold text-slate-900">{summary.commits}</p>
-                  <p className="text-xs text-slate-500">Total pushes captured</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
+                  <p className="text-3xl font-semibold text-text-primary">{summary.commits}</p>
+                  <p className="text-xs text-text-secondary">Total pushes captured</p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">PRs opened</p>
-                  <p className="text-3xl font-semibold text-slate-900">{summary.prsOpened}</p>
-                  <p className="text-xs text-slate-500">Awaiting review or merge</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs opened</p>
+                  <p className="text-3xl font-semibold text-text-primary">{summary.prsOpened}</p>
+                  <p className="text-xs text-text-secondary">Awaiting review or merge</p>
                 </div>
 
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400">Reviews</p>
-                  <p className="text-3xl font-semibold text-slate-900">{summary.reviews}</p>
-                  <p className="text-xs text-slate-500">Feedback cycles completed</p>
+                  <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Reviews</p>
+                  <p className="text-3xl font-semibold text-text-primary">{summary.reviews}</p>
+                  <p className="text-xs text-text-secondary">Feedback cycles completed</p>
                 </div>
               </div>
             </Card>

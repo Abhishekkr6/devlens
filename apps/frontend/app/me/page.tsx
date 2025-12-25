@@ -21,13 +21,13 @@ export default function MePage() {
   const getRoleIcon = (role: string) => {
     switch (role) {
       case "ADMIN":
-        return <Shield className="h-4 w-4 text-indigo-600" />;
+        return <Shield className="h-4 w-4 text-brand" />;
       case "MEMBER":
-        return <Code className="h-4 w-4 text-slate-600" />;
+        return <Code className="h-4 w-4 text-text-secondary" />;
       case "VIEWER":
-        return <Eye className="h-4 w-4 text-slate-400" />;
+        return <Eye className="h-4 w-4 text-text-secondary" />;
       default:
-        return <Globe className="h-4 w-4 text-slate-400" />;
+        return <Globe className="h-4 w-4 text-text-secondary" />;
     }
   };
 
@@ -47,14 +47,14 @@ export default function MePage() {
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-200 pb-6">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-border pb-6">
           <div className="space-y-1">
-            <h1 className="text-4xl font-semibold text-slate-900">Account Settings</h1>
-            <p className="text-base text-slate-500">Manage your profile and organization access</p>
+            <h1 className="text-4xl font-semibold text-text-primary">Account Settings</h1>
+            <p className="text-base text-text-secondary">Manage your profile and organization access</p>
           </div>
           <button
             onClick={() => useUserStore.getState().logout()}
-            className="flex items-center justify-center gap-2 rounded-xl bg-rose-50 px-6 py-2.5 text-sm font-semibold text-rose-600 border border-rose-100 transition-all hover:bg-rose-100 hover:shadow-sm active:scale-95"
+            className="flex items-center justify-center gap-2 rounded-xl bg-rose-50 dark:bg-rose-900/30 px-6 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50 transition-all hover:bg-rose-100 dark:hover:bg-rose-900/40 hover:shadow-sm active:scale-95"
           >
             Log Out
           </button>
@@ -63,25 +63,25 @@ export default function MePage() {
         {loading ? (
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
             {[1, 2, 3].map((i) => (
-              <Card key={i} className="animate-pulse h-48 bg-slate-50 border-dashed" />
+              <Card key={i} className="animate-pulse h-48 bg-surface border-dashed border-border" />
             ))}
           </div>
         ) : !user ? (
-          <Card className="border-rose-100 bg-rose-50/30">
+          <Card className="border-rose-100 dark:border-rose-900/30 bg-rose-50/30 dark:bg-rose-900/10">
             <CardBody className="flex flex-col items-center justify-center py-12 text-center">
-              <div className="h-12 w-12 rounded-full bg-rose-100 flex items-center justify-center mb-4">
-                <User className="h-6 w-6 text-rose-600" />
+              <div className="h-12 w-12 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center mb-4">
+                <User className="h-6 w-6 text-rose-600 dark:text-rose-400" />
               </div>
-              <h2 className="text-lg font-semibold text-slate-900">Not Authenticated</h2>
-              <p className="text-sm text-slate-500 mt-1">Please log in to view your account details.</p>
+              <h2 className="text-lg font-semibold text-text-primary">Not Authenticated</h2>
+              <p className="text-sm text-text-secondary mt-1">Please log in to view your account details.</p>
             </CardBody>
           </Card>
         ) : (
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             {/* Profile Card */}
             <div className="lg:col-span-1 space-y-6">
-              <Card className="overflow-hidden">
-                <div className="h-24 bg-linear-to-br from-indigo-600 to-indigo-400" />
+              <Card className="overflow-hidden border border-border bg-background">
+                <div className="h-24 bg-linear-to-br from-brand to-brand/60" />
                 <CardBody className="relative pt-0">
                   <div className="flex flex-col items-center -translate-y-12">
                     <div className="relative inline-block">
@@ -90,33 +90,33 @@ export default function MePage() {
                         alt={user.name || "User"}
                         width={96}
                         height={96}
-                        className="h-24 w-24 rounded-2xl border-4 border-white bg-white shadow-md object-cover"
+                        className="h-24 w-24 rounded-2xl border-4 border-background bg-background shadow-md object-cover"
                       />
-                      <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-white" />
+                      <div className="absolute -bottom-1 -right-1 h-5 w-5 rounded-full bg-emerald-500 border-2 border-background" />
                     </div>
                     <div className="mt-4 text-center">
-                      <h2 className="text-xl font-bold text-slate-900">{user.name || "Anonymous User"}</h2>
-                      <p className="text-sm text-slate-500 font-medium">@{user.login || "user"}</p>
+                      <h2 className="text-xl font-bold text-text-primary">{user.name || "Anonymous User"}</h2>
+                      <p className="text-sm text-text-secondary font-medium">@{user.login || "user"}</p>
                     </div>
                   </div>
 
-                  <div className="space-y-4 border-t border-slate-100 pt-2">
+                  <div className="space-y-4 border-t border-border pt-2">
                     <div className="flex items-center gap-3 text-sm">
-                      <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center">
-                        <Mail className="h-4 w-4 text-slate-400" />
+                      <div className="h-8 w-8 rounded-lg bg-surface flex items-center justify-center">
+                        <Mail className="h-4 w-4 text-text-secondary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Email Address</p>
-                        <p className="text-slate-700 truncate">{user.email || "No email provided"}</p>
+                        <p className="text-xs text-text-secondary font-medium uppercase tracking-wider">Email Address</p>
+                        <p className="text-text-primary truncate">{user.email || "No email provided"}</p>
                       </div>
                     </div>
                     <div className="flex items-center gap-3 text-sm">
-                      <div className="h-8 w-8 rounded-lg bg-slate-50 flex items-center justify-center">
-                        <User className="h-4 w-4 text-slate-400" />
+                      <div className="h-8 w-8 rounded-lg bg-surface flex items-center justify-center">
+                        <User className="h-4 w-4 text-text-secondary" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs text-slate-400 font-medium uppercase tracking-wider">Account ID</p>
-                        <p className="text-slate-700 truncate font-mono text-xs">{user.id || user._id || "N/A"}</p>
+                        <p className="text-xs text-text-secondary font-medium uppercase tracking-wider">Account ID</p>
+                        <p className="text-text-primary truncate font-mono text-xs">{user.id || user._id || "N/A"}</p>
                       </div>
                     </div>
                   </div>
@@ -126,31 +126,31 @@ export default function MePage() {
 
             {/* Organizations Card */}
             <div className="lg:col-span-2 space-y-6">
-              <Card>
+              <Card className="border border-border bg-background">
                 <CardHeader className="flex items-center justify-between py-4">
-                  <CardTitle className="text-lg">Your Organizations</CardTitle>
-                  <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-bold text-indigo-700">
+                  <CardTitle className="text-lg text-text-primary">Your Organizations</CardTitle>
+                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-bold text-indigo-700 dark:text-indigo-400">
                     {user.orgIds?.length || 0} Total
                   </span>
                 </CardHeader>
                 <CardBody className="p-0">
                   {user.orgIds && user.orgIds.length > 0 ? (
-                    <div className="divide-y divide-slate-100">
+                    <div className="divide-y divide-border">
                       {user.orgIds.map((org: any) => (
-                        <div key={org.id || org._id} className="flex items-center justify-between p-4 hover:bg-slate-50/50 transition-colors">
+                        <div key={org.id || org._id} className="flex items-center justify-between p-4 hover:bg-surface transition-colors">
                           <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-sm">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white shadow-sm">
                               {org.name?.[0]?.toUpperCase() || "O"}
                             </div>
                             <div>
-                              <p className="font-semibold text-slate-900">{org.name}</p>
-                              <p className="text-xs text-slate-500 font-medium uppercase tracking-tight">ID: {org.id || org._id}</p>
+                              <p className="font-semibold text-text-primary">{org.name}</p>
+                              <p className="text-xs text-text-secondary font-medium uppercase tracking-tight">ID: {org.id || org._id}</p>
                             </div>
                           </div>
                           <div className="flex flex-col items-end gap-1.5">
-                            <div className="flex items-center gap-1.5 rounded-full bg-slate-100 px-3 py-1">
+                            <div className="flex items-center gap-1.5 rounded-full bg-surface px-3 py-1">
                               {getRoleIcon(org.role)}
-                              <span className="text-xs font-bold text-slate-700">
+                              <span className="text-xs font-bold text-text-secondary">
                                 {getRoleLabel(org.role)}
                               </span>
                             </div>
@@ -159,15 +159,15 @@ export default function MePage() {
                       ))}
                     </div>
                   ) : (
-                    <div className="flex flex-col items-center justify-center py-12 text-center text-slate-500">
-                      < Globe className="h-10 w-10 text-slate-200 mb-2" />
+                    <div className="flex flex-col items-center justify-center py-12 text-center text-text-secondary">
+                      < Globe className="h-10 w-10 text-text-secondary mb-2" />
                       <p className="text-sm">No organizations linked to this account.</p>
                     </div>
                   )}
                 </CardBody>
               </Card>
 
-              <Card className="bg-indigo-600 border-none text-white overflow-hidden relative">
+              <Card className="bg-brand border-none text-white overflow-hidden relative">
                 <CardBody className="py-8 px-8 relative z-10">
                   <h3 className="text-xl font-bold mb-2">Need a new organization?</h3>
                   <p className="text-indigo-100 text-sm mb-6 max-w-md">
@@ -175,7 +175,7 @@ export default function MePage() {
                   </p>
                   <a
                     href="/organization"
-                    className="inline-flex items-center justify-center rounded-xl bg-white px-6 py-2.5 text-sm font-bold text-indigo-600 transition-all hover:bg-slate-50 hover:shadow-lg active:scale-95"
+                    className="inline-flex items-center justify-center rounded-xl bg-white text-brand px-6 py-2.5 text-sm font-bold transition-all hover:bg-surface hover:shadow-lg active:scale-95"
                   >
                     Manage Organizations
                   </a>

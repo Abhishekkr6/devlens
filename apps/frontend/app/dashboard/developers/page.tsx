@@ -137,7 +137,7 @@ export default function DevelopersPage() {
   }, [developers, searchTerm, activityFilter, roleFilter]);
 
   const emptyState = (
-    <Card className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500 shadow-none">
+    <Card className="rounded-2xl border border-dashed border-border bg-surface p-6 text-sm text-text-secondary shadow-none">
       No developers found. Adjust your filters or try a different search.
     </Card>
   );
@@ -146,16 +146,16 @@ export default function DevelopersPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <header className="flex flex-col gap-2">
-          <h1 className="text-4xl font-semibold text-slate-900">Developers</h1>
-          <p className="text-base text-slate-500">Team member activity and performance metrics</p>
+          <h1 className="text-4xl font-semibold text-text-primary">Developers</h1>
+          <p className="text-base text-text-secondary">Team member activity and performance metrics</p>
         </header>
 
         <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
           <div className="relative w-full max-w-xl">
-            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             <input
               aria-label="Search developers"
-              className="h-12 w-full rounded-2xl border border-slate-200 bg-white pl-11 pr-4 text-sm text-slate-700 placeholder:text-slate-400 focus:border-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-100"
+              className="h-12 w-full rounded-2xl border border-border bg-background pl-11 pr-4 text-sm text-text-secondary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
               onChange={(event) => setSearchTerm(event.target.value)}
               placeholder="Search..."
               type="search"
@@ -169,7 +169,7 @@ export default function DevelopersPage() {
                 Filter by activity level
               </label>
               <select
-                className="h-11 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 pr-10 text-sm font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                 id="developer-activity-filter"
                 onChange={(event) => setActivityFilter(event.target.value)}
                 value={activityFilter}
@@ -181,7 +181,7 @@ export default function DevelopersPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             </div>
 
             <div className="relative w-full sm:w-44">
@@ -189,7 +189,7 @@ export default function DevelopersPage() {
                 Filter by role
               </label>
               <select
-                className="h-11 w-full appearance-none rounded-full border border-slate-200 bg-white px-4 pr-10 text-sm font-semibold text-slate-700 outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                 id="developer-role-filter"
                 onChange={(event) => setRoleFilter(event.target.value)}
                 value={roleFilter}
@@ -201,7 +201,7 @@ export default function DevelopersPage() {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+              <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
             </div>
           </div>
         </div>
@@ -211,26 +211,26 @@ export default function DevelopersPage() {
             {Array.from({ length: 4 }).map((_, index) => (
               <Card
                 key={index}
-                className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm"
+                className="rounded-2xl border border-border bg-background p-5 shadow-sm"
               >
                 <div className="flex animate-pulse flex-col gap-4">
                   <div className="flex items-center gap-3">
-                    <div className="h-12 w-12 rounded-full bg-slate-200" />
+                    <div className="h-12 w-12 rounded-full bg-slate-200 dark:bg-slate-700" />
                     <div className="flex-1 space-y-2">
-                      <div className="h-3 w-2/3 rounded bg-slate-200" />
-                      <div className="h-3 w-1/3 rounded bg-slate-100" />
+                      <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700" />
+                      <div className="h-3 w-1/3 rounded bg-slate-100 dark:bg-slate-800" />
                     </div>
                   </div>
                   <div className="space-y-2">
-                    <div className="h-3 w-full rounded bg-slate-100" />
-                    <div className="h-2 w-3/4 rounded bg-slate-200" />
+                    <div className="h-3 w-full rounded bg-slate-100 dark:bg-slate-800" />
+                    <div className="h-2 w-3/4 rounded bg-slate-200 dark:bg-slate-700" />
                   </div>
                   <div className="grid grid-cols-3 gap-2">
                     {Array.from({ length: 3 }).map((__, idx) => (
-                      <div key={idx} className="space-y-2 rounded-lg bg-slate-50 p-3">
-                        <div className="h-3 w-6 rounded bg-slate-200" />
-                        <div className="h-4 w-1/2 rounded bg-slate-200" />
-                        <div className="h-2 w-3/4 rounded bg-slate-100" />
+                      <div key={idx} className="space-y-2 rounded-lg bg-surface p-3">
+                        <div className="h-3 w-6 rounded bg-slate-200 dark:bg-slate-700" />
+                        <div className="h-4 w-1/2 rounded bg-slate-200 dark:bg-slate-700" />
+                        <div className="h-2 w-3/4 rounded bg-slate-100 dark:bg-slate-800" />
                       </div>
                     ))}
                   </div>
@@ -259,7 +259,7 @@ function DeveloperCard({ developer }: { developer: Developer }) {
 
   return (
     <Link href={`/dashboard/developers/${developer.githubId}`} className="block" prefetch={false}>
-      <Card className="group h-full rounded-2xl border border-slate-200 bg-white p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+      <Card className="group h-full rounded-2xl border border-border bg-background p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
         <div className="flex items-start justify-between">
           <div className="flex flex-1 items-center gap-3">
             <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-indigo-500 to-indigo-400 text-white">
@@ -278,24 +278,24 @@ function DeveloperCard({ developer }: { developer: Developer }) {
               )}
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold text-slate-900">{developer.name}</p>
-              <p className="truncate text-xs text-slate-500">{formatRole(developer.role)}</p>
+              <p className="truncate text-sm font-semibold text-text-primary">{developer.name}</p>
+              <p className="truncate text-xs text-text-secondary">{formatRole(developer.role)}</p>
             </div>
           </div>
-          <TrendingUp className="h-4 w-4 text-slate-300 transition group-hover:text-indigo-400" />
+          <TrendingUp className="h-4 w-4 text-text-secondary transition group-hover:text-brand" />
         </div>
 
-        <div className="mt-4 rounded-xl bg-slate-50 p-3">
-          <div className="flex items-center justify-between text-xs font-medium text-slate-500">
+        <div className="mt-4 rounded-xl bg-surface p-3">
+          <div className="flex items-center justify-between text-xs font-medium text-text-secondary">
             <span>Weekly Activity</span>
             <span className={`${activityColor} text-sm font-semibold`}>
               {developer.weeklyActivity}%
             </span>
           </div>
-          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200">
+          <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
             <div className={`${progressColor} h-full transition-all`} style={{ width: `${developer.weeklyActivity}%` }} />
           </div>
-          <p className="mt-2 text-xs font-medium text-slate-500">{levelLabel}</p>
+          <p className="mt-2 text-xs font-medium text-text-secondary">{levelLabel}</p>
         </div>
 
         <div className="mt-4 grid grid-cols-3 gap-2">
@@ -320,12 +320,12 @@ function StatBlock({
   const displayValue = Number.isFinite(value as number) ? (value as number) : 0;
 
   return (
-    <div className="rounded-xl bg-slate-50 p-3 text-center transition group-hover:bg-slate-100">
+    <div className="rounded-xl bg-surface p-3 text-center transition group-hover:bg-surface-200">
       <div className="flex items-center justify-center">
-        <Icon className="h-4 w-4 text-slate-400" />
+        <Icon className="h-4 w-4 text-text-secondary" />
       </div>
-      <p className="mt-2 text-lg font-semibold text-slate-900">{displayValue.toLocaleString()}</p>
-      <p className="text-xs text-slate-500">{label}</p>
+      <p className="mt-2 text-lg font-semibold text-text-primary">{displayValue.toLocaleString()}</p>
+      <p className="text-xs text-text-secondary">{label}</p>
     </div>
   );
 }

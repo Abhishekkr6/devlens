@@ -3,6 +3,7 @@ import { fontHeading, fontBody } from "./fonts";
 import "./globals.css";
 import AutoCleanup from "../components/Auth/AutoCleanupScript";
 import SmoothScroll from "../components/SmoothScroll";
+import ThemeToggle from "../components/ThemeToggle";
 
 
 
@@ -11,16 +12,42 @@ export const metadata: Metadata = {
   description: "Real-time developer activity and insights",
 };
 
+const ThemeScript = () => (
+  <script
+    dangerouslySetInnerHTML={{
+      __html: `
+        (function() {
+          try {
+            var localTheme = localStorage.getItem('theme');
+            var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            if (localTheme === 'dark' || (!localTheme && supportDarkMode)) {
+              document.documentElement.setAttribute('data-theme', 'dark');
+            } else {
+              document.documentElement.setAttribute('data-theme', 'light');
+            }
+          } catch (e) {}
+        })();
+      `,
+    }}
+  />
+);
+
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body
-        className={`${fontHeading.variable} ${fontBody.variable} antialiased bg-slate-100 text-slate-900`}
+        className={`${fontHeading.variable} ${fontBody.variable} antialiased bg-background text-text-primary transition-colors duration-300`}
       >
+        <div className="fixed bottom-4 right-4 z-50">
+          <ThemeToggle />
+        </div>
         <AutoCleanup />
         <SmoothScroll />
         {children}

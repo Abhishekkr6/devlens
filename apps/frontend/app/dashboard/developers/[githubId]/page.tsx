@@ -204,7 +204,7 @@ export default function DeveloperDetailPage() {
   if (!githubId || (!profile && !stats.totalCommits && !stats.totalPRs && !stats.reviews)) {
     return (
       <DashboardLayout>
-        <Card className="rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600 shadow-none">
+        <Card className="rounded-2xl border border-dashed border-border bg-surface p-6 text-sm text-text-secondary shadow-none">
           {error ?? "We could not find this developer."}
         </Card>
       </DashboardLayout>
@@ -215,8 +215,8 @@ export default function DeveloperDetailPage() {
     <DashboardLayout>
       <div className="space-y-8">
         <section className="space-y-2">
-          <h1 className="text-4xl font-semibold text-slate-900">{displayName}</h1>
-          <p className="text-base text-slate-500">{roleLabel}</p>
+          <h1 className="text-4xl font-semibold text-text-primary">{displayName}</h1>
+          <p className="text-base text-text-secondary">{roleLabel}</p>
         </section>
 
         <HeroCard
@@ -264,10 +264,10 @@ function HeroCard({
   const statusLabel = weeklyActivity >= 60 ? "Active" : weeklyActivity >= 30 ? "Engaged" : "Warming up";
 
   return (
-    <div className="overflow-hidden rounded-3xl border border-transparent bg-linear-to-r from-indigo-50 via-slate-50 to-purple-50 p-6 shadow-sm">
+    <div className="overflow-hidden rounded-3xl border border-transparent bg-linear-to-r from-indigo-50 via-slate-50 to-purple-50 dark:from-indigo-950/20 dark:via-slate-900/40 dark:to-purple-950/20 p-6 shadow-sm">
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
         <div className="flex flex-1 gap-4">
-          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-indigo-200 text-slate-900 md:h-20 md:w-20">
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-full bg-indigo-200 dark:bg-indigo-900 text-slate-900 dark:text-indigo-100 md:h-20 md:w-20">
             {avatarUrl ? (
               <Image alt={displayName} className="h-full w-full object-cover" height={80} src={avatarUrl} width={80} />
             ) : (
@@ -278,31 +278,31 @@ function HeroCard({
           </div>
           <div className="space-y-3">
             <div>
-              <h2 className="text-2xl font-semibold text-slate-900 md:text-3xl">{displayName}</h2>
-              <p className="text-sm text-slate-500">{role}</p>
+              <h2 className="text-2xl font-semibold text-text-primary md:text-3xl">{displayName}</h2>
+              <p className="text-sm text-text-secondary">{role}</p>
             </div>
             <div className="flex flex-wrap gap-2 text-xs font-semibold">
-              <span className="inline-flex items-center rounded-full bg-indigo-100 px-3 py-1 text-indigo-700">
+              <span className="inline-flex items-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 px-3 py-1 text-indigo-700 dark:text-indigo-300">
                 {statusLabel}
               </span>
-              <span className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+              <span className="inline-flex items-center rounded-full bg-surface-200 px-3 py-1 text-text-secondary">
                 {role}
               </span>
               {email ? (
-                <span className="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                <span className="inline-flex items-center gap-1 rounded-full bg-surface-200 px-3 py-1 text-text-secondary">
                   <Mail className="h-3.5 w-3.5" />
                   {email}
                 </span>
               ) : null}
             </div>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-text-secondary">
               @{handle}
             </p>
           </div>
         </div>
-        <div className="flex flex-col items-start gap-1 rounded-2xl bg-white/70 px-6 py-4 text-right md:items-end">
-          <span className="text-sm font-medium text-slate-500">Weekly Activity</span>
-          <span className="text-4xl font-semibold text-indigo-600">{weeklyActivity}%</span>
+        <div className="flex flex-col items-start gap-1 rounded-2xl bg-white/70 dark:bg-slate-800/70 px-6 py-4 text-right md:items-end">
+          <span className="text-sm font-medium text-text-secondary">Weekly Activity</span>
+          <span className="text-4xl font-semibold text-indigo-600 dark:text-indigo-400">{weeklyActivity}%</span>
         </div>
       </div>
     </div>
@@ -350,8 +350,8 @@ function PerformanceMetrics({ stats }: { stats: DeveloperStats }) {
   ];
 
   return (
-    <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-900">Performance Metrics</h3>
+    <Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-text-primary">Performance Metrics</h3>
       <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
         {metrics.map((metric) => (
           <MetricCard key={metric.key} metric={metric} />
@@ -379,15 +379,15 @@ function MetricCard({
   const trendClass = trendClassName(metric.trend);
 
   return (
-    <div className="flex h-full flex-col justify-between rounded-2xl border border-slate-100 bg-slate-50/60 p-5">
+    <div className="flex h-full flex-col justify-between rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-center gap-3">
-        <span className="rounded-full bg-white p-2 text-indigo-500 shadow-sm">
+        <span className="rounded-full bg-background p-2 text-brand shadow-sm">
           <Icon className="h-4 w-4" />
         </span>
-        <span className="text-sm font-medium text-slate-500">{metric.label}</span>
+        <span className="text-sm font-medium text-text-secondary">{metric.label}</span>
       </div>
       <div className="mt-4 space-y-1">
-        <div className="text-2xl font-semibold text-slate-900">{formattedValue}</div>
+        <div className="text-2xl font-semibold text-text-primary">{formattedValue}</div>
         <div className={`text-xs font-semibold ${trendClass}`}>{trendLabel}</div>
       </div>
     </div>
@@ -414,17 +414,17 @@ function QuickInfo({ handle, email, joinedDate }: { handle?: string; email?: str
   ];
 
   return (
-    <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-900">Quick Info</h3>
+    <Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-text-primary">Quick Info</h3>
       <div className="mt-4 space-y-4">
         {items.map((item) => (
           <div key={item.label} className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary">
               <item.icon className="h-4 w-4" />
             </span>
             <div>
-              <p className="text-xs uppercase tracking-wide text-slate-400">{item.label}</p>
-              <p className="text-sm font-medium text-slate-700">{item.value}</p>
+              <p className="text-xs uppercase tracking-wide text-text-secondary">{item.label}</p>
+              <p className="text-sm font-medium text-text-primary">{item.value}</p>
             </div>
           </div>
         ))}
@@ -436,26 +436,26 @@ function QuickInfo({ handle, email, joinedDate }: { handle?: string; email?: str
 function ActiveRepositories({ repos }: { repos: ActiveRepo[] }) {
   if (!repos.length) {
     return (
-      <Card className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+      <Card className="rounded-3xl border border-border bg-background p-6 text-sm text-text-secondary shadow-sm">
         No recent repository activity yet.
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Active Repositories</h3>
-        <span className="text-xs font-semibold text-slate-400">Last 90 days</span>
+        <h3 className="text-lg font-semibold text-text-primary">Active Repositories</h3>
+        <span className="text-xs font-semibold text-text-secondary">Last 90 days</span>
       </div>
       <div className="mt-4 space-y-3">
         {repos.map((repo) => (
-          <div key={repo.repoId ?? repo.name} className="flex items-center justify-between rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+          <div key={repo.repoId ?? repo.name} className="flex items-center justify-between rounded-2xl border border-border bg-surface px-4 py-3">
             <div className="flex flex-col">
-              <span className="text-sm font-semibold text-slate-800">{repo.name}</span>
-              <span className="text-xs text-slate-500">{formatNumber(repo.commits)} commits</span>
+              <span className="text-sm font-semibold text-text-primary">{repo.name}</span>
+              <span className="text-xs text-text-secondary">{formatNumber(repo.commits)} commits</span>
             </div>
-            <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-600">
+            <span className="rounded-full bg-rose-100 dark:bg-rose-900/30 px-3 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400">
               Contributor
             </span>
           </div>
@@ -470,12 +470,12 @@ function ActionButtons({ handle }: { handle?: string }) {
 
   return (
     <div className="space-y-3">
-      <button className="h-12 w-full rounded-full bg-indigo-600 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
+      <button className="h-12 w-full rounded-full bg-brand text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90">
         Send Message
       </button>
       <Link
         aria-disabled={!githubUrl}
-        className="flex h-12 w-full items-center justify-center rounded-full border border-slate-200 text-sm font-semibold text-slate-600 transition hover:bg-slate-50"
+        className="flex h-12 w-full items-center justify-center rounded-full border border-border text-sm font-semibold text-text-secondary transition hover:bg-surface"
         href={githubUrl ?? "#"}
         onClick={(event) => {
           if (!githubUrl) {
@@ -494,17 +494,17 @@ function ActionButtons({ handle }: { handle?: string }) {
 function ContributionActivity({ heatmap }: { heatmap: HeatmapWeek[] }) {
   if (!heatmap.length) {
     return (
-      <Card className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+      <Card className="rounded-3xl border border-border bg-background p-6 text-sm text-text-secondary shadow-sm">
         No contribution data for the past 26 weeks.
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+    <Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-900">Contribution Activity (26 weeks)</h3>
-        <span className="text-xs font-semibold text-slate-400">Weekly view</span>
+        <h3 className="text-lg font-semibold text-text-primary">Contribution Activity (26 weeks)</h3>
+        <span className="text-xs font-semibold text-text-secondary">Weekly view</span>
       </div>
       <div className="mt-4 overflow-x-auto">
         <div className="grid grid-flow-col auto-cols-max gap-1">
@@ -528,15 +528,15 @@ function ContributionActivity({ heatmap }: { heatmap: HeatmapWeek[] }) {
 function RecentActivity({ events, repoNameMap }: { events: ActivityEvent[]; repoNameMap: Map<string, string> }) {
   if (!events.length) {
     return (
-      <Card className="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-500 shadow-sm">
+      <Card className="rounded-3xl border border-border bg-background p-6 text-sm text-text-secondary shadow-sm">
         No recent activity recorded.
       </Card>
     );
   }
 
   return (
-    <Card className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-      <h3 className="text-lg font-semibold text-slate-900">Recent Activity</h3>
+    <Card className="rounded-3xl border border-border bg-background p-6 shadow-sm">
+      <h3 className="text-lg font-semibold text-text-primary">Recent Activity</h3>
       <div className="mt-4 space-y-4">
         {events.map((event) => (
           <ActivityItem key={event.id ?? `${event.type}-${event.timestamp}`} event={event} repoNameMap={repoNameMap} />
@@ -553,13 +553,13 @@ function ActivityItem({ event, repoNameMap }: { event: ActivityEvent; repoNameMa
 
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+      <span className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary">
         {icon === GitCommit ? <GitCommit className="h-4 w-4" /> : icon === GitPullRequest ? <GitPullRequest className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
       </span>
       <div className="flex-1 space-y-1">
-        <p className="text-sm font-semibold text-slate-800">{event.title}</p>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-          <span className="rounded-full bg-slate-100 px-2 py-0.5 font-medium text-slate-600">{repoName}</span>
+        <p className="text-sm font-semibold text-text-primary">{event.title}</p>
+        <div className="flex flex-wrap items-center gap-2 text-xs text-text-secondary">
+          <span className="rounded-full bg-surface px-2 py-0.5 font-medium text-text-secondary">{repoName}</span>
           <span>{timeAgo}</span>
         </div>
       </div>
@@ -604,11 +604,11 @@ function useContributionHeatmap(points: ContributionPoint[]): HeatmapWeek[] {
     const maxValue = days.reduce((max, day) => (day.value > max ? day.value : max), 0) || 1;
 
     const heatLevels = [
-      "bg-slate-100",
-      "bg-indigo-100",
-      "bg-indigo-200",
-      "bg-indigo-300",
-      "bg-indigo-500",
+      "bg-slate-100 dark:bg-slate-800",
+      "bg-indigo-100 dark:bg-indigo-900/50",
+      "bg-indigo-200 dark:bg-indigo-800",
+      "bg-indigo-300 dark:bg-indigo-600",
+      "bg-indigo-500 dark:bg-indigo-400",
     ];
 
     const buckets: HeatmapWeek[] = [];
@@ -648,8 +648,8 @@ function formatTrend(value: number | null) {
 }
 
 function trendClassName(value: number | null) {
-  if (value === null || !Number.isFinite(value)) return "text-slate-400";
-  return value >= 0 ? "text-emerald-600" : "text-rose-600";
+  if (value === null || !Number.isFinite(value)) return "text-text-secondary";
+  return value >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400";
 }
 
 function formatRelativeTime(timestamp?: string | Date) {

@@ -17,10 +17,10 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 flex flex-col">
-      <div className="px-4 py-4 border-b border-gray-100">
-        <h1 className="text-lg font-bold tracking-tight">TeamPulse</h1>
-        <p className="text-xs text-gray-500">Engineering insights</p>
+    <div className="w-64 bg-background border-r border-border flex flex-col">
+      <div className="px-4 py-4 border-b border-border">
+        <h1 className="text-lg font-bold tracking-tight text-text-primary">TeamPulse</h1>
+        <p className="text-xs text-text-secondary">Engineering insights</p>
       </div>
 
       <nav className="flex-1 px-2 py-4 space-y-1">
@@ -32,11 +32,10 @@ export default function Sidebar() {
             <Link
               key={l.href}
               href={l.href}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition ${
-                active
-                  ? "bg-indigo-50 text-indigo-700 font-medium"
-                  : "text-gray-700 hover:bg-gray-50"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition ${active
+                  ? "bg-indigo-50 dark:bg-brand/20 text-brand font-medium"
+                  : "text-text-secondary hover:bg-surface"
+                }`}
             >
               <Icon className="w-4 h-4" />
               <span>{l.name}</span>

@@ -92,13 +92,13 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
       <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-semibold text-slate-900">Connected repositories</h1>
-            <p className="mt-1 text-sm text-slate-500">Repositories linked to this organization.</p>
+            <h1 className="text-3xl font-semibold text-text-primary">Connected repositories</h1>
+            <p className="mt-1 text-sm text-text-secondary">Repositories linked to this organization.</p>
           </div>
           {isAdmin && (
             <button
               onClick={() => setShowForm(!showForm)}
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+              className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50"
             >
               {showForm ? "Cancel" : "Connect Repository"}
             </button>
@@ -106,24 +106,24 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
         </div>
 
         {showForm && (
-          <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
-            <h3 className="mb-4 text-lg font-medium text-slate-900">Connect a GitHub Repository</h3>
+          <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+            <h3 className="mb-4 text-lg font-medium text-text-primary">Connect a GitHub Repository</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-sm font-medium text-slate-700">Repository Full Name (owner/repo)</label>
+                <label className="text-sm font-medium text-text-secondary">Repository Full Name (owner/repo)</label>
                 <input
-                  className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-100"
+                  className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-sm placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                   placeholder="facebook/react"
                   value={connectParams.fullName}
                   onChange={(e) => setConnectParams({ ...connectParams, fullName: e.target.value })}
                 />
-                <p className="mt-1 text-xs text-slate-500">
+                <p className="mt-1 text-xs text-text-secondary">
                   Ensure the TeamPulse GitHub App is installed on this repository.
                 </p>
               </div>
 
               {connectError && (
-                <div className="rounded-lg bg-red-50 p-3 text-sm text-red-600">
+                <div className="rounded-lg bg-red-50 dark:bg-rose-900/30 p-3 text-sm text-red-600 dark:text-red-400">
                   {connectError}
                 </div>
               )}
@@ -131,14 +131,14 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowForm(false)}
-                  className="rounded-xl px-4 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConnect}
                   disabled={isConnecting || !connectParams.fullName}
-                  className="rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-700 disabled:opacity-50"
+                  className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50"
                 >
                   {isConnecting ? "Connecting..." : "Connect Repository"}
                 </button>
@@ -147,24 +147,24 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
           </Card>
         )}
 
-        <Card className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
           {loading ? (
-            <p className="mt-3 text-sm text-slate-500">Loading repositories…</p>
+            <p className="mt-3 text-sm text-text-secondary">Loading repositories…</p>
           ) : repos.length === 0 ? (
             <div className="py-8 text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
-                <svg className="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-surface">
+                <svg className="h-6 w-6 text-text-secondary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
                 </svg>
               </div>
-              <h3 className="mt-2 text-sm font-medium text-slate-900">No repositories connected</h3>
-              <p className="mt-1 text-sm text-slate-500">
+              <h3 className="mt-2 text-sm font-medium text-text-primary">No repositories connected</h3>
+              <p className="mt-1 text-sm text-text-secondary">
                 Get started by connecting a new repository.
               </p>
               {isAdmin && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="mt-6 inline-flex items-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                  className="mt-6 inline-flex items-center rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
                 >
                   Connect Repository
                 </button>
@@ -173,17 +173,17 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
           ) : (
             <ul className="space-y-3">
               {repos.map((r) => (
-                <li key={r._id} className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
-                  <span className="text-sm font-medium text-slate-900">{r.name}</span>
+                <li key={r._id} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                  <span className="text-sm font-medium text-text-primary">{r.name}</span>
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex items-center rounded-full bg-emerald-50 px-2 py-1 text-xs font-medium text-emerald-700 ring-1 ring-inset ring-emerald-600/20">
+                    <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20">
                       Connected
                     </span>
                     {isAdmin && (
                       <button
                         onClick={() => handleDelete(r._id)}
                         disabled={deletingId === r._id}
-                        className="text-slate-400 hover:text-red-600 disabled:opacity-50"
+                        className="text-text-secondary hover:text-red-600 disabled:opacity-50"
                         title="Disconnect Repository"
                       >
                         {deletingId === r._id ? (

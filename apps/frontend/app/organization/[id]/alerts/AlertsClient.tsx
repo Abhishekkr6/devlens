@@ -56,37 +56,37 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
         }
     };
 
-    if (loading) return <div className="p-8 text-center text-slate-500">Loading alerts...</div>;
+    if (loading) return <div className="p-8 text-center text-text-secondary">Loading alerts...</div>;
 
     return (
         <div className="flex flex-col gap-6">
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-6">
                 <div className="flex items-center justify-between">
-                    <h1 className="text-3xl font-semibold text-slate-900">Alerts</h1>
+                    <h1 className="text-3xl font-semibold text-text-primary">Alerts</h1>
                 </div>
 
                 {alerts.length === 0 ? (
-                    <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-sm">
-                        <p className="text-slate-500">No active alerts. Good job!</p>
+                    <div className="rounded-2xl border border-border bg-background p-12 text-center shadow-sm">
+                        <p className="text-text-secondary">No active alerts. Good job!</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
                         {alerts.map((alert) => (
-                            <Card key={alert._id} className="p-4 border-l-4 border-l-red-500 bg-white shadow-sm">
+                            <Card key={alert._id} className="p-4 border-l-4 border-l-red-500 bg-background shadow-sm">
                                 <div className="flex justify-between items-start">
                                     <div>
                                         <div className="flex items-center gap-2">
-                                            <span className="font-bold text-slate-800 uppercase text-xs tracking-wider">{alert.type}</span>
-                                            <span className={`px-2 py-0.5 rounded text-xs font-semibold ${alert.severity === 'high' ? 'bg-red-100 text-red-700' :
-                                                alert.severity === 'medium' ? 'bg-orange-100 text-orange-700' : 'bg-blue-100 text-blue-700'
+                                            <span className="font-bold text-text-primary uppercase text-xs tracking-wider">{alert.type}</span>
+                                            <span className={`px-2 py-0.5 rounded text-xs font-semibold ${alert.severity === 'high' ? 'bg-red-100 dark:bg-rose-900/30 text-red-700 dark:text-rose-400' :
+                                                alert.severity === 'medium' ? 'bg-orange-100 dark:bg-amber-900/30 text-orange-700 dark:text-amber-400' : 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
                                                 }`}>
                                                 {alert.severity}
                                             </span>
                                         </div>
-                                        <p className="mt-1 text-sm text-slate-600">
+                                        <p className="mt-1 text-sm text-text-secondary">
                                             {JSON.stringify(alert.metadata)}
                                         </p>
-                                        <p className="mt-2 text-xs text-slate-400">
+                                        <p className="mt-2 text-xs text-text-secondary">
                                             {new Date(alert.createdAt).toLocaleString()}
                                         </p>
                                     </div>
@@ -95,7 +95,7 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
                                         <button
                                             onClick={() => handleAcknowledge(alert._id)}
                                             disabled={activeId === alert._id}
-                                            className="text-xs font-medium text-emerald-600 hover:text-emerald-800 disabled:opacity-50"
+                                            className="text-xs font-medium text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 disabled:opacity-50"
                                         >
                                             {activeId === alert._id ? "Resolving..." : "Mark Resolved"}
                                         </button>
