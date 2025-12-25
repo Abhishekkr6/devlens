@@ -15,10 +15,10 @@ export default function ThemeToggle() {
 
         if (storedTheme === "dark" || storedTheme === "light") {
             setTheme(storedTheme);
-        } else if (docTheme === "dark") {
-            setTheme("dark");
-        } else if (window.matchMedia("(prefers-color-scheme: dark)").matches && !storedTheme) {
-            // Default to system if no storage
+        } else if (docTheme === "light") {
+            setTheme("light");
+        } else {
+            // Default to dark
             setTheme("dark");
             document.documentElement.setAttribute("data-theme", "dark");
         }

@@ -18,13 +18,9 @@ const ThemeScript = () => (
       __html: `
         (function() {
           try {
-            var localTheme = localStorage.getItem('theme');
-            var supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
-            if (localTheme === 'dark' || (!localTheme && supportDarkMode)) {
-              document.documentElement.setAttribute('data-theme', 'dark');
-            } else {
-              document.documentElement.setAttribute('data-theme', 'light');
-            }
+            // Force Dark Mode for ALL visitors
+            localStorage.setItem('theme', 'dark');
+            document.documentElement.setAttribute('data-theme', 'dark');
           } catch (e) {}
         })();
       `,
