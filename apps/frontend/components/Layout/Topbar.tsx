@@ -485,11 +485,11 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="border-t border-border bg-background">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8">
+      <div className="absolute top-16 left-0 right-0 pointer-events-none">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8 pointer-events-auto">
           <FloatingDock
             items={dockItems}
-            desktopClassName="h-14 bg-background/90 px-6 pb-3 shadow-sm ring-1 ring-border"
+            desktopClassName="bg-background/80 backdrop-blur-xl px-4 py-2 shadow-lg rounded-2xl border-0"
             mobileClassName="w-full"
           />
         </div>
