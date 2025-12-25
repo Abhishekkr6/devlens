@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { fontHeading, fontBody } from "./fonts";
 import "./globals.css";
 import AutoCleanup from "../components/Auth/AutoCleanupScript";
+import SmoothScroll from "../components/SmoothScroll";
 
 
 
@@ -21,6 +22,7 @@ export default function RootLayout({
         className={`${fontHeading.variable} ${fontBody.variable} antialiased bg-slate-100 text-slate-900`}
       >
         <AutoCleanup />
+        <SmoothScroll />
         {children}
       </body>
     </html>
