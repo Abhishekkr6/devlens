@@ -260,7 +260,7 @@ function IconContainer({
         </AnimatePresence>
         <motion.div
           style={{ width: widthIcon, height: heightIcon }}
-          className="flex items-center justify-center text-text-secondary"
+          className="flex items-center justify-center text-slate-600 dark:text-slate-300"
         >
           {icon}
         </motion.div>
