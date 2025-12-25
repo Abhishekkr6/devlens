@@ -219,7 +219,7 @@ export default function Topbar() {
   });
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex w-full flex-wrap items-center gap-3 py-3">
           <Link
@@ -227,8 +227,8 @@ export default function Topbar() {
             className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
             aria-label="TeamPulse home"
           >
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white shadow-sm">
-              TP
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
+              <svg className="w-5 h-5 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
             </div>
             <div className="min-w-0 text-left">
               <p className="truncate text-sm font-semibold text-text-primary">TeamPulse</p>
@@ -305,7 +305,7 @@ export default function Topbar() {
               <input
                 type="search"
                 placeholder="Search..."
-                className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-4 text-sm text-text-primary transition-colors placeholder:text-text-secondary focus:border-brand focus:bg-background focus:outline-none focus:ring-2 focus:ring-brand/20"
+                className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-4 text-sm text-text-primary transition-colors placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-brand focus:bg-background focus:outline-none focus:ring-2 focus:ring-brand/20"
               />
             </div>
 
@@ -505,8 +505,8 @@ export default function Topbar() {
             <div className="flex h-full w-full flex-col gap-6 p-6" id="mobile-navigation">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand text-sm font-semibold text-white shadow-sm">
-                    TP
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
+                    <svg className="w-5 h-5 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
                   </div>
                   <div className="text-left">
                     <p className="text-sm font-semibold text-text-primary">TeamPulse</p>
@@ -528,7 +528,7 @@ export default function Topbar() {
                 <input
                   type="search"
                   placeholder="Search..."
-                  className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text-secondary transition-colors placeholder:text-text-secondary focus:border-brand focus:bg-background focus:outline-none focus:ring-2 focus:ring-brand/20"
+                  className="h-10 w-full rounded-full border border-border bg-surface pl-9 pr-3 text-sm text-text-secondary transition-colors placeholder:text-slate-500 dark:placeholder:text-slate-400 focus:border-brand focus:bg-background focus:outline-none focus:ring-2 focus:ring-brand/20"
                 />
               </div>
 
