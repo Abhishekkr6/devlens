@@ -53,8 +53,8 @@ export default function OrganizationPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 rounded-xl bg-brand flex items-center justify-center mb-4 shadow-lg shadow-indigo-200/50">
-            <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          <div className="mx-auto h-12 w-12 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200/50 dark:shadow-none">
+            <svg className="w-6 h-6 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-text-primary">Choose Organization</h1>
           <p className="mt-2 text-text-secondary">
@@ -70,7 +70,7 @@ export default function OrganizationPage() {
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">Organization Name</label>
                 <input
-                  className="w-full rounded-xl border-border bg-surface px-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-text-primary placeholder:text-text-secondary"
+                  className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                   placeholder="e.g. Acme Inc"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -81,7 +81,7 @@ export default function OrganizationPage() {
                 <div className="relative">
                   <span className="absolute left-4 top-2.5 text-text-secondary text-sm">/</span>
                   <input
-                    className="w-full rounded-xl border-border bg-surface pl-7 pr-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-text-primary placeholder:text-text-secondary"
+                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 pl-7 pr-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
                     placeholder="acme-inc"
                     value={slug}
                     onChange={(e) => setSlug(e.target.value)}
