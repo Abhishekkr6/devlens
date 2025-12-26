@@ -118,6 +118,16 @@ const FloatingDockMobile = ({
           </Link>
         ))}
       </div>
+      {showLeftHint && (
+        <div className="pointer-events-none absolute inset-y-2 left-2 flex w-12 items-center justify-start rounded-xl bg-linear-to-r from-background via-background/80 to-transparent pl-2 pr-6">
+          <ArrowIcon direction="left" />
+        </div>
+      )}
+      {showRightHint && (
+        <div className="pointer-events-none absolute inset-y-2 right-2 flex w-12 items-center justify-end rounded-xl bg-linear-to-l from-background via-background/80 to-transparent pl-6 pr-2">
+          <ArrowIcon direction="right" />
+        </div>
+      )}
     </nav>
   );
 };
