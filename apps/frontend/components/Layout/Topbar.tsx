@@ -219,7 +219,7 @@ export default function Topbar() {
   });
 
   return (
-    <header className="sticky top-0 z-40 mb-24 border-b border-border bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="flex w-full flex-wrap items-center gap-3 py-3">
           <Link
@@ -485,8 +485,8 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="absolute top-16 left-0 right-0 pointer-events-none">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8 pointer-events-auto">
+      <div className="w-full border-t border-border/50">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8">
           <FloatingDock
             items={dockItems}
             desktopClassName="bg-slate-900/95 backdrop-blur-3xl px-4 py-2 shadow-xl rounded-2xl border border-gray-200 dark:border-slate-700"
