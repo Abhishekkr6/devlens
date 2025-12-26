@@ -91,7 +91,7 @@ const FloatingDockMobile = ({
   return (
     <nav
       className={cn(
-        "relative block w-full rounded-2xl border border-border bg-background px-2 py-2 shadow-sm md:hidden",
+        "relative block w-fit rounded-2xl border border-border bg-background px-2 py-2 shadow-sm md:hidden",
         className,
       )}
       aria-label="Secondary navigation"

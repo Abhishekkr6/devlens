@@ -486,7 +486,7 @@ export default function Topbar() {
       </div>
 
       <div className="w-full border-t border-border/50 relative z-10">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-center py-2">
           <FloatingDock
             items={dockItems}
             desktopClassName="bg-slate-900/95 backdrop-blur-3xl px-4 py-2 shadow-xl rounded-2xl border border-gray-200 dark:border-slate-700"
