@@ -171,7 +171,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(event) => mouseX.set(event.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-24 max-w-full items-center gap-4 overflow-x-auto rounded-2xl bg-surface/50 px-4 md:flex [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
+        "mx-auto hidden h-16 max-w-full items-end gap-4 rounded-2xl bg-surface/50 px-4 pb-3 md:flex",
         className,
       )}
     >
@@ -241,7 +241,7 @@ function IconContainer({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={cn(
-          "relative flex aspect-square items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors",
+          "relative flex aspect-square items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors z-10",
           hovered && "bg-slate-300 dark:bg-slate-700",
           isActive && "ring-2 ring-brand ring-offset-2 ring-offset-background",
         )}
