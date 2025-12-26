@@ -221,8 +221,8 @@ export default function Topbar() {
 
   return (
     <>
-      <header className="relative z-50">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50">
+      <header className="relative z-[120]">
+        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-[120]">
           <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3">
             <Link
               href="/dashboard"
@@ -492,7 +492,7 @@ export default function Topbar() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="sticky top-0 z-[100] w-full flex justify-center py-2 px-2 bg-transparent"
+        className="sticky top-0 z-[110] w-full flex justify-center py-2 px-2 bg-transparent"
       >
         <FloatingDock
           items={dockItems}

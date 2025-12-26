@@ -241,7 +241,7 @@ function IconContainer({
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         className={cn(
-          "relative flex aspect-square items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors z-10",
+          "relative flex aspect-square items-center justify-center rounded-full bg-slate-200 dark:bg-slate-800 transition-colors z-8",
           hovered && "bg-slate-300 dark:bg-slate-700",
           isActive && "ring-2 ring-brand ring-offset-2 ring-offset-background",
         )}
