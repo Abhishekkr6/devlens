@@ -256,7 +256,7 @@ export default function Topbar() {
               </button>
 
               {orgDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-border bg-background/95 backdrop-blur-3xl p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-border bg-slate-900/95 backdrop-blur-3xl p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
                   <div className="mb-2 border-b border-border px-2 pb-2">
                     <p className="text-xs font-medium text-text-secondary">Switch Organization</p>
                   </div>
@@ -330,7 +330,7 @@ export default function Topbar() {
               </button>
 
               {teamDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-background/95 backdrop-blur-3xl shadow-lg z-50">
+                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-slate-900/95 backdrop-blur-3xl shadow-lg z-50">
                   <div className="p-4 border-b border-border">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-semibold text-text-primary">Team Members</h3>
@@ -501,7 +501,7 @@ export default function Topbar() {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={closeMobileNav}
           />
-          <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-background/80 backdrop-blur-xl shadow-2xl">
+          <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-slate-900/95 backdrop-blur-3xl shadow-2xl">
             <div className="flex h-full w-full flex-col gap-6 p-6" id="mobile-navigation">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">

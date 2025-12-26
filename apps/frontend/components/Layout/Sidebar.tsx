@@ -17,7 +17,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-background/80 backdrop-blur-xl border-r border-border flex flex-col">
+    <div className="w-64 bg-slate-900/95 backdrop-blur-3xl border-r border-border flex flex-col">
       <div className="px-4 py-4 border-b border-border">
         <h1 className="text-lg font-bold tracking-tight text-text-primary">TeamPulse</h1>
         <p className="text-xs text-text-secondary">Engineering insights</p>
