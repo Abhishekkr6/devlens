@@ -219,9 +219,9 @@ export default function Topbar() {
   });
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-xl">
+    <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex w-full flex-wrap items-center gap-3 py-3">
+        <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3 overflow-x-hidden">
           <Link
             href="/dashboard"
             className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
@@ -230,7 +230,7 @@ export default function Topbar() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
               <svg className="w-5 h-5 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
             </div>
-            <div className="min-w-0 text-left">
+            <div className="min-w-0 text-left hidden xs:block">
               <p className="truncate text-sm font-semibold text-text-primary">TeamPulse</p>
               <p className="hidden text-xs text-text-secondary sm:block">Developer Activity</p>
             </div>
