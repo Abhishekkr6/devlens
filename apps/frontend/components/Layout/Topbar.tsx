@@ -492,7 +492,7 @@ export default function Topbar() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="sticky top-0 z-40 flex justify-center py-2 bg-transparent shadow-sm"
+        className="sticky top-0 z-40 mx-auto w-fit flex justify-center py-2 bg-transparent"
       >
         <FloatingDock
           items={dockItems}
