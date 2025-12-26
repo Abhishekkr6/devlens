@@ -488,8 +488,8 @@ export default function Topbar() {
       <div className="relative z-10 flex justify-center py-2">
         <FloatingDock
           items={dockItems}
-          desktopClassName="bg-white dark:bg-slate-950 px-4 py-2 shadow-xl rounded-2xl border border-border"
-          mobileClassName="w-fit bg-white dark:bg-slate-950 rounded-2xl border border-border"
+          desktopClassName="bg-[var(--background)] px-4 py-2 shadow-xl rounded-2xl border border-border"
+          mobileClassName="w-fit bg-[var(--background)] rounded-2xl border border-border"
         />
       </div>
 
