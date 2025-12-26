@@ -220,7 +220,7 @@ export default function Topbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50 overflow-x-clip">
         <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3 overflow-x-hidden">
           <Link
             href="/dashboard"
@@ -485,7 +485,7 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="w-full border-t border-border/50">
+      <div className="w-full border-t border-border/50 relative z-10">
         <div className="mx-auto flex w-full max-w-7xl items-center justify-center px-2 py-2 sm:px-4 lg:px-8">
           <FloatingDock
             items={dockItems}
