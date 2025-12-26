@@ -220,8 +220,8 @@ export default function Topbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl">
-      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50 overflow-x-clip">
-        <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3 overflow-x-hidden">
+      <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50">
+        <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3">
           <Link
             href="/dashboard"
             className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
