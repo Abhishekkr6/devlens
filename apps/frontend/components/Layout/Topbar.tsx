@@ -230,7 +230,7 @@ export default function Topbar() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
               <svg className="w-5 h-5 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
             </div>
-            <div className="min-w-0 text-left hidden xs:block">
+            <div className="min-w-0 text-left hidden lg:block">
               <p className="truncate text-sm font-semibold text-text-primary">TeamPulse</p>
               <p className="hidden text-xs text-text-secondary sm:block">Developer Activity</p>
             </div>
@@ -256,7 +256,7 @@ export default function Topbar() {
               </button>
 
               {orgDropdownOpen && (
-                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-border bg-slate-900/95 backdrop-blur-3xl p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
+                <div className="absolute left-0 mt-2 w-64 origin-top-left rounded-xl border border-border bg-slate-900/95 backdrop-blur-3xl p-2 shadow-xl ring-1 ring-black ring-opacity-5 focus:outline-none z-[100]">
                   <div className="mb-2 border-b border-border px-2 pb-2">
                     <p className="text-xs font-medium text-text-secondary">Switch Organization</p>
                   </div>
@@ -330,7 +330,7 @@ export default function Topbar() {
               </button>
 
               {teamDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-slate-900/95 backdrop-blur-3xl shadow-lg z-50">
+                <div className="absolute right-0 mt-2 w-80 rounded-xl border border-border bg-slate-900/95 backdrop-blur-3xl shadow-lg z-[100]">
                   <div className="p-4 border-b border-border">
                     <div className="flex items-center justify-between">
                       <h3 className="text-sm font-semibold text-text-primary">Team Members</h3>
