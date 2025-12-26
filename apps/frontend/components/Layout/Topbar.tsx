@@ -21,6 +21,7 @@ import {
   Eye,
   Code,
 } from "lucide-react";
+import { motion } from "motion/react";
 import { FloatingDock } from "../Ui/floating-dock";
 import { useUserStore } from "../../store/userStore";
 import { getBackendBase } from "../../lib/api";
@@ -219,7 +220,7 @@ export default function Topbar() {
   });
 
   return (
-    <header className="sticky top-0 z-40 bg-background/80 backdrop-blur-xl">
+    <header className="relative z-50">
       <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-50">
         <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3">
           <Link
@@ -485,13 +486,18 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="relative z-10 flex justify-center py-2">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="sticky top-0 z-40 flex justify-center py-2 bg-background/80 backdrop-blur-lg border-b border-border/50 shadow-sm"
+      >
         <FloatingDock
           items={dockItems}
           desktopClassName="bg-[var(--background)] px-4 py-2 shadow-xl rounded-2xl border border-border"
           mobileClassName="w-fit bg-[var(--background)] rounded-2xl border border-border"
         />
-      </div>
+      </motion.div>
 
       {mobileNavOpen && (
         <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
