@@ -490,7 +490,7 @@ export default function Topbar() {
           <FloatingDock
             items={dockItems}
             desktopClassName="bg-slate-900/95 backdrop-blur-3xl px-4 py-2 shadow-xl rounded-2xl border border-gray-200 dark:border-slate-700"
-            mobileClassName="w-full"
+            mobileClassName="w-full bg-slate-900/95 backdrop-blur-3xl rounded-2xl border border-gray-400 dark:border-slate-700"
           />
         </div>
       </div>
