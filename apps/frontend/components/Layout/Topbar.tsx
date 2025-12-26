@@ -492,12 +492,12 @@ export default function Topbar() {
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="sticky top-0 z-40 mx-auto w-fit flex justify-center py-2 bg-transparent"
+        className="sticky top-0 z-40 w-full flex justify-center py-2 px-2 bg-transparent"
       >
         <FloatingDock
           items={dockItems}
           desktopClassName="bg-[var(--background)] px-4 py-2 shadow-xl rounded-2xl border border-border"
-          mobileClassName="w-fit bg-[var(--background)] rounded-2xl border border-border"
+          mobileClassName="bg-[var(--background)] rounded-2xl border border-border max-w-full"
         />
       </motion.div>
 

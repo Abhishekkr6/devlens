@@ -91,7 +91,7 @@ const FloatingDockMobile = ({
   return (
     <nav
       className={cn(
-        "relative block w-fit rounded-2xl border border-border bg-background px-2 py-2 shadow-sm md:hidden",
+        "relative block w-fit max-w-full rounded-2xl border border-border bg-background px-2 py-2 shadow-sm md:hidden",
         className,
       )}
       aria-label="Secondary navigation"
@@ -171,7 +171,7 @@ const FloatingDockDesktop = ({
       onMouseMove={(event) => mouseX.set(event.pageX)}
       onMouseLeave={() => mouseX.set(Infinity)}
       className={cn(
-        "mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-surface/50 px-4 pb-3 md:flex",
+        "mx-auto hidden h-16 max-w-full items-end gap-4 overflow-x-auto rounded-2xl bg-surface/50 px-4 pb-3 md:flex [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden",
         className,
       )}
     >
