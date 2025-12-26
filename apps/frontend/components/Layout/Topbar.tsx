@@ -501,7 +501,7 @@ export default function Topbar() {
             className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
             onClick={closeMobileNav}
           />
-          <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-background shadow-2xl">
+          <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-background/80 backdrop-blur-xl shadow-2xl">
             <div className="flex h-full w-full flex-col gap-6 p-6" id="mobile-navigation">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">

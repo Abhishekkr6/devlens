@@ -17,7 +17,7 @@ export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <div className="w-64 bg-background border-r border-border flex flex-col">
+    <div className="w-64 bg-background/80 backdrop-blur-xl border-r border-border flex flex-col">
       <div className="px-4 py-4 border-b border-border">
         <h1 className="text-lg font-bold tracking-tight text-text-primary">TeamPulse</h1>
         <p className="text-xs text-text-secondary">Engineering insights</p>
@@ -33,8 +33,8 @@ export default function Sidebar() {
               key={l.href}
               href={l.href}
               className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition ${active
-                  ? "bg-indigo-50 dark:bg-brand/20 text-brand font-medium"
-                  : "text-text-secondary hover:bg-surface"
+                ? "bg-indigo-50 dark:bg-brand/20 text-brand font-medium"
+                : "text-text-secondary hover:bg-surface"
                 }`}
             >
               <Icon className="w-4 h-4" />
