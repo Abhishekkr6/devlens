@@ -496,8 +496,8 @@ export default function Topbar() {
       >
         <FloatingDock
           items={dockItems}
-          desktopClassName="bg-white/90 data-[theme=dark]:bg-[#0E1116]/90 backdrop-blur-xl px-4 py-2 shadow-xl rounded-2xl border border-border"
-          mobileClassName="w-fit bg-white/90 data-[theme=dark]:bg-[#0E1116]/90 backdrop-blur-xl rounded-2xl border border-border"
+          desktopClassName="bg-[var(--background)] px-4 py-2 shadow-xl rounded-2xl border border-border"
+          mobileClassName="w-fit bg-[var(--background)] rounded-2xl border border-border"
         />
       </motion.div>
 
