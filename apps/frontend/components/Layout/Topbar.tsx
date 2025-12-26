@@ -485,7 +485,7 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="w-full border-t border-border/50 relative z-10">
+      <div className="w-fit border-t border-border/50 relative z-10">
         <div className="mx-auto flex w-fit max-w-7xl items-center justify-center py-2">
           <FloatingDock
             items={dockItems}
