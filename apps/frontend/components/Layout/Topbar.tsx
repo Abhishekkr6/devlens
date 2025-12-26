@@ -485,14 +485,12 @@ export default function Topbar() {
         </div>
       </div>
 
-      <div className="relative z-10">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-center py-2">
-          <FloatingDock
-            items={dockItems}
-            desktopClassName="bg-slate-900/95 backdrop-blur-3xl px-4 py-2 shadow-xl rounded-2xl border border-gray-200 dark:border-slate-700"
-            mobileClassName="w-fit bg-slate-900/95 backdrop-blur-3xl rounded-2xl border border-gray-400 dark:border-slate-700"
-          />
-        </div>
+      <div className="relative z-10 flex justify-center py-2">
+        <FloatingDock
+          items={dockItems}
+          desktopClassName="bg-slate-900/95 backdrop-blur-3xl px-4 py-2 shadow-xl rounded-2xl border border-gray-200 dark:border-slate-700"
+          mobileClassName="w-fit bg-slate-900/95 backdrop-blur-3xl rounded-2xl border border-gray-400 dark:border-slate-700"
+        />
       </div>
 
       {mobileNavOpen && (
