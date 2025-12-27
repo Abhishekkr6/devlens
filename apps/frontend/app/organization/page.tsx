@@ -53,8 +53,8 @@ export default function OrganizationPage() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-2xl space-y-8">
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 rounded-xl bg-slate-900 dark:bg-slate-950 flex items-center justify-center mb-4 shadow-lg shadow-indigo-200/50 dark:shadow-none border border-transparent dark:border-white/10">
-            <svg className="w-6 h-6 text-white dark:text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          <div className="mx-auto h-12 w-12 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200/50 dark:shadow-none">
+            <svg className="w-6 h-6 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
           </div>
           <h1 className="text-3xl font-bold tracking-tight text-text-primary">Choose Organization</h1>
           <p className="mt-2 text-text-secondary">
@@ -118,7 +118,7 @@ export default function OrganizationPage() {
                     className="group flex items-center justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-sm"
                   >
                     <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 text-lg rounded-lg bg-background dark:bg-slate-950 border border-border dark:border-white/10 flex items-center justify-center font-bold text-text-secondary dark:text-white shadow-sm group-hover:border-brand/40 group-hover:text-brand">
+                      <div className="h-10 w-10 text-lg rounded-lg bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand">
                         {o.name[0]?.toUpperCase()}
                       </div>
                       <div>

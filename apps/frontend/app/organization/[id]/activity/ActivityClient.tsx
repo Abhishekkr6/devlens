@@ -154,10 +154,10 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                                 const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl";
                                 const baseIconStyles =
                                     event.kind === "commit"
-                                        ? "bg-indigo-50 dark:bg-slate-950 text-brand dark:text-white border border-transparent dark:border-white/5"
+                                        ? "bg-indigo-50 dark:bg-slate-900 text-brand dark:text-white border border-transparent dark:border-white/5 shadow-sm"
                                         : event.kind === "review"
-                                            ? "bg-emerald-50 dark:bg-slate-950 text-emerald-600 dark:text-white border border-transparent dark:border-white/5"
-                                            : "bg-amber-50 dark:bg-slate-950 text-amber-600 dark:text-white border border-transparent dark:border-white/5";
+                                            ? "bg-emerald-50 dark:bg-slate-900 text-emerald-600 dark:text-white border border-transparent dark:border-white/5 shadow-sm"
+                                            : "bg-amber-50 dark:bg-slate-900 text-amber-600 dark:text-white border border-transparent dark:border-white/5 shadow-sm";
 
                                 return (
                                     <div

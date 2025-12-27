@@ -102,8 +102,8 @@ export default function MePage() {
 
                   <div className="space-y-4 border-t border-border pt-2">
                     <div className="flex items-center gap-3 text-sm">
-                      <div className="h-8 w-8 rounded-lg bg-surface dark:bg-slate-900 flex items-center justify-center border border-transparent dark:border-white/5">
-                        <Mail className="h-4 w-4 text-text-secondary dark:text-white" />
+                      <div className="h-8 w-8 rounded-lg bg-surface flex items-center justify-center">
+                        <Mail className="h-4 w-4 text-text-secondary" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-text-secondary font-medium uppercase tracking-wider">Email Address</p>
@@ -111,8 +111,8 @@ export default function MePage() {
                       </div>
                     </div>
                     <div className="flex items-center gap-3 text-sm">
-                      <div className="h-8 w-8 rounded-lg bg-surface dark:bg-slate-900 flex items-center justify-center border border-transparent dark:border-white/5">
-                        <User className="h-4 w-4 text-text-secondary dark:text-white" />
+                      <div className="h-8 w-8 rounded-lg bg-surface flex items-center justify-center">
+                        <User className="h-4 w-4 text-text-secondary" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-xs text-text-secondary font-medium uppercase tracking-wider">Account ID</p>
@@ -129,7 +129,7 @@ export default function MePage() {
               <Card className="border border-border bg-background">
                 <CardHeader className="flex items-center justify-between py-4">
                   <CardTitle className="text-lg text-text-primary">Your Organizations</CardTitle>
-                  <span className="rounded-full bg-indigo-50 dark:bg-slate-950 px-2.5 py-0.5 text-xs font-bold text-indigo-700 dark:text-white border border-transparent dark:border-white/10">
+                  <span className="rounded-full bg-indigo-50 dark:bg-indigo-900/30 px-2.5 py-0.5 text-xs font-bold text-indigo-700 dark:text-indigo-400">
                     {user.orgIds?.length || 0} Total
                   </span>
                 </CardHeader>
