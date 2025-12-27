@@ -167,7 +167,7 @@ export default function MePage() {
                 </CardBody>
               </Card>
 
-              <div className="bg-[#4A5DFF] rounded-xl shadow-sm text-white overflow-hidden relative shadow-brand/20">
+              <div className="bg-[#181818] rounded-xl shadow-sm text-white overflow-hidden relative shadow-brand/20">
                 <div className="py-8 px-8 relative z-10">
                   <h3 className="text-xl font-bold mb-2 text-white">Need a new organization?</h3>
                   <p className="text-white/90 text-sm mb-6 max-w-md font-medium">
