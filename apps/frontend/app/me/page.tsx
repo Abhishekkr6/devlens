@@ -167,8 +167,8 @@ export default function MePage() {
                 </CardBody>
               </Card>
 
-              <Card className="bg-brand border-none text-white overflow-hidden relative shadow-lg shadow-brand/20">
-                <CardBody className="py-8 px-8 relative z-10">
+              <div className="bg-brand rounded-xl shadow-sm text-white overflow-hidden relative shadow-brand/20">
+                <div className="py-8 px-8 relative z-10">
                   <h3 className="text-xl font-bold mb-2">Need a new organization?</h3>
                   <p className="text-white/90 text-sm mb-6 max-w-md font-medium">
                     You can create a new organization to isolate your projects and team members, or ask an administrator to invite you to an existing one.
@@ -179,11 +179,11 @@ export default function MePage() {
                   >
                     Manage Organizations
                   </a>
-                </CardBody>
+                </div>
                 {/* Decorative background element */}
                 <div className="absolute top-0 right-0 -mr-16 -mt-16 h-64 w-64 rounded-full bg-white/10 blur-3xl opacity-50" />
                 <div className="absolute bottom-0 left-0 -ml-8 -mb-8 h-32 w-32 rounded-full bg-white/5 blur-2xl opacity-30" />
-              </Card>
+              </div>
             </div>
           </div>
         )}
