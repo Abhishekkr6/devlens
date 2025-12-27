@@ -187,7 +187,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                                 </p>
                                 <p className="mt-3 text-3xl font-semibold text-text-primary">{value}</p>
                             </div>
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white dark:bg-slate-950 border border-border/50 dark:border-white/5 text-brand dark:text-indigo-400">
+                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white dark:bg-slate-900 border border-border/50 dark:border-white/10 text-brand dark:text-white">
                                 <Icon className="h-5 w-5" />
                             </span>
                         </div>
