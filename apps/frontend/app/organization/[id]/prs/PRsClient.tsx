@@ -115,32 +115,7 @@ type FilterOption = {
     value: string;
 };
 
-interface FilterSelectProps {
-    label: string;
-    value: string;
-    options: FilterOption[];
-    onChange: (value: string) => void;
-}
-
-const FilterSelect = ({ label, value, options, onChange }: FilterSelectProps) => (
-    <div className="relative">
-        <select
-            aria-label={label}
-            className="h-10 appearance-none rounded-full border border-border bg-background dark:bg-slate-900 px-4 pr-10 text-sm font-semibold text-text-secondary shadow-sm transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
-            value={value}
-            onChange={(event) => onChange(event.target.value)}
-        >
-            {options.map((option) => (
-                <option key={option.value} value={option.value} className="bg-background dark:bg-slate-900 text-text-primary">
-                    {option.label}
-                </option>
-            ))}
-        </select>
-        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-text-secondary">
-            <ChevronDown className="h-4 w-4" />
-        </span>
-    </div>
-);
+import { Select } from "../../../../components/Ui/Select";
 
 type TableRow = {
     id: string;
@@ -378,20 +353,20 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                 </div>
 
                 <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap lg:flex-nowrap">
-                    <FilterSelect
-                        label="Filter by status"
+                    <Select
+                        containerClassName="sm:w-44"
                         onChange={(value) => setStatusFilter(value as StatusFilter)}
                         options={statusOptions}
                         value={statusFilter}
                     />
-                    <FilterSelect
-                        label="Filter by risk"
+                    <Select
+                        containerClassName="sm:w-44"
                         onChange={(value) => setRiskFilter(value as RiskFilter)}
                         options={riskOptions}
                         value={riskFilter}
                     />
-                    <FilterSelect
-                        label="Filter by repository"
+                    <Select
+                        containerClassName="sm:w-56"
                         onChange={(value) => setRepoFilter(value)}
                         options={repoFilterOptions}
                         value={repoFilter}

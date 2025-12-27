@@ -12,6 +12,7 @@ import {
     TrendingUp,
 } from "lucide-react";
 import { Card } from "../../../../components/Ui/Card";
+import { Select } from "../../../../components/Ui/Select";
 import { api } from "../../../../lib/api";
 
 interface Developer {
@@ -164,37 +165,31 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
                 </div>
 
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
-                    <div className="relative w-full sm:w-48">
-                        <select
-                            className="h-11 w-full appearance-none rounded-full border border-border bg-background dark:bg-slate-900 px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-                            onChange={(event) => setActivityFilter(event.target.value)}
-                            value={activityFilter}
-                        >
-                            <option value="all" className="bg-background dark:bg-slate-900 text-text-primary">Activity Level</option>
-                            {(Object.keys(ACTIVITY_FILTER_LABELS) as ActivityLevel[]).map((option) => (
-                                <option key={option} value={option} className="bg-background dark:bg-slate-900 text-text-primary">
-                                    {ACTIVITY_FILTER_LABELS[option]}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
-                    </div>
+                    <Select
+                        containerClassName="sm:w-48"
+                        options={[
+                            { label: "Activity Level", value: "all" },
+                            ...(Object.keys(ACTIVITY_FILTER_LABELS) as ActivityLevel[]).map((key) => ({
+                                label: ACTIVITY_FILTER_LABELS[key],
+                                value: key,
+                            })),
+                        ]}
+                        value={activityFilter}
+                        onChange={(val) => setActivityFilter(val)}
+                    />
 
-                    <div className="relative w-full sm:w-44">
-                        <select
-                            className="h-11 w-full appearance-none rounded-full border border-border bg-background dark:bg-slate-900 px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
-                            onChange={(event) => setRoleFilter(event.target.value)}
-                            value={roleFilter}
-                        >
-                            <option value="all" className="bg-background dark:bg-slate-900 text-text-primary">Role</option>
-                            {roleOptions.map((option) => (
-                                <option key={option} value={option} className="bg-background dark:bg-slate-900 text-text-primary">
-                                    {formatRole(option)}
-                                </option>
-                            ))}
-                        </select>
-                        <ChevronDown className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
-                    </div>
+                    <Select
+                        containerClassName="sm:w-48"
+                        options={[
+                            { label: "Role", value: "all" },
+                            ...roleOptions.map((role) => ({
+                                label: formatRole(role),
+                                value: role,
+                            })),
+                        ]}
+                        value={roleFilter}
+                        onChange={(val) => setRoleFilter(val)}
+                    />
                 </div>
             </div>
 
