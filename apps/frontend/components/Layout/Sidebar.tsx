@@ -33,7 +33,7 @@ export default function Sidebar() {
               key={l.href}
               href={l.href}
               className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition ${active
-                ? "bg-indigo-50 dark:bg-brand/20 text-brand font-medium"
+                ? "bg-brand text-white dark:bg-indigo-600 font-medium shadow-sm"
                 : "text-text-secondary hover:bg-surface"
                 }`}
             >

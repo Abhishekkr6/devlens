@@ -107,11 +107,16 @@ const FloatingDockMobile = ({
             className={cn(
               "flex h-10 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-medium transition-colors",
               item.isActive
-                ? "bg-indigo-100 dark:bg-brand/20 text-brand"
+                ? "bg-brand text-white dark:bg-indigo-600 dark:text-white shadow-sm"
                 : "text-text-secondary hover:bg-surface hover:text-brand",
             )}
           >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-background text-text-secondary ring-1 ring-inset ring-border">
+            <span className={cn(
+              "flex h-7 w-7 shrink-0 items-center justify-center rounded-full ring-1 ring-inset",
+              item.isActive
+                ? "bg-white/20 text-white ring-white/20"
+                : "bg-background text-text-secondary ring-border"
+            )}>
               {item.icon}
             </span>
             <span className="whitespace-nowrap">{item.title}</span>
