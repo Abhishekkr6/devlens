@@ -199,7 +199,7 @@ export default function Topbar() {
           href={resolvedHref}
           onClick={closeMobileNav}
           className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${active
-            ? "bg-brand text-white dark:bg-indigo-600 shadow-sm"
+            ? "bg-brand text-white dark:bg-indigo-600 shadow-sm border border-white/20 dark:border-white/10"
             : "text-text-secondary hover:bg-surface hover:text-indigo-600 dark:hover:text-brand"
             } ${className ?? ""}`.trim()}
         >

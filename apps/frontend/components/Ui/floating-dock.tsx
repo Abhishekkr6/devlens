@@ -107,7 +107,7 @@ const FloatingDockMobile = ({
             className={cn(
               "flex h-10 shrink-0 items-center gap-2 rounded-full px-3 text-xs font-medium transition-colors",
               item.isActive
-                ? "bg-brand text-white dark:bg-indigo-600 dark:text-white shadow-sm"
+                ? "bg-brand text-white dark:bg-indigo-600 dark:text-white shadow-sm border border-white/20 dark:border-white/10"
                 : "text-text-secondary hover:bg-surface hover:text-brand",
             )}
           >
