@@ -166,13 +166,13 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
                 <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-end">
                     <div className="relative w-full sm:w-48">
                         <select
-                            className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                            className="h-11 w-full appearance-none rounded-full border border-border bg-background dark:bg-slate-900 px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                             onChange={(event) => setActivityFilter(event.target.value)}
                             value={activityFilter}
                         >
-                            <option value="all">Activity Level</option>
+                            <option value="all" className="bg-background dark:bg-slate-900 text-text-primary">Activity Level</option>
                             {(Object.keys(ACTIVITY_FILTER_LABELS) as ActivityLevel[]).map((option) => (
-                                <option key={option} value={option}>
+                                <option key={option} value={option} className="bg-background dark:bg-slate-900 text-text-primary">
                                     {ACTIVITY_FILTER_LABELS[option]}
                                 </option>
                             ))}
@@ -182,13 +182,13 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
 
                     <div className="relative w-full sm:w-44">
                         <select
-                            className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                            className="h-11 w-full appearance-none rounded-full border border-border bg-background dark:bg-slate-900 px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
                             onChange={(event) => setRoleFilter(event.target.value)}
                             value={roleFilter}
                         >
-                            <option value="all">Role</option>
+                            <option value="all" className="bg-background dark:bg-slate-900 text-text-primary">Role</option>
                             {roleOptions.map((option) => (
-                                <option key={option} value={option}>
+                                <option key={option} value={option} className="bg-background dark:bg-slate-900 text-text-primary">
                                     {formatRole(option)}
                                 </option>
                             ))}

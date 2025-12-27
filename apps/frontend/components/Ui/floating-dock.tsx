@@ -124,12 +124,12 @@ const FloatingDockMobile = ({
         ))}
       </div>
       {showLeftHint && (
-        <div className="pointer-events-none absolute inset-y-0 left-0 flex w-14 items-center justify-start rounded-l-2xl bg-linear-to-r from-background/95 via-background/50 to-transparent backdrop-blur-md pl-2 pr-6 border-l border-white/5 dark:border-white/10">
+        <div className="pointer-events-none absolute inset-y-2 left-2 flex w-12 items-center justify-start rounded-l-xl bg-linear-to-r from-background/90 via-background/40 to-transparent backdrop-blur-[2px] pl-2 pr-6">
           <ArrowIcon direction="left" />
         </div>
       )}
       {showRightHint && (
-        <div className="pointer-events-none absolute inset-y-0 right-0 flex w-14 items-center justify-end rounded-r-2xl bg-linear-to-l from-background/95 via-background/50 to-transparent backdrop-blur-md pl-6 pr-2 border-r border-white/5 dark:border-white/10">
+        <div className="pointer-events-none absolute inset-y-2 right-2 flex w-12 items-center justify-end rounded-r-xl bg-linear-to-l from-background/90 via-background/40 to-transparent backdrop-blur-[2px] pl-6 pr-2">
           <ArrowIcon direction="right" />
         </div>
       )}

@@ -126,12 +126,12 @@ const FilterSelect = ({ label, value, options, onChange }: FilterSelectProps) =>
     <div className="relative">
         <select
             aria-label={label}
-            className="h-10 appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary shadow-sm transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+            className="h-10 appearance-none rounded-full border border-border bg-background dark:bg-slate-900 px-4 pr-10 text-sm font-semibold text-text-secondary shadow-sm transition focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
             value={value}
             onChange={(event) => onChange(event.target.value)}
         >
             {options.map((option) => (
-                <option key={option.value} value={option.value}>
+                <option key={option.value} value={option.value} className="bg-background dark:bg-slate-900 text-text-primary">
                     {option.label}
                 </option>
             ))}

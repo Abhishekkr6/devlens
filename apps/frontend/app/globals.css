@@ -15,6 +15,7 @@
 
 [data-theme='dark'] {
   /* DARK MODE */
+  color-scheme: dark;
   --background: #0E1116;
   --surface: #1A1D23;
   --text-primary: #FFFFFF;
