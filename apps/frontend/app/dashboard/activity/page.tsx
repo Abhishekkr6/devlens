@@ -198,10 +198,10 @@ export default function ActivityPage() {
                   const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl";
                   const baseIconStyles =
                     event.kind === "commit"
-                      ? "bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400"
+                      ? "bg-indigo-50 dark:bg-slate-950 text-indigo-600 dark:text-white border border-transparent dark:border-white/5"
                       : event.kind === "review"
-                        ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
-                        : "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400";
+                        ? "bg-emerald-50 dark:bg-slate-950 text-emerald-600 dark:text-white border border-transparent dark:border-white/5"
+                        : "bg-amber-50 dark:bg-slate-950 text-amber-600 dark:text-white border border-transparent dark:border-white/5";
 
                   return (
                     <div

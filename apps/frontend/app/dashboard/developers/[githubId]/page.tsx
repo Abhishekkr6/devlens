@@ -282,7 +282,7 @@ function HeroCard({
               <p className="text-sm text-text-secondary">{role}</p>
             </div>
             <div className="flex flex-wrap gap-2 text-xs font-semibold">
-              <span className="inline-flex items-center rounded-full bg-indigo-100 dark:bg-indigo-900/50 px-3 py-1 text-indigo-700 dark:text-indigo-300">
+              <span className="inline-flex items-center rounded-full bg-indigo-100 dark:bg-slate-950 px-3 py-1 text-indigo-700 dark:text-white border border-transparent dark:border-white/10">
                 {statusLabel}
               </span>
               <span className="inline-flex items-center rounded-full bg-surface-200 px-3 py-1 text-text-secondary">
@@ -381,7 +381,7 @@ function MetricCard({
   return (
     <div className="flex h-full flex-col justify-between rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-center gap-3">
-        <span className="rounded-full bg-background p-2 text-brand shadow-sm">
+        <span className="rounded-full bg-background dark:bg-slate-950 p-2 text-brand dark:text-white shadow-sm border border-transparent dark:border-white/10">
           <Icon className="h-4 w-4" />
         </span>
         <span className="text-sm font-medium text-text-secondary">{metric.label}</span>
@@ -419,7 +419,7 @@ function QuickInfo({ handle, email, joinedDate }: { handle?: string; email?: str
       <div className="mt-4 space-y-4">
         {items.map((item) => (
           <div key={item.label} className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-surface dark:bg-slate-950 text-text-secondary dark:text-white border border-transparent dark:border-white/10">
               <item.icon className="h-4 w-4" />
             </span>
             <div>
@@ -455,7 +455,7 @@ function ActiveRepositories({ repos }: { repos: ActiveRepo[] }) {
               <span className="text-sm font-semibold text-text-primary">{repo.name}</span>
               <span className="text-xs text-text-secondary">{formatNumber(repo.commits)} commits</span>
             </div>
-            <span className="rounded-full bg-rose-100 dark:bg-rose-900/30 px-3 py-1 text-xs font-semibold text-rose-600 dark:text-rose-400">
+            <span className="rounded-full bg-rose-100 dark:bg-slate-950 px-3 py-1 text-xs font-semibold text-rose-600 dark:text-white border border-transparent dark:border-white/10">
               Contributor
             </span>
           </div>
@@ -553,7 +553,7 @@ function ActivityItem({ event, repoNameMap }: { event: ActivityEvent; repoNameMa
 
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary">
+      <span className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-surface dark:bg-slate-950 text-text-secondary dark:text-white border border-transparent dark:border-white/10">
         {icon === GitCommit ? <GitCommit className="h-4 w-4" /> : icon === GitPullRequest ? <GitPullRequest className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
       </span>
       <div className="flex-1 space-y-1">
