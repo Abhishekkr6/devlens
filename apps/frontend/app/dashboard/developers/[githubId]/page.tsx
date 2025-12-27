@@ -381,7 +381,7 @@ function MetricCard({
   return (
     <div className="flex h-full flex-col justify-between rounded-2xl border border-border bg-surface p-5">
       <div className="flex items-center gap-3">
-        <span className="rounded-full bg-background dark:bg-slate-900 p-2 text-brand dark:text-white shadow-sm border border-transparent dark:border-white/5">
+        <span className="rounded-full bg-background p-2 text-brand shadow-sm">
           <Icon className="h-4 w-4" />
         </span>
         <span className="text-sm font-medium text-text-secondary">{metric.label}</span>
@@ -553,7 +553,7 @@ function ActivityItem({ event, repoNameMap }: { event: ActivityEvent; repoNameMa
 
   return (
     <div className="flex items-start gap-3">
-      <span className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-surface dark:bg-slate-900 text-text-secondary dark:text-white border border-transparent dark:border-white/5">
+      <span className="mt-1 flex h-9 w-9 items-center justify-center rounded-full bg-surface text-text-secondary">
         {icon === GitCommit ? <GitCommit className="h-4 w-4" /> : icon === GitPullRequest ? <GitPullRequest className="h-4 w-4" /> : <MessageSquare className="h-4 w-4" />}
       </span>
       <div className="flex-1 space-y-1">
