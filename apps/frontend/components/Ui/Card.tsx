@@ -1,48 +1,43 @@
-import React from "react";
+import { cn } from "../../lib/utils";
 
 type DivProps = React.PropsWithChildren<React.HTMLAttributes<HTMLDivElement>>;
 
 export function Card({ children, className, ...rest }: DivProps) {
-  const combinedClassName = className
-    ? `bg-background border border-border rounded-xl shadow-sm ${className}`
-    : "bg-background border border-border rounded-xl shadow-sm";
-
   return (
-    <div className={combinedClassName} {...rest}>
+    <div
+      className={cn("bg-background border border-border rounded-xl shadow-sm", className)}
+      {...rest}
+    >
       {children}
     </div>
   );
 }
 
 export function CardHeader({ children, className, ...rest }: DivProps) {
-  const combinedClassName = className
-    ? `px-4 py-3 border-b border-border ${className}`
-    : "px-4 py-3 border-b border-border";
-
   return (
-    <div className={combinedClassName} {...rest}>
+    <div
+      className={cn("px-4 py-3 border-b border-border", className)}
+      {...rest}
+    >
       {children}
     </div>
   );
 }
 
 export function CardBody({ children, className, ...rest }: DivProps) {
-  const combinedClassName = className ? `px-4 py-3 ${className}` : "px-4 py-3";
-
   return (
-    <div className={combinedClassName} {...rest}>
+    <div className={cn("px-4 py-3", className)} {...rest}>
       {children}
     </div>
   );
 }
 
 export function CardFooter({ children, className, ...rest }: DivProps) {
-  const combinedClassName = className
-    ? `px-4 py-3 border-t border-border ${className}`
-    : "px-4 py-3 border-t border-border";
-
   return (
-    <div className={combinedClassName} {...rest}>
+    <div
+      className={cn("px-4 py-3 border-t border-border", className)}
+      {...rest}
+    >
       {children}
     </div>
   );
@@ -51,12 +46,11 @@ export function CardFooter({ children, className, ...rest }: DivProps) {
 type HeadingProps = React.PropsWithChildren<React.HTMLAttributes<HTMLHeadingElement>>;
 
 export function CardTitle({ children, className, ...rest }: HeadingProps) {
-  const combinedClassName = className
-    ? `text-sm font-semibold text-text-secondary ${className}`
-    : "text-sm font-semibold text-text-secondary";
-
   return (
-    <h2 className={combinedClassName} {...rest}>
+    <h2
+      className={cn("text-sm font-semibold text-text-secondary", className)}
+      {...rest}
+    >
       {children}
     </h2>
   );
@@ -65,12 +59,11 @@ export function CardTitle({ children, className, ...rest }: HeadingProps) {
 type ParagraphProps = React.PropsWithChildren<React.HTMLAttributes<HTMLParagraphElement>>;
 
 export function CardValue({ children, className, ...rest }: ParagraphProps) {
-  const combinedClassName = className
-    ? `text-2xl font-bold text-text-primary ${className}`
-    : "text-2xl font-bold text-text-primary";
-
   return (
-    <p className={combinedClassName} {...rest}>
+    <p
+      className={cn("text-2xl font-bold text-text-primary", className)}
+      {...rest}
+    >
       {children}
     </p>
   );
