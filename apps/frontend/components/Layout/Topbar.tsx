@@ -503,7 +503,7 @@ export default function Topbar() {
 
       {
         mobileNavOpen && (
-          <div className="fixed inset-0 z-50 lg:hidden" role="dialog" aria-modal="true">
+          <div className="fixed inset-0 z-[200] lg:hidden" role="dialog" aria-modal="true">
             <div
               className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
               onClick={closeMobileNav}
