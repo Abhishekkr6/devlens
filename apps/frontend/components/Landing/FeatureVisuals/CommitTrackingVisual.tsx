@@ -16,17 +16,17 @@ export function CommitTrackingVisual() {
             {/* Header with Pulse */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface">
                 <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 dark:bg-indigo-500/20 p-1.5 rounded-lg">
-                        <GitCommit className="w-4 h-4 text-indigo-600 dark:text-indigo-300" />
+                    <div className="bg-indigo-500/20 p-1.5 rounded-lg">
+                        <GitCommit className="w-4 h-4 text-indigo-300" />
                     </div>
                     <h3 className="text-sm font-bold text-text-primary">Real-time Tracking</h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-100 dark:border-emerald-800">
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-emerald-900/20 border border-emerald-800">
                     <span className="relative flex h-2 w-2">
                         <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                         <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                     </span>
-                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-400 uppercase tracking-wide">Live</span>
+                    <span className="text-[10px] font-bold text-emerald-400 uppercase tracking-wide">Live</span>
                 </div>
             </div>
 

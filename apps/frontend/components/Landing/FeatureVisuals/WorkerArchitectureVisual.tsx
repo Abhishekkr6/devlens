@@ -9,13 +9,13 @@ export function WorkerArchitectureVisual() {
             {/* Header */}
             <div className="px-6 py-4 border-b border-border flex items-center justify-between bg-surface">
                 <div className="flex items-center gap-3">
-                    <div className="bg-indigo-100 dark:bg-indigo-500/20 p-1.5 rounded-lg">
-                        <Cpu className="w-4 h-4 text-indigo-600 dark:text-indigo-300" />
+                    <div className="bg-indigo-500/20 p-1.5 rounded-lg">
+                        <Cpu className="w-4 h-4 text-indigo-300" />
                     </div>
                     <h3 className="text-sm font-bold text-text-primary">Worker Architecture</h3>
                 </div>
-                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800">
-                    <span className="text-[10px] font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wide">Async</span>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-blue-900/20 border border-blue-800">
+                    <span className="text-[10px] font-bold text-blue-400 uppercase tracking-wide">Async</span>
                 </div>
             </div>
 
@@ -79,8 +79,8 @@ function Node({ icon: Icon, label }: { icon: any, label: string, delay: number }
 
 function FlowArrow({ delay }: { delay: number }) {
     return (
-        <div className="hidden md:flex flex-1 items-center justify-center text-slate-300 dark:text-slate-600 relative px-1">
-            <div className="h-0.5 w-full bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden max-w-[40px]">
+        <div className="hidden md:flex flex-1 items-center justify-center text-slate-600 relative px-1">
+            <div className="h-0.5 w-full bg-slate-800 rounded-full overflow-hidden max-w-[40px]">
                 <motion.div
                     initial={{ x: "-100%" }}
                     animate={{ x: "100%" }}
@@ -94,8 +94,8 @@ function FlowArrow({ delay }: { delay: number }) {
 
 function Badge({ text, color }: { text: string, color: string }) {
     const colors: Record<string, string> = {
-        emerald: "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 border-emerald-100 dark:border-emerald-800",
-        blue: "bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 border-blue-100 dark:border-blue-800",
+        emerald: "bg-emerald-900/20 text-emerald-400 border-emerald-800",
+        blue: "bg-blue-900/20 text-blue-400 border-blue-800",
     }
     return (
         <div className={`flex items-center gap-1.5 px-2 py-1 rounded-full border ${colors[color]} shadow-sm`}>

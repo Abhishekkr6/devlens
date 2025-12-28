@@ -7,11 +7,11 @@ export function HeroVisual() {
     return (
         <div className="relative z-10 w-full font-sans">
             {/* Main Card */}
-            <div className="relative z-10 bg-background/80 dark:bg-background/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-border p-6 w-full max-w-lg mx-auto rotate-1 transition-transform hover:rotate-0 duration-500">
+            <div className="relative z-10 bg-background/60 backdrop-blur-xl rounded-2xl shadow-2xl border border-border p-6 w-full max-w-lg mx-auto rotate-1 transition-transform hover:rotate-0 duration-500">
 
                 {/* Top Header - Activity Icon */}
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 flex items-center justify-center">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center">
                         <Activity className="w-6 h-6" />
                     </div>
                     <span className="text-xl font-bold text-text-primary tracking-tight">TeamPulse</span>
@@ -82,7 +82,7 @@ export function HeroVisual() {
                         transition={{ duration: 0.6, delay: 0.5, type: "spring" }}
                         className="absolute right-0 bottom-8 z-20 bg-background p-4 rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-border flex items-center gap-4 w-64"
                     >
-                        <div className="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-900/20 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-rose-900/20 flex items-center justify-center shrink-0">
                             <ShieldAlert className="w-5 h-5 text-rose-500" />
                         </div>
                         <div>

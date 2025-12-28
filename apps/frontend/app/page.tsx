@@ -40,17 +40,16 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/95 dark:bg-background/95 backdrop-blur-xl border-b border-border/50 dark:border-border/30 py-3 shadow-lg"
-          : "bg-background/85 dark:bg-background/90 backdrop-blur-xl py-5"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+          ? "bg-background/95 backdrop-blur-xl border-b border-border/30 py-3 shadow-lg"
+          : "bg-background/85 backdrop-blur-xl py-5"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
         <div className="flex items-center gap-2">
-          <div className="bg-slate-900 dark:bg-white p-1.5 rounded-lg">
-            <Activity className="text-white dark:text-slate-900 w-5 h-5" />
+          <div className="bg-white p-1.5 rounded-lg">
+            <Activity className="text-slate-900 w-5 h-5" />
           </div>
           <span className="text-xl font-bold text-text-primary tracking-tight">
             TeamPulse
@@ -67,7 +66,7 @@ function Navbar() {
           </button>
           <button
             onClick={handleLogin}
-            className="flex items-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
+            className="flex items-center gap-2 bg-white hover:bg-slate-200 text-slate-900 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
           >
             <Github className="w-4 h-4" />
             Login with GitHub
@@ -87,14 +86,14 @@ function Navbar() {
       {mobileMenuOpen && (
         <>
           {/* Backdrop overlay with blur - covers entire screen behind menu */}
-          <div 
-            className="md:hidden fixed inset-0 bg-background/95 dark:bg-background/98 backdrop-blur-2xl z-[45]" 
-            onClick={() => setMobileMenuOpen(false)} 
+          <div
+            className="md:hidden fixed inset-0 bg-background/98 backdrop-blur-2xl z-[45]"
+            onClick={() => setMobileMenuOpen(false)}
           />
           {/* Menu container - completely solid background with no transparency */}
-          <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/50 dark:border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden">
+          <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden">
             {/* Solid background layer */}
-            <div className="absolute inset-0 bg-background dark:bg-background" />
+            <div className="absolute inset-0 bg-background" />
             {/* Content */}
             <div className="relative p-4 flex flex-col gap-4">
               <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
@@ -105,7 +104,7 @@ function Navbar() {
               </button>
               <button
                 onClick={handleLogin}
-                className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
                 <Github className="w-4 h-4" />
                 Login with GitHub
@@ -131,12 +130,12 @@ function Hero() {
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-50/50 dark:bg-indigo-900/30 rounded-full blur-3xl opacity-60 dark:opacity-40 mix-blend-multiply dark:mix-blend-normal" />
-        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-blue-50/50 dark:bg-blue-900/30 rounded-full blur-3xl opacity-60 dark:opacity-40 mix-blend-multiply dark:mix-blend-normal" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-900/30 rounded-full blur-3xl opacity-40 mix-blend-normal" />
+        <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-blue-900/30 rounded-full blur-3xl opacity-40 mix-blend-normal" />
       </div>
 
       {/* Backdrop overlay to prevent transparency issues - professional blur effect */}
-      <div className="absolute inset-0 bg-background/70 dark:bg-background/80 backdrop-blur-xl z-0 pointer-events-none" />
+      <div className="absolute inset-0 bg-background/80 backdrop-blur-xl z-0 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
         {/* Left Content */}
@@ -148,7 +147,7 @@ function Hero() {
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary leading-[1.15] tracking-tight mb-6">
               Understand Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-blue-600 dark:from-indigo-300 dark:to-cyan-300 pb-2">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-cyan-300 pb-2">
                 Engineering Team
               </span>{" "}
               <br />
@@ -175,7 +174,7 @@ function Hero() {
           >
             <button
               onClick={handleLogin}
-              className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-xl hover:-translate-y-1 cursor-pointer"
+              className="flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-slate-900 px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-xl hover:-translate-y-1 cursor-pointer"
             >
               <Github className="w-5 h-5" />
               Continue with GitHub
@@ -232,8 +231,8 @@ function FeatureCard({
 }) {
   return (
     <div className="bg-background p-6 rounded-2xl border border-border shadow-sm hover:shadow-md transition-shadow">
-      <div className="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-500/20 flex items-center justify-center mb-4">
-        <Icon className="w-6 h-6 text-indigo-600 dark:text-indigo-300" />
+      <div className="w-12 h-12 rounded-xl bg-indigo-500/20 flex items-center justify-center mb-4">
+        <Icon className="w-6 h-6 text-indigo-300" />
       </div>
       <h3 className="text-lg font-bold text-text-primary mb-2">{title}</h3>
       <p className="text-text-secondary text-sm leading-relaxed">{description}</p>
@@ -327,7 +326,7 @@ function DetailedFeature({
   return (
     <div className={`flex flex-col ${align === "right" ? "lg:flex-row-reverse" : "lg:flex-row"} items-center gap-12 py-16`}>
       <div className="flex-1 space-y-6">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 text-xs font-semibold uppercase tracking-wider">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 text-indigo-300 text-xs font-semibold uppercase tracking-wider">
           <Zap className="w-3 h-3" />
           Feature
         </div>
@@ -347,8 +346,8 @@ function DetailedFeature({
           <div className="relative z-10 w-full h-full p-6 flex items-center justify-center">{visual}</div>
         ) : (
           <>
-            <div className="absolute inset-0 bg-gradient-to-br from-surface to-slate-200/50 dark:to-slate-800/50" />
-            <Icon className="w-32 h-32 text-slate-300 dark:text-slate-600 group-hover:scale-110 transition-transform duration-500" />
+            <div className="absolute inset-0 bg-gradient-to-br from-surface to-slate-800/50" />
+            <Icon className="w-32 h-32 text-slate-600 group-hover:scale-110 transition-transform duration-500" />
           </>
         )}
       </div>
@@ -393,7 +392,7 @@ function HowItWorks() {
 
           {steps.map((s, i) => (
             <div key={i} className="relative pt-4 md:pt-0">
-              <div className="w-16 h-16 rounded-2xl bg-background border-2 border-indigo-100 dark:border-indigo-900 text-brand flex items-center justify-center text-xl font-bold mb-6 shadow-sm mx-auto md:mx-0 z-10">
+              <div className="w-16 h-16 rounded-2xl bg-background border-2 border-indigo-900 text-brand flex items-center justify-center text-xl font-bold mb-6 shadow-sm mx-auto md:mx-0 z-10">
                 {s.step}
               </div>
               <h3 className="text-xl font-bold text-text-primary mb-3 md:pr-4">{s.title}</h3>
@@ -412,20 +411,20 @@ function CTA() {
   };
 
   return (
-    <section className="py-24 bg-slate-900 overflow-hidden relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.3),transparent_50%)]" />
+    <section className="py-24 bg-surface overflow-hidden relative">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(79,70,229,0.15),transparent_50%)]" />
 
       <div className="max-w-4xl mx-auto px-4 text-center relative z-10">
-        <h2 className="text-3xl md:text-5xl font-bold !text-white mb-6 tracking-tight">
+        <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-6 tracking-tight">
           Stop guessing. <br />
           Start understanding your engineering team.
         </h2>
-        <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
+        <p className="text-xl text-text-secondary mb-10 max-w-2xl mx-auto">
           Join high-performing engineering teams who use TeamPulse to deliver better software, faster.
         </p>
         <button
           onClick={handleLogin}
-          className="bg-white text-slate-900 hover:bg-slate-50 px-10 py-4 rounded-xl text-lg font-bold transition-transform hover:-translate-y-1 shadow-2xl flex items-center gap-2 mx-auto cursor-pointer"
+          className="bg-white text-slate-900 hover:bg-slate-200 px-10 py-4 rounded-xl text-lg font-bold transition-transform hover:-translate-y-1 shadow-2xl flex items-center gap-2 mx-auto cursor-pointer"
         >
           <Github className="w-5 h-5" />
           Get Started with GitHub
@@ -440,7 +439,7 @@ function Footer() {
     <footer className="bg-background border-t border-border py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-1 rounded-md">
+          <div className="bg-white text-slate-900 p-1 rounded-md">
             <Activity className="w-4 h-4" />
           </div>
           <span className="font-bold text-text-primary">TeamPulse</span>
