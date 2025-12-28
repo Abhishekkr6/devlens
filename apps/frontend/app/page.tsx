@@ -85,21 +85,34 @@ function Navbar() {
 
       {/* Mobile Menu */}
       {mobileMenuOpen && (
-        <div className="md:hidden absolute top-full left-0 right-0 bg-background/95 dark:bg-background/95 backdrop-blur-xl border-b border-border p-4 flex flex-col gap-4 shadow-lg animate-in slide-in-from-top-5">
-          <button className="text-left text-sm font-medium text-text-secondary">
-            Features
-          </button>
-          <button className="text-left text-sm font-medium text-text-secondary">
-            How it works
-          </button>
-          <button
-            onClick={handleLogin}
-            className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer"
-          >
-            <Github className="w-4 h-4" />
-            Login with GitHub
-          </button>
-        </div>
+        <>
+          {/* Backdrop overlay with blur - covers entire screen behind menu */}
+          <div 
+            className="md:hidden fixed inset-0 bg-background/95 dark:bg-background/98 backdrop-blur-2xl z-[45]" 
+            onClick={() => setMobileMenuOpen(false)} 
+          />
+          {/* Menu container - completely solid background with no transparency */}
+          <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/50 dark:border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden">
+            {/* Solid background layer */}
+            <div className="absolute inset-0 bg-background dark:bg-background" />
+            {/* Content */}
+            <div className="relative p-4 flex flex-col gap-4">
+              <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
+                Features
+              </button>
+              <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
+                How it works
+              </button>
+              <button
+                onClick={handleLogin}
+                className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              >
+                <Github className="w-4 h-4" />
+                Login with GitHub
+              </button>
+            </div>
+          </div>
+        </>
       )}
     </nav>
   );
@@ -255,7 +268,7 @@ function FeatureSection() {
             Built for modern engineering teams
           </h2>
           <p className="text-text-secondary">
-            Stop relying on standups to know what's happening. detailed insights into your team's development lifecycle.
+            Stop relying on standups to know what&apos;s happening. detailed insights into your team&apos;s development lifecycle.
           </p>
         </div>
 

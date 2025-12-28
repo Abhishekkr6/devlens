@@ -139,7 +139,7 @@ export default function MePage() {
                       {user.orgIds.map((org: any) => (
                         <div key={org.id || org._id} className="flex items-center justify-between p-4 hover:bg-surface transition-colors">
                           <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-sm font-bold text-white shadow-sm">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-sm font-bold text-black/10 shadow-sm">
                               {org.name?.[0]?.toUpperCase() || "O"}
                             </div>
                             <div>
@@ -167,7 +167,7 @@ export default function MePage() {
                 </CardBody>
               </Card>
 
-              <div className="bg-white dark:!bg-[#0E1116] border border-border rounded-xl shadow-sm overflow-hidden relative shadow-brand/20">
+              <div className="bg-black/10 dark:!bg-[#0E1116] border border-border rounded-xl shadow-sm overflow-hidden relative shadow-brand/20">
                 <div className="py-8 px-8 relative z-10">
                   <h3 className="text-xl font-bold mb-2 text-text-primary">Need a new organization?</h3>
                   <p className="text-sm mb-6 max-w-md font-medium text-text-secondary">
@@ -175,7 +175,7 @@ export default function MePage() {
                   </p>
                   <a
                     href="/organization"
-                    className="inline-flex items-center justify-center rounded-xl bg-brand text-white px-6 py-2.5 text-sm font-bold transition-all hover:bg-brand/90 hover:shadow-xl active:scale-95"
+                    className="inline-flex items-center border border-border justify-center rounded-xl bg-brand text-white px-6 py-2.5 text-sm font-bold transition-all hover:bg-brand/90 hover:shadow-xl active:scale-95"
                   >
                     Manage Organizations
                   </a>
