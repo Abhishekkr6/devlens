@@ -167,15 +167,15 @@ export default function MePage() {
                 </CardBody>
               </Card>
 
-              <div className="bg-white dark:!bg-white/10 border border-border rounded-xl shadow-sm overflow-hidden relative shadow-brand/20">
+              <div className="bg-white/10 border border-border rounded-xl shadow-sm overflow-hidden relative shadow-brand/20">
                 <div className="py-8 px-8 relative z-10">
-                  <h3 className="text-xl font-bold mb-2 text-black dark:!text-white">Need a new organization?</h3>
-                  <p className="text-sm mb-6 max-w-md font-medium text-black dark:!text-gray-300">
+                  <h3 className="text-xl font-bold mb-2 text-white">Need a new organization?</h3>
+                  <p className="text-sm mb-6 max-w-md font-medium text-gray-300">
                     You can create a new organization to isolate your projects and team members, or ask an administrator to invite you to an existing one.
                   </p>
                   <a
                     href="/organization"
-                    className="inline-flex items-center justify-center rounded-xl px-6 py-2.5 text-sm font-bold transition-all hover:shadow-xl active:scale-95 border border-black bg-white text-black hover:bg-gray-50 dark:!border-white dark:!bg-transparent dark:!text-white dark:hover:!bg-white/10"
+                    className="inline-flex items-center justify-center rounded-xl px-6 py-2.5 text-sm font-bold transition-all hover:shadow-xl active:scale-95 border border-white bg-transparent text-white hover:bg-white/10"
                   >
                     Manage Organizations
                   </a>

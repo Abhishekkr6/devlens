@@ -1,32 +1,25 @@
 @import "tailwindcss";
 
 :root {
-  /* LIGHT MODE (Default) */
-  --background: #FFFFFF;
-  --surface: #F8FAFC;
-  --text-primary: #0A0A0A;
-  --text-secondary: #6B7280;
-  --border: #E5E7EB;
-  --brand: #4A5DFF;
-  --success: #22C55E;
-  --warning: #F59E0B;
-  --danger: #EF4444;
-}
-
-[data-theme='dark'] {
-  /* DARK MODE */
+  /* FORCED DARK MODE */
   color-scheme: dark;
   --background: #0E1116;
   --surface: #1A1D23;
   --text-primary: #FFFFFF;
   --text-secondary: #8B97A5;
   --border: rgba(255, 255, 255, 0.08);
-  /* Brand/Success colors often remain same, or slightly adjusted for dark mode contrast if needed */
+  /* Dark mode border */
+
+  /* Brand/Status Colors */
   --brand: #4A5DFF;
   --success: #22C55E;
   --warning: #F3B34D;
+  /* Dark mode warning */
   --danger: #F87171;
+  /* Dark mode danger */
 }
+
+/* [data-theme='dark'] block removed as it is now the default */
 
 /* Base styles using the new variables */
 body {
