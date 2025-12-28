@@ -41,8 +41,8 @@ function Navbar() {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-          ? "bg-background/95 backdrop-blur-xl border-b border-border/30 py-3 shadow-lg"
-          : "bg-background/85 backdrop-blur-xl py-5"
+        ? "bg-background/95 backdrop-blur-xl border-b border-border/30 py-3 shadow-lg"
+        : "bg-background/85 backdrop-blur-xl py-5"
         }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
@@ -87,26 +87,24 @@ function Navbar() {
         <>
           {/* Backdrop overlay with blur - covers entire screen behind menu */}
           <div
-            className="md:hidden fixed inset-0 bg-background/98 backdrop-blur-2xl z-[45]"
+            className="md:hidden fixed inset-0 bg-background/60 backdrop-blur-sm z-[45]"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Menu container - completely solid background with no transparency */}
-          <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden">
-            {/* Solid background layer */}
-            <div className="absolute inset-0 bg-background" />
+          {/* Menu container - Dark blurred background */}
+          <div className="md:hidden absolute top-full left-0 right-0 border-b border-white/10 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden bg-slate-900/95 backdrop-blur-3xl">
             {/* Content */}
             <div className="relative p-4 flex flex-col gap-4">
-              <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
+              <button className="text-left text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
                 Features
               </button>
-              <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
+              <button className="text-left text-sm font-medium text-slate-300 hover:text-white transition-colors py-2">
                 How it works
               </button>
               <button
                 onClick={handleLogin}
-                className="flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+                className="flex items-center justify-center gap-2 bg-white hover:bg-slate-200 text-slate-900 px-4 py-3 rounded-xl text-sm font-bold w-full cursor-pointer transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
               >
-                <Github className="w-4 h-4" />
+                <Github className="w-5 h-5" />
                 Login with GitHub
               </button>
             </div>
