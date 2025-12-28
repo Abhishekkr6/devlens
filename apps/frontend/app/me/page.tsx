@@ -139,7 +139,7 @@ export default function MePage() {
                       {user.orgIds.map((org: any) => (
                         <div key={org.id || org._id} className="flex items-center justify-between p-4 hover:bg-surface transition-colors">
                           <div className="flex items-center gap-4">
-                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-sm font-bold text-black/10 shadow-sm">
+                            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-white text-lg font-bold text-indigo-600 shadow-sm shrink-0 border border-indigo-100">
                               {org.name?.[0]?.toUpperCase() || "O"}
                             </div>
                             <div>
