@@ -57,6 +57,12 @@ const FloatingDockMobile = ({
       return;
     }
 
+    // Restore scroll position
+    const savedScroll = sessionStorage.getItem("mobile-dock-scroll");
+    if (savedScroll) {
+      element.scrollLeft = parseInt(savedScroll, 10);
+    }
+
     const updateHints = () => {
       if (!element) {
         return;
@@ -74,6 +80,9 @@ const FloatingDockMobile = ({
 
       setShowLeftHint(!atStart);
       setShowRightHint(!atEnd);
+
+      // Save scroll position
+      sessionStorage.setItem("mobile-dock-scroll", element.scrollLeft.toString());
     };
 
     updateHints();
