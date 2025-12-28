@@ -151,13 +151,13 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
 
                         <div className="space-y-4">
                             {recentEvents.map((event) => {
-                                const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl";
+                                const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl shrink-0";
                                 const baseIconStyles =
                                     event.kind === "commit"
-                                        ? "bg-indigo-50 dark:bg-brand/20 text-brand dark:text-indigo-400"
+                                        ? "bg-white text-indigo-600 shadow-sm"
                                         : event.kind === "review"
-                                            ? "bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400"
-                                            : "bg-amber-50 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400";
+                                            ? "bg-white text-emerald-600 shadow-sm"
+                                            : "bg-white text-amber-600 shadow-sm";
 
                                 return (
                                     <div
