@@ -177,10 +177,13 @@ function Hero() {
               <Github className="w-5 h-5" />
               Continue with GitHub
             </button>
-            <button className="flex items-center justify-center gap-2 bg-surface text-text-primary border border-border px-8 py-4 rounded-xl text-lg font-medium hover:brightness-95 transition-colors cursor-pointer">
+            <Link
+              href="/demo"
+              className="flex items-center justify-center gap-2 bg-surface text-text-primary border border-border px-8 py-4 rounded-xl text-lg font-medium hover:brightness-95 transition-colors cursor-pointer"
+            >
               <LayoutDashboard className="w-5 h-5 text-text-secondary" />
               View Dashboard Demo
-            </button>
+            </Link>
           </motion.div>
 
           <motion.div
