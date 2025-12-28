@@ -32,9 +32,9 @@ export default function Sidebar() {
             <Link
               key={l.href}
               href={l.href}
-              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-md transition-all duration-200 ${active
-                ? "bg-brand text-white font-medium shadow-md shadow-brand/25 border border-brand/50 translate-x-1"
-                : "text-text-secondary hover:bg-surface hover:text-text-primary"
+              className={`flex items-center gap-3 px-3 py-2 text-sm rounded-xl transition-all duration-200 group relative ${active
+                ? "bg-white text-slate-900 font-bold shadow-xl shadow-white/20 scale-[1.02] border-2 border-indigo-600"
+                : "text-slate-400 hover:text-white hover:bg-white/5 border-2 border-transparent"
                 }`}
             >
               <Icon className="w-4 h-4" />
