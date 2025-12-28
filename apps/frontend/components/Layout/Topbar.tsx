@@ -186,8 +186,13 @@ export default function Topbar() {
     }
   };
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string) => {
+    // strict match for overview (organization root)
+    if (activeOrgId && href === `/organization/${activeOrgId}`) {
+      return pathname === href;
+    }
+    return pathname === href || pathname.startsWith(`${href}/`);
+  };
 
   const renderNavLinks = (className?: string) =>
     navLinks.map(({ name, href, icon: Icon }) => {
