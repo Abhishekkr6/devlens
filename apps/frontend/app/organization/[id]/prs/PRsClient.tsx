@@ -6,6 +6,7 @@ import { api } from "../../../../lib/api";
 import { useLiveStore } from "../../../../store/liveStore";
 import { Button } from "../../../../components/Ui/Button";
 import { Card } from "../../../../components/Ui/Card";
+import { Select } from "../../../../components/Ui/Select";
 
 interface Reviewer {
     login?: string;
@@ -115,7 +116,7 @@ type FilterOption = {
     value: string;
 };
 
-import { Select } from "../../../../components/Ui/Select";
+import { ScrollableWithHints } from "../../../../components/Ui/ScrollableWithHints";
 
 type TableRow = {
     id: string;
@@ -375,7 +376,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
             </div>
 
             <Card className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
-                <div className="overflow-x-auto">
+                <ScrollableWithHints>
                     <table className="min-w-full table-auto text-sm text-text-secondary">
                         <thead className="bg-surface text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
                             <tr>
@@ -390,7 +391,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         </thead>
                         <tbody>{renderTableBody()}</tbody>
                     </table>
-                </div>
+                </ScrollableWithHints>
             </Card>
         </div>
     );
