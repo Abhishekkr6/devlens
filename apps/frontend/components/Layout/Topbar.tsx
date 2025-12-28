@@ -226,7 +226,7 @@ export default function Topbar() {
           <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3">
             <Link
               href="/dashboard"
-              className="flex min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
+              className="flex shrink-0 min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
               aria-label="TeamPulse home"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
@@ -243,12 +243,12 @@ export default function Topbar() {
               <div className="relative ml-2" ref={orgDropdownRef}>
                 <button
                   onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
-                  className="flex items-center gap-2 rounded-xl border border-border bg-background px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm"
+                  className="flex items-center gap-2 rounded-xl border border-border bg-background px-2 sm:px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm"
                 >
                   <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-indigo-700 dark:text-brand">
                     {currentOrg?.name?.[0]?.toUpperCase() || "O"}
                   </div>
-                  <span className="max-w-[100px] truncate sm:max-w-[140px]">
+                  <span className="max-w-[70px] xs:max-w-[100px] truncate sm:max-w-[140px]">
                     {currentOrg?.name || "Select Organization"}
                   </span>
                   <ChevronDown
@@ -451,7 +451,7 @@ export default function Topbar() {
               )}
             </div>
 
-            <div className="ml-auto flex items-center gap-2 md:hidden">
+            <div className="ml-auto flex shrink-0 items-center gap-2 md:hidden">
               <button
                 type="button"
                 className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand"
