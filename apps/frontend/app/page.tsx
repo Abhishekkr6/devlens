@@ -22,6 +22,7 @@ import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/Commi
 import { WorkerArchitectureVisual } from "../components/Landing/FeatureVisuals/WorkerArchitectureVisual";
 
 import { Navbar } from "../components/Landing/Navbar";
+import { Footer } from "../components/Landing/Footer";
 
 // --- Components ---
 
@@ -347,30 +348,7 @@ function CTA() {
   );
 }
 
-function Footer() {
-  return (
-    <footer className="bg-background border-t border-border py-12">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-2">
-          <div className="bg-white text-slate-900 p-1 rounded-md">
-            <Activity className="w-4 h-4" />
-          </div>
-          <span className="font-bold text-text-primary">TeamPulse</span>
-        </div>
 
-        <p className="text-text-secondary text-sm">
-          © {new Date().getFullYear()} TeamPulse. Built for engineers.
-        </p>
-
-        <div className="flex gap-6 text-sm text-text-secondary">
-          <a href="#" className="hover:text-text-primary">Privacy</a>
-          <a href="#" className="hover:text-text-primary">Terms</a>
-          <a href="#" className="hover:text-text-primary">GitHub</a>
-        </div>
-      </div>
-    </footer>
-  );
-}
 
 // --- Main Page Component ---
 
