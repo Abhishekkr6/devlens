@@ -8,7 +8,7 @@ import SmoothScroll from "../components/SmoothScroll";
 
 
 export const metadata: Metadata = {
-  title: "TeamPulse",
+  title: "TeamPulse | Developer Activity & Insights",
   description: "Real-time developer activity and insights",
 };
 

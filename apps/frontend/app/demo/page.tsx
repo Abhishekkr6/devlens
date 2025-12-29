@@ -26,9 +26,11 @@ export default function DemoPage() {
                         <div className="bg-white p-1.5 rounded-lg flex items-center justify-center">
                             <Activity className="text-slate-900 w-5 h-5" />
                         </div>
-                        <h1 className="text-lg font-heading font-semibold text-text-primary">
+                        <Button
+                            onClick={() => router.push("/")}
+                            className="cursor-pointer text-lg font-heading font-semibold text-text-primary">
                             TeamPulse <span className="text-text-secondary font-normal text-sm ml-1 hidden sm:inline">(Demo Mode)</span>
-                        </h1>
+                        </Button>
                     </div>
 
                     <Button variant="primary" onClick={handleLogin} className="cursor-pointer hover:text-white text-xs sm:text-sm px-3 sm:px-4">
