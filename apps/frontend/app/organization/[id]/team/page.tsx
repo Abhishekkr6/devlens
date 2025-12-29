@@ -67,7 +67,7 @@ const getRoleLabel = (role: string) => {
 const getRoleBadgeColor = (role: string) => {
   switch (role) {
     case "ADMIN":
-      return "bg-indigo-100 dark:bg-brand/20 text-brand border-brand/20";
+      return "bg-indigo-500/10 text-indigo-300 border-indigo-500/20";
     case "MEMBER":
       return "bg-surface text-text-secondary border-border";
     case "VIEWER":
