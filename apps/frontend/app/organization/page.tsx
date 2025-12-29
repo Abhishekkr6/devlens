@@ -4,13 +4,17 @@ import { useState, useEffect } from "react";
 import { api } from "../../lib/api";
 import { useRouter } from "next/navigation";
 import { Card } from "../../components/Ui/Card";
+import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../store/userStore";
+import { Trash2 } from "lucide-react";
 
 export default function OrganizationPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
   const [orgs, setOrgs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const [deletingOrg, setDeletingOrg] = useState<any>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const router = useRouter();
   const { setActiveOrganization } = useUserStore();
@@ -45,6 +49,22 @@ export default function OrganizationPage() {
     setActiveOrganization(activeOrgId.toString());
     await fetchOrgs();
     router.push(`/organization/${org._id}/repos`);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deletingOrg) return;
+
+    try {
+      setIsDeleting(true);
+      await api.delete(`/orgs/${deletingOrg._id}`);
+      setOrgs((prev) => prev.filter((o) => o._id !== deletingOrg._id));
+      setDeletingOrg(null);
+    } catch (e) {
+      console.error("Failed to delete organization", e);
+      alert("Failed to delete organization. Please try again.");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const disabled = !name.trim() || !slug.trim();
@@ -126,15 +146,24 @@ export default function OrganizationPage() {
                         <div className="text-xs text-text-secondary font-mono">{o.slug}</div>
                       </div>
                     </div>
-                    <button
-                      onClick={() => {
-                        setActiveOrganization(o._id);
-                        router.push(`/organization/${o._id}/repos`);
-                      }}
-                      className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
-                    >
-                      Launch
-                    </button>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setActiveOrganization(o._id);
+                          router.push(`/organization/${o._id}/repos`);
+                        }}
+                        className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
+                      >
+                        Launch
+                      </button>
+                      <button
+                        onClick={() => setDeletingOrg(o)}
+                        className="p-2 rounded-lg text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-colors"
+                        title="Delete Organization"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -142,6 +171,16 @@ export default function OrganizationPage() {
           </Card>
         </div>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!deletingOrg}
+        onClose={() => setDeletingOrg(null)}
+        onConfirm={handleConfirmDelete}
+        title="Delete Organization"
+        description={`Are you sure you want to delete "${deletingOrg?.name}"? This action cannot be undone and will permanently delete all data associated with this organization.`}
+        confirmText="Delete Organization"
+        isLoading={isDeleting}
+      />
     </div>
   );
 }
