@@ -343,3 +343,49 @@ export const updateMemberRole = async (req: any, res: Response) => {
     return res.status(500).json({ error: "Failed to update role" });
   }
 };
+
+/**
+ * DELETE ORGANIZATION
+ * - Deletes the organization
+ * - Removes org from all users' orgIds
+ */
+export const deleteOrg = async (req: any, res: Response) => {
+  try {
+    const { orgId } = req.params;
+
+    const org = await OrgModel.findById(orgId);
+    if (!org) {
+      return res.status(404).json({
+        success: false,
+        error: { message: "Organization not found" }
+      });
+    }
+
+    // Delete the organization
+    await OrgModel.findByIdAndDelete(orgId);
+
+    // Remove org from all users
+    await UserModel.updateMany(
+      { orgIds: orgId },
+      { $pull: { orgIds: orgId } }
+    );
+
+    // Logic to clean up defaultOrgId if it matches deleted org
+    // This is a heavier operation, can be done lazily, but here's a simple cleanup
+    await UserModel.updateMany(
+      { defaultOrgId: orgId },
+      { $unset: { defaultOrgId: 1 } }
+    );
+
+    return res.json({
+      success: true,
+      message: "Organization deleted successfully"
+    });
+  } catch (error) {
+    console.error("DELETE ORG ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      error: { message: "Failed to delete organization" }
+    });
+  }
+};

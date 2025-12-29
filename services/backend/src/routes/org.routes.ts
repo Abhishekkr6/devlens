@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createOrg, getUserOrgs, getOrgMembers, inviteUser, removeMember, updateMemberRole } from "../controllers/org.controller";
+import { createOrg, getUserOrgs, getOrgMembers, inviteUser, removeMember, updateMemberRole, deleteOrg } from "../controllers/org.controller";
 import { getRepoDetail, getRepos, deleteRepo } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
 import { getAlertSummary, acknowledgeAlert } from "../controllers/alertSummary.controller";
@@ -12,6 +12,14 @@ const router = Router();
 
 // Org create
 router.post("/orgs", authMiddleware, validate(createOrgSchema), createOrg);
+
+// Org delete
+router.delete(
+  "/orgs/:orgId",
+  authMiddleware,
+  requireOrgRole(["ADMIN"]),
+  deleteOrg
+);
 
 // Repo list in org
 router.get(
