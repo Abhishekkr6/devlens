@@ -16,7 +16,7 @@ const run = async () => {
 
         console.log("Listing current indexes...");
         const indexes = await collection.indexes();
-        console.log(indexes);
+        console.log("Index names found:", indexes.map(i => i.name));
 
         const oldIndexName = "providerRepoId_1"; // Default name for { providerRepoId: 1 } unique
 
