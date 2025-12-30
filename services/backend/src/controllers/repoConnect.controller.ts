@@ -42,22 +42,35 @@ export const connectRepo = async (req: any, res: Response) => {
         .json({ success: false, error: "GitHub token not found" });
     }
 
+    // Check if repo is already connected
+    const existingRepo = await RepoModel.findOne({
+      providerRepoId: repoFullName,
+      orgId: orgId
+    });
+
+    if (existingRepo) {
+      return res.status(409).json({
+        success: false,
+        error: "Repository already connected to this organization"
+      });
+    }
+
     // Verify that the repository exists on GitHub
     const verifyResult = await verifyRepositoryExists(repoFullName, user.githubAccessToken);
     if (!verifyResult.exists) {
       return res
         .status(404)
-        .json({ 
-          success: false, 
-          error: `Repository not found: ${verifyResult.reason || "The specified repository does not exist on GitHub"}` 
+        .json({
+          success: false,
+          error: `Repository not found: ${verifyResult.reason || "The specified repository does not exist on GitHub"}`
         });
     }
 
     const secret = process.env.WEBHOOK_SECRET;
     if (!secret) {
-      return res.status(500).json({ 
-        success: false, 
-        error: "Server configuration error: WEBHOOK_SECRET not set" 
+      return res.status(500).json({
+        success: false,
+        error: "Server configuration error: WEBHOOK_SECRET not set"
       });
     }
     const hashed = crypto.createHash("sha256").update(secret).digest("hex");
