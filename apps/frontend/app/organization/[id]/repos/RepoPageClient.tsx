@@ -64,7 +64,11 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
       setRepos(res.data.data || []);
     } catch (err: any) {
       console.error("Connect failed", err);
-      setConnectError(err.response?.data?.error || "Failed to connect repository");
+      if (err.response?.status === 409) {
+        setConnectError("Repository is already connected to this organization.");
+      } else {
+        setConnectError(err.response?.data?.error || "Failed to connect repository");
+      }
     } finally {
       setIsConnecting(false);
     }
