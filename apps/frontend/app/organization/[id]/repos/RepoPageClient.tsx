@@ -102,7 +102,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
           {isAdmin && (
             <button
               onClick={() => setShowForm(!showForm)}
-              className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50"
+              className="rounded-xl border border-border px-4 py-2 text-sm font-semibold text-text-primary hover:bg-brand/90 cursor-pointer disabled:opacity-50"
             >
               {showForm ? "Cancel" : "Connect Repository"}
             </button>
@@ -135,14 +135,14 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowForm(false)}
-                  className="rounded-xl px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface"
+                  className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConnect}
                   disabled={isConnecting || !connectParams.fullName}
-                  className="rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50"
+                  className="rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50"
                 >
                   {isConnecting ? "Connecting..." : "Connect Repository"}
                 </button>
@@ -168,7 +168,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
               {isAdmin && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="mt-6 inline-flex items-center rounded-xl bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+                  className="mt-6 inline-flex items-center rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
                 >
                   Connect Repository
                 </button>
@@ -187,7 +187,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
                       <button
                         onClick={() => handleDelete(r._id)}
                         disabled={deletingId === r._id}
-                        className="text-text-secondary hover:text-red-600 disabled:opacity-50"
+                        className="text-text-secondary cursor-pointer hover:text-red-600 disabled:opacity-50"
                         title="Disconnect Repository"
                       >
                         {deletingId === r._id ? (
