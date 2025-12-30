@@ -15,7 +15,7 @@ export interface IRepo extends Document {
 
 const RepoSchema = new Schema<IRepo>({
   provider: { type: String, required: true, default: "github" },
-  providerRepoId: { type: String, required: true, unique: true },
+  providerRepoId: { type: String, required: true }, // Removed unique: true
   orgId: { type: Schema.Types.ObjectId, ref: "Org" },
   name: String,
   url: String,
@@ -23,5 +23,8 @@ const RepoSchema = new Schema<IRepo>({
   webhookSecretHash: String,
   connectedAt: Date,
 }, { timestamps: true });
+
+// Compound unique index: A repo can be in multiple orgs, but unique per org
+RepoSchema.index({ providerRepoId: 1, orgId: 1 }, { unique: true });
 
 export const RepoModel = model<IRepo>("Repo", RepoSchema);
