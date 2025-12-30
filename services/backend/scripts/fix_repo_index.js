@@ -7,7 +7,7 @@ const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/teampu
 
 const run = async () => {
     try {
-        console.log("Connecting to MongoDB...");
+        console.log(`Connecting to MongoDB at ${MONGODB_URI.split("@")[1] || "localhost"}...`);
         await mongoose.connect(MONGODB_URI);
         console.log("Connected.");
 
