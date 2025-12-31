@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../../../../lib/api";
 import { Card } from "../../../../components/Ui/Card";
+import { ConfirmDialog } from "../../../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../../../store/userStore";
 
 type Repo = {
@@ -18,7 +19,8 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
 
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [repoToDelete, setRepoToDelete] = useState<Repo | null>(null);
+  const [isDeletingRepo, setIsDeletingRepo] = useState(false);
 
   const activeOrgId = useUserStore((state) => state.activeOrgId);
   const user = useUserStore((state) => state.user);
@@ -74,20 +76,21 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
     }
   };
 
-  const handleDelete = async (repoId: string) => {
-    if (!confirm("Are you sure you want to delete this repository? This action cannot be undone.")) return;
+  const handleConfirmDelete = async () => {
+    if (!repoToDelete || !currentOrgId) return;
 
     try {
-      setDeletingId(repoId);
-      await api.delete(`/orgs/${currentOrgId}/repos/${repoId}`);
+      setIsDeletingRepo(true);
+      await api.delete(`/orgs/${currentOrgId}/repos/${repoToDelete.id}`);
       // Refresh list
       const res = await api.get(`/orgs/${currentOrgId}/repos`);
       setRepos(res.data.data || []);
+      setRepoToDelete(null);
     } catch (err) {
       console.error("Delete failed", err);
       alert("Failed to delete repository");
     } finally {
-      setDeletingId(null);
+      setIsDeletingRepo(false);
     }
   };
 
@@ -185,18 +188,13 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
                     </span>
                     {isAdmin && (
                       <button
-                        onClick={() => handleDelete(r.id)}
-                        disabled={deletingId === r.id}
+                        onClick={() => setRepoToDelete(r)}
                         className="text-text-secondary cursor-pointer hover:text-red-600 disabled:opacity-50"
                         title="Disconnect Repository"
                       >
-                        {deletingId === r.id ? (
-                          <span className="animate-spin">...</span>
-                        ) : (
-                          <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                          </svg>
-                        )}
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
                       </button>
                     )}
                   </div>
@@ -206,6 +204,16 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
           )}
         </Card>
       </div>
+
+      <ConfirmDialog
+        isOpen={!!repoToDelete}
+        onClose={() => setRepoToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        title="Disconnect Repository"
+        description={`Are you sure you want to disconnect "${repoToDelete?.name}"? This will remove all analyzed data, including commits, PRs, and alerts from TeamPulse. The actual GitHub repository will not be affected.`}
+        confirmText="Disconnect Repository"
+        isLoading={isDeletingRepo}
+      />
     </div>
   );
 }
