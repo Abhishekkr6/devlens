@@ -346,7 +346,11 @@ export default function Topbar() {
                   aria-label="Notifications"
                 >
                   <Bell className="h-4 w-4" />
-                  <span className="absolute right-2 top-2 inline-flex h-2 w-2 rounded-full bg-rose-500 ring-2 ring-background" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-background">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
                 </button>
                 <NotificationDropdown
                   isOpen={notificationOpen}
@@ -492,7 +496,11 @@ export default function Topbar() {
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
-                <span className="absolute right-2 top-2 inline-flex h-2 w-2 rounded-full bg-rose-500" />
+                {unreadCount > 0 && (
+                  <span className="absolute -right-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-background">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
+                )}
               </button>
 
               {user ? (
