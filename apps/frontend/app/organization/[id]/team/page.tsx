@@ -142,8 +142,14 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     try {
       setInviting(true);
 
+      await api.post(`/orgs/${orgId}/invite`, {
+        email: inviteEmail.trim(),
+        role: inviteRole,
+      });
+
       setInviteRole("MEMBER");
       showToast("Invitation sent successfully!", "success");
+      setInviteEmail("");
       await fetchMembers();
       setShowInviteForm(false);
     } catch (err: any) {
