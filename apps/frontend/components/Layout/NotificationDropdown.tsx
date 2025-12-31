@@ -12,21 +12,7 @@ import {
     Check,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
-
-export type NotificationType = "alert" | "invite" | "info" | "success";
-
-export interface Notification {
-    id: string;
-    type: NotificationType;
-    title: string;
-    message: string;
-    time: string;
-    read: boolean;
-    link?: string;
-}
-
-// Mock Data
-const MOCK_NOTIFICATIONS: Notification[] = [];
+import { useNotificationStore, NotificationType } from "../../store/notificationStore";
 
 interface NotificationDropdownProps {
     isOpen: boolean;
@@ -34,26 +20,9 @@ interface NotificationDropdownProps {
 }
 
 export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
-    const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
+    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotificationStore();
 
     if (!isOpen) return null;
-
-    const unreadCount = notifications.filter((n) => !n.read).length;
-
-    const markAllRead = () => {
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-    };
-
-    const markAsRead = (id: string) => {
-        setNotifications((prev) =>
-            prev.map((n) => (n.id === id ? { ...n, read: true } : n))
-        );
-    };
-
-    const deleteNotification = (e: React.MouseEvent, id: string) => {
-        e.stopPropagation();
-        setNotifications((prev) => prev.filter((n) => n.id !== id));
-    };
 
     const getIcon = (type: NotificationType) => {
         switch (type) {
@@ -81,6 +50,18 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         }
     };
 
+    // Format time roughly (e.g., "5m ago")
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now.getTime() - date.getTime()) / 60000); // minutes
+        if (diff < 1) return "Just now";
+        if (diff < 60) return `${diff}m ago`;
+        const hours = Math.floor(diff / 60);
+        if (hours < 24) return `${hours}h ago`;
+        return `${Math.floor(hours / 24)}d ago`;
+    };
+
     return (
         <div className="absolute right-0 mt-2 w-80 sm:w-96 origin-top-right rounded-xl border border-border bg-[var(--background)] shadow-2xl ring-1 ring-black ring-opacity-5 focus:outline-none z-[100] overflow-hidden">
             <div className="flex items-center justify-between px-4 py-3 border-b border-border bg-surface/50">
@@ -94,7 +75,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                 </div>
                 {unreadCount > 0 && (
                     <button
-                        onClick={markAllRead}
+                        onClick={() => markAllAsRead()}
                         className="text-xs font-medium text-brand hover:text-brand/80 transition-colors"
                     >
                         Mark all read
@@ -117,8 +98,8 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                     <div className="divide-y divide-border">
                         {notifications.map((notification) => (
                             <div
-                                key={notification.id}
-                                onClick={() => markAsRead(notification.id)}
+                                key={notification._id}
+                                onClick={() => markAsRead(notification._id)}
                                 className={cn(
                                     "group relative flex gap-3 p-4 transition-colors hover:bg-surface/50 cursor-pointer",
                                     !notification.read && "bg-brand/5 dark:bg-brand/10 hover:bg-brand/10"
@@ -144,7 +125,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                                             {notification.title}
                                         </p>
                                         <span className="text-[10px] text-text-secondary bg-surface px-1.5 py-0.5 rounded shrink-0">
-                                            {notification.time}
+                                            {formatTime(notification.createdAt)}
                                         </span>
                                     </div>
                                     <p className="mt-1 text-xs text-text-secondary leading-normal line-clamp-2">
@@ -152,14 +133,14 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                                     </p>
 
                                     {notification.link && (
-                                        <p className="mt-2 text-xs font-medium text-brand group-hover:underline">
+                                        <Link href={notification.link} className="mt-2 text-xs font-medium text-brand group-hover:underline inline-block">
                                             View Details →
-                                        </p>
+                                        </Link>
                                     )}
                                 </div>
 
                                 <button
-                                    onClick={(e) => deleteNotification(e, notification.id)}
+                                    onClick={(e) => deleteNotification(notification._id)}
                                     className="absolute right-2 top-2 p-1 rounded-full opacity-0 group-hover:opacity-100 hover:bg-black/5 dark:hover:bg-white/10 transition-all text-text-secondary"
                                     title="Dismiss"
                                 >
@@ -176,7 +157,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
             </div>
 
             <div className="p-2 border-t border-border bg-surface/50 text-center">
-                <Link href="/notifications" className="text-xs font-medium text-text-secondary hover:text-text-primary transition-colors block py-1">
+                <Link href="/notifications" onClick={onClose} className="text-xs font-medium text-text-secondary hover:text-text-primary transition-colors block py-1">
                     View all notifications
                 </Link>
             </div>

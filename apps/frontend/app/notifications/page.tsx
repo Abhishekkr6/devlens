@@ -7,24 +7,30 @@ import { Bell, CheckCircle2, AlertTriangle, Info, UserPlus, X, Filter } from "lu
 import { cn } from "@/lib/utils";
 
 // Define locally for now until we have a shared type file or backend
+import { useNotificationStore } from "../../store/notificationStore";
+
 type NotificationType = "alert" | "invite" | "info" | "success";
 
-interface Notification {
-    id: string;
-    type: NotificationType;
-    title: string;
-    message: string;
-    time: string;
-    read: boolean;
-    link?: string;
-}
-
 export default function NotificationsPage() {
-    // Empty for now as requested, but structured to accept data
-    const [notifications, setNotifications] = useState<Notification[]>([]);
+    const { notifications, markAllAsRead, markAsRead } = useNotificationStore();
     const [filter, setFilter] = useState<NotificationType | "all">("all");
 
-    const unreadCount = notifications.filter((n) => !n.read).length;
+    // Filter logic
+    const filteredNotifications = notifications.filter(n => {
+        if (filter === "all") return true;
+        return n.type === filter;
+    });
+
+    const formatTime = (dateStr: string) => {
+        const date = new Date(dateStr);
+        const now = new Date();
+        const diff = Math.floor((now.getTime() - date.getTime()) / 60000); // minutes
+        if (diff < 1) return "Just now";
+        if (diff < 60) return `${diff}m ago`;
+        const hours = Math.floor(diff / 60);
+        if (hours < 24) return `${hours}h ago`;
+        return `${Math.floor(hours / 24)}d ago`;
+    };
 
     const getIcon = (type: NotificationType) => {
         switch (type) {
@@ -63,7 +69,10 @@ export default function NotificationsPage() {
                         </p>
                     </div>
                     <div className="flex items-center gap-3">
-                        <button disabled className="px-4 py-2 text-sm font-medium text-text-secondary bg-surface border border-border rounded-xl opacity-50 cursor-not-allowed">
+                        <button
+                            onClick={() => markAllAsRead()}
+                            className="px-4 py-2 text-sm font-medium text-text-secondary bg-surface border border-border rounded-xl hover:bg-surface/80 hover:text-brand transition-colors cursor-pointer"
+                        >
                             Mark all read
                         </button>
                     </div>
@@ -99,7 +108,7 @@ export default function NotificationsPage() {
                 </div>
 
                 {/* Content */}
-                {notifications.length === 0 ? (
+                {filteredNotifications.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-24 text-center">
                         <div className="h-20 w-20 rounded-full bg-surface border border-border flex items-center justify-center mb-6 shadow-sm">
                             <Bell className="h-10 w-10 text-text-secondary/30" />
@@ -111,9 +120,10 @@ export default function NotificationsPage() {
                     </div>
                 ) : (
                     <div className="space-y-4">
-                        {notifications.map((notification) => (
+                        {filteredNotifications.map((notification) => (
                             <Card
-                                key={notification.id}
+                                key={notification._id}
+                                onClick={() => markAsRead(notification._id)}
                                 className={cn(
                                     "p-5 transition-all hover:shadow-md border",
                                     !notification.read ? "border-l-4 border-l-brand" : "border-border"
@@ -137,7 +147,7 @@ export default function NotificationsPage() {
                                                 </p>
                                             </div>
                                             <span className="text-xs text-text-secondary whitespace-nowrap bg-surface px-2 py-1 rounded-lg border border-border/50">
-                                                {notification.time}
+                                                {formatTime(notification.createdAt)}
                                             </span>
                                         </div>
                                         {notification.link && (

@@ -25,6 +25,7 @@ import { motion } from "motion/react";
 import { FloatingDock } from "../Ui/floating-dock";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useUserStore } from "../../store/userStore";
+import { useNotificationStore } from "../../store/notificationStore";
 import { getBackendBase } from "../../lib/api";
 import { api } from "../../lib/api";
 
@@ -72,6 +73,17 @@ export default function Topbar() {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const teamDropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
+
+  const { unreadCount, fetchNotifications } = useNotificationStore();
+
+  // Poll for notifications
+  useEffect(() => {
+    if (user) {
+      fetchNotifications();
+      const interval = setInterval(fetchNotifications, 30000); // Poll every 30s
+      return () => clearInterval(interval);
+    }
+  }, [user, fetchNotifications]);
 
   const toggleMobileNav = () => setMobileNavOpen((prev) => !prev);
   const closeMobileNav = () => setMobileNavOpen(false);

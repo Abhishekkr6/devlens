@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { OrgModel } from "../models/org.model";
 import { UserModel } from "../models/user.model";
+import { NotificationModel } from "../models/notification.model";
 
 /**
  * CREATE ORGANIZATION
@@ -175,7 +176,16 @@ export const inviteUser = async (req: any, res: Response) => {
 
     await user.save();
 
-    // 7️⃣ Response
+    // 7️⃣ Create Notification
+    await NotificationModel.create({
+      recipientId: user._id,
+      type: "invite",
+      title: "New Organization Invite",
+      message: `You have been invited to join ${org.name} as a ${role.toLowerCase()}.`,
+      link: `/organization/${org._id}/team`,
+    });
+
+    // 8️⃣ Response
     return res.status(200).json({
       success: true,
       data: {
