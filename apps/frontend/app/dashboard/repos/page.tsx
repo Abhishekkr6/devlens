@@ -200,7 +200,7 @@ export default function ReposPage() {
                 <button
                   type="submit"
                   disabled={connecting}
-                  className="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 disabled:opacity-60 cursor-pointer"
                 >
                   {connecting ? "Connecting…" : "Connect"}
                 </button>
@@ -312,7 +312,7 @@ function RepositoryCard({ repo }: { repo: RepoSummary }) {
           </span>
           {repo.url ? (
             <button
-              className="text-sm font-semibold text-brand hover:text-brand/80"
+              className="text-sm font-semibold text-brand hover:text-brand/80 cursor-pointer"
               onClick={handleExternalView}
               type="button"
             >

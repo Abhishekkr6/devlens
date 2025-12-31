@@ -328,7 +328,7 @@ export default function AlertsPage() {
                 Filter by severity
               </label>
               <select
-                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 cursor-pointer"
                 id="alerts-severity-filter"
                 onChange={(event) => setSeverityFilter(event.target.value)}
                 value={severityFilter}
@@ -347,7 +347,7 @@ export default function AlertsPage() {
                 Filter by type
               </label>
               <select
-                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20"
+                className="h-11 w-full appearance-none rounded-full border border-border bg-background px-4 pr-10 text-sm font-semibold text-text-secondary outline-none transition focus:border-brand focus:ring-2 focus:ring-brand/20 cursor-pointer"
                 id="alerts-type-filter"
                 onChange={(event) => setTypeFilter(event.target.value)}
                 value={typeFilter}

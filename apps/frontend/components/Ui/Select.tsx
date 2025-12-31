@@ -55,7 +55,7 @@ export function Select({
                 type="button"
                 onClick={() => setIsOpen(!isOpen)}
                 className={cn(
-                    "flex h-11 w-full items-center justify-between rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-text-secondary shadow-sm transition-all focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20",
+                    "flex h-11 w-full items-center justify-between rounded-full border border-border bg-background px-4 py-2 text-sm font-semibold text-text-secondary shadow-sm transition-all focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20 cursor-pointer",
                     isOpen && "border-brand ring-2 ring-brand/20",
                     className
                 )}
@@ -93,7 +93,8 @@ export function Select({
                                         "flex w-full items-center justify-between rounded-xl px-4 py-2 text-left text-sm font-medium transition-colors",
                                         value === option.value
                                             ? "bg-brand/10 text-brand dark:bg-brand/20 dark:text-indigo-400"
-                                            : "text-text-secondary hover:bg-surface hover:text-text-primary dark:hover:bg-slate-800"
+                                            : "text-text-secondary hover:bg-surface hover:text-text-primary dark:hover:bg-slate-800",
+                                        "cursor-pointer"
                                     )}
                                 >
                                     <span className="truncate">{option.label}</span>

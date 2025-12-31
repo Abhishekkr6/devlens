@@ -54,7 +54,7 @@ export default function MePage() {
           </div>
           <button
             onClick={() => useUserStore.getState().logout()}
-            className="flex items-center justify-center gap-2 rounded-xl bg-rose-50 dark:bg-rose-900/30 px-6 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50 transition-all hover:bg-rose-100 dark:hover:bg-rose-900/40 hover:shadow-sm active:scale-95"
+            className="flex items-center justify-center gap-2 rounded-xl bg-rose-50 dark:bg-rose-900/30 px-6 py-2.5 text-sm font-semibold text-rose-600 dark:text-rose-400 border border-rose-100 dark:border-rose-900/50 transition-all hover:bg-rose-100 dark:hover:bg-rose-900/40 hover:shadow-sm active:scale-95 cursor-pointer"
           >
             Log Out
           </button>

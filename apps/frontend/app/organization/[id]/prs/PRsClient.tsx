@@ -292,7 +292,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
             return (
                 <tr
                     key={row.id}
-                    className={`group border-b border-border transition-colors last:border-0 hover:bg-surface/50 ${isSelected ? "bg-surface" : ""
+                    className={`group border-b border-border transition-colors last:border-0 hover:bg-surface/50 cursor-pointer ${isSelected ? "bg-surface" : ""
                         }`}
                     onClick={() => setSelectedPrId(row.id)}
                 >
@@ -316,7 +316,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                     <td className="px-6 py-4 align-middle text-right">
                         <Button
                             aria-label="View pull request"
-                            className="h-8 w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary"
+                            className="h-8 w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary cursor-pointer"
                             onClick={(event) => {
                                 event.stopPropagation();
                                 setSelectedPrId(row.id);

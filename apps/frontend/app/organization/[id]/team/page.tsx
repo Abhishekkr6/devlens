@@ -209,7 +209,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                 onChange={(e) => setInviteEmail(e.target.value)}
               />
               <select
-                className="border border-border bg-background text-text-primary rounded-xl px-4 py-2 focus:border-brand focus:outline-none"
+                className="border border-border bg-background text-text-primary rounded-xl px-4 py-2 focus:border-brand focus:outline-none cursor-pointer"
                 value={inviteRole}
                 onChange={(e) => setInviteRole(e.target.value as any)}
               >
@@ -258,7 +258,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                   </div>
                 </div>
                 {isAdmin && member.userId !== user?._id && (
-                  <button onClick={() => handleRemoveMember(member.userId)} className="text-text-secondary hover:text-red-500">
+                  <button onClick={() => handleRemoveMember(member.userId)} className="text-text-secondary hover:text-red-500 cursor-pointer">
                     <X className="h-4 w-4" />
                   </button>
                 )}

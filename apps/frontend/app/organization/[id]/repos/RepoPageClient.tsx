@@ -135,14 +135,14 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
               <div className="flex justify-end gap-3">
                 <button
                   onClick={() => setShowForm(false)}
-                  className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface"
+                  className="rounded-xl border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:bg-surface cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleConnect}
                   disabled={isConnecting || !connectParams.fullName}
-                  className="rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50"
+                  className="rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 disabled:opacity-50 cursor-pointer"
                 >
                   {isConnecting ? "Connecting..." : "Connect Repository"}
                 </button>
@@ -168,7 +168,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
               {isAdmin && (
                 <button
                   onClick={() => setShowForm(true)}
-                  className="mt-6 inline-flex items-center rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+                  className="mt-6 inline-flex items-center rounded-xl border border-brand px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-brand/90 focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2 cursor-pointer"
                 >
                   Connect Repository
                 </button>

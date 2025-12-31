@@ -206,7 +206,7 @@ export default function Topbar() {
           className={`flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors ${active
             ? "bg-brand text-white dark:bg-indigo-600 shadow-sm border border-white/20 dark:border-white/10"
             : "text-text-secondary hover:bg-surface hover:text-indigo-600 dark:hover:text-brand"
-            } ${className ?? ""}`.trim()}
+            } ${className ?? ""} cursor-pointer`.trim()}
         >
           <Icon className="h-4 w-4" />
           {name}
@@ -248,7 +248,7 @@ export default function Topbar() {
               <div className="relative ml-2" ref={orgDropdownRef}>
                 <button
                   onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
-                  className="flex items-center gap-2 rounded-xl border border-border bg-background px-2 sm:px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm"
+                  className="flex items-center gap-2 rounded-xl border border-border bg-background px-2 sm:px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm cursor-pointer"
                 >
                   <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-indigo-700 dark:text-brand">
                     {currentOrg?.name?.[0]?.toUpperCase() || "O"}
@@ -273,7 +273,7 @@ export default function Topbar() {
                         <button
                           key={org.id}
                           onClick={() => handleOrgSwitch(org.id)}
-                          className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors ${activeOrgId === org.id
+                          className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors cursor-pointer ${activeOrgId === org.id
                             ? "bg-indigo-50 dark:bg-brand/20 text-indigo-700 dark:text-brand"
                             : "text-text-secondary hover:bg-surface"
                             }`}
@@ -318,7 +318,7 @@ export default function Topbar() {
 
               <button
                 type="button"
-                className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand md:flex"
+                className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand md:flex cursor-pointer"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
@@ -329,7 +329,7 @@ export default function Topbar() {
                 <button
                   type="button"
                   onClick={() => setTeamDropdownOpen(!teamDropdownOpen)}
-                  className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:border-brand hover:text-brand"
+                  className="flex items-center gap-2 rounded-full border border-border bg-background px-4 py-2 text-sm font-medium text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer"
                 >
                   <Users className="h-4 w-4" />
                   Team
@@ -367,7 +367,7 @@ export default function Topbar() {
                           {teamMembers.map((member) => (
                             <div
                               key={member.userId}
-                              className="flex items-center gap-3 rounded-lg p-2 hover:bg-surface transition-colors"
+                              className="flex items-center gap-3 rounded-lg p-2 hover:bg-surface transition-colors cursor-pointer"
                             >
                               {member.user?.avatarUrl ? (
                                 <Image
@@ -439,7 +439,7 @@ export default function Topbar() {
                   <button
                     type="button"
                     onClick={() => useUserStore.getState().logout()}
-                    className="flex items-center gap-2 rounded-r-full border border-border bg-background px-3 py-2 text-xs font-semibold text-text-secondary transition-colors hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 hover:border-rose-200 transform border-l-0"
+                    className="flex items-center gap-2 rounded-r-full border border-border bg-background px-3 py-2 text-xs font-semibold text-text-secondary transition-colors hover:bg-rose-50 dark:hover:bg-rose-900/30 hover:text-rose-600 hover:border-rose-200 transform border-l-0 cursor-pointer"
                   >
                     <X className="h-3 w-3" />
                     Log Out
@@ -459,7 +459,7 @@ export default function Topbar() {
             <div className="ml-auto flex shrink-0 items-center gap-2 md:hidden">
               <button
                 type="button"
-                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand"
+                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer"
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
@@ -482,7 +482,7 @@ export default function Topbar() {
 
               <button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand"
+                className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer"
                 onClick={toggleMobileNav}
                 aria-label={mobileNavOpen ? "Close navigation" : "Open navigation"}
               >
@@ -510,7 +510,7 @@ export default function Topbar() {
         mobileNavOpen && (
           <div className="fixed inset-0 z-[200] lg:hidden" role="dialog" aria-modal="true">
             <div
-              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm"
+              className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm cursor-pointer"
               onClick={closeMobileNav}
             />
             <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-slate-900/95 backdrop-blur-3xl shadow-2xl">
@@ -527,7 +527,7 @@ export default function Topbar() {
                   </div>
                   <button
                     type="button"
-                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:border-brand hover:text-brand"
+                    className="flex h-9 w-9 items-center justify-center rounded-full border border-border text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer"
                     onClick={closeMobileNav}
                     aria-label="Close navigation"
                   >

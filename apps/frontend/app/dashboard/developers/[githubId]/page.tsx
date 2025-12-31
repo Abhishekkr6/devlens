@@ -470,7 +470,7 @@ function ActionButtons({ handle }: { handle?: string }) {
 
   return (
     <div className="space-y-3">
-      <button className="h-12 w-full rounded-full bg-brand text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90">
+      <button className="h-12 w-full rounded-full bg-brand text-sm font-semibold text-white shadow-sm transition hover:bg-brand/90 cursor-pointer">
         Send Message
       </button>
       <Link
