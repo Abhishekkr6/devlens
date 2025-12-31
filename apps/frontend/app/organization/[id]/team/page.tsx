@@ -7,6 +7,7 @@ import { api } from "../../../../lib/api";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "../../../../components/Ui/Card";
 import { Button } from "../../../../components/Ui/Button";
+import { Select } from "../../../../components/Ui/Select";
 import { useUserStore } from "../../../../store/userStore";
 import {
   UserPlus,
@@ -191,7 +192,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
             <p className="mt-1 text-sm text-text-secondary">{orgInfo?.orgName}</p>
           </div>
           {isAdmin && (
-            <Button onClick={() => setShowInviteForm(!showInviteForm)}>
+            <Button className="border border-indigo-200 dark:border-indigo-800 cursor-pointer" onClick={() => setShowInviteForm(!showInviteForm)}>
               <UserPlus className="h-4 w-4 mr-2" />
               Invite Member
             </Button>
@@ -208,16 +209,18 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                 value={inviteEmail}
                 onChange={(e) => setInviteEmail(e.target.value)}
               />
-              <select
-                className="border border-border bg-background text-text-primary rounded-xl px-4 py-2 focus:border-brand focus:outline-none cursor-pointer"
-                value={inviteRole}
-                onChange={(e) => setInviteRole(e.target.value as any)}
-              >
-                <option value="MEMBER">Member</option>
-                <option value="ADMIN">Admin</option>
-                <option value="VIEWER">Viewer</option>
-              </select>
-              <Button onClick={handleInvite} disabled={inviting}>
+              <div className="w-full sm:w-48">
+                <Select
+                  options={[
+                    { label: "Member", value: "MEMBER" },
+                    { label: "Admin", value: "ADMIN" },
+                    { label: "Viewer", value: "VIEWER" },
+                  ]}
+                  value={inviteRole}
+                  onChange={(val) => setInviteRole(val as any)}
+                />
+              </div>
+              <Button onClick={handleInvite} disabled={inviting} className="border border-indigo-200 dark:border-indigo-800">
                 {inviting ? "Sending..." : "Send Invite"}
               </Button>
             </div>
