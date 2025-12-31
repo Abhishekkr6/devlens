@@ -74,7 +74,7 @@ export default function NotificationsPage() {
                     <button
                         onClick={() => setFilter("all")}
                         className={cn(
-                            "px-4 py-2 rounded-full text-sm font-medium transition-colors border",
+                            "px-4 py-2 rounded-full text-sm font-medium transition-colors border cursor-pointer",
                             filter === "all"
                                 ? "bg-brand text-white border-brand"
                                 : "bg-surface text-text-secondary border-border hover:border-brand hover:text-brand"
@@ -87,7 +87,7 @@ export default function NotificationsPage() {
                             key={f}
                             onClick={() => setFilter(f as any)}
                             className={cn(
-                                "px-4 py-2 rounded-full text-sm font-medium transition-colors border capitalize",
+                                "px-4 py-2 rounded-full text-sm font-medium transition-colors border capitalize cursor-pointer",
                                 filter === f
                                     ? "bg-brand text-white border-brand"
                                     : "bg-surface text-text-secondary border-border hover:border-brand hover:text-brand"
@@ -142,7 +142,7 @@ export default function NotificationsPage() {
                                         </div>
                                         {notification.link && (
                                             <div className="mt-3">
-                                                <a href={notification.link} className="text-sm font-medium text-brand hover:underline inline-flex items-center gap-1">
+                                                <a href={notification.link} className="text-sm font-medium text-brand hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                     Check details <span aria-hidden="true">&rarr;</span>
                                                 </a>
                                             </div>

@@ -26,34 +26,7 @@ export interface Notification {
 }
 
 // Mock Data
-const MOCK_NOTIFICATIONS: Notification[] = [
-    {
-        id: "1",
-        type: "alert",
-        title: "High Memory Usage",
-        message: "Repo 'backend-api' exceeded 90% memory threshold.",
-        time: "10m ago",
-        read: false,
-        link: "/organization/org_123/alerts",
-    },
-    {
-        id: "2",
-        type: "invite",
-        title: "Team Invite",
-        message: "Abhishek invited you to join 'Design System' team.",
-        time: "1h ago",
-        read: false,
-        link: "/organization/org_123/team",
-    },
-    {
-        id: "3",
-        type: "success",
-        title: "Build Succeeded",
-        message: "Deployment for 'frontend-v2' completed successfully.",
-        time: "2h ago",
-        read: true,
-    },
-];
+const MOCK_NOTIFICATIONS: Notification[] = [];
 
 interface NotificationDropdownProps {
     isOpen: boolean;
