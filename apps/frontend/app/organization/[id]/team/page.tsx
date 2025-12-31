@@ -24,9 +24,10 @@ import {
   Users,
 } from "lucide-react";
 
-type TeamMember = {
+type Member = {
   userId: string;
   role: "ADMIN" | "MEMBER" | "VIEWER";
+  status?: "active" | "pending"; // Added status
   user: {
     id: string;
     name: string;
@@ -94,7 +95,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   const { id: orgId } = use(params);
   const router = useRouter();
 
-  const [members, setMembers] = useState<TeamMember[]>([]);
+  const [members, setMembers] = useState<Member[]>([]);
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -262,8 +263,19 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold truncate text-text-primary">{member.user?.name}</p>
-                  <p className="text-xs text-text-secondary truncate">{member.user?.email}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-sm font-medium text-text-primary truncate">
+                      {member.user?.name || "Unknown User"}
+                    </p>
+                    {member.status === 'pending' && (
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500">
+                        Pending
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-xs text-text-secondary truncate">
+                    {member.user?.email}
+                  </p>
                   <div className={`mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border ${getRoleBadgeColor(member.role)}`}>
                     {getRoleIcon(member.role)}
                     {getRoleLabel(member.role)}

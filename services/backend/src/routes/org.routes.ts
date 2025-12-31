@@ -1,5 +1,11 @@
+```javascript
 import { Router } from "express";
-import { createOrg, getUserOrgs, getOrgMembers, inviteUser, removeMember, updateMemberRole, deleteOrg } from "../controllers/org.controller";
+import { createOrg, getUserOrgs, getOrgMembers, inviteUser, removeMember, updateMemberRole,
+  deleteOrg,
+  acceptInvite,
+  rejectInvite,
+  leaveOrg,
+} from "../controllers/org.controller";
 import { getRepoDetail, getRepos, deleteRepo } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
 import { getAlertSummary, acknowledgeAlert } from "../controllers/alertSummary.controller";
@@ -77,6 +83,11 @@ router.post(
   inviteUser
 );
 
+// Invite Flow
+router.post("/orgs/:orgId/invite/accept", authMiddleware, acceptInvite);
+router.post("/orgs/:orgId/invite/reject", authMiddleware, rejectInvite);
+router.delete("/orgs/:orgId/leave", authMiddleware, leaveOrg);
+
 // Update member role
 router.patch(
   "/orgs/:orgId/members/:userId",
@@ -104,3 +115,4 @@ router.get(
 );
 
 export default router;
+```

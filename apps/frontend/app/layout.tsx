@@ -4,6 +4,7 @@ import "./globals.css";
 import AutoCleanup from "../components/Auth/AutoCleanupScript";
 import SmoothScroll from "../components/SmoothScroll";
 import { ToastProvider } from "../store/ToastContext";
+import { Toaster } from "sonner";
 
 
 
@@ -33,6 +34,7 @@ export default function RootLayout({
         <SmoothScroll />
         <ToastProvider>
           {children}
+          <Toaster />
         </ToastProvider>
       </body>
     </html>

@@ -6,7 +6,12 @@ export interface INotification extends Document {
     title: string;
     message: string;
     link?: string;
+    link?: string;
     read: boolean;
+    metadata?: {
+        orgId?: string;
+        role?: string;
+    };
     createdAt: Date;
 }
 
@@ -22,6 +27,10 @@ const NotificationSchema = new Schema<INotification>(
         message: { type: String, required: true },
         link: { type: String },
         read: { type: Boolean, default: false },
+        metadata: {
+            orgId: { type: String },
+            role: { type: String },
+        },
     },
     { timestamps: true }
 );

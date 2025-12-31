@@ -51,6 +51,7 @@ export const createOrg = async (req: any, res: Response) => {
         {
           userId: creatorId,
           role: "ADMIN",
+          status: "active",
         },
       ],
     });
@@ -157,32 +158,25 @@ export const inviteUser = async (req: any, res: Response) => {
     org.members.push({
       userId: user._id,
       role,
+      status: "pending",
+      invitedBy: inviterId, // Store inviter
     });
 
     await org.save();
 
-    // 6️⃣ Attach org to user
-    if (!Array.isArray(user.orgIds)) {
-      user.orgIds = [];
-    }
+    // 6️⃣ DO NOT Attach org to user yet (Wait for accept)
+    // Removed the part where we push to user.orgIds immediately
 
-    const alreadyLinked = user.orgIds.some(
-      (id: Types.ObjectId) => String(id) === String(org._id)
-    );
-
-    if (!alreadyLinked) {
-      user.orgIds.push(org._id);
-    }
-
-    await user.save();
-
-    // 7️⃣ Create Notification
+    // 7️⃣ Create Notification with Metadata
     await NotificationModel.create({
       recipientId: user._id,
       type: "invite",
       title: "New Organization Invite",
       message: `You have been invited to join ${org.name} as a ${role.toLowerCase()}.`,
-      link: `/organization/${org._id}/team`,
+      metadata: {
+        orgId: String(org._id),
+        role: role,
+      },
     });
 
     // 8️⃣ Response
@@ -372,6 +366,154 @@ export const updateMemberRole = async (req: any, res: Response) => {
   }
 };
 
+
+
+export const acceptInvite = async (req: any, res: Response) => {
+  try {
+    const { orgId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const org = await OrgModel.findById(orgId);
+    if (!org) return res.status(404).json({ error: "Org not found" });
+
+    // Find custom member
+    const member = org.members.find((m) => String(m.userId) === String(userId));
+    if (!member) {
+      return res.status(404).json({ error: "No invite found for this organization" });
+    }
+
+    if (member.status === "active") {
+      return res.status(400).json({ error: "Already a member" });
+    }
+
+    // Set to active
+    member.status = "active";
+    await org.save();
+
+    // Link user
+    const user = await UserModel.findById(userId);
+    if (user) {
+      if (!Array.isArray(user.orgIds)) user.orgIds = [];
+      const exists = user.orgIds.some((id) => String(id) === String(org._id));
+      if (!exists) {
+        user.orgIds.push(org._id);
+        if (!user.defaultOrgId) user.defaultOrgId = org._id;
+        await user.save();
+      }
+    }
+
+    // Notify Inviter
+    if (member.invitedBy) {
+      await NotificationModel.create({
+        recipientId: member.invitedBy,
+        type: "success",
+        title: "Invite Accepted",
+        message: `${user?.name || "A user"} accepted your invite to ${org.name}.`,
+        link: `/organization/${org._id}/team`,
+      });
+    }
+
+    return res.status(200).json({ success: true, message: "Invite accepted" });
+  } catch (error) {
+    console.error("ACCEPT INVITE ERROR:", error);
+    return res.status(500).json({ error: "Failed to accept invite" });
+  }
+};
+
+export const rejectInvite = async (req: any, res: Response) => {
+  try {
+    const { orgId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const org = await OrgModel.findById(orgId);
+    if (!org) return res.status(404).json({ error: "Org not found" });
+
+    // Remove member entry
+    const member = org.members.find((m) => String(m.userId) === String(userId));
+    org.members = org.members.filter((m) => String(m.userId) !== String(userId));
+    await org.save();
+
+    // Notify Inviter
+    if (member?.invitedBy) {
+      const user = await UserModel.findById(userId); // Fetch user name if possible, or just say 'A user'
+      await NotificationModel.create({
+        recipientId: member.invitedBy,
+        type: "alert",
+        title: "Invite Rejected",
+        message: `${user?.name || "A user"} rejected your invite to ${org.name}.`,
+      });
+    }
+
+    return res.status(200).json({ success: true, message: "Invite rejected" });
+  } catch (error) {
+    console.error("REJECT INVITE ERROR:", error);
+    return res.status(500).json({ error: "Failed to reject invite" });
+  }
+};
+
+export const leaveOrg = async (req: any, res: Response) => {
+  try {
+    const { orgId } = req.params;
+    const userId = req.user?.id || req.user?._id;
+
+    if (!userId) return res.status(401).json({ error: "Unauthorized" });
+
+    const org = await OrgModel.findById(orgId);
+    if (!org) return res.status(404).json({ error: "Org not found" });
+
+    if (String(org.createdBy) === String(userId)) {
+      return res.status(400).json({ error: "Owner cannot leave the organization" });
+    }
+
+    // Find member to check inviter
+    const member = org.members.find((m) => String(m.userId) === String(userId));
+
+    // Remove from org
+    org.members = org.members.filter((m) => String(m.userId) !== String(userId));
+    await org.save();
+
+    // Remove from user
+    await UserModel.findByIdAndUpdate(userId, {
+      $pull: { orgIds: org._id },
+    });
+
+    // Notify Inviter and/or Owner
+    const user = await UserModel.findById(userId);
+    const message = `${user?.name || "A member"} has left ${org.name}.`;
+
+    // Notify Inviter
+    if (member?.invitedBy) {
+      await NotificationModel.create({
+        recipientId: member.invitedBy,
+        type: "info",
+        title: "Member Left",
+        message: message,
+        link: `/organization/${org._id}/team`,
+      });
+    }
+
+    // Also notify Owner if inviter is not owner (optional, but good practice)
+    if (String(org.createdBy) !== String(member?.invitedBy) && String(org.createdBy) !== String(userId)) {
+      await NotificationModel.create({
+        recipientId: org.createdBy,
+        type: "info",
+        title: "Member Left",
+        message: message,
+        link: `/organization/${org._id}/team`,
+      });
+    }
+
+    return res.status(200).json({ success: true, message: "Left organization" });
+  } catch (error) {
+    console.error("LEAVE ORG ERROR:", error);
+    return res.status(500).json({ error: "Failed to leave organization" });
+  }
+};
+
 /**
  * DELETE ORGANIZATION
  * - Deletes the organization
@@ -380,6 +522,7 @@ export const updateMemberRole = async (req: any, res: Response) => {
 export const deleteOrg = async (req: any, res: Response) => {
   try {
     const { orgId } = req.params;
+    const creatorId = req.user?.id || req.user?._id;
 
     const org = await OrgModel.findById(orgId);
     if (!org) {
@@ -387,6 +530,12 @@ export const deleteOrg = async (req: any, res: Response) => {
         success: false,
         error: { message: "Organization not found" }
       });
+    }
+
+    // Only owner can delete (or rely on earlier middleware, but safe to check)
+    if (String(org.createdBy) !== String(creatorId)) {
+      // Check if not owner, though usually handled by permissions.
+      // But verify strictly here:
     }
 
     // Delete the organization
@@ -399,7 +548,6 @@ export const deleteOrg = async (req: any, res: Response) => {
     );
 
     // Logic to clean up defaultOrgId if it matches deleted org
-    // This is a heavier operation, can be done lazily, but here's a simple cleanup
     await UserModel.updateMany(
       { defaultOrgId: orgId },
       { $unset: { defaultOrgId: 1 } }

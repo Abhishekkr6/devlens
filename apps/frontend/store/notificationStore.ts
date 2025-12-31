@@ -10,6 +10,10 @@ export interface Notification {
     message: string;
     link?: string;
     read: boolean;
+    metadata?: {
+        orgId?: string;
+        role?: string;
+    };
     createdAt: string;
 }
 

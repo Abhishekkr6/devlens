@@ -13,6 +13,9 @@ import {
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useNotificationStore, NotificationType } from "../../store/notificationStore";
+import { api } from "../../lib/api";
+import { toast } from "sonner";
+import { useUserStore } from "../../store/userStore";
 
 interface NotificationDropdownProps {
     isOpen: boolean;
@@ -20,9 +23,35 @@ interface NotificationDropdownProps {
 }
 
 export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
-    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification } = useNotificationStore();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, fetchNotifications } = useNotificationStore();
+    const { fetchUser } = useUserStore();
 
     if (!isOpen) return null;
+
+    const handleAcceptInvite = async (e: React.MouseEvent, notification: any) => {
+        e.stopPropagation();
+        try {
+            if (!notification.metadata?.orgId) return;
+            await api.post(`/orgs/${notification.metadata.orgId}/invite/accept`);
+            toast.success("Invitation accepted! You have joined the organization.");
+            await fetchUser();
+            await deleteNotification(notification._id);
+        } catch (error) {
+            toast.error("Failed to accept invitation.");
+        }
+    };
+
+    const handleRejectInvite = async (e: React.MouseEvent, notification: any) => {
+        e.stopPropagation();
+        try {
+            if (!notification.metadata?.orgId) return;
+            await api.post(`/orgs/${notification.metadata.orgId}/invite/reject`);
+            toast.success("Invitation rejected.");
+            await deleteNotification(notification._id);
+        } catch (error) {
+            toast.error("Failed to reject invitation.");
+        }
+    };
 
     const getIcon = (type: NotificationType) => {
         switch (type) {
@@ -132,11 +161,26 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
                                         {notification.message}
                                     </p>
 
-                                    {notification.link && (
+                                    {notification.type === "invite" && notification.metadata?.orgId ? (
+                                        <div className="mt-3 flex items-center gap-2">
+                                            <button
+                                                onClick={(e) => handleAcceptInvite(e, notification)}
+                                                className="px-3 py-1.5 rounded-lg bg-brand text-xs font-semibold text-white hover:bg-brand/90 transition-colors shadow-sm"
+                                            >
+                                                Accept
+                                            </button>
+                                            <button
+                                                onClick={(e) => handleRejectInvite(e, notification)}
+                                                className="px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-medium text-text-secondary hover:bg-surface/80 hover:text-rose-500 transition-colors"
+                                            >
+                                                Reject
+                                            </button>
+                                        </div>
+                                    ) : notification.link ? (
                                         <Link href={notification.link} className="mt-2 text-xs font-medium text-brand group-hover:underline inline-block">
                                             View Details →
                                         </Link>
-                                    )}
+                                    ) : null}
                                 </div>
 
                                 <button

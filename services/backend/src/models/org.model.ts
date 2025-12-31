@@ -8,6 +8,8 @@ export interface IOrg extends Document {
   members: {
     userId: Types.ObjectId;
     role: "ADMIN" | "MEMBER" | "VIEWER";
+    status: "active" | "pending";
+    invitedBy?: Types.ObjectId;
   }[];
 
   createdAt: Date;
@@ -36,6 +38,15 @@ const OrgSchema = new Schema<IOrg>(
           type: String,
           enum: ["ADMIN", "MEMBER", "VIEWER"],
           default: "MEMBER",
+        },
+        status: {
+          type: String,
+          enum: ["active", "pending"],
+          default: "active",
+        },
+        invitedBy: {
+          type: Schema.Types.ObjectId,
+          ref: "User",
         },
       },
     ],
