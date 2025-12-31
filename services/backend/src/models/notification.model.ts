@@ -6,7 +6,7 @@ export interface INotification extends Document {
     title: string;
     message: string;
     link?: string;
-    link?: string;
+
     read: boolean;
     metadata?: {
         orgId?: string;

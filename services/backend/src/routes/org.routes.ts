@@ -1,6 +1,7 @@
-```javascript
+
 import { Router } from "express";
-import { createOrg, getUserOrgs, getOrgMembers, inviteUser, removeMember, updateMemberRole,
+import {
+  createOrg, getUserOrgs, getOrgMembers, inviteUser, removeMember, updateMemberRole,
   deleteOrg,
   acceptInvite,
   rejectInvite,
@@ -115,4 +116,4 @@ router.get(
 );
 
 export default router;
-```
+
