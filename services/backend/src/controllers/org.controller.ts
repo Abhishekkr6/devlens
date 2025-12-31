@@ -303,6 +303,24 @@ export const removeMember = async (req: any, res: Response) => {
     const org = await OrgModel.findById(orgId);
     if (!org) return res.status(404).json({ error: "Org not found" });
 
+    // Check if trying to remove the owner
+    if (String(org.createdBy) === String(userId)) {
+      return res.status(400).json({ error: "Cannot remove the organization owner" });
+    }
+
+    const memberToRemove = org.members.find(m => String(m.userId) === String(userId));
+    if (!memberToRemove) {
+      return res.status(404).json({ error: "User not found in organization" });
+    }
+
+    // Check if removing the last admin
+    if (memberToRemove.role === "ADMIN") {
+      const adminCount = org.members.filter(m => m.role === "ADMIN").length;
+      if (adminCount <= 1) {
+        return res.status(400).json({ error: "Cannot remove the last administrator" });
+      }
+    }
+
     // Remove from members array
     org.members = org.members.filter(m => String(m.userId) !== String(userId));
     await org.save();
