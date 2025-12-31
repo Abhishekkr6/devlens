@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import { motion } from "motion/react";
 import { FloatingDock } from "../Ui/floating-dock";
+import { NotificationDropdown } from "./NotificationDropdown";
 import { useUserStore } from "../../store/userStore";
 import { getBackendBase } from "../../lib/api";
 import { api } from "../../lib/api";
@@ -66,9 +67,11 @@ export default function Topbar() {
   const router = useRouter();
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loadingMembers, setLoadingMembers] = useState(false);
   const teamDropdownRef = useRef<HTMLDivElement>(null);
+  const notificationRef = useRef<HTMLDivElement>(null);
 
   const toggleMobileNav = () => setMobileNavOpen((prev) => !prev);
   const closeMobileNav = () => setMobileNavOpen(false);
@@ -134,13 +137,19 @@ export default function Topbar() {
       ) {
         setOrgDropdownOpen(false);
       }
+      if (
+        notificationRef.current &&
+        !notificationRef.current.contains(event.target as Node)
+      ) {
+        setNotificationOpen(false);
+      }
     };
 
-    if (teamDropdownOpen || orgDropdownOpen) {
+    if (teamDropdownOpen || orgDropdownOpen || notificationOpen) {
       document.addEventListener("mousedown", handleClickOutside);
       return () => document.removeEventListener("mousedown", handleClickOutside);
     }
-  }, [teamDropdownOpen, orgDropdownOpen]);
+  }, [teamDropdownOpen, orgDropdownOpen, notificationOpen]);
 
   const fetchTeamMembers = async () => {
     if (!activeOrgId) return;
@@ -316,14 +325,22 @@ export default function Topbar() {
                 />
               </div>
 
-              <button
-                type="button"
-                className="relative hidden h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand md:flex cursor-pointer"
-                aria-label="Notifications"
-              >
-                <Bell className="h-4 w-4" />
-                <span className="absolute right-2 top-2 inline-flex h-2 w-2 rounded-full bg-rose-500" />
-              </button>
+              <div className="relative" ref={notificationRef}>
+                <button
+                  type="button"
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className={`relative hidden h-10 w-10 items-center justify-center rounded-full border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand md:flex cursor-pointer ${notificationOpen ? "border-brand text-brand ring-2 ring-brand/20" : "border-border"
+                    }`}
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-4 w-4" />
+                  <span className="absolute right-2 top-2 inline-flex h-2 w-2 rounded-full bg-rose-500 ring-2 ring-background" />
+                </button>
+                <NotificationDropdown
+                  isOpen={notificationOpen}
+                  onClose={() => setNotificationOpen(false)}
+                />
+              </div>
 
               <div className="relative hidden md:block" ref={teamDropdownRef}>
                 <button
