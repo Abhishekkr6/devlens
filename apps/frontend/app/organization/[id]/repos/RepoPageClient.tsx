@@ -6,7 +6,7 @@ import { Card } from "../../../../components/Ui/Card";
 import { useUserStore } from "../../../../store/userStore";
 
 type Repo = {
-  _id: string;
+  id: string;
   name: string;
 };
 
@@ -177,7 +177,7 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
           ) : (
             <ul className="space-y-3">
               {repos.map((r) => (
-                <li key={r._id} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
+                <li key={r.id} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
                   <span className="text-sm font-medium text-text-primary">{r.name}</span>
                   <div className="flex items-center gap-3">
                     <span className="inline-flex items-center rounded-full bg-emerald-50 dark:bg-emerald-900/30 px-2 py-1 text-xs font-medium text-emerald-700 dark:text-emerald-400 ring-1 ring-inset ring-emerald-600/20">
@@ -185,12 +185,12 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
                     </span>
                     {isAdmin && (
                       <button
-                        onClick={() => handleDelete(r._id)}
-                        disabled={deletingId === r._id}
+                        onClick={() => handleDelete(r.id)}
+                        disabled={deletingId === r.id}
                         className="text-text-secondary cursor-pointer hover:text-red-600 disabled:opacity-50"
                         title="Disconnect Repository"
                       >
-                        {deletingId === r._id ? (
+                        {deletingId === r.id ? (
                           <span className="animate-spin">...</span>
                         ) : (
                           <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
