@@ -8,7 +8,9 @@ import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "../../../../components/Ui/Card";
 import { Button } from "../../../../components/Ui/Button";
 import { Select } from "../../../../components/Ui/Select";
+import { ConfirmDialog } from "../../../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../../../store/userStore";
+import { useToast } from "../../../../store/ToastContext";
 import {
   UserPlus,
   Shield,
@@ -100,8 +102,10 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState<"ADMIN" | "MEMBER" | "VIEWER">("MEMBER");
   const [inviting, setInviting] = useState(false);
-  const [inviteSuccess, setInviteSuccess] = useState(false);
-  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
+  const [isRemoving, setIsRemoving] = useState(false);
+
+  const { showToast } = useToast();
 
   const user = useUserStore((state) => state.user);
 
@@ -137,33 +141,31 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     if (!inviteEmail.trim() || !orgId) return;
     try {
       setInviting(true);
-      setInviteError(null);
-      await api.post(`/orgs/${orgId}/invite`, {
-        email: inviteEmail.trim(),
-        role: inviteRole,
-      });
-      setInviteSuccess(true);
-      setInviteEmail("");
+
       setInviteRole("MEMBER");
+      showToast("Invitation sent successfully!", "success");
       await fetchMembers();
-      setTimeout(() => {
-        setInviteSuccess(false);
-        setShowInviteForm(false);
-      }, 3000);
+      setShowInviteForm(false);
     } catch (err: any) {
-      setInviteError(err.response?.data?.error?.message || "Failed to invite user");
+      showToast(err.response?.data?.error?.message || "Failed to invite user", "error");
     } finally {
       setInviting(false);
     }
   };
 
-  const handleRemoveMember = async (userId: string) => {
-    if (!confirm("Are you sure?")) return;
+  const handleConfirmRemove = async () => {
+    if (!memberToRemove || !orgId) return;
     try {
-      await api.delete(`/orgs/${orgId}/members/${userId}`);
-      setMembers(members.filter(m => m.userId !== userId));
-    } catch (err) {
+      setIsRemoving(true);
+      await api.delete(`/orgs/${orgId}/members/${memberToRemove}`);
+      setMembers(members.filter(m => m.userId !== memberToRemove));
+      showToast("Member removed successfully", "success");
+      setMemberToRemove(null);
+    } catch (err: any) {
       console.error("Remove failed", err);
+      showToast(err.response?.data?.error || "Failed to remove member", "error");
+    } finally {
+      setIsRemoving(false);
     }
   };
 
@@ -171,8 +173,10 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     try {
       await api.patch(`/orgs/${orgId}/members/${userId}`, { role: newRole });
       setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as any } : m));
+      showToast("Role updated", "success");
     } catch (err) {
       console.error("Update role failed", err);
+      showToast("Failed to update role", "error");
     }
   };
 
@@ -224,8 +228,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                 {inviting ? "Sending..." : "Send Invite"}
               </Button>
             </div>
-            {inviteError && <p className="text-red-500 mt-2 text-sm">{inviteError}</p>}
-            {inviteSuccess && <p className="text-green-500 mt-2 text-sm">Invite sent!</p>}
+            {/* Errors/Success now handled by Toast */}
           </Card>
         )}
 
@@ -261,7 +264,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                   </div>
                 </div>
                 {isAdmin && member.userId !== user?._id && (
-                  <button onClick={() => handleRemoveMember(member.userId)} className="text-text-secondary hover:text-red-500 cursor-pointer">
+                  <button onClick={() => setMemberToRemove(member.userId)} className="text-text-secondary hover:text-red-500 cursor-pointer">
                     <X className="h-4 w-4" />
                   </button>
                 )}
@@ -270,6 +273,16 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
           ))}
         </div>
       </div>
-    </DashboardLayout>
+
+      <ConfirmDialog
+        isOpen={!!memberToRemove}
+        onClose={() => setMemberToRemove(null)}
+        onConfirm={handleConfirmRemove}
+        title="Remove Member"
+        description="Are you sure you want to remove this member from the organization? They will lose access to all repositories and teams."
+        confirmText="Remove Member"
+        isLoading={isRemoving}
+      />
+    </DashboardLayout >
   );
 }

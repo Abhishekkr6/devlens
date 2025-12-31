@@ -3,6 +3,7 @@ import { fontHeading, fontBody } from "./fonts";
 import "./globals.css";
 import AutoCleanup from "../components/Auth/AutoCleanupScript";
 import SmoothScroll from "../components/SmoothScroll";
+import { ToastProvider } from "../store/ToastContext";
 
 
 
@@ -30,7 +31,9 @@ export default function RootLayout({
 
         <AutoCleanup />
         <SmoothScroll />
-        {children}
+        <ToastProvider>
+          {children}
+        </ToastProvider>
       </body>
     </html>
   );
