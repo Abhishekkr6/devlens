@@ -106,7 +106,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                     {isOwner && (
                         <div className="rounded-xl border border-rose-200 bg-rose-50/50 dark:border-rose-900/30 dark:bg-rose-950/10 overflow-hidden">
                             <div className="px-6 py-4 border-b border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-950/20">
-                                <h2 className="text-base font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                                <h2 className="text-base font-semibold text-red-600 flex items-center gap-2">
                                     <AlertTriangle className="h-4 w-4" />
                                     Danger Zone
                                 </h2>
