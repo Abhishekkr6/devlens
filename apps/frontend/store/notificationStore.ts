@@ -25,6 +25,7 @@ interface NotificationState {
     markAsRead: (id: string) => Promise<void>;
     markAllAsRead: () => Promise<void>;
     deleteNotification: (id: string) => Promise<void>;
+    addNotification: (notification: Notification) => void;
 }
 
 export const useNotificationStore = create<NotificationState>((set, get) => ({
@@ -95,5 +96,18 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             console.error("Failed to delete notification", err);
             get().fetchNotifications();
         }
+    },
+
+    addNotification: (notification: Notification) => {
+        set((state) => {
+            // Prevent duplicates
+            if (state.notifications.some((n) => n._id === notification._id)) return state;
+
+            const updated = [notification, ...state.notifications];
+            return {
+                notifications: updated,
+                unreadCount: updated.filter((n) => !n.read).length,
+            };
+        });
     },
 }));

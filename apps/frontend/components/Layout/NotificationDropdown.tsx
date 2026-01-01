@@ -16,6 +16,8 @@ import { useNotificationStore, NotificationType } from "../../store/notification
 import { api } from "../../lib/api";
 import { toast } from "sonner";
 import { useUserStore } from "../../store/userStore";
+import { connectWS, subscribeWS } from "../../lib/ws";
+import { useEffect } from "react";
 
 interface NotificationDropdownProps {
     isOpen: boolean;
@@ -23,8 +25,22 @@ interface NotificationDropdownProps {
 }
 
 export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
-    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, fetchNotifications } = useNotificationStore();
-    const { fetchUser } = useUserStore();
+    const { notifications, unreadCount, markAsRead, markAllAsRead, deleteNotification, fetchNotifications, addNotification } = useNotificationStore();
+    const { fetchUser, user } = useUserStore();
+
+    useEffect(() => {
+        connectWS();
+
+        const unsubscribe = subscribeWS((event: any) => {
+            if (event.type === "notification:created" && event.userId === user?.id) {
+                addNotification(event.data);
+            }
+        });
+
+        return () => {
+            unsubscribe();
+        }
+    }, [user?.id, addNotification]);
 
     if (!isOpen) return null;
 
