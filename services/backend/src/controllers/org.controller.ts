@@ -397,6 +397,12 @@ export const acceptInvite = async (req: any, res: Response) => {
     const org = await OrgModel.findById(orgId);
     if (!org) return res.status(404).json({ error: "Org not found" });
 
+    // Fetch user early to ensure existence
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
     // Find custom member
     const member = org.members.find((m) => String(m.userId) === String(userId));
     if (!member) {
@@ -412,16 +418,25 @@ export const acceptInvite = async (req: any, res: Response) => {
     await org.save();
 
     // Link user
-    const user = await UserModel.findById(userId);
-    if (user) {
-      if (!Array.isArray(user.orgIds)) user.orgIds = [];
-      const exists = user.orgIds.some((id) => String(id) === String(org._id));
-      if (!exists) {
-        user.orgIds.push(org._id);
-        if (!user.defaultOrgId) user.defaultOrgId = org._id;
-        await user.save();
-      }
+    if (!Array.isArray(user.orgIds)) user.orgIds = [];
+    const exists = user.orgIds.some((id) => String(id) === String(org._id));
+    if (!exists) {
+      user.orgIds.push(org._id);
+      if (!user.defaultOrgId) user.defaultOrgId = org._id;
+      await user.save();
     }
+
+    // Publish Real-time Event (Org Joined)
+    await publishEvent({
+      type: "org:joined",
+      userId: user._id,
+      org: {
+        _id: org._id,
+        name: org.name,
+        slug: org.slug,
+        createdBy: org.createdBy,
+      },
+    });
 
     // Notify Inviter
     if (member.invitedBy) {
@@ -429,7 +444,7 @@ export const acceptInvite = async (req: any, res: Response) => {
         recipientId: member.invitedBy,
         type: "success",
         title: "Invite Accepted",
-        message: `${user?.name || "A user"} accepted your invite to ${org.name}.`,
+        message: `${user.name || "A user"} accepted your invite to ${org.name}.`,
         link: `/organization/${org._id}/team`,
       });
     }

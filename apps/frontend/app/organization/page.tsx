@@ -43,13 +43,18 @@ export default function OrganizationPage() {
 
     // Subscribe to events
     const unsubscribe = subscribeWS((event: any) => {
+      // 1. Invite Received -> Toast Only (don't add to list yet)
       if (event.type === "org:invited" && event.userId === user?.id) {
+        toast.info(`You have been invited to ${event.org.name}`);
+      }
+
+      // 2. Org Joined -> Add to List (Instant Update)
+      if (event.type === "org:joined" && event.userId === user?.id) {
         setOrgs((prev) => {
-          // Avoid duplicates just in case
           if (prev.find((o) => o._id === event.org._id)) return prev;
           return [...prev, event.org];
         });
-        toast.info(`You have been invited to ${event.org.name}`);
+        toast.success(` joined ${event.org.name}`);
       }
     });
 
