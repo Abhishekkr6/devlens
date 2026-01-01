@@ -7,7 +7,8 @@ import { Card } from "../../components/Ui/Card";
 import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../store/userStore";
 import { Trash2, LogOut } from "lucide-react";
-import { toast } from "sonner"; // Using toast here as well for consistency
+import { toast } from "sonner";
+import { connectWS, subscribeWS } from "../../lib/ws";
 
 export default function OrganizationPage() {
   const [name, setName] = useState("");
@@ -36,7 +37,26 @@ export default function OrganizationPage() {
 
   useEffect(() => {
     fetchOrgs();
-  }, []);
+
+    // Connect to WS
+    connectWS();
+
+    // Subscribe to events
+    const unsubscribe = subscribeWS((event: any) => {
+      if (event.type === "org:invited" && event.userId === user?.id) {
+        setOrgs((prev) => {
+          // Avoid duplicates just in case
+          if (prev.find((o) => o._id === event.org._id)) return prev;
+          return [...prev, event.org];
+        });
+        toast.info(`You have been invited to ${event.org.name}`);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }, [user?.id]);
 
   const createOrg = async () => {
     if (!name.trim() || !slug.trim()) return;

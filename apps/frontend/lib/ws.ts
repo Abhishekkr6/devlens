@@ -63,4 +63,10 @@ export const connectWS = () => {
 
 export const subscribeWS = (cb: (event: unknown) => void) => {
   listeners.push(cb);
+  return () => {
+    const index = listeners.indexOf(cb);
+    if (index > -1) {
+      listeners.splice(index, 1);
+    }
+  };
 };

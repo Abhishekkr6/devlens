@@ -5,6 +5,7 @@ import AutoCleanup from "../components/Auth/AutoCleanupScript";
 import SmoothScroll from "../components/SmoothScroll";
 import { ToastProvider } from "../store/ToastContext";
 import { Toaster } from "sonner";
+import { GlobalNotificationListener } from "../components/GlobalNotificationListener";
 
 
 
@@ -33,6 +34,7 @@ export default function RootLayout({
         <AutoCleanup />
         <SmoothScroll />
         <ToastProvider>
+          <GlobalNotificationListener />
           {children}
           <Toaster />
         </ToastProvider>

@@ -2,7 +2,8 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { OrgModel } from "../models/org.model";
 import { UserModel } from "../models/user.model";
-import { NotificationModel } from "../models/notification.model";
+import { createNotification } from "../services/notification.service";
+import { publishEvent } from "../realtime/publisher";
 
 /**
  * CREATE ORGANIZATION
@@ -168,7 +169,7 @@ export const inviteUser = async (req: any, res: Response) => {
     // Removed the part where we push to user.orgIds immediately
 
     // 7️⃣ Create Notification with Metadata
-    await NotificationModel.create({
+    await createNotification({
       recipientId: user._id,
       type: "invite",
       title: "New Organization Invite",
@@ -176,6 +177,18 @@ export const inviteUser = async (req: any, res: Response) => {
       metadata: {
         orgId: String(org._id),
         role: role,
+      },
+    });
+
+    // 7.5️⃣ Publish Real-time Event
+    await publishEvent({
+      type: "org:invited",
+      userId: user._id, // Target user
+      org: {
+        _id: org._id,
+        name: org.name,
+        slug: org.slug,
+        createdBy: org.createdBy,
       },
     });
 
@@ -407,7 +420,7 @@ export const acceptInvite = async (req: any, res: Response) => {
 
     // Notify Inviter
     if (member.invitedBy) {
-      await NotificationModel.create({
+      await createNotification({
         recipientId: member.invitedBy,
         type: "success",
         title: "Invite Accepted",
@@ -441,7 +454,7 @@ export const rejectInvite = async (req: any, res: Response) => {
     // Notify Inviter
     if (member?.invitedBy) {
       const user = await UserModel.findById(userId); // Fetch user name if possible, or just say 'A user'
-      await NotificationModel.create({
+      await createNotification({
         recipientId: member.invitedBy,
         type: "alert",
         title: "Invite Rejected",
@@ -488,7 +501,7 @@ export const leaveOrg = async (req: any, res: Response) => {
 
     // Notify Inviter
     if (member?.invitedBy) {
-      await NotificationModel.create({
+      await createNotification({
         recipientId: member.invitedBy,
         type: "info",
         title: "Member Left",
@@ -499,7 +512,7 @@ export const leaveOrg = async (req: any, res: Response) => {
 
     // Also notify Owner if inviter is not owner (optional, but good practice)
     if (String(org.createdBy) !== String(member?.invitedBy) && String(org.createdBy) !== String(userId)) {
-      await NotificationModel.create({
+      await createNotification({
         recipientId: org.createdBy,
         type: "info",
         title: "Member Left",
