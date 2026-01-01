@@ -8,7 +8,7 @@ import { Button } from "@/components/Ui/Button";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
-import { AlertTriangle, LogOut, Trash2, X } from "lucide-react";
+import { AlertTriangle, Trash2 } from "lucide-react";
 
 export default function SettingsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: orgId } = use(params);
@@ -19,8 +19,6 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
     const [orgData, setOrgData] = useState<{ createdBy: string; orgName: string } | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
-    const [isLeaving, setIsLeaving] = useState(false);
-    const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
     useEffect(() => {
         const fetchOrgDetails = async () => {
@@ -69,23 +67,6 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
         }
     };
 
-    const handleLeaveOrg = async () => {
-        try {
-            setIsLeaving(true);
-            await api.delete(`/orgs/${orgId}/leave`);
-            toast.success("You have left the organization");
-
-            await fetchUser();
-            setActiveOrganization("");
-            router.push("/dashboard");
-        } catch (err: any) {
-            toast.error(err.response?.data?.error?.message || "Failed to leave organization");
-        } finally {
-            setIsLeaving(false);
-            setShowLeaveConfirm(false);
-        }
-    };
-
     if (loading) {
         return (
             <DashboardLayout>
@@ -121,18 +102,17 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                         </div>
                     </Card>
 
-                    {/* Danger Zone */}
-                    <div className="rounded-xl border border-rose-200 bg-rose-50/50 dark:border-rose-900/30 dark:bg-rose-950/10 overflow-hidden">
-                        <div className="px-6 py-4 border-b border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-950/20">
-                            <h2 className="text-base font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
-                                <AlertTriangle className="h-4 w-4" />
-                                Danger Zone
-                            </h2>
-                        </div>
+                    {/* Danger Zone - OWNER ONLY */}
+                    {isOwner && (
+                        <div className="rounded-xl border border-rose-200 bg-rose-50/50 dark:border-rose-900/30 dark:bg-rose-950/10 overflow-hidden">
+                            <div className="px-6 py-4 border-b border-rose-200 dark:border-rose-900/30 bg-rose-50 dark:bg-rose-950/20">
+                                <h2 className="text-base font-semibold text-rose-600 dark:text-rose-400 flex items-center gap-2">
+                                    <AlertTriangle className="h-4 w-4" />
+                                    Danger Zone
+                                </h2>
+                            </div>
 
-                        <div className="p-6 space-y-6">
-                            {isOwner ? (
-                                // DELETE ORG (Owner Only)
+                            <div className="p-6 space-y-6">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div>
                                         <h3 className="text-sm font-medium text-text-primary">Delete Organization</h3>
@@ -141,7 +121,6 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                                         </p>
                                     </div>
                                     <div className="w-full sm:w-auto">
-                                        {/* Simple confirmation flow for demo purposes */}
                                         <div className="space-y-3">
                                             <p className="text-xs text-text-secondary">
                                                 Type <strong>{orgData?.orgName}</strong> to confirm:
@@ -169,66 +148,9 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                                         </div>
                                     </div>
                                 </div>
-                            ) : (
-                                // LEAVE ORG (Non-Owners)
-                                <div className="flex flex-col gap-4">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                        <div>
-                                            <h3 className="text-sm font-medium text-text-primary">Leave Organization</h3>
-                                            <p className="text-sm text-text-secondary mt-1">
-                                                You will lose access to all repositories and resources.
-                                            </p>
-                                        </div>
-                                        {!showLeaveConfirm && (
-                                            <Button
-                                                variant="destructive"
-                                                className="shrink-0"
-                                                onClick={() => setShowLeaveConfirm(true)}
-                                            >
-                                                <LogOut className="mr-2 h-4 w-4" />
-                                                Leave Organization
-                                            </Button>
-                                        )}
-                                    </div>
-
-                                    {showLeaveConfirm && (
-                                        <div className="mt-2 p-4 rounded-lg bg-background border border-border animate-in fade-in slide-in-from-top-2">
-                                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                                                <div className="flex items-center gap-3">
-                                                    <div className="h-8 w-8 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600">
-                                                        <AlertTriangle className="h-4 w-4" />
-                                                    </div>
-                                                    <div>
-                                                        <p className="font-semibold text-text-primary">Are you absolutely sure?</p>
-                                                        <p className="text-xs text-text-secondary">This action cannot be undone.</p>
-                                                    </div>
-                                                </div>
-                                                <div className="flex items-center gap-2 w-full sm:w-auto">
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onClick={() => setShowLeaveConfirm(false)}
-                                                        className="w-full sm:w-auto"
-                                                    >
-                                                        Cancel
-                                                    </Button>
-                                                    <Button
-                                                        variant="destructive"
-                                                        size="sm"
-                                                        onClick={handleLeaveOrg}
-                                                        disabled={isLeaving}
-                                                        className="w-full sm:w-auto"
-                                                    >
-                                                        {isLeaving ? "Leaving..." : "Yes, Leave Organization"}
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
-                            )}
+                            </div>
                         </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </DashboardLayout>

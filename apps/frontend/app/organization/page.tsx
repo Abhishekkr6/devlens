@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { Card } from "../../components/Ui/Card";
 import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../store/userStore";
-import { Trash2 } from "lucide-react";
+import { Trash2, LogOut } from "lucide-react";
+import { toast } from "sonner"; // Using toast here as well for consistency
 
 export default function OrganizationPage() {
   const [name, setName] = useState("");
@@ -14,10 +15,12 @@ export default function OrganizationPage() {
   const [orgs, setOrgs] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [deletingOrg, setDeletingOrg] = useState<any>(null);
+  const [leavingOrg, setLeavingOrg] = useState<any>(null); // New state for leave confirmation
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isLeaving, setIsLeaving] = useState(false);
 
   const router = useRouter();
-  const { setActiveOrganization } = useUserStore();
+  const { setActiveOrganization, user, fetchUser } = useUserStore();
 
   const fetchOrgs = async () => {
     try {
@@ -59,15 +62,36 @@ export default function OrganizationPage() {
       await api.delete(`/orgs/${deletingOrg._id}`);
       setOrgs((prev) => prev.filter((o) => o._id !== deletingOrg._id));
       setDeletingOrg(null);
-    } catch (e) {
+      toast.success("Organization deleted successfully");
+      await fetchUser(); // Ensure global state is updated
+    } catch (e: any) {
       console.error("Failed to delete organization", e);
-      alert("Failed to delete organization. Please try again.");
+      toast.error(e.response?.data?.error?.message || "Failed to delete organization");
     } finally {
       setIsDeleting(false);
     }
   };
 
+  const handleConfirmLeave = async () => {
+    if (!leavingOrg) return;
+
+    try {
+      setIsLeaving(true);
+      await api.delete(`/orgs/${leavingOrg._id}/leave`);
+      setOrgs((prev) => prev.filter((o) => o._id !== leavingOrg._id));
+      setLeavingOrg(null);
+      toast.success("You have left the organization");
+      await fetchUser();
+    } catch (e: any) {
+      console.error("Failed to leave organization", e);
+      toast.error(e.response?.data?.error?.message || "Failed to leave organization");
+    } finally {
+      setIsLeaving(false);
+    }
+  }
+
   const disabled = !name.trim() || !slug.trim();
+  const userId = user?.id || user?._id;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -132,40 +156,55 @@ export default function OrganizationPage() {
               </div>
             ) : (
               <ul className="space-y-3">
-                {orgs.map((o) => (
-                  <li
-                    key={o._id}
-                    className="group flex items-center justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-sm"
-                  >
-                    <div className="flex items-center gap-4">
-                      <div className="h-10 w-10 text-lg rounded-lg bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand">
-                        {o.name[0]?.toUpperCase()}
+                {orgs.map((o) => {
+                  const isOwner = String(o.createdBy) === String(userId);
+                  return (
+                    <li
+                      key={o._id}
+                      className="group flex items-center justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-sm"
+                    >
+                      <div className="flex items-center gap-4">
+                        <div className="h-10 w-10 text-lg rounded-lg bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand">
+                          {o.name[0]?.toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-semibold text-text-primary">{o.name} <span className="text-xs font-normal text-text-secondary ml-1">{isOwner ? "(Owner)" : "(Member)"}</span></div>
+                          <div className="text-xs text-text-secondary font-mono">{o.slug}</div>
+                        </div>
                       </div>
-                      <div>
-                        <div className="font-semibold text-text-primary">{o.name}</div>
-                        <div className="text-xs text-text-secondary font-mono">{o.slug}</div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            setActiveOrganization(o._id);
+                            router.push(`/organization/${o._id}/repos`);
+                          }}
+                          className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
+                        >
+                          Launch
+                        </button>
+
+                        {/* Conditional Delete/Leave Button */}
+                        {isOwner ? (
+                          <button
+                            onClick={() => setDeletingOrg(o)}
+                            className="p-2 rounded-lg text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-colors"
+                            title="Delete Organization"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => setLeavingOrg(o)}
+                            className="p-2 rounded-lg text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-colors"
+                            title="Leave Organization"
+                          >
+                            <LogOut className="h-4 w-4" />
+                          </button>
+                        )}
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <button
-                        onClick={() => {
-                          setActiveOrganization(o._id);
-                          router.push(`/organization/${o._id}/repos`);
-                        }}
-                        className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
-                      >
-                        Launch
-                      </button>
-                      <button
-                        onClick={() => setDeletingOrg(o)}
-                        className="p-2 rounded-lg text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-colors"
-                        title="Delete Organization"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                  </li>
-                ))}
+                    </li>
+                  );
+                })}
               </ul>
             )}
           </Card>
@@ -180,6 +219,16 @@ export default function OrganizationPage() {
         description={`Are you sure you want to delete "${deletingOrg?.name}"? This action cannot be undone and will permanently delete all data associated with this organization.`}
         confirmText="Delete Organization"
         isLoading={isDeleting}
+      />
+
+      <ConfirmDialog
+        isOpen={!!leavingOrg}
+        onClose={() => setLeavingOrg(null)}
+        onConfirm={handleConfirmLeave}
+        title="Leave Organization"
+        description={`Are you sure you want to leave "${leavingOrg?.name}"? You will lose access to all repositories and resources.`}
+        confirmText="Leave Organization"
+        isLoading={isLeaving}
       />
     </div>
   );
