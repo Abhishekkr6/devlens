@@ -4,13 +4,17 @@ import React from "react";
 
 type Variant = "primary" | "secondary" | "ghost" | "destructive";
 
+export type ButtonSize = "sm" | "md" | "lg";
+
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
+  size?: ButtonSize;
 }
 
-export function Button({ variant = "primary", className = "", ...props }: ButtonProps) {
+export function Button({ variant = "primary", size = "md", className = "", ...props }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center px-3 py-1.5 rounded-md text-sm font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-1 cursor-pointer";
+    "inline-flex items-center justify-center rounded-md font-medium transition focus:outline-none focus:ring-2 focus:ring-offset-1 cursor-pointer";
+
   const variants: Record<Variant, string> = {
     primary: "bg-brand text-white hover:bg-brand/90 focus:ring-brand",
     secondary: "bg-slate-200 dark:bg-slate-800 text-text-primary hover:bg-slate-300 dark:hover:bg-slate-700 focus:ring-slate-400",
@@ -18,9 +22,15 @@ export function Button({ variant = "primary", className = "", ...props }: Button
     destructive: "bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-600",
   };
 
+  const sizes: Record<ButtonSize, string> = {
+    sm: "px-2.5 py-1 text-xs",
+    md: "px-3 py-1.5 text-sm",
+    lg: "px-4 py-2 text-base",
+  };
+
   return (
     <button
-      className={`${base} ${variants[variant]} ${className}`}
+      className={`${base} ${variants[variant]} ${sizes[size]} ${className}`}
       {...props}
     />
   );

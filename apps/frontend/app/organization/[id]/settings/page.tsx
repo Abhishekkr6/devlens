@@ -8,7 +8,7 @@ import { Button } from "@/components/Ui/Button";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
-import { AlertTriangle, LogOut, Trash2 } from "lucide-react";
+import { AlertTriangle, LogOut, Trash2, X } from "lucide-react";
 
 export default function SettingsPage({ params }: { params: Promise<{ id: string }> }) {
     const { id: orgId } = use(params);
@@ -20,6 +20,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
     const [deleteConfirm, setDeleteConfirm] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
     const [isLeaving, setIsLeaving] = useState(false);
+    const [showLeaveConfirm, setShowLeaveConfirm] = useState(false);
 
     useEffect(() => {
         const fetchOrgDetails = async () => {
@@ -42,7 +43,9 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
         }
     }, [orgId, user]);
 
-    const isOwner = user && orgData && String(user.id || user._id) === String(orgData.createdBy);
+    // Robust check for owner
+    const userId = user?.id || user?._id;
+    const isOwner = userId && orgData?.createdBy && String(userId) === String(orgData.createdBy);
 
     const handleDeleteOrg = async () => {
         if (deleteConfirm !== orgData?.orgName) {
@@ -67,8 +70,6 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
     };
 
     const handleLeaveOrg = async () => {
-        if (!confirm("Are you sure you want to leave this organization?")) return;
-
         try {
             setIsLeaving(true);
             await api.delete(`/orgs/${orgId}/leave`);
@@ -81,6 +82,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
             toast.error(err.response?.data?.error?.message || "Failed to leave organization");
         } finally {
             setIsLeaving(false);
+            setShowLeaveConfirm(false);
         }
     };
 
@@ -102,6 +104,10 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                     <p className="mt-1 text-sm text-text-secondary">
                         Manage settings for <span className="font-medium text-text-primary">{orgData?.orgName}</span>
                     </p>
+                    {/* Debug info (hidden in production) */}
+                    {/* <div className="text-xs text-text-secondary hidden">
+                        User: {String(userId)} | Creator: {String(orgData?.createdBy)} | IsOwner: {String(isOwner)}
+                    </div> */}
                 </header>
 
                 <div className="space-y-6">
@@ -165,26 +171,60 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                                 </div>
                             ) : (
                                 // LEAVE ORG (Non-Owners)
-                                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                                    <div>
-                                        <h3 className="text-sm font-medium text-text-primary">Leave Organization</h3>
-                                        <p className="text-sm text-text-secondary mt-1">
-                                            You will lose access to all repositories and resources. You can only rejoin if invited again.
-                                        </p>
-                                    </div>
-                                    <Button
-                                        variant="destructive"
-                                        className="shrink-0"
-                                        onClick={handleLeaveOrg}
-                                        disabled={isLeaving}
-                                    >
-                                        {isLeaving ? "Leaving..." : (
-                                            <>
+                                <div className="flex flex-col gap-4">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                                        <div>
+                                            <h3 className="text-sm font-medium text-text-primary">Leave Organization</h3>
+                                            <p className="text-sm text-text-secondary mt-1">
+                                                You will lose access to all repositories and resources.
+                                            </p>
+                                        </div>
+                                        {!showLeaveConfirm && (
+                                            <Button
+                                                variant="destructive"
+                                                className="shrink-0"
+                                                onClick={() => setShowLeaveConfirm(true)}
+                                            >
                                                 <LogOut className="mr-2 h-4 w-4" />
                                                 Leave Organization
-                                            </>
+                                            </Button>
                                         )}
-                                    </Button>
+                                    </div>
+
+                                    {showLeaveConfirm && (
+                                        <div className="mt-2 p-4 rounded-lg bg-background border border-border animate-in fade-in slide-in-from-top-2">
+                                            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="h-8 w-8 rounded-full bg-rose-100 dark:bg-rose-900/30 flex items-center justify-center text-rose-600">
+                                                        <AlertTriangle className="h-4 w-4" />
+                                                    </div>
+                                                    <div>
+                                                        <p className="font-semibold text-text-primary">Are you absolutely sure?</p>
+                                                        <p className="text-xs text-text-secondary">This action cannot be undone.</p>
+                                                    </div>
+                                                </div>
+                                                <div className="flex items-center gap-2 w-full sm:w-auto">
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        onClick={() => setShowLeaveConfirm(false)}
+                                                        className="w-full sm:w-auto"
+                                                    >
+                                                        Cancel
+                                                    </Button>
+                                                    <Button
+                                                        variant="destructive"
+                                                        size="sm"
+                                                        onClick={handleLeaveOrg}
+                                                        disabled={isLeaving}
+                                                        className="w-full sm:w-auto"
+                                                    >
+                                                        {isLeaving ? "Leaving..." : "Yes, Leave Organization"}
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
                                 </div>
                             )}
                         </div>
