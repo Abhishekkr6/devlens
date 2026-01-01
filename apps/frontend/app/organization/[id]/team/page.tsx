@@ -121,13 +121,17 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       connectWS();
 
       const unsubscribe = subscribeWS((event: any) => {
-        if (event.type === "org:joined" && event.org._id === orgId && event.member) {
-          setMembers((prev) => {
-            // Avoid duplicates
-            if (prev.find(m => m.userId === event.member.userId)) return prev;
-            return [...prev, event.member];
-          });
-          showToast(`${event.member.user.name || "A user"} joined the team`, "success");
+        console.log("WS Event received:", event); // Log the event for debugging
+        if (event.type === "org:joined") {
+          const isSameOrg = String(event.org?._id) === String(orgId);
+          if (isSameOrg && event.member) {
+            setMembers((prev) => {
+              // Avoid duplicates
+              if (prev.find(m => m.userId === event.member.userId)) return prev;
+              return [...prev, event.member];
+            });
+            showToast(`${event.member.user.name || "A user"} joined the team`, "success");
+          }
         }
       });
       return () => unsubscribe();
