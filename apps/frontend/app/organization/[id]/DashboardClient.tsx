@@ -51,6 +51,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     const [prStatusCounts, setPrStatusCounts] = useState<PRStatusSummary>(emptyStatus);
     const [loading, setLoading] = useState(true);
     const [lastRefresh, setLastRefresh] = useState(0);
+    const [errorType, setErrorType] = useState<"404" | "generic" | null>(null);
 
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
@@ -97,8 +98,13 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
             setRiskBuckets(buckets);
             setPrStatusCounts(statusSummary);
-        } catch (e: unknown) {
+        } catch (e: any) {
             console.error("Dashboard load error:", e);
+            if (e.response?.status === 404) {
+                setErrorType("404");
+            } else {
+                setErrorType("generic");
+            }
         } finally {
             setLoading(false);
         }
@@ -146,7 +152,27 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
         );
     }
 
-    if (!data) {
+    if (!data || errorType) {
+        if (errorType === "404") {
+            return (
+                <div className="flex h-[50vh] w-full flex-col items-center justify-center gap-4 text-center">
+                    <div className="rounded-full bg-surface p-4 border border-border">
+                        <Users className="h-8 w-8 text-text-secondary" />
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-semibold text-text-primary">Organization Not Found</h3>
+                        <p className="text-sm text-text-secondary">This organization may have been deleted or you don't have access.</p>
+                    </div>
+                    <a
+                        href="/organization"
+                        className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand/90 transition-colors"
+                    >
+                        Go to My Organizations
+                    </a>
+                </div>
+            );
+        }
+
         return (
             <div className="flex h-[50vh] w-full flex-col items-center justify-center gap-4 text-center">
                 <div className="rounded-full bg-surface p-4 border border-border">
@@ -154,14 +180,14 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                 </div>
                 <div>
                     <h3 className="text-lg font-semibold text-text-primary">Failed to load dashboard</h3>
-                    <p className="text-sm text-text-secondary">The organization data could not be retrieved.</p>
+                    <p className="text-sm text-text-secondary">Something went wrong while fetching data.</p>
                 </div>
-                <a
-                    href="/organization"
-                    className="rounded-lg bg-brand px-4 py-2 text-sm font-medium text-white hover:bg-brand/90 transition-colors"
+                <button
+                    onClick={() => window.location.reload()}
+                    className="rounded-lg bg-surface border border-border px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface/80 transition-colors"
                 >
-                    Back to Organizations
-                </a>
+                    Retry
+                </button>
             </div>
         );
     }
