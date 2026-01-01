@@ -2,7 +2,7 @@
 
 import React from "react";
 
-type Variant = "primary" | "secondary" | "ghost" | "destructive";
+type Variant = "primary" | "secondary" | "ghost" | "destructive" | "outline";
 
 export type ButtonSize = "sm" | "md" | "lg";
 
@@ -20,6 +20,7 @@ export function Button({ variant = "primary", size = "md", className = "", ...pr
     secondary: "bg-slate-200 dark:bg-slate-800 text-text-primary hover:bg-slate-300 dark:hover:bg-slate-700 focus:ring-slate-400",
     ghost: "bg-transparent text-text-secondary hover:bg-surface hover:text-text-primary focus:ring-slate-300",
     destructive: "bg-rose-600 text-white hover:bg-rose-700 focus:ring-rose-600",
+    outline: "bg-transparent border border-border text-text-primary hover:bg-surface focus:ring-slate-300",
   };
 
   const sizes: Record<ButtonSize, string> = {
