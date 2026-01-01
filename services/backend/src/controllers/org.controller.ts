@@ -227,7 +227,12 @@ export const getUserOrgs = async (req: any, res: Response) => {
     }
 
     const orgs = await OrgModel.find({
-      "members.userId": userId,
+      members: {
+        $elemMatch: {
+          userId: userId,
+          status: "active",
+        },
+      },
     }).select("_id name slug createdBy");
 
     return res.status(200).json({

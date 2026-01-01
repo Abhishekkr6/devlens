@@ -69,6 +69,12 @@ export const requireOrgRole =
           return res.status(403).json({ error: "Insufficient permission" });
         }
 
+        // 🔒 BLOCK PENDING MEMBERS
+        if (member.status !== "active") {
+          logger.warn({ orgId, userId, status: member.status }, "User status mismatch (pending)");
+          return res.status(403).json({ error: "Membership not active. Please accept the invite first." });
+        }
+
         req.org = org;
         req.orgRole = member.role;
         next();
