@@ -115,26 +115,26 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                             <div className="p-6 space-y-6">
                                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                                     <div>
-                                        <h3 className="text-sm font-medium text-text-primary">Delete Organization</h3>
-                                        <p className="text-sm text-text-secondary mt-1">
+                                        <h3 className="text-sm font-bold text-red-900 dark:text-red-100">Delete Organization</h3>
+                                        <p className="text-sm text-red-700 dark:text-red-300 mt-1">
                                             This action cannot be undone. All repositories, members, and data associated with this organization will be permanently deleted.
                                         </p>
                                     </div>
                                     <div className="w-full sm:w-auto">
                                         <div className="space-y-3">
-                                            <p className="text-xs text-text-secondary">
-                                                Type <strong>{orgData?.orgName}</strong> to confirm:
+                                            <p className="text-xs text-red-700 dark:text-red-300">
+                                                Type <strong className="text-red-900 dark:text-red-100">{orgData?.orgName}</strong> to confirm:
                                             </p>
                                             <input
                                                 type="text"
                                                 value={deleteConfirm}
                                                 onChange={(e) => setDeleteConfirm(e.target.value)}
-                                                className="w-full px-3 py-2 text-sm border border-border rounded-lg bg-background"
+                                                className="w-full px-3 py-2 text-sm border border-red-200 dark:border-red-800 rounded-lg bg-white dark:bg-black/20 text-red-900 dark:text-red-100 placeholder:text-red-300 dark:placeholder:text-red-700 focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none"
                                                 placeholder="Organization Name"
                                             />
                                             <Button
                                                 variant="destructive"
-                                                className="w-full sm:w-auto"
+                                                className="w-full sm:w-auto hover:bg-red-700"
                                                 disabled={deleteConfirm !== orgData?.orgName || isDeleting}
                                                 onClick={handleDeleteOrg}
                                             >
