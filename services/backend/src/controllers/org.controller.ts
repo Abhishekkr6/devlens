@@ -290,6 +290,7 @@ export const getOrgMembers = async (req: any, res: Response) => {
         members: membersWithDetails,
         orgName: org.name,
         orgSlug: org.slug,
+        createdBy: org.createdBy,
       },
     });
   } catch (error) {
