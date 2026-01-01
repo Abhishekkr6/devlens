@@ -4,6 +4,7 @@ import { useState, useEffect, use } from "react";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
+import { connectWS, subscribeWS } from "../../../../lib/ws"; // Import WS
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "../../../../components/Ui/Card";
 import { Button } from "../../../../components/Ui/Button";
@@ -117,8 +118,21 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   useEffect(() => {
     if (orgId) {
       fetchMembers();
+      connectWS();
+
+      const unsubscribe = subscribeWS((event: any) => {
+        if (event.type === "org:joined" && event.org._id === orgId && event.member) {
+          setMembers((prev) => {
+            // Avoid duplicates
+            if (prev.find(m => m.userId === event.member.userId)) return prev;
+            return [...prev, event.member];
+          });
+          showToast(`${event.member.user.name || "A user"} joined the team`, "success");
+        }
+      });
+      return () => unsubscribe();
     }
-  }, [orgId]);
+  }, [orgId, showToast]);
 
   const fetchMembers = async () => {
     if (!orgId) return;

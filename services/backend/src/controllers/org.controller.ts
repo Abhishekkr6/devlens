@@ -428,6 +428,7 @@ export const acceptInvite = async (req: any, res: Response) => {
     }
 
     // Publish Real-time Event (Org Joined)
+    // Publish Real-time Event (Org Joined)
     await publishEvent({
       type: "org:joined",
       userId: user._id,
@@ -437,6 +438,18 @@ export const acceptInvite = async (req: any, res: Response) => {
         slug: org.slug,
         createdBy: org.createdBy,
       },
+      member: {
+        userId: user._id,
+        role: member.role,
+        status: "active",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          avatarUrl: user.avatarUrl,
+          githubId: user.githubId
+        }
+      }
     });
 
     // Notify Inviter
