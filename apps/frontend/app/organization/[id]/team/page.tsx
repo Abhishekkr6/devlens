@@ -187,17 +187,15 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
-  // Main active members list
-  const activeMembers = members.filter((member) => {
+  const filteredMembers = members.filter((member) => {
+    // Hide pending members as per user request
     if (member.status === 'pending') return false;
+
     if (!searchTerm.trim()) return true;
     const keyword = searchTerm.toLowerCase();
     return (member.user?.name?.toLowerCase() || "").includes(keyword) ||
       (member.user?.email?.toLowerCase() || "").includes(keyword);
   });
-
-  // Pending members only for admins
-  const pendingMembers = members.filter((member) => member.status === 'pending');
 
   return (
     <DashboardLayout>
@@ -255,7 +253,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {activeMembers.map((member) => (
+          {filteredMembers.map((member) => (
             <Card key={member.userId} className="p-4 group">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700">
@@ -292,58 +290,6 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                   </button>
                 )}
               </div>
-
-              {/* Pending Invites Section (Only for Admins) */}
-              {isAdmin && pendingMembers.length > 0 && (
-                <div className="mt-12">
-                  <h2 className="text-xl font-semibold text-text-primary mb-4 flex items-center gap-2">
-                    <span className="bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-500 text-xs px-2 py-1 rounded-md">
-                      {pendingMembers.length} Pending
-                    </span>
-                    Sent Invitations
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {pendingMembers.map((member) => (
-                      <Card key={member.userId} className="p-4 border-dashed border-amber-200 dark:border-amber-900/50 bg-amber-50/50 dark:bg-amber-900/10">
-                        <div className="flex items-center gap-4 opacity-75">
-                          <div className="h-12 w-12 rounded-full overflow-hidden bg-slate-200 dark:bg-slate-700 grayscale">
-                            {member.user?.avatarUrl ? (
-                              <Image src={member.user.avatarUrl} alt="" width={48} height={48} />
-                            ) : (
-                              <div className="h-full w-full flex items-center justify-center font-bold">
-                                {getInitials(member.user?.name || "?")}
-                              </div>
-                            )}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-text-primary truncate">
-                              {member.user?.name || "Invited User"}
-                            </p>
-                            <p className="text-xs text-text-secondary truncate">
-                              {member.user?.email}
-                            </p>
-                            <div className="mt-1 flex items-center gap-2">
-                              <span className="text-[10px] uppercase font-bold text-amber-600 dark:text-amber-500 tracking-wider">
-                                Awaiting Acceptance
-                              </span>
-                              <span className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] border ${getRoleBadgeColor(member.role)}`}>
-                                {getRoleLabel(member.role)}
-                              </span>
-                            </div>
-                          </div>
-                          <button
-                            onClick={() => setMemberToRemove(member.userId)}
-                            className="text-text-secondary hover:text-red-500 cursor-pointer p-1 rounded-md hover:bg-rose-100 dark:hover:bg-rose-900/20"
-                            title="Revoke Invite"
-                          >
-                            <X className="h-4 w-4" />
-                          </button>
-                        </div>
-                      </Card>
-                    ))}
-                  </div>
-                </div>
-              )}
             </Card>
           ))}
         </div>

@@ -290,6 +290,7 @@ export const getOrgMembers = async (req: any, res: Response) => {
       return {
         userId: String(member.userId),
         role: member.role,
+        status: member.status, // Return status so frontend can filter
         user: user
           ? {
             id: String(user._id),
