@@ -5,6 +5,9 @@ import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "@/components/Ui/Card";
 import { Bell, CheckCircle2, AlertTriangle, Info, UserPlus, X, Filter } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { api } from "@/lib/api";
+import { toast } from "sonner";
+import { useUserStore } from "@/store/userStore";
 
 // Define locally for now until we have a shared type file or backend
 import { useNotificationStore } from "../../store/notificationStore";
@@ -12,8 +15,34 @@ import { useNotificationStore } from "../../store/notificationStore";
 type NotificationType = "alert" | "invite" | "info" | "success";
 
 export default function NotificationsPage() {
-    const { notifications, markAllAsRead, markAsRead } = useNotificationStore();
+    const { notifications, markAllAsRead, markAsRead, deleteNotification } = useNotificationStore();
+    const { fetchUser } = useUserStore();
     const [filter, setFilter] = useState<NotificationType | "all">("all");
+
+    const handleAccept = async (e: React.MouseEvent, notification: any) => {
+        e.stopPropagation();
+        try {
+            if (!notification.metadata?.orgId) return;
+            await api.post(`/orgs/${notification.metadata.orgId}/invite/accept`);
+            toast.success("Joined organization successfully");
+            await fetchUser();
+            await deleteNotification(notification._id);
+        } catch (error) {
+            toast.error("Failed to accept invitation");
+        }
+    };
+
+    const handleReject = async (e: React.MouseEvent, notification: any) => {
+        e.stopPropagation();
+        try {
+            if (!notification.metadata?.orgId) return;
+            await api.post(`/orgs/${notification.metadata.orgId}/invite/reject`);
+            toast.info("Invitation rejected");
+            await deleteNotification(notification._id);
+        } catch (error) {
+            toast.error("Failed to reject invitation");
+        }
+    };
 
     // Filter logic
     const filteredNotifications = notifications.filter(n => {
@@ -150,7 +179,26 @@ export default function NotificationsPage() {
                                                 {formatTime(notification.createdAt)}
                                             </span>
                                         </div>
-                                        {notification.link && (
+
+                                        {/* Action Buttons for Invites */}
+                                        {notification.type === "invite" && notification.metadata?.orgId && (
+                                            <div className="mt-3 flex items-center gap-3">
+                                                <button
+                                                    onClick={(e) => handleAccept(e, notification)}
+                                                    className="px-4 py-2 rounded-lg bg-brand text-sm font-semibold text-white hover:bg-brand/90 transition-colors shadow-sm"
+                                                >
+                                                    Accept Invite
+                                                </button>
+                                                <button
+                                                    onClick={(e) => handleReject(e, notification)}
+                                                    className="px-4 py-2 rounded-lg border border-border bg-surface text-sm font-medium text-text-secondary hover:bg-surface/80 hover:text-rose-500 transition-colors"
+                                                >
+                                                    Reject
+                                                </button>
+                                            </div>
+                                        )}
+
+                                        {notification.type !== "invite" && notification.link && (
                                             <div className="mt-3">
                                                 <a href={notification.link} className="text-sm font-medium text-brand hover:underline inline-flex items-center gap-1 cursor-pointer">
                                                     Check details <span aria-hidden="true">&rarr;</span>
@@ -162,8 +210,9 @@ export default function NotificationsPage() {
                             </Card>
                         ))}
                     </div>
-                )}
-            </div>
-        </DashboardLayout>
+                )
+                }
+            </div >
+        </DashboardLayout >
     );
 }
