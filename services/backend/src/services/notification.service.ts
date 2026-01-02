@@ -4,7 +4,7 @@ import logger from "../utils/logger";
 
 interface CreateNotificationParams {
     recipientId: string | any;
-    type: "invite" | "success" | "alert" | "info" | "warning";
+    type: "invite" | "success" | "alert" | "info" | "warning" | "system";
     title: string;
     message: string;
     link?: string;

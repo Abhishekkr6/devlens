@@ -27,6 +27,7 @@ interface UserState {
   fetchUser: (opts?: { silent?: boolean }) => Promise<void>;
   logout: () => Promise<void>;
   setActiveOrganization: (id: string) => void;
+  removeOrgFromUser: (orgId: string) => void;
 }
 
 export const useUserStore = create<UserState>((set, get) => ({
@@ -128,5 +129,34 @@ export const useUserStore = create<UserState>((set, get) => ({
     if (typeof window !== "undefined") {
       window.location.href = "/";
     }
+  },
+
+  removeOrgFromUser: (orgId: string) => {
+    const { user, activeOrgId } = get();
+    if (!user || !user.orgIds) return;
+
+    const updatedOrgs = user.orgIds.filter((o) => o.id !== orgId);
+
+    let newActiveId = activeOrgId;
+    if (activeOrgId === orgId) {
+      newActiveId = updatedOrgs.length > 0 ? updatedOrgs[0].id : null;
+      if (newActiveId) {
+        try {
+          localStorage.setItem("orgId", newActiveId);
+        } catch { }
+      } else {
+        try {
+          localStorage.removeItem("orgId");
+        } catch { }
+      }
+    }
+
+    set({
+      user: {
+        ...user,
+        orgIds: updatedOrgs,
+      },
+      activeOrgId: newActiveId,
+    });
   },
 }));

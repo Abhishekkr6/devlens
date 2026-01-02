@@ -2,7 +2,7 @@ import { Schema, model, Document, Types } from "mongoose";
 
 export interface INotification extends Document {
     recipientId: Types.ObjectId;
-    type: "alert" | "invite" | "info" | "success";
+    type: "alert" | "invite" | "info" | "success" | "warning" | "system";
     title: string;
     message: string;
     link?: string;
@@ -20,7 +20,7 @@ const NotificationSchema = new Schema<INotification>(
         recipientId: { type: Schema.Types.ObjectId, ref: "User", required: true },
         type: {
             type: String,
-            enum: ["alert", "invite", "info", "success"],
+            enum: ["alert", "invite", "info", "success", "warning", "system"],
             required: true,
         },
         title: { type: String, required: true },

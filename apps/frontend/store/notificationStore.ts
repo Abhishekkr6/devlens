@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { api } from "../lib/api";
 
-export type NotificationType = "alert" | "invite" | "info" | "success";
+export type NotificationType = "alert" | "invite" | "info" | "success" | "warning" | "system";
 
 export interface Notification {
     _id: string; // Backend uses _id
