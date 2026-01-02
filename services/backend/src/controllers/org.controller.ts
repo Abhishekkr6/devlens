@@ -144,11 +144,17 @@ export const inviteUser = async (req: any, res: Response) => {
     }
 
     // 4️⃣ Prevent duplicate membership
-    const alreadyMember = org.members.some(
+    const existingMember = org.members.find(
       (m: any) => String(m.userId) === String(user._id)
     );
 
-    if (alreadyMember) {
+    if (existingMember) {
+      if (existingMember.status === "pending") {
+        return res.status(409).json({
+          success: false,
+          error: { message: "User already invited" },
+        });
+      }
       return res.status(409).json({
         success: false,
         error: { message: "User already a member of this organization" },

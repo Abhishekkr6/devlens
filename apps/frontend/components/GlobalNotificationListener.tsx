@@ -20,7 +20,11 @@ export function GlobalNotificationListener() {
 
         const unsubscribe = subscribeWS((event: any) => {
             // 1. Check if event is a notification for THIS user
-            if (event.type === "notification:created" && event.userId === user?.id) {
+            // Robust ID comparison
+            const targetId = String(event.userId);
+            const currentId = String(user?.id || user?._id);
+
+            if (event.type === "notification:created" && targetId === currentId) {
                 const notif = event.data;
                 try {
                     addNotification(notif);
