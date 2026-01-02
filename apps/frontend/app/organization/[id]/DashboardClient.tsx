@@ -55,6 +55,9 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
+    const [retryCount, setRetryCount] = useState(0);
+    const [errorMessage, setErrorMessage] = useState("");
+
     const loadData = useCallback(async () => {
         if (!orgId) return;
         try {
@@ -98,17 +101,33 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
             setRiskBuckets(buckets);
             setPrStatusCounts(statusSummary);
+            setErrorType(null); // Clear errors on success
         } catch (e: any) {
             console.error("Dashboard load error:", e);
+            const msg = e.response?.data?.error?.message || e.message || "Unknown error";
+            setErrorMessage(msg);
+
+            // Auto-Retry Logic (Race condition fix)
+            if (retryCount < 1) {
+                console.log("Auto-retrying dashboard load...");
+                setRetryCount(prev => prev + 1);
+                setTimeout(() => {
+                    loadData();
+                }, 1000); // Wait 1s and retry
+                return; // Don't set error state yet
+            }
+
             if (e.response?.status === 404) {
                 setErrorType("404");
             } else {
                 setErrorType("generic");
             }
         } finally {
-            setLoading(false);
+            if (retryCount >= 1 || !errorType) {
+                setLoading(false);
+            }
         }
-    }, [orgId]);
+    }, [orgId, retryCount, errorType]);
 
     useEffect(() => {
         loadData();
@@ -180,7 +199,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                 </div>
                 <div>
                     <h3 className="text-lg font-semibold text-text-primary">Failed to load dashboard</h3>
-                    <p className="text-sm text-text-secondary">Something went wrong while fetching data.</p>
+                    <p className="text-sm text-text-secondary">{errorMessage || "Something went wrong while fetching data."}</p>
                 </div>
                 <button
                     onClick={() => window.location.reload()}
