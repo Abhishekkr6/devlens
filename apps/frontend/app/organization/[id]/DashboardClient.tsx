@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useRef } from "react";
 import {
     AlertCircle,
     ArrowDownRight,
@@ -55,7 +55,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
-    const [retryCount, setRetryCount] = useState(0);
+    const retryRef = useRef(0);
     const [errorMessage, setErrorMessage] = useState("");
 
     const loadData = useCallback(async () => {
@@ -102,32 +102,31 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
             setRiskBuckets(buckets);
             setPrStatusCounts(statusSummary);
             setErrorType(null); // Clear errors on success
+            setLoading(false); // Success - stop loading
         } catch (e: any) {
             console.error("Dashboard load error:", e);
             const msg = e.response?.data?.error?.message || e.message || "Unknown error";
-            setErrorMessage(msg);
 
             // Auto-Retry Logic (Race condition fix)
-            if (retryCount < 1) {
+            if (retryRef.current < 1) {
                 console.log("Auto-retrying dashboard load...");
-                setRetryCount(prev => prev + 1);
+                retryRef.current += 1;
                 setTimeout(() => {
                     loadData();
                 }, 1000); // Wait 1s and retry
-                return; // Don't set error state yet
+                // Keep loading true!
+                return;
             }
 
+            setErrorMessage(msg);
             if (e.response?.status === 404) {
                 setErrorType("404");
             } else {
                 setErrorType("generic");
             }
-        } finally {
-            if (retryCount >= 1 || !errorType) {
-                setLoading(false);
-            }
+            setLoading(false); // Failure - stop loading
         }
-    }, [orgId, retryCount, errorType]);
+    }, [orgId]);
 
     useEffect(() => {
         loadData();
