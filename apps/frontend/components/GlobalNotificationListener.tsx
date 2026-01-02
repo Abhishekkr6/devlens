@@ -55,22 +55,23 @@ export function GlobalNotificationListener() {
             }
             // Handle Removal - Instant Kick
             else if (event.type === "org:removed") {
-                if (event.userId === user?._id) { // Assuming user._id is the correct field for comparison
+                const currentUserId = user?._id || user?.id;
+                // Robust comparison
+                if (currentUserId && String(event.userId) === String(currentUserId)) {
                     toast.error(`You have been removed from ${event.org.name}`);
 
+                    const startId = String(event.org._id);
                     // Remove the organization from the user's store
-                    removeOrgFromUser(event.org._id);
+                    removeOrgFromUser(startId);
 
                     // Check if currently viewing that org
                     const currentPath = window.location.pathname;
-                    if (currentPath.includes(event.org._id)) {
+                    if (currentPath.includes(startId)) {
                         router.push("/organization");
                         // Force reload to clear cache/state
                         setTimeout(() => window.location.reload(), 500);
                     } else {
                         // Just reload to update sidebar/org list if not viewing it
-                        // or rely on store update? 
-                        // For "sara data hat jaye", reload is safest.
                         window.location.reload();
                     }
                 }
