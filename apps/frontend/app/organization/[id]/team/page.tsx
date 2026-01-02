@@ -123,14 +123,23 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       const unsubscribe = subscribeWS((event: any) => {
         console.log("WS Event received:", event); // Log the event for debugging
         if (event.type === "org:joined") {
+          // Robust ID comparison (handle string vs objectid)
           const isSameOrg = String(event.org?._id) === String(orgId);
-          if (isSameOrg && event.member) {
-            setMembers((prev) => {
-              // Avoid duplicates
-              if (prev.find(m => m.userId === event.member.userId)) return prev;
-              return [...prev, event.member];
-            });
-            showToast(`${event.member.user.name || "A user"} joined the team`, "success");
+
+          if (isSameOrg) {
+            // 1. Optimistic Update (Immediate)
+            if (event.member) {
+              setMembers((prev) => {
+                const newMemberId = String(event.member.userId);
+                // Prevent duplicates
+                if (prev.some(m => String(m.userId) === newMemberId)) return prev;
+                return [...prev, event.member];
+              });
+              showToast(`${event.member.user.name || "A user"} joined the team`, "success");
+            }
+
+            // 2. Fetch Latest (Guarantee Consistency)
+            fetchMembers();
           }
         }
       });
