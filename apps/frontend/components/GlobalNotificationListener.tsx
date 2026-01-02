@@ -22,19 +22,10 @@ export function GlobalNotificationListener() {
             // 1. Check if event is a notification for THIS user
             if (event.type === "notification:created" && event.userId === user?.id) {
                 const notif = event.data;
-
-                // Update store immediately
-                // (This is redundant if NotificationDropdown already does it? 
-                // No, NotificationDropdown only adds if it's mounted.
-                // But if Global adds it, and Dropdown adds it, we might have duplicates?
-                // useNotificationStore.addNotification handles duplicates.)
                 try {
                     addNotification(notif);
-                } catch (e) {
-                    // ignore
-                }
+                } catch (e) { }
 
-                // 2. Custom Toast for Invites
                 if (notif.type === "invite" && notif.metadata?.orgId) {
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
@@ -42,7 +33,6 @@ export function GlobalNotificationListener() {
                     return;
                 }
 
-                // 3. Standard Toast for others
                 toast(notif.title, {
                     description: notif.message,
                     action: notif.link ? {
@@ -52,6 +42,22 @@ export function GlobalNotificationListener() {
                     duration: 5000,
                     position: "bottom-right",
                 });
+            }
+
+            // Handle Real-time Removal
+            if (event.type === "org:removed" && event.userId === user?.id) {
+                toast.error("Removed from Team", {
+                    description: `You have been removed from ${event.org.name}`,
+                    duration: 5000,
+                });
+
+                // Refresh user state (removes org from sidebar)
+                useUserStore.getState().fetchUser();
+
+                // Redirect if currently on that org's page
+                if (window.location.pathname.includes(event.org._id)) {
+                    router.push('/organization');
+                }
             }
         });
 
