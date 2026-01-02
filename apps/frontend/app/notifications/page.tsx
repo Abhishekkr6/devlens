@@ -27,6 +27,7 @@ export default function NotificationsPage() {
             toast.success("Joined organization successfully");
             await fetchUser();
             await deleteNotification(notification._id);
+            window.location.reload(); // Force full refresh as requested
         } catch (error) {
             toast.error("Failed to accept invitation");
         }
