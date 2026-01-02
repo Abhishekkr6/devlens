@@ -10,7 +10,7 @@ import { useNotificationStore } from "../store/notificationStore"; // Added impo
 import { api } from "../lib/api"; // Added import
 
 export function GlobalNotificationListener() {
-    const { user, removeOrgFromUser } = useUserStore();
+    const { user } = useUserStore();
     const { addNotification } = useNotificationStore();
     const router = useRouter();
 
@@ -53,35 +53,12 @@ export function GlobalNotificationListener() {
                     position: "bottom-right",
                 });
             }
-            // Handle Removal - Instant Kick
-            else if (event.type === "org:removed") {
-                const currentUserId = user?._id || user?.id;
-                // Robust comparison
-                if (currentUserId && String(event.userId) === String(currentUserId)) {
-                    toast.error(`You have been removed from ${event.org.name}`);
-
-                    const startId = String(event.org._id);
-                    // Remove the organization from the user's store
-                    removeOrgFromUser(startId);
-
-                    // Check if currently viewing that org
-                    const currentPath = window.location.pathname;
-                    if (currentPath.includes(startId)) {
-                        router.push("/organization");
-                        // Force reload to clear cache/state
-                        setTimeout(() => window.location.reload(), 500);
-                    } else {
-                        // Just reload to update sidebar/org list if not viewing it
-                        window.location.reload();
-                    }
-                }
-            }
         });
 
         return () => {
             unsubscribe();
         };
-    }, [user?.id, router, addNotification, removeOrgFromUser]);
+    }, [user?.id, router, addNotification]);
 
     return null;
 }
