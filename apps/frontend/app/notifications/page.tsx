@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
 
 // Define locally for now until we have a shared type file or backend
-import { useNotificationStore } from "../../store/notificationStore";
+import { useNotificationStore, NotificationType } from "../../store/notificationStore";
 
-type NotificationType = "alert" | "invite" | "info" | "success";
+
 
 export default function NotificationsPage() {
     const { notifications, markAllAsRead, markAsRead, deleteNotification } = useNotificationStore();
@@ -121,7 +121,7 @@ export default function NotificationsPage() {
                     >
                         All
                     </button>
-                    {["alert", "invite", "success", "info"].map((f) => (
+                    {["alert", "invite", "success", "info", "warning", "system"].map((f) => (
                         <button
                             key={f}
                             onClick={() => setFilter(f as any)}
