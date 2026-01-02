@@ -45,18 +45,26 @@ export function GlobalNotificationListener() {
             }
 
             // Handle Real-time Removal
-            if (event.type === "org:removed" && event.userId === user?.id) {
-                toast.error("Removed from Team", {
-                    description: `You have been removed from ${event.org.name}`,
-                    duration: 5000,
-                });
+            if (event.type === "org:removed") {
+                console.log("Org removed event:", event); // Debug
 
-                // Refresh user state (removes org from sidebar)
-                useUserStore.getState().fetchUser();
+                const targetUserId = String(event.userId);
+                const currentUserId = String(user?.id || user?._id);
 
-                // Redirect if currently on that org's page
-                if (window.location.pathname.includes(event.org._id)) {
-                    router.push('/organization');
+                if (targetUserId === currentUserId) {
+                    toast.error("Removed from Team", {
+                        description: `You have been removed from ${event.org.name}`,
+                        duration: 5000,
+                    });
+
+                    // Refresh user state (removes org from sidebar)
+                    useUserStore.getState().fetchUser();
+
+                    // Redirect if currently on that org's page
+                    const orgId = String(event.org._id);
+                    if (window.location.pathname.includes(orgId)) {
+                        router.push('/organization');
+                    }
                 }
             }
         });
