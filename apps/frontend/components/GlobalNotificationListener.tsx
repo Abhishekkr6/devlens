@@ -139,7 +139,7 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
     return (
 
         <div
-            className="w-full max-w-sm rounded-xl border border-white/20 bg-black/90 backdrop-blur-md shadow-2xl p-4 flex flex-col gap-3"
+            className="w-full max-w-sm sm:max-w-md rounded-xl border border-white/20 bg-black/90 backdrop-blur-md shadow-2xl p-4 flex flex-col gap-3"
             style={{ zIndex: 999999, pointerEvents: 'auto', position: 'relative' }}
         >
             <div className="flex items-start gap-3">
