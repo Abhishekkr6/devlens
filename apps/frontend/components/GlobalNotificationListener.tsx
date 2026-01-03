@@ -137,7 +137,11 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
     };
 
     return (
-        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex flex-col gap-3 z-[99999]">
+
+        <div
+            className="w-full max-w-sm rounded-xl border border-white/20 bg-black/90 backdrop-blur-md shadow-2xl p-4 flex flex-col gap-3"
+            style={{ zIndex: 999999, pointerEvents: 'auto', position: 'relative' }}
+        >
             <div className="flex items-start gap-3">
                 <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
                     <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -151,37 +155,40 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
             </div>
 
             <div className="flex items-center gap-2 pl-11">
-                <div className="flex items-center gap-2 pl-11">
-                    <button
-                        onClick={handleAccept}
-                        className="h-7 px-3 rounded-md text-xs font-medium bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
-                    >
-                        Accept
-                    </button>
-                    <button
-                        onClick={handleReject}
-                        className="h-7 px-3 rounded-md text-xs font-medium border border-slate-600 hover:bg-slate-800 text-slate-300 transition-colors"
-                    >
-                        Reject
-                    </button>
-                    <button
-                        onClick={() => {
-                            toast.dismiss(t);
-                            router.push('/notifications');
-                        }}
-                        className="h-7 px-2 text-xs font-medium text-slate-400 hover:text-white ml-auto transition-colors"
-                    >
-                        View
-                    </button>
-                </div>
+
+                <button
+                    onClick={handleAccept}
+                    className="h-7 px-3 rounded-md text-xs font-medium bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
+                >
+                    Accept
+                </button>
+                <button
+                    onClick={handleReject}
+                    className="h-7 px-3 rounded-md text-xs font-medium border border-slate-600 hover:bg-slate-800 text-slate-300 transition-colors"
+                >
+                    Reject
+                </button>
+                <button
+                    onClick={() => {
+                        toast.dismiss(t);
+                        router.push('/notifications');
+                    }}
+                    className="h-7 px-2 text-xs font-medium text-slate-400 hover:text-white ml-auto transition-colors"
+                >
+                    View
+                </button>
             </div>
+
         </div>
     );
 }
 
 function StatusToast({ t, notification, type }: { t: string | number, notification: any, type: "success" | "error" }) {
     return (
-        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex items-start gap-3 z-[99999]">
+        <div
+            className="w-full max-w-sm rounded-xl border border-white/20 bg-black/90 backdrop-blur-md shadow-2xl p-4 flex items-start gap-3"
+            style={{ zIndex: 999999, pointerEvents: 'auto', position: 'relative' }}
+        >
             <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${type === 'success' ? 'bg-emerald-500/20' : 'bg-rose-500/20'}`}>
                 {type === 'success' ? (
                     <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
