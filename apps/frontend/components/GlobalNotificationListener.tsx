@@ -14,21 +14,18 @@ export function GlobalNotificationListener() {
     const { addNotification } = useNotificationStore();
     const router = useRouter();
 
-    // Ensure User Data is present for ID checks
-    useEffect(() => {
-        if (!user) {
-            console.log("[GlobalNotif] User missing, fetching...");
-            fetchUser({ silent: true });
-        }
-    }, [user, fetchUser]);
+    // Don't run on public pages (landing, auth, etc.)
+    if (!user) {
+        return null;
+    }
 
-    // Verify Toast System on Mount
-    useEffect(() => {
-        if (user) {
-            console.log("[GlobalNotif] System Active for user:", user.id);
-            toast("🔔 Notification System Active", { duration: 3000, position: "bottom-right" });
-        }
-    }, [user]);
+    // Verify Toast System on Mount (disabled for production)
+    // useEffect(() => {
+    //     if (user) {
+    //         console.log("[GlobalNotif] System Active for user:", user.id);
+    //         toast("🔔 Notification System Active", { duration: 3000, position: "bottom-right" });
+    //     }
+    // }, [user]);
 
     useEffect(() => {
         // Ensure connection
