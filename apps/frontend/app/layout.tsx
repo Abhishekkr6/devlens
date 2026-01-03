@@ -36,7 +36,7 @@ export default function RootLayout({
         <ToastProvider>
           <GlobalNotificationListener />
           {children}
-          <Toaster />
+          <Toaster position="bottom-right" richColors />
         </ToastProvider>
       </body>
     </html>

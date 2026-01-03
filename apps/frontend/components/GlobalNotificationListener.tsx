@@ -35,10 +35,12 @@ export function GlobalNotificationListener() {
                 }
 
                 // 2. Custom Toast for Invites
-                if (notif.type === "invite" && notif.metadata?.orgId) {
+                // Explicit check for "invite" type
+                if (notif.type === "invite") {
+                    console.log("[GlobalNotif] Triggering Invite Toast", notif);
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: 10000, position: "bottom-right" });
+                    ), { duration: Infinity, position: "bottom-right" }); // Infinity duration so user doesn't miss it
                     return;
                 }
 
@@ -74,6 +76,7 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
             toast.dismiss(t);
             // Cleanup notification
             await deleteNotification(notification._id);
+            window.location.reload(); // Force full refresh as requested
         } catch (error) {
             toast.error("Failed to accept invitation");
         }
