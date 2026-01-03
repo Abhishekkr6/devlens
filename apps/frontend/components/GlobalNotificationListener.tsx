@@ -26,7 +26,7 @@ export function GlobalNotificationListener() {
     useEffect(() => {
         if (user) {
             console.log("[GlobalNotif] System Active for user:", user.id);
-            // toast("Notification System Active", { duration: 2000, position: "bottom-right" });
+            toast("🔔 Notification System Active", { duration: 3000, position: "bottom-right" });
         }
     }, [user]);
 
