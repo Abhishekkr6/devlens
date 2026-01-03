@@ -143,19 +143,26 @@ export const inviteUser = async (req: any, res: Response) => {
       });
     }
 
-    // 4️⃣ Prevent duplicate membership
-    const alreadyMember = org.members.some(
+    // 4️⃣ Check for active membership only
+    const existingMember = org.members.find(
       (m: any) => String(m.userId) === String(user._id)
     );
 
-    if (alreadyMember) {
+    if (existingMember && existingMember.status === "active") {
       return res.status(409).json({
         success: false,
         error: { message: "User already a member of this organization" },
       });
     }
 
-    // 5️⃣ Add member to org
+    // 5️⃣ If pending invite exists, remove it (allow re-invite)
+    if (existingMember && existingMember.status === "pending") {
+      org.members = org.members.filter(
+        (m: any) => String(m.userId) !== String(user._id)
+      );
+    }
+
+    // 6️⃣ Add member to org
     org.members.push({
       userId: user._id,
       role,

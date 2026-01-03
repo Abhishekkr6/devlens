@@ -49,6 +49,7 @@ const navLinks = [
 type TeamMember = {
   userId: string;
   role: "ADMIN" | "MEMBER" | "VIEWER";
+  status?: "active" | "pending";
   user: {
     id: string;
     name: string;
@@ -57,6 +58,7 @@ type TeamMember = {
     githubId?: number;
   } | null;
 };
+
 
 export default function Topbar() {
   const { user, loading, activeOrgId } = useUserStore() as {
@@ -397,40 +399,42 @@ export default function Topbar() {
                         </div>
                       ) : (
                         <div className="p-2">
-                          {teamMembers.map((member) => (
-                            <div
-                              key={member.userId}
-                              className="flex items-center gap-3 rounded-lg p-2 hover:bg-surface transition-colors cursor-pointer"
-                            >
-                              {member.user?.avatarUrl ? (
-                                <Image
-                                  src={member.user.avatarUrl}
-                                  alt={member.user.name}
-                                  width={32}
-                                  height={32}
-                                  className="h-8 w-8 rounded-full"
-                                />
-                              ) : (
-                                <div className="h-8 w-8 rounded-full bg-surface flex items-center justify-center text-xs font-medium text-text-secondary">
-                                  {member.user?.name?.[0]?.toUpperCase() || "?"}
+                          {teamMembers
+                            .filter((member) => member.status !== "pending")
+                            .map((member) => (
+                              <div
+                                key={member.userId}
+                                className="flex items-center gap-3 rounded-lg p-2 hover:bg-surface transition-colors cursor-pointer"
+                              >
+                                {member.user?.avatarUrl ? (
+                                  <Image
+                                    src={member.user.avatarUrl}
+                                    alt={member.user.name}
+                                    width={32}
+                                    height={32}
+                                    className="h-8 w-8 rounded-full"
+                                  />
+                                ) : (
+                                  <div className="h-8 w-8 rounded-full bg-surface flex items-center justify-center text-xs font-medium text-text-secondary">
+                                    {member.user?.name?.[0]?.toUpperCase() || "?"}
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium text-text-primary truncate">
+                                    {member.user?.name || "Unknown User"}
+                                  </p>
+                                  <p className="text-xs text-text-secondary truncate">
+                                    {member.user?.email || "No email"}
+                                  </p>
                                 </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium text-text-primary truncate">
-                                  {member.user?.name || "Unknown User"}
-                                </p>
-                                <p className="text-xs text-text-secondary truncate">
-                                  {member.user?.email || "No email"}
-                                </p>
+                                <div className="flex items-center gap-1.5">
+                                  {getRoleIcon(member.role)}
+                                  <span className="text-xs text-text-secondary">
+                                    {getRoleLabel(member.role)}
+                                  </span>
+                                </div>
                               </div>
-                              <div className="flex items-center gap-1.5">
-                                {getRoleIcon(member.role)}
-                                <span className="text-xs text-text-secondary">
-                                  {getRoleLabel(member.role)}
-                                </span>
-                              </div>
-                            </div>
-                          ))}
+                            ))}
                         </div>
                       )}
                     </div>
