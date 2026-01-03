@@ -28,10 +28,12 @@ export function GlobalNotificationListener() {
 
         const unsubscribe = subscribeWS((event: any) => {
             // 1. Check if event is a notification for THIS user
-            // Debug Log
-            console.log(`[GlobalNotif] Event: ${event.type}, For: ${event.userId}, Me: ${user?.id}`);
+            const currentUserId = user?.id || user?._id;
 
-            if (event.type === "notification:created" && String(event.userId) === String(user?.id)) {
+            // Debug Log
+            console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${currentUserId}`);
+
+            if (event.type === "notification:created" && String(event.userId) === String(currentUserId)) {
                 const notif = event.data;
 
                 // Update store immediately
@@ -90,10 +92,13 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
     const { deleteNotification, fetchNotifications } = useNotificationStore();
     const { fetchUser, setActiveOrganization } = useUserStore();
     const router = useRouter();
+    const metadata = notification.metadata || {}; // Defensive fallback
 
     const handleAccept = async () => {
         try {
-            await api.post(`/orgs/${notification.metadata.orgId}/invite/accept`);
+            if (metadata.orgId) {
+                await api.post(`/orgs/${metadata.orgId}/invite/accept`);
+            }
             toast.success(`Joined organization successfully`);
             toast.dismiss(t);
             // Cleanup notification
@@ -103,9 +108,9 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
             await fetchNotifications();
 
             // Navigate to new Org
-            if (notification.metadata?.orgId) {
-                setActiveOrganization(notification.metadata.orgId);
-                router.push(`/organization/${notification.metadata.orgId}`);
+            if (metadata.orgId) {
+                setActiveOrganization(metadata.orgId);
+                router.push(`/organization/${metadata.orgId}`);
             }
         } catch (error) {
             toast.error("Failed to accept invitation");
@@ -114,7 +119,9 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
 
     const handleReject = async () => {
         try {
-            await api.post(`/orgs/${notification.metadata.orgId}/invite/reject`);
+            if (metadata.orgId) {
+                await api.post(`/orgs/${metadata.orgId}/invite/reject`);
+            }
             toast.info("Invitation rejected");
             toast.dismiss(t);
             await deleteNotification(notification._id);
