@@ -123,12 +123,14 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       const unsubscribe = subscribeWS((event: any) => {
         console.log("WS Event received:", event); // Log the event for debugging
         if (event.type === "org:joined") {
-          // Robust ID comparison (handle string vs objectid)
-          const isSameOrg = String(event.org?._id) === String(orgId);
+          console.log("Joined event:", event);
+          const eventOrgId = String(event.org?._id || event.org?.id);
+          const currentOrgId = String(orgId);
 
-          // 1. Force Refresh (Nuclear Option as requested)
-          // "pura website ka page refresh ho"
-          window.location.reload();
+          if (eventOrgId === currentOrgId) {
+            showToast("Syncing team members...", "info");
+            window.location.reload();
+          }
         }
       });
       return () => unsubscribe();

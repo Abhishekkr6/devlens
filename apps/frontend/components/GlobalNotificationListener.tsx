@@ -28,13 +28,21 @@ export function GlobalNotificationListener() {
                     addNotification(notif);
                 } catch (e) { }
 
-                if (notif.type?.toLowerCase() === "invite" && notif.metadata?.orgId) {
+                // Debug logs
+                console.log("Processing notification:", notif);
+
+                // Check for invite type (handle both "invite" and "INVITE")
+                const isInvite = notif.type?.toLowerCase() === "invite";
+
+                if (isInvite && notif.metadata?.orgId) {
+                    console.log("Showing custom invite toast");
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: Infinity, position: "bottom-right" }); // Set duration Infinity for interactions
+                    ), { duration: Infinity, position: "bottom-right" });
                     return;
                 }
 
+                // If not invite, or metadata missing, show standard toast
                 toast(notif.title, {
                     description: notif.message,
                     action: notif.link ? {
