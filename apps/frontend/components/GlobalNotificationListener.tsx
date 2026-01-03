@@ -14,11 +14,6 @@ export function GlobalNotificationListener() {
     const { addNotification } = useNotificationStore();
     const router = useRouter();
 
-    // Don't run on public pages (landing, auth, etc.)
-    if (!user) {
-        return null;
-    }
-
     // Verify Toast System on Mount (disabled for production)
     // useEffect(() => {
     //     if (user) {
@@ -28,6 +23,14 @@ export function GlobalNotificationListener() {
     // }, [user]);
 
     useEffect(() => {
+        // Don't set up listener if no user (public pages)
+        if (!user) {
+            console.log("[GlobalNotif] No user, skipping WebSocket setup");
+            return;
+        }
+
+        console.log("[GlobalNotif] Setting up WebSocket listener for user:", user.id);
+
         // Ensure connection
         connectWS();
 
