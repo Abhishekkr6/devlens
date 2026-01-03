@@ -31,52 +31,26 @@ const resolveWsUrl = () => {
   return DEFAULT_REMOTE_WS;
 };
 
-let heartbeatInterval: NodeJS.Timeout | null = null;
-let reconnectTimeout: NodeJS.Timeout | null = null;
-const HEARTBEAT_INTERVAL = 30000;
-const RECONNECT_DELAY = 3000;
-
 export const connectWS = () => {
-  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-    return socket;
-  }
+  if (socket) return socket;
 
-  // Clear existing timeouts
-  if (reconnectTimeout) clearTimeout(reconnectTimeout);
-  if (heartbeatInterval) clearInterval(heartbeatInterval);
-
-  console.log("[WS] Connecting...");
   socket = new WebSocket(resolveWsUrl());
 
-  socket.onopen = () => {
-    console.log("[WS] Connected");
-    // Start Heartbeat
-    heartbeatInterval = setInterval(() => {
-      if (socket?.readyState === WebSocket.OPEN) {
-        socket.send(JSON.stringify({ type: "ping" }));
-      }
-    }, HEARTBEAT_INTERVAL);
-  };
-
+  socket.onopen = () => console.log("[WS] Connected");
   socket.onerror = (error) => {
     console.error("[WS] Connection error:", error);
   };
-
   socket.onclose = () => {
     console.log("[WS] Disconnected. Reconnecting...");
-    if (heartbeatInterval) clearInterval(heartbeatInterval);
-    socket = null;
-
-    reconnectTimeout = setTimeout(() => {
+    setTimeout(() => {
+      socket = null;
       connectWS();
-    }, RECONNECT_DELAY);
+    }, 2000);
   };
 
   socket.onmessage = (msg) => {
     try {
       const data = JSON.parse(msg.data);
-      if (data.type === "pong") return; // Ignore pongs
-
       console.log("[WS] Event received:", data.type, data);
       listeners.forEach((cb) => cb(data));
     } catch (err) {
@@ -86,23 +60,6 @@ export const connectWS = () => {
 
   return socket;
 };
-
-// Auto-reconnect on visibility change (wake from sleep)
-if (typeof window !== "undefined") {
-  document.addEventListener("visibilitychange", () => {
-    if (document.visibilityState === "visible") {
-      if (!socket || socket.readyState === WebSocket.CLOSED || socket.readyState === WebSocket.CLOSING) {
-        console.log("[WS] Page visible, reconnecting...");
-        connectWS();
-      }
-    }
-  });
-
-  window.addEventListener("online", () => {
-    console.log("[WS] Network online, reconnecting...");
-    connectWS();
-  });
-}
 
 export const subscribeWS = (cb: (event: unknown) => void) => {
   listeners.push(cb);
