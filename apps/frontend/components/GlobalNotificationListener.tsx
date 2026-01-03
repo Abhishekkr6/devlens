@@ -94,16 +94,16 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
     };
 
     return (
-        <div className="w-full max-w-sm rounded-xl border border-border bg-background shadow-lg p-4 pointer-events-auto flex flex-col gap-3">
+        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex flex-col gap-3 z-[99999]">
             <div className="flex items-start gap-3">
-                <div className="h-8 w-8 rounded-full bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center shrink-0">
-                    <svg className="h-4 w-4 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
+                    <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                     </svg>
                 </div>
                 <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-text-primary">{notification.title}</h4>
-                    <p className="text-xs text-text-secondary mt-1 leading-relaxed">{notification.message}</p>
+                    <h4 className="text-sm font-semibold text-white">{notification.title}</h4>
+                    <p className="text-xs text-slate-300 mt-1 leading-relaxed">{notification.message}</p>
                 </div>
             </div>
 
