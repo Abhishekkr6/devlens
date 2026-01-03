@@ -32,18 +32,38 @@ const resolveWsUrl = () => {
 };
 
 export const connectWS = () => {
-  if (socket) return socket;
+  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
+    return socket;
+  }
 
   socket = new WebSocket(resolveWsUrl());
 
-  socket.onopen = () => console.log("[WS] Connected");
+  // Heartbeat Logic
+  let pingInterval: NodeJS.Timeout;
+
+  const startHeartbeat = () => {
+    clearInterval(pingInterval);
+    pingInterval = setInterval(() => {
+      if (socket?.readyState === WebSocket.OPEN) {
+        socket.send(JSON.stringify({ type: "ping" }));
+      }
+    }, 30000); // Ping every 30s
+  };
+
+  socket.onopen = () => {
+    console.log("[WS] Connected");
+    startHeartbeat();
+  };
+
   socket.onerror = (error) => {
     console.error("[WS] Connection error:", error);
   };
+
   socket.onclose = () => {
     console.log("[WS] Disconnected. Reconnecting...");
+    clearInterval(pingInterval);
+    socket = null;
     setTimeout(() => {
-      socket = null;
       connectWS();
     }, 2000);
   };
@@ -51,6 +71,8 @@ export const connectWS = () => {
   socket.onmessage = (msg) => {
     try {
       const data = JSON.parse(msg.data);
+      if (data.type === "pong") return; // Ignore pong
+
       console.log("[WS] Event received:", data.type, data);
       listeners.forEach((cb) => cb(data));
     } catch (err) {
