@@ -44,7 +44,17 @@ export function GlobalNotificationListener() {
                     return;
                 }
 
-                // 3. Standard Toast for others
+                // 3. Dark Glass Toast for Invite Responses (Accept/Reject)
+                if ((notif.type === "success" && notif.title?.includes("Accepted")) ||
+                    (notif.type === "alert" && notif.title?.includes("Rejected"))) {
+
+                    toast.custom((t) => (
+                        <StatusToast t={t} notification={notif} type={notif.type === "success" ? "success" : "error"} />
+                    ), { duration: 5000, position: "bottom-right" });
+                    return;
+                }
+
+                // 4. Standard Toast for others
                 toast(notif.title, {
                     description: notif.message,
                     action: notif.link ? {
@@ -135,6 +145,36 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
                     View
                 </Button>
             </div>
+        </div>
+    );
+}
+
+function StatusToast({ t, notification, type }: { t: string | number, notification: any, type: "success" | "error" }) {
+    return (
+        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex items-start gap-3 z-[99999]">
+            <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${type === 'success' ? 'bg-emerald-500/20' : 'bg-rose-500/20'}`}>
+                {type === 'success' ? (
+                    <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                ) : (
+                    <svg className="h-4 w-4 text-rose-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                )}
+            </div>
+            <div className="flex-1">
+                <h4 className="text-sm font-semibold text-white">{notification.title}</h4>
+                <p className="text-xs text-slate-300 mt-1 leading-relaxed">{notification.message}</p>
+            </div>
+            <button
+                onClick={() => toast.dismiss(t)}
+                className="text-slate-400 hover:text-white transition-colors"
+            >
+                <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
     );
 }
