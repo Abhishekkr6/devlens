@@ -10,9 +10,17 @@ import { useNotificationStore } from "../store/notificationStore"; // Added impo
 import { api } from "../lib/api"; // Added import
 
 export function GlobalNotificationListener() {
-    const { user } = useUserStore();
+    const { user, fetchUser } = useUserStore();
     const { addNotification } = useNotificationStore();
     const router = useRouter();
+
+    // Ensure User Data is present for ID checks
+    useEffect(() => {
+        if (!user) {
+            console.log("[GlobalNotif] User missing, fetching...");
+            fetchUser({ silent: true });
+        }
+    }, [user, fetchUser]);
 
     useEffect(() => {
         // Ensure connection
