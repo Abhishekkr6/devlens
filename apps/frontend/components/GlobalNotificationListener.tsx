@@ -28,10 +28,10 @@ export function GlobalNotificationListener() {
                     addNotification(notif);
                 } catch (e) { }
 
-                if (notif.type === "invite" && notif.metadata?.orgId) {
+                if (notif.type?.toLowerCase() === "invite" && notif.metadata?.orgId) {
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: 10000, position: "bottom-right" });
+                    ), { duration: Infinity, position: "bottom-right" }); // Set duration Infinity for interactions
                     return;
                 }
 
