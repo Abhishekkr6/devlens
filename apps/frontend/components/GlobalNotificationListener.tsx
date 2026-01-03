@@ -20,7 +20,10 @@ export function GlobalNotificationListener() {
 
         const unsubscribe = subscribeWS((event: any) => {
             // 1. Check if event is a notification for THIS user
-            if (event.type === "notification:created" && event.userId === user?.id) {
+            // Debug Log
+            console.log(`[GlobalNotif] Event: ${event.type}, For: ${event.userId}, Me: ${user?.id}`);
+
+            if (event.type === "notification:created" && String(event.userId) === String(user?.id)) {
                 const notif = event.data;
 
                 // Update store immediately
@@ -77,6 +80,7 @@ export function GlobalNotificationListener() {
 
 function InviteToast({ t, notification }: { t: string | number, notification: any }) {
     const { deleteNotification, fetchNotifications } = useNotificationStore();
+    const { fetchUser, setActiveOrganization } = useUserStore();
     const router = useRouter();
 
     const handleAccept = async () => {
@@ -86,7 +90,15 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
             toast.dismiss(t);
             // Cleanup notification
             await deleteNotification(notification._id);
-            window.location.reload(); // Force full refresh as requested
+            // Refresh User Data (Orgs List) & Notifications
+            await fetchUser({ silent: true });
+            await fetchNotifications();
+
+            // Navigate to new Org
+            if (notification.metadata?.orgId) {
+                setActiveOrganization(notification.metadata.orgId);
+                router.push(`/organization/${notification.metadata.orgId}`);
+            }
         } catch (error) {
             toast.error("Failed to accept invitation");
         }
