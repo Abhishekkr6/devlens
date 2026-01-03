@@ -37,14 +37,18 @@ export function GlobalNotificationListener() {
         const unsubscribe = subscribeWS((event: any) => {
             // Use EXACT same logic as NotificationDropdown (which works!)
             console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${user?.id}`);
+            console.log(`[GlobalNotif] Full Event:`, event);
+            console.log(`[GlobalNotif] User ID comparison: ${String(event.userId)} === ${String(user?.id)} = ${String(event.userId) === String(user?.id)}`);
 
-            if (event.type === "notification:created" && event.userId === user?.id) {
+            if (event.type === "notification:created" && String(event.userId) === String(user?.id)) {
                 const notif = event.data;
                 console.log("[GlobalNotif] ✅ MATCHED USER! Payload:", notif);
+                console.log("[GlobalNotif] Notification type:", notif.type);
 
                 // 2. Custom Toast for Invites
                 if (notif.type === "invite") {
                     console.log("[GlobalNotif] 🎯 Triggering Invite Toast...");
+                    console.log("[GlobalNotif] Notification metadata:", notif.metadata);
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
                     ), { duration: Infinity, position: "bottom-right" });
@@ -71,6 +75,8 @@ export function GlobalNotificationListener() {
                     duration: 5000,
                     position: "bottom-right",
                 });
+            } else {
+                console.log("[GlobalNotif] ❌ Event skipped - Type:", event.type, "| User match:", String(event.userId) === String(user?.id));
             }
         });
 
