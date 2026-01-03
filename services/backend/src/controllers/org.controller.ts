@@ -354,6 +354,13 @@ export const removeMember = async (req: any, res: Response) => {
       $pull: { orgIds: org._id }
     });
 
+    // Publish Real-time Event (Org Removed)
+    await publishEvent({
+      type: "org:removed",
+      userId: userId, // The removed user
+      orgId: org._id,
+    });
+
     return res.json({ success: true, message: "Member removed" });
   } catch (error) {
     return res.status(500).json({ error: "Failed to remove member" });

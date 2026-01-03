@@ -65,6 +65,21 @@ export function GlobalNotificationListener() {
                     position: "bottom-right",
                 });
             }
+
+
+            // 5. Handle Immediate Removal / Ban
+            if (event.type === "org:removed" && event.userId === user?.id) {
+                console.log("[GlobalNotif] User removed from org", event);
+
+                toast.error("You have been removed from the organization", {
+                    duration: Infinity, // Make sure they see it
+                    description: "You are being redirected...",
+                });
+
+                // Immediate redirect
+                router.push("/organization");
+            }
+
         });
 
         return () => {
