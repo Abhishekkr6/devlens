@@ -36,7 +36,7 @@ export default function RootLayout({
         <ToastProvider>
           <GlobalNotificationListener />
           {children}
-          <Toaster position="bottom-right" richColors />
+          <Toaster position="bottom-right" richColors toastOptions={{ style: { zIndex: 99999 } }} />
         </ToastProvider>
       </body>
     </html>

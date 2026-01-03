@@ -27,12 +27,14 @@ export function GlobalNotificationListener() {
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
-            // 1. Check if event is a notification for THIS user
-            const currentUserId = user?.id || user?._id;
+            // Access fresh state directly to avoid closure staleness
+            const currentUser = useUserStore.getState().user;
+            const currentUserId = currentUser?.id || currentUser?._id;
 
             // Debug Log
             console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${currentUserId}`);
 
+            // Loose comparison to handle string vs value types
             if (event.type === "notification:created" && String(event.userId) === String(currentUserId)) {
                 const notif = event.data;
 
@@ -53,7 +55,7 @@ export function GlobalNotificationListener() {
                     console.log("[GlobalNotif] Triggering Invite Toast", notif);
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: Infinity, position: "bottom-right" }); // Infinity duration so user doesn't miss it
+                    ), { duration: Infinity, position: "bottom-right" }); // Infinity duration
                     return;
                 }
 
@@ -83,7 +85,7 @@ export function GlobalNotificationListener() {
         return () => {
             unsubscribe();
         };
-    }, [user?.id, router, addNotification]);
+    }, [router, addNotification]); // Removed user dependency -> Stable Listener
 
     return null;
 }
