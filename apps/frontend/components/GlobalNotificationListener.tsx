@@ -37,6 +37,8 @@ export function GlobalNotificationListener() {
             // Loose comparison to handle string vs value types
             if (event.type === "notification:created" && String(event.userId) === String(currentUserId)) {
                 const notif = event.data;
+                console.log("[GlobalNotif] MATCHED USER! Payload:", notif);
+                console.log("[GlobalNotif] Metadata:", notif.metadata);
 
                 // Update store immediately
                 // (This is redundant if NotificationDropdown already does it? 
@@ -52,11 +54,13 @@ export function GlobalNotificationListener() {
                 // 2. Custom Toast for Invites
                 // Explicit check for "invite" type
                 if (notif.type === "invite") {
-                    console.log("[GlobalNotif] Triggering Invite Toast", notif);
+                    console.log("[GlobalNotif] Triggering Invite Toast...");
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
                     ), { duration: Infinity, position: "bottom-right" }); // Infinity duration
                     return;
+                } else {
+                    console.log("[GlobalNotif] Type was not 'invite':", notif.type);
                 }
 
                 // 3. Dark Glass Toast for Invite Responses (Accept/Reject)
@@ -147,32 +151,29 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
             </div>
 
             <div className="flex items-center gap-2 pl-11">
-                <Button
-                    size="sm"
-                    onClick={handleAccept}
-                    className="h-7 px-3 text-xs bg-brand hover:bg-brand/90 text-white border-none"
-                >
-                    Accept
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReject}
-                    className="h-7 px-3 text-xs border-border hover:bg-surface hover:text-rose-500"
-                >
-                    Reject
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                        toast.dismiss(t);
-                        router.push('/notifications');
-                    }}
-                    className="h-7 px-2 text-xs text-text-secondary hover:text-text-primary ml-auto"
-                >
-                    View
-                </Button>
+                <div className="flex items-center gap-2 pl-11">
+                    <button
+                        onClick={handleAccept}
+                        className="h-7 px-3 rounded-md text-xs font-medium bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
+                    >
+                        Accept
+                    </button>
+                    <button
+                        onClick={handleReject}
+                        className="h-7 px-3 rounded-md text-xs font-medium border border-slate-600 hover:bg-slate-800 text-slate-300 transition-colors"
+                    >
+                        Reject
+                    </button>
+                    <button
+                        onClick={() => {
+                            toast.dismiss(t);
+                            router.push('/notifications');
+                        }}
+                        className="h-7 px-2 text-xs font-medium text-slate-400 hover:text-white ml-auto transition-colors"
+                    >
+                        View
+                    </button>
+                </div>
             </div>
         </div>
     );
