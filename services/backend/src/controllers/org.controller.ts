@@ -354,28 +354,8 @@ export const removeMember = async (req: any, res: Response) => {
       $pull: { orgIds: org._id }
     });
 
-    // Notify the removed user
-    await createNotification({
-      type: "info",
-      title: "Removed from Team",
-      message: `You have been removed from the organization "${org.name}".`,
-      recipientId: userId, // CORRECTED PARAMETER
-      metadata: { orgId: org._id }
-    });
-
-    // Publish Real-time Event (Org Removed)
-    await publishEvent({
-      type: "org:removed",
-      userId: userId, // Target the removed user
-      org: {
-        _id: org._id,
-        name: org.name
-      }
-    });
-
     return res.json({ success: true, message: "Member removed" });
   } catch (error) {
-    console.error("Remove member error", error);
     return res.status(500).json({ error: "Failed to remove member" });
   }
 };

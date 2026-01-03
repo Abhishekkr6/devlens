@@ -32,15 +32,7 @@ const resolveWsUrl = () => {
 };
 
 export const connectWS = () => {
-  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-    return socket;
-  }
-
-  if (socket) {
-    // Socket exists but is closed/closing, reset it
-    try { socket.close(); } catch { }
-    socket = null;
-  }
+  if (socket) return socket;
 
   socket = new WebSocket(resolveWsUrl());
 

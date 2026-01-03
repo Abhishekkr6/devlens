@@ -20,29 +20,29 @@ export function GlobalNotificationListener() {
 
         const unsubscribe = subscribeWS((event: any) => {
             // 1. Check if event is a notification for THIS user
-            const isTargetUser = String(event.userId) === String(user?.id || user?._id);
-
-            if (event.type === "notification:created" && isTargetUser) {
+            if (event.type === "notification:created" && event.userId === user?.id) {
                 const notif = event.data;
+
+                // Update store immediately
+                // (This is redundant if NotificationDropdown already does it? 
+                // No, NotificationDropdown only adds if it's mounted.
+                // But if Global adds it, and Dropdown adds it, we might have duplicates?
+                // useNotificationStore.addNotification handles duplicates.)
                 try {
                     addNotification(notif);
-                } catch (e) { }
+                } catch (e) {
+                    // ignore
+                }
 
-                // Debug logs
-                console.log("Processing notification:", notif);
-
-                // Check for invite type (handle both "invite" and "INVITE")
-                const isInvite = notif.type?.toLowerCase() === "invite";
-
-                if (isInvite && notif.metadata?.orgId) {
-                    console.log("Showing custom invite toast");
+                // 2. Custom Toast for Invites
+                if (notif.type === "invite" && notif.metadata?.orgId) {
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: Infinity, position: "bottom-right" });
+                    ), { duration: 10000, position: "bottom-right" });
                     return;
                 }
 
-                // If not invite, or metadata missing, show standard toast
+                // 3. Standard Toast for others
                 toast(notif.title, {
                     description: notif.message,
                     action: notif.link ? {
@@ -52,30 +52,6 @@ export function GlobalNotificationListener() {
                     duration: 5000,
                     position: "bottom-right",
                 });
-            }
-
-            // Handle Real-time Removal
-            if (event.type === "org:removed") {
-                console.log("Org removed event:", event); // Debug
-
-                const targetUserId = String(event.userId);
-                const currentUserId = String(user?.id || user?._id);
-
-                if (targetUserId === currentUserId) {
-                    toast.error("Removed from Team", {
-                        description: `You have been removed from ${event.org.name}`,
-                        duration: 5000,
-                    });
-
-                    // Refresh user state (removes org from sidebar)
-                    useUserStore.getState().fetchUser();
-
-                    // Redirect if currently on that org's page
-                    const orgId = String(event.org._id);
-                    if (window.location.pathname.includes(orgId)) {
-                        router.push('/organization');
-                    }
-                }
             }
         });
 
