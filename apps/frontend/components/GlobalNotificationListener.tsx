@@ -35,18 +35,16 @@ export function GlobalNotificationListener() {
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
-            // 1. Check if event is a notification for THIS user
-            // Use local variable from closure (updated by dependency array)
-
+            // Use EXACT same logic as NotificationDropdown (which works!)
             console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${user?.id}`);
 
-            if (event.type === "notification:created" && user?.id && String(event.userId) === String(user.id)) {
+            if (event.type === "notification:created" && event.userId === user?.id) {
                 const notif = event.data;
-                console.log("[GlobalNotif] MATCHED USER! Payload:", notif);
+                console.log("[GlobalNotif] ✅ MATCHED USER! Payload:", notif);
 
                 // 2. Custom Toast for Invites
                 if (notif.type === "invite") {
-                    console.log("[GlobalNotif] Triggering Invite Toast...");
+                    console.log("[GlobalNotif] 🎯 Triggering Invite Toast...");
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
                     ), { duration: Infinity, position: "bottom-right" });
@@ -79,7 +77,7 @@ export function GlobalNotificationListener() {
         return () => {
             unsubscribe();
         };
-    }, [user, user?.id, router]); // Re-subscribe when user changes (Proven Pattern)
+    }, [user?.id, router]); // Match NotificationDropdown dependencies
 
     return null;
 }
