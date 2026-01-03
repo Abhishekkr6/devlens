@@ -22,45 +22,35 @@ export function GlobalNotificationListener() {
         }
     }, [user, fetchUser]);
 
+    // Verify Toast System on Mount
+    useEffect(() => {
+        if (user) {
+            console.log("[GlobalNotif] System Active for user:", user.id);
+            // toast("Notification System Active", { duration: 2000, position: "bottom-right" });
+        }
+    }, [user]);
+
     useEffect(() => {
         // Ensure connection
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
-            // Access fresh state directly to avoid closure staleness
-            const currentUser = useUserStore.getState().user;
-            const currentUserId = currentUser?.id || currentUser?._id;
+            // 1. Check if event is a notification for THIS user
+            // Use local variable from closure (updated by dependency array)
 
-            // Debug Log
-            console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${currentUserId}`);
+            console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${user?.id}`);
 
-            // Loose comparison to handle string vs value types
-            if (event.type === "notification:created" && String(event.userId) === String(currentUserId)) {
+            if (event.type === "notification:created" && user?.id && String(event.userId) === String(user.id)) {
                 const notif = event.data;
                 console.log("[GlobalNotif] MATCHED USER! Payload:", notif);
-                console.log("[GlobalNotif] Metadata:", notif.metadata);
-
-                // Update store immediately
-                // (This is redundant if NotificationDropdown already does it? 
-                // No, NotificationDropdown only adds if it's mounted.
-                // But if Global adds it, and Dropdown adds it, we might have duplicates?
-                // useNotificationStore.addNotification handles duplicates.)
-                try {
-                    addNotification(notif);
-                } catch (e) {
-                    // ignore
-                }
 
                 // 2. Custom Toast for Invites
-                // Explicit check for "invite" type
                 if (notif.type === "invite") {
                     console.log("[GlobalNotif] Triggering Invite Toast...");
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: Infinity, position: "bottom-right" }); // Infinity duration
+                    ), { duration: Infinity, position: "bottom-right" });
                     return;
-                } else {
-                    console.log("[GlobalNotif] Type was not 'invite':", notif.type);
                 }
 
                 // 3. Dark Glass Toast for Invite Responses (Accept/Reject)
@@ -89,7 +79,7 @@ export function GlobalNotificationListener() {
         return () => {
             unsubscribe();
         };
-    }, [router, addNotification]); // Removed user dependency -> Stable Listener
+    }, [user, user?.id, router]); // Re-subscribe when user changes (Proven Pattern)
 
     return null;
 }
