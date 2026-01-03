@@ -141,13 +141,6 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
             fetchMembers();
           }
         }
-
-        if (event.type === "org:removed") {
-          const isSameOrg = String(event.orgId) === String(orgId);
-          if (isSameOrg) {
-            setMembers((prev) => prev.filter((m) => String(m.userId) !== String(event.userId)));
-          }
-        }
       });
       return () => unsubscribe();
     }
