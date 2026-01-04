@@ -10,7 +10,10 @@ import {
     X,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { useNotificationStore, NotificationType } from "../../store/notificationStore";
+import {
+    useNotificationStore,
+    NotificationType,
+} from "../../store/notificationStore";
 import { api } from "../../lib/api";
 import { useUserStore } from "../../store/userStore";
 
@@ -19,7 +22,10 @@ interface NotificationDropdownProps {
     onClose: () => void;
 }
 
-export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownProps) {
+export function NotificationDropdown({
+    isOpen,
+    onClose,
+}: NotificationDropdownProps) {
     const {
         notifications,
         unreadCount,
@@ -46,70 +52,142 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
 
     const getIcon = (type: NotificationType) => {
         switch (type) {
-            case "alert": return <AlertTriangle className="h-4 w-4 text-rose-500" />;
-            case "invite": return <UserPlus className="h-4 w-4 text-blue-500" />;
-            case "success": return <CheckCircle2 className="h-4 w-4 text-emerald-500" />;
-            default: return <Info className="h-4 w-4 text-slate-500" />;
+            case "alert":
+                return <AlertTriangle className="h-4 w-4 text-rose-400" />;
+            case "invite":
+                return <UserPlus className="h-4 w-4 text-indigo-400" />;
+            case "success":
+                return <CheckCircle2 className="h-4 w-4 text-emerald-400" />;
+            default:
+                return <Info className="h-4 w-4 text-slate-400" />;
         }
     };
 
     return (
-        <div className="absolute right-0 mt-2 w-96 rounded-xl border bg-background shadow-xl z-50">
-            <div className="flex justify-between px-4 py-3 border-b">
+        <div
+            className={cn(
+                "absolute right-0 mt-3 w-[22rem] z-50",
+                "rounded-2xl overflow-hidden",
+                "border border-white/10",
+                "bg-slate-950/80 backdrop-blur-xl",
+                "shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+            )}
+        >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/40">
                 <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-semibold">Notifications</h3>
+                    <Bell className="h-4 w-4 text-slate-400" />
+                    <h3 className="text-sm font-semibold text-white">
+                        Notifications
+                    </h3>
                     {unreadCount > 0 && (
-                        <span className="text-xs bg-brand text-white px-2 rounded-full">
+                        <span className="ml-1 rounded-full bg-rose-500 px-2 py-0.5 text-[10px] font-bold text-white">
                             {unreadCount}
                         </span>
                     )}
                 </div>
+
                 {unreadCount > 0 && (
-                    <button onClick={markAllAsRead} className="text-xs text-brand">
+                    <button
+                        onClick={markAllAsRead}
+                        className="text-[11px] font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                    >
                         Mark all read
                     </button>
                 )}
             </div>
 
-            <div className="max-h-[400px] overflow-y-auto">
-                {notifications.map((n) => (
-                    <div
-                        key={n._id}
-                        onClick={() => markAsRead(n._id)}
-                        className={cn(
-                            "flex gap-3 p-4 hover:bg-surface cursor-pointer",
-                            !n.read && "bg-brand/5"
-                        )}
-                    >
-                        <div className="h-8 w-8 flex items-center justify-center rounded-full">
-                            {getIcon(n.type)}
+            {/* Content */}
+            <div className="max-h-[420px] overflow-y-auto divide-y divide-white/5">
+                {notifications.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+                        <div className="h-12 w-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
+                            <Bell className="h-6 w-6 text-slate-500" />
                         </div>
+                        <p className="text-sm font-medium text-white">
+                            All caught up
+                        </p>
+                        <p className="text-xs text-slate-400 mt-1">
+                            No new notifications
+                        </p>
+                    </div>
+                ) : (
+                    notifications.map((n) => (
+                        <div
+                            key={n._id}
+                            onClick={() => markAsRead(n._id)}
+                            className={cn(
+                                "group relative flex gap-3 p-4 cursor-pointer transition-all",
+                                "hover:bg-white/5",
+                                !n.read && "bg-indigo-500/5"
+                            )}
+                        >
+                            {/* Icon */}
+                            <div className="mt-0.5 h-8 w-8 rounded-full bg-white/5 flex items-center justify-center shrink-0">
+                                {getIcon(n.type)}
+                            </div>
 
-                        <div className="flex-1">
-                            <p className="text-sm font-medium">{n.title}</p>
-                            <p className="text-xs text-text-secondary">{n.message}</p>
+                            {/* Content */}
+                            <div className="flex-1 min-w-0">
+                                <p
+                                    className={cn(
+                                        "text-sm leading-tight",
+                                        n.read
+                                            ? "text-slate-200"
+                                            : "text-white font-semibold"
+                                    )}
+                                >
+                                    {n.title}
+                                </p>
+                                <p className="mt-1 text-xs text-slate-400 line-clamp-2">
+                                    {n.message}
+                                </p>
 
-                            {n.type === "invite" && (
-                                <div className="mt-2 flex gap-2">
-                                    <button onClick={(e) => handleAcceptInvite(e, n)} className="text-xs text-brand">
-                                        Accept
-                                    </button>
-                                    <button onClick={(e) => handleRejectInvite(e, n)} className="text-xs text-rose-500">
-                                        Reject
-                                    </button>
-                                </div>
+                                {n.type === "invite" && (
+                                    <div className="mt-3 flex items-center gap-2">
+                                        <button
+                                            onClick={(e) => handleAcceptInvite(e, n)}
+                                            className="h-7 px-3 rounded-lg text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-400 transition-colors"
+                                        >
+                                            Accept
+                                        </button>
+                                        <button
+                                            onClick={(e) => handleRejectInvite(e, n)}
+                                            className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
+                                        >
+                                            Reject
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Dismiss */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    deleteNotification(n._id);
+                                }}
+                                className="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity text-slate-400 hover:text-white"
+                            >
+                                <X className="h-3.5 w-3.5" />
+                            </button>
+
+                            {/* Unread dot */}
+                            {!n.read && (
+                                <span className="absolute left-2 top-1/2 -translate-y-1/2 h-1.5 w-1.5 rounded-full bg-indigo-400" />
                             )}
                         </div>
-
-                        <button onClick={() => deleteNotification(n._id)}>
-                            <X className="h-3 w-3" />
-                        </button>
-                    </div>
-                ))}
+                    ))
+                )}
             </div>
 
-            <Link href="/notifications" onClick={onClose} className="block text-center text-xs py-2">
-                View all notifications
+            {/* Footer */}
+            <Link
+                href="/notifications"
+                onClick={onClose}
+                className="block text-center py-2.5 text-[11px] font-medium text-slate-400 hover:text-white transition-colors bg-slate-900/40 border-t border-white/10"
+            >
+                View all notifications →
             </Link>
         </div>
     );
