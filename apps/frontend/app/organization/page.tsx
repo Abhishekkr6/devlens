@@ -116,7 +116,6 @@ export default function OrganizationPage() {
   }
 
   const disabled = !name.trim() || !slug.trim();
-  const userId = user?.id || user?._id;
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -182,7 +181,7 @@ export default function OrganizationPage() {
             ) : (
               <ul className="space-y-3">
                 {orgs.map((o) => {
-                  const isOwner = String(o.createdBy) === String(userId);
+                  const isOwner = o.role === "ADMIN";
                   return (
                     <li
                       key={o._id}

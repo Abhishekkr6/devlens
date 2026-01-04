@@ -240,11 +240,26 @@ export const getUserOrgs = async (req: any, res: Response) => {
           status: "active",
         },
       },
-    }).select("_id name slug createdBy");
+    }).select("_id name slug createdBy members");
+
+    // Map organizations to include user's role
+    const orgsWithRole = orgs.map((org) => {
+      const member = org.members.find(
+        (m: any) => String(m.userId) === String(userId) && m.status === "active"
+      );
+
+      return {
+        _id: org._id,
+        name: org.name,
+        slug: org.slug,
+        createdBy: org.createdBy,
+        role: member?.role || "VIEWER", // Include user's role in this org
+      };
+    });
 
     return res.status(200).json({
       success: true,
-      data: orgs,
+      data: orgsWithRole,
     });
   } catch (error) {
     console.error("GET USER ORGS ERROR:", error);
