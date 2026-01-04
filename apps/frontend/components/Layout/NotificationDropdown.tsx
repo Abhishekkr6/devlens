@@ -32,7 +32,8 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
-            if (event.type === "notification:created" && event.userId === user?.id) {
+            const currentUserId = user?.id || user?._id;
+            if (event.type === "notification:created" && String(event.userId) === String(currentUserId)) {
                 addNotification(event.data);
             }
         });
@@ -40,7 +41,7 @@ export function NotificationDropdown({ isOpen, onClose }: NotificationDropdownPr
         return () => {
             unsubscribe();
         }
-    }, [user?.id, addNotification]);
+    }, [user?.id, user?._id, addNotification]);
 
     if (!isOpen) return null;
 

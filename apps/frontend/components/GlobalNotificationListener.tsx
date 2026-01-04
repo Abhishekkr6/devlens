@@ -19,9 +19,18 @@ export function GlobalNotificationListener() {
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
+            // Get current user ID (handle both id and _id)
+            const currentUserId = user?.id || user?._id;
+
+            console.log("[GlobalNotif] Received event:", event.type, event);
+            console.log("[GlobalNotif] Current user ID:", currentUserId);
+            console.log("[GlobalNotif] Event userId:", event.userId);
+
             // 1. Check if event is a notification for THIS user
-            if (event.type === "notification:created" && event.userId === user?.id) {
+            // Use String() to normalize comparison
+            if (event.type === "notification:created" && String(event.userId) === String(currentUserId)) {
                 const notif = event.data;
+                console.log("[GlobalNotif] Processing notification for current user:", notif);
 
                 // Update store immediately
                 // (This is redundant if NotificationDropdown already does it? 
@@ -64,13 +73,15 @@ export function GlobalNotificationListener() {
                     duration: 5000,
                     position: "bottom-right",
                 });
+            } else {
+                console.log("[GlobalNotif] Event skipped - not for current user or wrong type");
             }
         });
 
         return () => {
             unsubscribe();
         };
-    }, [user?.id, router, addNotification]);
+    }, [user?.id, user?._id, router, addNotification]);
 
     return null;
 }
