@@ -186,13 +186,13 @@ export default function NotificationsPage() {
                                             <div className="mt-3 flex items-center gap-3">
                                                 <button
                                                     onClick={(e) => handleAccept(e, notification)}
-                                                    className="px-4 py-2 rounded-lg bg-brand text-sm font-semibold text-white hover:bg-brand/90 transition-colors shadow-sm"
+                                                    className="px-4 py-2 rounded-lg bg-brand text-sm font-semibold text-white border border-border hover:bg-brand/90 transition-colors cursor-pointer"
                                                 >
                                                     Accept Invite
                                                 </button>
                                                 <button
                                                     onClick={(e) => handleReject(e, notification)}
-                                                    className="px-4 py-2 rounded-lg border border-border bg-surface text-sm font-medium text-text-secondary hover:bg-surface/80 hover:text-rose-500 transition-colors"
+                                                    className="px-4 py-2 rounded-lg border border-border bg-surface text-sm font-medium text-text-secondary hover:bg-surface/80 hover:text-rose-500 transition-colors cursor-pointer"
                                                 >
                                                     Reject
                                                 </button>

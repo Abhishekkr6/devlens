@@ -95,13 +95,13 @@ function InviteToast({
             <div className="flex items-center gap-2 justify-end">
                 <button
                     onClick={handleReject}
-                    className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 transition"
+                    className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 transition cursor-pointer"
                 >
                     Reject
                 </button>
                 <button
                     onClick={handleAccept}
-                    className="h-7 px-3 rounded-lg text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-400 transition"
+                    className="h-7 px-3 rounded-lg text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-400 transition cursor-pointer"
                 >
                     Accept
                 </button>

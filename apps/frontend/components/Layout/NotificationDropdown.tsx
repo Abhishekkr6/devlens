@@ -90,7 +90,7 @@ export function NotificationDropdown({
                 {unreadCount > 0 && (
                     <button
                         onClick={markAllAsRead}
-                        className="text-[11px] font-medium text-indigo-400 hover:text-indigo-300 transition-colors"
+                        className="text-[11px] font-medium text-indigo-400 hover:text-indigo-300 transition-colors cursor-pointer"
                     >
                         Mark all read
                     </button>
@@ -147,13 +147,13 @@ export function NotificationDropdown({
                                     <div className="mt-3 flex items-center gap-2">
                                         <button
                                             onClick={(e) => handleAcceptInvite(e, n)}
-                                            className="h-7 px-3 rounded-lg text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-400 transition-colors"
+                                            className="h-7 px-3 rounded-lg text-xs font-semibold text-white bg-indigo-500 hover:bg-indigo-400 transition-colors cursor-pointer"
                                         >
                                             Accept
                                         </button>
                                         <button
                                             onClick={(e) => handleRejectInvite(e, n)}
-                                            className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 transition-colors"
+                                            className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 transition-colors cursor-pointer"
                                         >
                                             Reject
                                         </button>
