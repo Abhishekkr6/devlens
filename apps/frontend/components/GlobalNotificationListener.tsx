@@ -10,48 +10,37 @@ import { useNotificationStore } from "../store/notificationStore"; // Added impo
 import { api } from "../lib/api"; // Added import
 
 export function GlobalNotificationListener() {
-    const { user, fetchUser } = useUserStore();
+    const { user } = useUserStore();
     const { addNotification } = useNotificationStore();
     const router = useRouter();
 
-    // Verify Toast System on Mount (disabled for production)
-    // useEffect(() => {
-    //     if (user) {
-    //         console.log("[GlobalNotif] System Active for user:", user.id);
-    //         toast("🔔 Notification System Active", { duration: 3000, position: "bottom-right" });
-    //     }
-    // }, [user]);
-
     useEffect(() => {
-        // Don't set up listener if no user (public pages)
-        if (!user) {
-            console.log("[GlobalNotif] No user, skipping WebSocket setup");
-            return;
-        }
-
-        console.log("[GlobalNotif] Setting up WebSocket listener for user:", user.id);
-
         // Ensure connection
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
-            // Use EXACT same logic as NotificationDropdown (which works!)
-            console.log(`[GlobalNotif] Event: ${event.type} | Target: ${event.userId} | Me: ${user?.id}`);
-            console.log(`[GlobalNotif] Full Event:`, event);
-            console.log(`[GlobalNotif] User ID comparison: ${String(event.userId)} === ${String(user?.id)} = ${String(event.userId) === String(user?.id)}`);
-
-            if (event.type === "notification:created" && String(event.userId) === String(user?.id)) {
+            // 1. Check if event is a notification for THIS user
+            if (event.type === "notification:created" && event.userId === user?.id) {
                 const notif = event.data;
-                console.log("[GlobalNotif] ✅ MATCHED USER! Payload:", notif);
-                console.log("[GlobalNotif] Notification type:", notif.type);
+
+                // Update store immediately
+                // (This is redundant if NotificationDropdown already does it? 
+                // No, NotificationDropdown only adds if it's mounted.
+                // But if Global adds it, and Dropdown adds it, we might have duplicates?
+                // useNotificationStore.addNotification handles duplicates.)
+                try {
+                    addNotification(notif);
+                } catch (e) {
+                    // ignore
+                }
 
                 // 2. Custom Toast for Invites
+                // Explicit check for "invite" type
                 if (notif.type === "invite") {
-                    console.log("[GlobalNotif] 🎯 Triggering Invite Toast...");
-                    console.log("[GlobalNotif] Notification metadata:", notif.metadata);
+                    console.log("[GlobalNotif] Triggering Invite Toast", notif);
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: Infinity, position: "bottom-right" });
+                    ), { duration: Infinity, position: "bottom-right" }); // Infinity duration so user doesn't miss it
                     return;
                 }
 
@@ -75,43 +64,29 @@ export function GlobalNotificationListener() {
                     duration: 5000,
                     position: "bottom-right",
                 });
-            } else {
-                console.log("[GlobalNotif] ❌ Event skipped - Type:", event.type, "| User match:", String(event.userId) === String(user?.id));
             }
         });
 
         return () => {
             unsubscribe();
         };
-    }, [user?.id, router]); // Match NotificationDropdown dependencies
+    }, [user?.id, router, addNotification]);
 
     return null;
 }
 
 function InviteToast({ t, notification }: { t: string | number, notification: any }) {
     const { deleteNotification, fetchNotifications } = useNotificationStore();
-    const { fetchUser, setActiveOrganization } = useUserStore();
     const router = useRouter();
-    const metadata = notification.metadata || {}; // Defensive fallback
 
     const handleAccept = async () => {
         try {
-            if (metadata.orgId) {
-                await api.post(`/orgs/${metadata.orgId}/invite/accept`);
-            }
+            await api.post(`/orgs/${notification.metadata.orgId}/invite/accept`);
             toast.success(`Joined organization successfully`);
             toast.dismiss(t);
             // Cleanup notification
             await deleteNotification(notification._id);
-            // Refresh User Data (Orgs List) & Notifications
-            await fetchUser({ silent: true });
-            await fetchNotifications();
-
-            // Navigate to new Org
-            if (metadata.orgId) {
-                setActiveOrganization(metadata.orgId);
-                router.push(`/organization/${metadata.orgId}`);
-            }
+            window.location.reload(); // Force full refresh as requested
         } catch (error) {
             toast.error("Failed to accept invitation");
         }
@@ -119,9 +94,7 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
 
     const handleReject = async () => {
         try {
-            if (metadata.orgId) {
-                await api.post(`/orgs/${metadata.orgId}/invite/reject`);
-            }
+            await api.post(`/orgs/${notification.metadata.orgId}/invite/reject`);
             toast.info("Invitation rejected");
             toast.dismiss(t);
             await deleteNotification(notification._id);
@@ -131,11 +104,7 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
     };
 
     return (
-
-        <div
-            className="w-full max-w-sm sm:max-w-md rounded-xl border border-white/20 bg-black/90 backdrop-blur-md shadow-2xl p-4 flex flex-col gap-3"
-            style={{ zIndex: 999999, pointerEvents: 'auto', position: 'relative' }}
-        >
+        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex flex-col gap-3 z-[99999]">
             <div className="flex items-start gap-3">
                 <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
                     <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -149,40 +118,40 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
             </div>
 
             <div className="flex items-center gap-2 pl-11">
-
-                <button
+                <Button
+                    size="sm"
                     onClick={handleAccept}
-                    className="h-7 px-3 rounded-md text-xs font-medium bg-indigo-500 hover:bg-indigo-600 text-white transition-colors"
+                    className="h-7 px-3 text-xs bg-brand hover:bg-brand/90 text-white border-none"
                 >
                     Accept
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="outline"
+                    size="sm"
                     onClick={handleReject}
-                    className="h-7 px-3 rounded-md text-xs font-medium border border-slate-600 hover:bg-slate-800 text-slate-300 transition-colors"
+                    className="h-7 px-3 text-xs border-border hover:bg-surface hover:text-rose-500"
                 >
                     Reject
-                </button>
-                <button
+                </Button>
+                <Button
+                    variant="ghost"
+                    size="sm"
                     onClick={() => {
                         toast.dismiss(t);
                         router.push('/notifications');
                     }}
-                    className="h-7 px-2 text-xs font-medium text-slate-400 hover:text-white ml-auto transition-colors"
+                    className="h-7 px-2 text-xs text-text-secondary hover:text-text-primary ml-auto"
                 >
                     View
-                </button>
+                </Button>
             </div>
-
         </div>
     );
 }
 
 function StatusToast({ t, notification, type }: { t: string | number, notification: any, type: "success" | "error" }) {
     return (
-        <div
-            className="w-full max-w-sm rounded-xl border border-white/20 bg-black/90 backdrop-blur-md shadow-2xl p-4 flex items-start gap-3"
-            style={{ zIndex: 999999, pointerEvents: 'auto', position: 'relative' }}
-        >
+        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex items-start gap-3 z-[99999]">
             <div className={`h-8 w-8 rounded-full flex items-center justify-center shrink-0 ${type === 'success' ? 'bg-emerald-500/20' : 'bg-rose-500/20'}`}>
                 {type === 'success' ? (
                     <svg className="h-4 w-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

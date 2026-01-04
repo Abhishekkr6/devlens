@@ -32,11 +32,8 @@ const resolveWsUrl = () => {
 };
 
 export const connectWS = () => {
-  if (socket && (socket.readyState === WebSocket.OPEN || socket.readyState === WebSocket.CONNECTING)) {
-    return socket;
-  }
+  if (socket) return socket;
 
-  console.log("[WS] Initializing connection...");
   socket = new WebSocket(resolveWsUrl());
 
   socket.onopen = () => console.log("[WS] Connected");
@@ -46,7 +43,7 @@ export const connectWS = () => {
   socket.onclose = () => {
     console.log("[WS] Disconnected. Reconnecting...");
     setTimeout(() => {
-      socket = null; // Clear reference
+      socket = null;
       connectWS();
     }, 2000);
   };
