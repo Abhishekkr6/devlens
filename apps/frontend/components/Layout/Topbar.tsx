@@ -33,7 +33,7 @@ type User = {
   name: string;
   avatarUrl: string;
   email?: string;
-  orgIds?: { id: string; name: string }[];
+  orgIds?: { id: string; name: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
 };
 
 const navLinks = [
@@ -447,7 +447,7 @@ export default function Topbar() {
                           className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-brand hover:bg-brand/10 transition-colors"
                         >
                           <UserPlus className="h-4 w-4" />
-                          Invite Member
+                          {currentOrg?.role === "ADMIN" ? "Invite Member" : "See Members"}
                         </Link>
                       </div>
                     )}
