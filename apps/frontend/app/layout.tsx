@@ -6,6 +6,7 @@ import SmoothScroll from "../components/SmoothScroll";
 import { Toaster } from "sonner";
 import { GlobalNotificationListener } from "../components/GlobalNotificationListener";
 import { NotificationToaster } from "../components/NotificationToaster";
+import { GlobalInviteToaster } from "../components/GlobalInviteToaster";
 
 export const metadata: Metadata = {
   title: "TeamPulse | Developer Activity & Insights",
@@ -33,6 +34,9 @@ export default function RootLayout({
 
         {/* Sonner UI */}
         <Toaster position="bottom-right" richColors expand />
+
+        <GlobalInviteToaster />
+
 
         {children}
       </body>
