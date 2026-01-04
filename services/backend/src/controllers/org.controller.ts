@@ -335,6 +335,7 @@ export const getOrgMembers = async (req: any, res: Response) => {
       },
     });
   } catch (error) {
+    console.error("getOrgMembers error:", error);
     return res.status(500).json({
       success: false,
       error: { message: "Failed to fetch organization members" },

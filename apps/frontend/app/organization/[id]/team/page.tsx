@@ -11,7 +11,7 @@ import { Button } from "../../../../components/Ui/Button";
 import { Select } from "../../../../components/Ui/Select";
 import { ConfirmDialog } from "../../../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../../../store/userStore";
-import { useToast } from "../../../../store/ToastContext";
+import { toast } from "sonner";
 import {
   UserPlus,
   Shield,
@@ -107,7 +107,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
-  const { showToast } = useToast();
+
 
   const user = useUserStore((state) => state.user);
 
@@ -134,7 +134,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                 if (prev.some(m => String(m.userId) === newMemberId)) return prev;
                 return [...prev, event.member];
               });
-              showToast(`${event.member.user.name || "A user"} joined the team`, "success");
+              toast.success(`${event.member.user.name || "A user"} joined the team`);
             }
 
             // 2. Fetch Latest (Guarantee Consistency without Reload)
@@ -144,7 +144,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       });
       return () => unsubscribe();
     }
-  }, [orgId, showToast]);
+  }, [orgId]);
 
   const fetchMembers = async () => {
     if (!orgId) return;
@@ -175,12 +175,12 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       });
 
       setInviteRole("MEMBER");
-      showToast("Invitation sent successfully!", "success");
+      toast.success("Invitation sent successfully!");
       setInviteEmail("");
       await fetchMembers();
       setShowInviteForm(false);
     } catch (err: any) {
-      showToast(err.response?.data?.error?.message || "Failed to invite user", "error");
+      toast.error(err.response?.data?.error?.message || "Failed to invite user");
     } finally {
       setInviting(false);
     }
@@ -192,11 +192,11 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       setIsRemoving(true);
       await api.delete(`/orgs/${orgId}/members/${memberToRemove}`);
       setMembers(members.filter(m => m.userId !== memberToRemove));
-      showToast("Member removed successfully", "success");
+      toast.success("Member removed successfully");
       setMemberToRemove(null);
     } catch (err: any) {
       console.error("Remove failed", err);
-      showToast(err.response?.data?.error || "Failed to remove member", "error");
+      toast.error(err.response?.data?.error || "Failed to remove member");
     } finally {
       setIsRemoving(false);
     }
@@ -206,10 +206,10 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     try {
       await api.patch(`/orgs/${orgId}/members/${userId}`, { role: newRole });
       setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as any } : m));
-      showToast("Role updated", "success");
+      toast.success("Role updated");
     } catch (err) {
       console.error("Update role failed", err);
-      showToast("Failed to update role", "error");
+      toast.error("Failed to update role");
     }
   };
 
