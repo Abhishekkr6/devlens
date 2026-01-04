@@ -59,7 +59,7 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
             // Refresh user to clear deleted org from state
             await fetchUser();
             setActiveOrganization(""); // Clear active org
-            router.push("/dashboard");
+            router.push("/organization");
         } catch (err: any) {
             toast.error(err.response?.data?.error?.message || "Failed to delete organization");
         } finally {
