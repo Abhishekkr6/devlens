@@ -16,9 +16,7 @@ const resolveWsUrl = () => {
       parsed.protocol = parsed.protocol === "https:" ? "wss:" : "ws:";
       parsed.pathname = parsed.pathname.replace(/\/?api\/?v1?$/i, "");
       return parsed.toString().replace(/\/$/, "");
-    } catch {
-      // fall through to default
-    }
+    } catch { }
   }
 
   if (typeof window !== "undefined") {
@@ -37,9 +35,6 @@ export const connectWS = () => {
   socket = new WebSocket(resolveWsUrl());
 
   socket.onopen = () => console.log("[WS] Connected");
-  socket.onerror = (error) => {
-    console.error("[WS] Connection error:", error);
-  };
   socket.onclose = () => {
     console.log("[WS] Disconnected. Reconnecting...");
     setTimeout(() => {
@@ -51,11 +46,8 @@ export const connectWS = () => {
   socket.onmessage = (msg) => {
     try {
       const data = JSON.parse(msg.data);
-      console.log("[WS] Event received:", data.type, data);
       listeners.forEach((cb) => cb(data));
-    } catch (err) {
-      console.error("[WS] Failed to parse message:", err);
-    }
+    } catch { }
   };
 
   return socket;
@@ -64,9 +56,7 @@ export const connectWS = () => {
 export const subscribeWS = (cb: (event: unknown) => void) => {
   listeners.push(cb);
   return () => {
-    const index = listeners.indexOf(cb);
-    if (index > -1) {
-      listeners.splice(index, 1);
-    }
+    const i = listeners.indexOf(cb);
+    if (i > -1) listeners.splice(i, 1);
   };
 };
