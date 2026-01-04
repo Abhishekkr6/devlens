@@ -52,20 +52,6 @@ h6 {
   --toast-gap: 20px;
 }
 
-/* Center toast notifications vertically and horizontally */
-[data-sonner-toaster][data-position="top-center"] {
-  top: 50% !important;
-  left: 50% !important;
-  transform: translate(-50%, -50%) !important;
-  right: auto !important;
-  bottom: auto !important;
-}
-
-/* Ensure custom toasts with backdrop can override positioning */
-[data-sonner-toast] > div[class*="fixed"] {
-  position: fixed !important;
-}
-
 [data-sonner-toast] {
   margin-bottom: var(--toast-gap) !important;
   margin-top: 0 !important;
