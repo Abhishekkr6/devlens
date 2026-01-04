@@ -40,7 +40,7 @@ export function GlobalNotificationListener() {
                     console.log("[GlobalNotif] Triggering Invite Toast", notif);
                     toast.custom((t) => (
                         <InviteToast t={t} notification={notif} />
-                    ), { duration: Infinity, position: "bottom-right" }); // Infinity duration so user doesn't miss it
+                    ), { duration: Infinity, position: "top-center" }); // Infinity duration so user doesn't miss it
                     return;
                 }
 
@@ -50,7 +50,7 @@ export function GlobalNotificationListener() {
 
                     toast.custom((t) => (
                         <StatusToast t={t} notification={notif} type={notif.type === "success" ? "success" : "error"} />
-                    ), { duration: 5000, position: "bottom-right" });
+                    ), { duration: 5000, position: "top-center" });
                     return;
                 }
 
@@ -62,7 +62,7 @@ export function GlobalNotificationListener() {
                         onClick: () => router.push(notif.link!),
                     } : undefined,
                     duration: 5000,
-                    position: "bottom-right",
+                    position: "top-center",
                 });
             }
         });
@@ -104,46 +104,54 @@ function InviteToast({ t, notification }: { t: string | number, notification: an
     };
 
     return (
-        <div className="w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/80 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex flex-col gap-3 z-[99999]">
-            <div className="flex items-start gap-3">
-                <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
-                    <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
-                    </svg>
+        <div className="fixed inset-0 flex items-center justify-center z-[99999] pointer-events-none">
+            {/* Backdrop blur overlay */}
+            <div 
+                className="absolute inset-0 bg-black/50 backdrop-blur-lg pointer-events-auto"
+                onClick={() => toast.dismiss(t)}
+            />
+            {/* Notification card */}
+            <div className="relative w-full max-w-sm rounded-xl border border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-2xl p-4 pointer-events-auto flex flex-col gap-3">
+                <div className="flex items-start gap-3">
+                    <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
+                        <svg className="h-4 w-4 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                        </svg>
+                    </div>
+                    <div className="flex-1">
+                        <h4 className="text-sm font-semibold text-white">{notification.title}</h4>
+                        <p className="text-xs text-slate-300 mt-1 leading-relaxed">{notification.message}</p>
+                    </div>
                 </div>
-                <div className="flex-1">
-                    <h4 className="text-sm font-semibold text-white">{notification.title}</h4>
-                    <p className="text-xs text-slate-300 mt-1 leading-relaxed">{notification.message}</p>
-                </div>
-            </div>
 
-            <div className="flex items-center gap-2 pl-11">
-                <Button
-                    size="sm"
-                    onClick={handleAccept}
-                    className="h-7 px-3 text-xs bg-brand hover:bg-brand/90 text-white border-none"
-                >
-                    Accept
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={handleReject}
-                    className="h-7 px-3 text-xs border-border hover:bg-surface hover:text-rose-500"
-                >
-                    Reject
-                </Button>
-                <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                        toast.dismiss(t);
-                        router.push('/notifications');
-                    }}
-                    className="h-7 px-2 text-xs text-text-secondary hover:text-text-primary ml-auto"
-                >
-                    View
-                </Button>
+                <div className="flex items-center gap-2 pl-11">
+                    <Button
+                        size="sm"
+                        onClick={handleAccept}
+                        className="h-7 px-3 text-xs bg-brand hover:bg-brand/90 text-white border-none"
+                    >
+                        Accept
+                    </Button>
+                    <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleReject}
+                        className="h-7 px-3 text-xs border-border hover:bg-surface hover:text-rose-500"
+                    >
+                        Reject
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => {
+                            toast.dismiss(t);
+                            router.push('/notifications');
+                        }}
+                        className="h-7 px-2 text-xs text-text-secondary hover:text-text-primary ml-auto"
+                    >
+                        View
+                    </Button>
+                </div>
             </div>
         </div>
     );
