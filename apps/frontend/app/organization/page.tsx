@@ -76,7 +76,10 @@ export default function OrganizationPage() {
 
     setActiveOrganization(activeOrgId.toString());
     await fetchOrgs();
-    router.push(`/organization/${org._id}/repos`);
+    // Reset form
+    setName("");
+    setSlug("");
+    toast.success(`Organization "${org.name}" created successfully`);
   };
 
   const handleConfirmDelete = async () => {
