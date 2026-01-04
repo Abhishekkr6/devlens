@@ -36,7 +36,7 @@ export default function RootLayout({
         <ToastProvider>
           <GlobalNotificationListener />
           {children}
-          <Toaster position="bottom-right" richColors gap={12} expand={true} />
+          <Toaster position="bottom-right" richColors gap={20} expand={true} />
         </ToastProvider>
       </body>
     </html>

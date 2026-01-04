@@ -45,3 +45,18 @@ h6 {
   outline: 2px solid var(--brand);
   outline-offset: 2px;
 }
+
+/* Toast notifications stacking - prevent overlap */
+[data-sonner-toaster] {
+  --width: 356px;
+  --toast-gap: 20px;
+}
+
+[data-sonner-toast] {
+  margin-bottom: var(--toast-gap) !important;
+  margin-top: 0 !important;
+}
+
+[data-sonner-toast]:not(:last-child) {
+  margin-bottom: var(--toast-gap) !important;
+}
