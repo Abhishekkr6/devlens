@@ -45,7 +45,6 @@ export const getMe = async (req: Request, res: Response) => {
           id: String(o._id),
           name: o.name,
           role: member?.role || "VIEWER", // Fallback
-          joinedAt: member?.joinedAt || null,
         };
       })
       : [];

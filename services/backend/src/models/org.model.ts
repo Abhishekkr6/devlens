@@ -10,7 +10,6 @@ export interface IOrg extends Document {
     role: "ADMIN" | "MEMBER" | "VIEWER";
     status: "active" | "pending";
     invitedBy?: Types.ObjectId;
-    joinedAt?: Date;
   }[];
 
   createdAt: Date;
@@ -48,10 +47,6 @@ const OrgSchema = new Schema<IOrg>(
         invitedBy: {
           type: Schema.Types.ObjectId,
           ref: "User",
-        },
-        joinedAt: {
-          type: Date,
-          default: Date.now,
         },
       },
     ],

@@ -65,12 +65,46 @@ export default function OrganizationPage() {
     };
   }, [user?.id]);
 
-  const createOrg = async () => {
-    if (!name.trim() || !slug.trim()) return;
+  const validateName = (value: string): string => {
+    if (!value.trim()) {
+      return "Organization name is required";
+    }
+    return "";
+  };
 
+  const validateSlug = (value: string): string => {
+    if (!value.trim()) {
+      return "Slug URL is required";
+    }
+    // Check for uppercase letters
+    if (/[A-Z]/.test(value)) {
+      return "Slug must be lowercase only";
+    }
+    // Check for spaces
+    if (/\s/.test(value)) {
+      return "Slug cannot contain spaces";
+    }
+    // Check for invalid characters (only allow lowercase letters, numbers, and hyphens)
+    if (!/^[a-z0-9-]+$/.test(value)) {
+      return "Slug can only contain lowercase letters, numbers, and hyphens";
+    }
+    return "";
+  };
+
+  const createOrg = async () => {
     // Clear previous errors
     setNameError("");
     setSlugError("");
+
+    // Validate inputs
+    const nameValidationError = validateName(name);
+    const slugValidationError = validateSlug(slug);
+
+    if (nameValidationError || slugValidationError) {
+      setNameError(nameValidationError);
+      setSlugError(slugValidationError);
+      return;
+    }
 
     try {
       const res = await api.post("/orgs", { name, slug });
@@ -88,15 +122,20 @@ export default function OrganizationPage() {
       setSlug("");
       toast.success(`Organization "${org.name}" created successfully`);
     } catch (e: any) {
+      console.error("Failed to create organization", e);
+
+      // Handle backend errors
       const errorMessage = e.response?.data?.error?.message || "Failed to create organization";
 
-      // Handle specific error cases
-      if (errorMessage.toLowerCase().includes("slug")) {
-        setSlugError(errorMessage);
+      // Check if it's a duplicate slug error
+      if (errorMessage.toLowerCase().includes("slug already exists") ||
+        errorMessage.toLowerCase().includes("duplicate")) {
+        setSlugError("This slug is already taken");
       } else if (errorMessage.toLowerCase().includes("name")) {
         setNameError(errorMessage);
+      } else if (errorMessage.toLowerCase().includes("slug")) {
+        setSlugError(errorMessage);
       } else {
-        // Generic error - show on both fields or use toast
         toast.error(errorMessage);
       }
     }
@@ -166,11 +205,11 @@ export default function OrganizationPage() {
                   value={name}
                   onChange={(e) => {
                     setName(e.target.value);
-                    setNameError(""); // Clear error on input
+                    if (nameError) setNameError("");
                   }}
                 />
                 {nameError && (
-                  <p className="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{nameError}</p>
+                  <p className="mt-1 text-xs text-rose-600 dark:text-rose-400">{nameError}</p>
                 )}
               </div>
               <div>
@@ -183,12 +222,12 @@ export default function OrganizationPage() {
                     value={slug}
                     onChange={(e) => {
                       setSlug(e.target.value);
-                      setSlugError(""); // Clear error on input
+                      if (slugError) setSlugError("");
                     }}
                   />
                 </div>
                 {slugError && (
-                  <p className="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{slugError}</p>
+                  <p className="mt-1 text-xs text-rose-600 dark:text-rose-400">{slugError}</p>
                 )}
               </div>
             </div>
