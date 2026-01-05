@@ -294,7 +294,7 @@ export default function Topbar() {
                       <p className="text-xs font-medium text-text-secondary">Switch Organization</p>
                     </div>
 
-                    <div className="max-h-80 overflow-y-scroll space-y-1 hide-scrollbar">
+                    <div className="max-h-80 overflow-y-auto space-y-1">
                       {user.orgIds.map((org) => (
                         <button
                           key={org.id}
