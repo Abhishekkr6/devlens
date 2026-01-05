@@ -20,12 +20,25 @@ const getPublisher = () => {
 
 export const publishEvent = async (event: any) => {
     const pub = getPublisher();
-    if (!pub) return;
+
+    if (!pub) {
+        console.warn("[Redis Publisher] ⚠️ Publisher not available - REDIS_URL missing?");
+        logger.warn("[Redis Publisher] Cannot publish event - no Redis connection");
+        return;
+    }
 
     try {
         const message = JSON.stringify(event);
+        console.log("[Redis Publisher] Publishing event:", {
+            type: event.type,
+            userId: event.userId,
+            channel: "events"
+        });
+
         await pub.publish("events", message);
+        console.log("[Redis Publisher] ✅ Event published successfully");
     } catch (error) {
+        console.error("[Redis Publisher] ❌ Failed to publish:", error);
         logger.error({ error }, "[Redis Publisher] Failed to publish event");
     }
 };
