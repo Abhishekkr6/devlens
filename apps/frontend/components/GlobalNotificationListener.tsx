@@ -6,7 +6,7 @@ import { useUserStore } from "../store/userStore";
 import { useNotificationStore } from "../store/notificationStore";
 
 export function GlobalNotificationListener() {
-    const { user } = useUserStore();
+    const { user, fetchUser } = useUserStore();
     const { addNotification } = useNotificationStore();
 
     useEffect(() => {
@@ -20,6 +20,8 @@ export function GlobalNotificationListener() {
         // Don't subscribe until user is loaded
         if (!user?.id && !user?._id) {
             console.log("[GlobalNotificationListener] ⚠️ User not loaded yet, skipping subscription");
+            console.log("[GlobalNotificationListener] Triggering fetchUser...");
+            fetchUser();
             return;
         }
 
@@ -59,7 +61,7 @@ export function GlobalNotificationListener() {
             console.log("[GlobalNotificationListener] Cleaning up...");
             unsubscribe();
         };
-    }, [user?.id, user?._id, addNotification]);
+    }, [user?.id, user?._id, addNotification, fetchUser]);
 
     return null;
 }
