@@ -8,6 +8,7 @@ export interface Org {
   id: string;
   name: string;
   role: "ADMIN" | "MEMBER" | "VIEWER";
+  joinedAt?: string;
 }
 
 interface User {
@@ -61,6 +62,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         ...o,
         id: o.id || o._id,
         role: o.role || "VIEWER",
+        joinedAt: o.joinedAt,
       }));
 
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);

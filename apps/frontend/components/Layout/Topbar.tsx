@@ -33,7 +33,7 @@ type User = {
   name: string;
   avatarUrl: string;
   email?: string;
-  orgIds?: { id: string; name: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
+  orgIds?: { id: string; name: string; role?: "ADMIN" | "MEMBER" | "VIEWER"; joinedAt?: string }[];
 };
 
 const navLinks = [
@@ -209,6 +209,14 @@ export default function Topbar() {
     }
   };
 
+  const isNewOrg = (joinedAt?: string): boolean => {
+    if (!joinedAt) return false;
+    const joinedDate = new Date(joinedAt);
+    const now = new Date();
+    const daysSinceJoined = (now.getTime() - joinedDate.getTime()) / (1000 * 60 * 60 * 24);
+    return daysSinceJoined <= 7;
+  };
+
   const isActive = (href: string) => {
     // strict match for overview (organization root)
     if (activeOrgId && href === `/organization/${activeOrgId}`) {
@@ -306,7 +314,14 @@ export default function Topbar() {
                             {org.name[0]?.toUpperCase()}
                           </div>
                           <div className="flex-1 truncate">
-                            <p className="font-medium">{org.name}</p>
+                            <div className="flex items-center gap-2">
+                              <p className="font-medium">{org.name}</p>
+                              {isNewOrg(org.joinedAt) && (
+                                <span className="inline-flex items-center rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 px-2 py-0.5 text-[10px] font-bold text-white shadow-sm">
+                                  NEW
+                                </span>
+                              )}
+                            </div>
                           </div>
                           {activeOrgId === org.id && (
                             <div className="h-2 w-2 rounded-full bg-brand" />
