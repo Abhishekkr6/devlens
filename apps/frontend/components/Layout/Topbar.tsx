@@ -504,20 +504,26 @@ export default function Topbar() {
             </div>
 
             <div className="ml-auto flex shrink-0 items-center gap-2 md:hidden">
-              <button
-                type="button"
-                onClick={() => setNotificationOpen(!notificationOpen)}
-                className={`relative flex h-10 w-10 items-center justify-center rounded-full border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer ${notificationOpen ? "border-brand text-brand ring-2 ring-brand/20" : "border-border"
-                  }`}
-                aria-label="Notifications"
-              >
-                <Bell className="h-4 w-4" />
-                {unreadCount > 0 && (
-                  <span className="absolute -right-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-background">
-                    {unreadCount > 9 ? "9+" : unreadCount}
-                  </span>
-                )}
-              </button>
+              <div className="relative" ref={notificationRef}>
+                <button
+                  type="button"
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className={`relative flex h-10 w-10 items-center justify-center rounded-full border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer ${notificationOpen ? "border-brand text-brand ring-2 ring-brand/20" : "border-border"
+                    }`}
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-4 w-4" />
+                  {unreadCount > 0 && (
+                    <span className="absolute -right-1 -top-1 inline-flex h-4 w-4 items-center justify-center rounded-full bg-rose-500 text-[10px] font-bold text-white ring-2 ring-background">
+                      {unreadCount > 9 ? "9+" : unreadCount}
+                    </span>
+                  )}
+                </button>
+                <NotificationDropdown
+                  isOpen={notificationOpen}
+                  onClose={() => setNotificationOpen(false)}
+                />
+              </div>
 
               {user ? (
                 <Link href="/me" className="inline-flex rounded-full">
