@@ -9,7 +9,7 @@ import { Button } from "../../components/Ui/Button";
 
 export default function GitHubPage() {
     return (
-        <main className="min-h-screen bg-background text-text-primary font-sans pt-24">
+        <main className="min-h-screen bg-background text-text-primary pt-24">
             <Navbar />
 
             {/* Hero Section */}

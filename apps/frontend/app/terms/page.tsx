@@ -6,7 +6,7 @@ import { Footer } from "../../components/Landing/Footer";
 
 export default function TermsPage() {
     return (
-        <main className="min-h-screen bg-background text-text-primary font-sans pt-24">
+        <main className="min-h-screen bg-background text-text-primary pt-24">
             <Navbar />
 
             <div className="max-w-4xl mx-auto px-4 py-12 md:py-20">
