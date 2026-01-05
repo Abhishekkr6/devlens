@@ -19,6 +19,8 @@ export default function OrganizationPage() {
   const [leavingOrg, setLeavingOrg] = useState<any>(null); // New state for leave confirmation
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
+  const [nameError, setNameError] = useState("");
+  const [slugError, setSlugError] = useState("");
 
   const router = useRouter();
   const { setActiveOrganization, user, fetchUser } = useUserStore();
@@ -66,20 +68,38 @@ export default function OrganizationPage() {
   const createOrg = async () => {
     if (!name.trim() || !slug.trim()) return;
 
-    const res = await api.post("/orgs", { name, slug });
-    const { org, defaultOrgId } = res.data.data;
+    // Clear previous errors
+    setNameError("");
+    setSlugError("");
 
-    const activeOrgId = defaultOrgId ?? org?._id;
-    if (!org?._id || !activeOrgId) {
-      throw new Error("Invalid organization response");
+    try {
+      const res = await api.post("/orgs", { name, slug });
+      const { org, defaultOrgId } = res.data.data;
+
+      const activeOrgId = defaultOrgId ?? org?._id;
+      if (!org?._id || !activeOrgId) {
+        throw new Error("Invalid organization response");
+      }
+
+      setActiveOrganization(activeOrgId.toString());
+      await fetchOrgs();
+      // Reset form
+      setName("");
+      setSlug("");
+      toast.success(`Organization "${org.name}" created successfully`);
+    } catch (e: any) {
+      const errorMessage = e.response?.data?.error?.message || "Failed to create organization";
+
+      // Handle specific error cases
+      if (errorMessage.toLowerCase().includes("slug")) {
+        setSlugError(errorMessage);
+      } else if (errorMessage.toLowerCase().includes("name")) {
+        setNameError(errorMessage);
+      } else {
+        // Generic error - show on both fields or use toast
+        toast.error(errorMessage);
+      }
     }
-
-    setActiveOrganization(activeOrgId.toString());
-    await fetchOrgs();
-    // Reset form
-    setName("");
-    setSlug("");
-    toast.success(`Organization "${org.name}" created successfully`);
   };
 
   const handleConfirmDelete = async () => {
@@ -141,23 +161,35 @@ export default function OrganizationPage() {
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">Organization Name</label>
                 <input
-                  className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                  className={`w-full rounded-xl border ${nameError ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-slate-800 focus:border-brand focus:ring-brand'} bg-slate-50 dark:bg-slate-900 px-4 py-2.5 text-sm outline-none focus:ring-1 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500`}
                   placeholder="e.g. Acme Inc"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setNameError(""); // Clear error on input
+                  }}
                 />
+                {nameError && (
+                  <p className="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{nameError}</p>
+                )}
               </div>
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">Slug URL</label>
                 <div className="relative">
                   <span className="absolute left-4 top-2.5 text-text-secondary text-sm">/</span>
                   <input
-                    className="w-full rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900 pl-7 pr-4 py-2.5 text-sm outline-none focus:border-brand focus:ring-1 focus:ring-brand transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500"
+                    className={`w-full rounded-xl border ${slugError ? 'border-rose-500 focus:border-rose-500 focus:ring-rose-500' : 'border-slate-200 dark:border-slate-800 focus:border-brand focus:ring-brand'} bg-slate-50 dark:bg-slate-900 pl-7 pr-4 py-2.5 text-sm outline-none focus:ring-1 transition-all text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-slate-500`}
                     placeholder="acme-inc"
                     value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
+                    onChange={(e) => {
+                      setSlug(e.target.value);
+                      setSlugError(""); // Clear error on input
+                    }}
                   />
                 </div>
+                {slugError && (
+                  <p className="mt-1.5 text-xs text-rose-600 dark:text-rose-400">{slugError}</p>
+                )}
               </div>
             </div>
             <button
