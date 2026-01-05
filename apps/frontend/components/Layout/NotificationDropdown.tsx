@@ -66,7 +66,7 @@ export function NotificationDropdown({
     return (
         <div
             className={cn(
-                "absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-[22rem] max-w-[22rem] z-50",
+                "absolute left-0 sm:left-auto sm:right-0 mt-3 w-[calc(100vw-2rem)] sm:w-[22rem] max-w-[22rem] z-50",
                 "rounded-2xl overflow-hidden",
                 "border border-white/10",
                 "bg-slate-950/80 backdrop-blur-xl",
