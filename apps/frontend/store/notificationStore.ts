@@ -99,14 +99,28 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
     },
 
     addNotification: (notification: Notification) => {
+        console.log("[NotificationStore] Adding notification:", notification);
+
         set((state) => {
             // Prevent duplicates
-            if (state.notifications.some((n) => n._id === notification._id)) return state;
+            if (state.notifications.some((n) => n._id === notification._id)) {
+                console.log("[NotificationStore] ⚠️ Duplicate notification, skipping:", notification._id);
+                return state;
+            }
 
             const updated = [notification, ...state.notifications];
+            const newUnreadCount = updated.filter((n) => !n.read).length;
+
+            console.log("[NotificationStore] ✅ Notification added:", {
+                id: notification._id,
+                type: notification.type,
+                totalNotifications: updated.length,
+                unreadCount: newUnreadCount
+            });
+
             return {
                 notifications: updated,
-                unreadCount: updated.filter((n) => !n.read).length,
+                unreadCount: newUnreadCount,
             };
         });
     },

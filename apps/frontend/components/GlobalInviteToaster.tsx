@@ -15,11 +15,28 @@ export function GlobalInviteToaster() {
     const shown = useRef(new Set<string>());
 
     useEffect(() => {
-        notifications.forEach((n) => {
-            if (n.type !== "invite") return;
-            if (n.read) return;
-            if (shown.current.has(n._id)) return;
+        console.log("[GlobalInviteToaster] Notifications changed:", {
+            total: notifications.length,
+            invites: notifications.filter(n => n.type === "invite").length,
+            unread: notifications.filter(n => !n.read).length,
+            shown: Array.from(shown.current)
+        });
 
+        notifications.forEach((n) => {
+            if (n.type !== "invite") {
+                console.log(`[GlobalInviteToaster] Skipping non-invite: ${n.type}`);
+                return;
+            }
+            if (n.read) {
+                console.log(`[GlobalInviteToaster] Skipping read notification: ${n._id}`);
+                return;
+            }
+            if (shown.current.has(n._id)) {
+                console.log(`[GlobalInviteToaster] Already shown: ${n._id}`);
+                return;
+            }
+
+            console.log("[GlobalInviteToaster] 🎉 Showing invite toast:", n);
             shown.current.add(n._id);
 
             toast.custom(
@@ -27,7 +44,11 @@ export function GlobalInviteToaster() {
                     <InviteToast
                         toastId={t}
                         notification={n}
-                        onDone={() => deleteNotification(n._id)}
+                        onDone={() => {
+                            console.log(`[GlobalInviteToaster] Toast done, removing from shown: ${n._id}`);
+                            shown.current.delete(n._id);
+                            deleteNotification(n._id);
+                        }}
                         fetchUser={fetchUser}
                     />
                 ),

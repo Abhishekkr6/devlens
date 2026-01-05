@@ -30,24 +30,49 @@ const resolveWsUrl = () => {
 };
 
 export const connectWS = () => {
-  if (socket) return socket;
+  if (socket) {
+    console.log("[WS] Already connected, reusing existing socket");
+    return socket;
+  }
 
-  socket = new WebSocket(resolveWsUrl());
+  const wsUrl = resolveWsUrl();
+  console.log("[WS] Connecting to:", wsUrl);
+  socket = new WebSocket(wsUrl);
 
-  socket.onopen = () => console.log("[WS] Connected");
+  socket.onopen = () => {
+    console.log("[WS] ✅ Connected successfully");
+    console.log("[WS] Active listeners:", listeners.length);
+  };
+
   socket.onclose = () => {
-    console.log("[WS] Disconnected. Reconnecting...");
+    console.log("[WS] ❌ Disconnected. Reconnecting in 2s...");
     setTimeout(() => {
       socket = null;
       connectWS();
     }, 2000);
   };
 
+  socket.onerror = (error) => {
+    console.error("[WS] ⚠️ Error:", error);
+  };
+
   socket.onmessage = (msg) => {
     try {
       const data = JSON.parse(msg.data);
-      listeners.forEach((cb) => cb(data));
-    } catch { }
+      console.log("[WS] 📨 Message received:", {
+        type: data.type,
+        userId: data.userId,
+        data: data.data,
+        fullEvent: data
+      });
+      console.log(`[WS] Broadcasting to ${listeners.length} listener(s)`);
+      listeners.forEach((cb, index) => {
+        console.log(`[WS] Calling listener #${index + 1}`);
+        cb(data);
+      });
+    } catch (error) {
+      console.error("[WS] Failed to parse message:", error, msg.data);
+    }
   };
 
   return socket;
@@ -55,8 +80,13 @@ export const connectWS = () => {
 
 export const subscribeWS = (cb: (event: unknown) => void) => {
   listeners.push(cb);
+  console.log(`[WS] 📝 Listener registered. Total listeners: ${listeners.length}`);
+
   return () => {
     const i = listeners.indexOf(cb);
-    if (i > -1) listeners.splice(i, 1);
+    if (i > -1) {
+      listeners.splice(i, 1);
+      console.log(`[WS] 🗑️ Listener unregistered. Total listeners: ${listeners.length}`);
+    }
   };
 };
