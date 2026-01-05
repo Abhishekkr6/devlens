@@ -294,7 +294,14 @@ export default function Topbar() {
                       <p className="text-xs font-medium text-text-secondary">Switch Organization</p>
                     </div>
 
-                    <div className="max-h-80 overflow-y-auto space-y-1">
+                    <div
+                      className="max-h-80 overflow-y-auto space-y-1 hide-scrollbar"
+                      style={{
+                        overscrollBehavior: 'contain',
+                        WebkitOverflowScrolling: 'touch'
+                      }}
+                      onWheel={(e) => e.stopPropagation()}
+                    >
                       {user.orgIds.map((org) => (
                         <button
                           key={org.id}

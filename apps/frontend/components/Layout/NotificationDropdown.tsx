@@ -98,7 +98,14 @@ export function NotificationDropdown({
             </div>
 
             {/* Content */}
-            <div className="max-h-[420px] overflow-y-auto divide-y divide-white/5">
+            <div
+                className="max-h-[420px] overflow-y-auto divide-y divide-white/5 hide-scrollbar"
+                style={{
+                    overscrollBehavior: 'contain',
+                    WebkitOverflowScrolling: 'touch'
+                }}
+                onWheel={(e) => e.stopPropagation()}
+            >
                 {notifications.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
                         <div className="h-12 w-12 rounded-full bg-white/5 flex items-center justify-center mb-3">
