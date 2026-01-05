@@ -17,6 +17,13 @@ export function GlobalNotificationListener() {
             name: user?.name
         });
 
+        // Don't subscribe until user is loaded
+        if (!user?.id && !user?._id) {
+            console.log("[GlobalNotificationListener] ⚠️ User not loaded yet, skipping subscription");
+            return;
+        }
+
+        console.log("[GlobalNotificationListener] ✅ User loaded, setting up WebSocket listener");
         connectWS();
 
         const unsubscribe = subscribeWS((event: any) => {
