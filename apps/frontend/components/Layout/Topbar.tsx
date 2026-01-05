@@ -506,7 +506,9 @@ export default function Topbar() {
             <div className="ml-auto flex shrink-0 items-center gap-2 md:hidden">
               <button
                 type="button"
-                className="relative flex h-10 w-10 items-center justify-center rounded-full border border-border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer"
+                onClick={() => setNotificationOpen(!notificationOpen)}
+                className={`relative flex h-10 w-10 items-center justify-center rounded-full border bg-background text-text-secondary transition-colors hover:border-brand hover:text-brand cursor-pointer ${notificationOpen ? "border-brand text-brand ring-2 ring-brand/20" : "border-border"
+                  }`}
                 aria-label="Notifications"
               >
                 <Bell className="h-4 w-4" />
