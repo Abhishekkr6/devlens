@@ -271,16 +271,19 @@ export default function Topbar() {
               <div className="relative ml-2" ref={orgDropdownRef}>
                 <button
                   onClick={() => setOrgDropdownOpen(!orgDropdownOpen)}
-                  className="flex items-center gap-2 rounded-xl border border-border bg-background px-2 sm:px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm cursor-pointer"
+                  className="flex items-center gap-1.5 sm:gap-2 rounded-xl border border-border bg-background px-2 sm:px-3 py-1.5 text-sm font-medium text-text-secondary transition hover:border-brand hover:text-brand shadow-sm cursor-pointer"
                 >
-                  <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-indigo-700 dark:text-brand">
+                  <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg bg-indigo-100 dark:bg-brand/20 text-xs font-bold text-indigo-700 dark:text-brand">
                     {currentOrg?.name?.[0]?.toUpperCase() || "O"}
                   </div>
-                  <span className="max-w-[70px] xs:max-w-[100px] truncate sm:max-w-[140px]">
+                  <span
+                    className="truncate max-w-[60px] xs:max-w-[80px] sm:max-w-[120px] md:max-w-[160px] lg:max-w-[200px]"
+                    title={currentOrg?.name || "Select Organization"}
+                  >
                     {currentOrg?.name || "Select Organization"}
                   </span>
                   <ChevronDown
-                    className={`h-4 w-4 text-text-secondary transition-transform ${orgDropdownOpen ? "rotate-180" : ""
+                    className={`h-4 w-4 shrink-0 text-text-secondary transition-transform ${orgDropdownOpen ? "rotate-180" : ""
                       }`}
                   />
                 </button>
