@@ -259,24 +259,28 @@ export default function OrganizationPage() {
                   return (
                     <li
                       key={o._id}
-                      className="group flex items-center justify-between rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-sm"
+                      className="group flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-sm"
                     >
-                      <div className="flex items-center gap-4">
-                        <div className="h-10 w-10 text-lg rounded-lg bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand">
+                      <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
+                        <div className="h-10 w-10 shrink-0 text-lg rounded-lg bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand">
                           {o.name[0]?.toUpperCase()}
                         </div>
-                        <div>
-                          <div className="font-semibold text-text-primary">{o.name} <span className="text-xs font-normal text-text-secondary ml-1">{isOwner ? "(Owner)" : "(Member)"}</span></div>
-                          <div className="text-xs text-text-secondary font-mono">{o.slug}</div>
+                        <div className="min-w-0 flex-1">
+                          <div className="font-semibold text-text-primary truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.name}>
+                            {o.name} <span className="text-xs font-normal text-text-secondary ml-1 whitespace-nowrap">{isOwner ? "(Owner)" : "(Member)"}</span>
+                          </div>
+                          <div className="text-xs text-text-secondary font-mono truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.slug}>
+                            {o.slug}
+                          </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => {
                             setActiveOrganization(o._id);
                             router.push(`/organization/${o._id}/repos`);
                           }}
-                          className="rounded-lg bg-background border border-border px-4 py-2 text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
+                          className="rounded-lg bg-background border border-border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
                         >
                           Launch
                         </button>
