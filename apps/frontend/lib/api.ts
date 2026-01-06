@@ -60,6 +60,12 @@ api.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
+        // Don't redirect if already on landing page to prevent infinite loop
+        if (window.location.pathname === "/") {
+          console.log("[api] 401 on landing page, skipping redirect to prevent loop");
+          return Promise.reject(error);
+        }
+
         // Clear everything locally
         localStorage.clear();
         sessionStorage.clear();
