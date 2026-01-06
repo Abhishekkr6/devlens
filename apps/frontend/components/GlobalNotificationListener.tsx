@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { connectWS, subscribeWS } from "../lib/ws";
 import { useUserStore } from "../store/userStore";
@@ -11,6 +11,7 @@ export function GlobalNotificationListener() {
     const { user, fetchUser, removeOrgFromUser, activeOrgId } = useUserStore();
     const { addNotification } = useNotificationStore();
     const router = useRouter();
+    const fetchUserCalled = useRef(false);
 
     useEffect(() => {
         console.log("[GlobalNotificationListener] Initializing...");
@@ -23,8 +24,12 @@ export function GlobalNotificationListener() {
         // Don't subscribe until user is loaded
         if (!user?.id && !user?._id) {
             console.log("[GlobalNotificationListener] ⚠️ User not loaded yet, skipping subscription");
-            console.log("[GlobalNotificationListener] Triggering fetchUser...");
-            fetchUser();
+            // Only call fetchUser once to prevent infinite loop
+            if (!fetchUserCalled.current) {
+                console.log("[GlobalNotificationListener] Triggering fetchUser...");
+                fetchUserCalled.current = true;
+                fetchUser();
+            }
             return;
         }
 
