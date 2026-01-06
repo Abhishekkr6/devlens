@@ -1,19 +1,43 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useNotificationStore } from "@/store/notificationStore";
 
 export function NotificationToaster() {
     const notifications = useNotificationStore((s) => s.notifications);
-    const shown = useRef(new Set<string>());
+    const [initialized, setInitialized] = useState(false);
+    const shownRef = useRef(new Set<string>());
+
+    // Load shown toasts from localStorage on mount
+    useEffect(() => {
+        const stored = localStorage.getItem("shownGeneralToasts");
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                shownRef.current = new Set(parsed);
+            } catch (e) {
+                console.error("Failed to parse shownGeneralToasts", e);
+            }
+        }
+        setInitialized(true);
+    }, []);
 
     useEffect(() => {
+        if (!initialized) return;
+
+        // Skip one-time toast types (handled by GlobalToastManager)
+        const skipTypes = ["Invite Accepted", "Invite Rejected", "Member Left"];
+
         notifications.forEach((n) => {
             if (n.read) return;
-            if (shown.current.has(n._id)) return;
+            if (shownRef.current.has(n._id)) return;
 
-            shown.current.add(n._id);
+            // Skip if it's a one-time toast type
+            if (skipTypes.includes(n.title)) return;
+
+            shownRef.current.add(n._id);
+            localStorage.setItem("shownGeneralToasts", JSON.stringify(Array.from(shownRef.current)));
 
             toast(n.title, {
                 description: n.message,
@@ -21,7 +45,7 @@ export function NotificationToaster() {
                 duration: 5000,
             });
         });
-    }, [notifications]);
+    }, [notifications, initialized]);
 
     return null;
 }

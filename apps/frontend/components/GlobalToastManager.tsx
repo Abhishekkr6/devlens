@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useNotificationStore } from "../store/notificationStore";
 
@@ -10,15 +10,27 @@ import { useNotificationStore } from "../store/notificationStore";
  */
 export function GlobalToastManager() {
     const notifications = useNotificationStore((s) => s.notifications);
-    const shown = useRef(new Set<string>());
+    const [initialized, setInitialized] = useState(false);
+    const shownToastsRef = useRef<Set<string>>(new Set());
 
+    // Load shown toasts from localStorage on mount
     useEffect(() => {
-        // Load previously shown toasts from localStorage on mount
-        const shownToasts = JSON.parse(localStorage.getItem("shownToasts") || "[]");
-        shown.current = new Set(shownToasts);
+        const stored = localStorage.getItem("shownToasts");
+        if (stored) {
+            try {
+                const parsed = JSON.parse(stored);
+                shownToastsRef.current = new Set(parsed);
+            } catch (e) {
+                console.error("Failed to parse shownToasts from localStorage", e);
+            }
+        }
+        setInitialized(true);
     }, []);
 
     useEffect(() => {
+        // Don't run until localStorage is loaded
+        if (!initialized) return;
+
         // One-time toast types that should only appear once
         const oneTimeToastTypes = ["Invite Accepted", "Invite Rejected", "Member Left"];
 
@@ -29,9 +41,11 @@ export function GlobalToastManager() {
             }
 
             // Skip if already shown
-            if (shown.current.has(n._id)) {
+            if (shownToastsRef.current.has(n._id)) {
                 return;
             }
+
+            console.log("[GlobalToastManager] Showing one-time toast:", n.title, n._id);
 
             // Show toast based on notification type
             if (n.title === "Invite Accepted") {
@@ -52,11 +66,10 @@ export function GlobalToastManager() {
             }
 
             // Mark as shown
-            shown.current.add(n._id);
-            const shownToasts = Array.from(shown.current);
-            localStorage.setItem("shownToasts", JSON.stringify(shownToasts));
+            shownToastsRef.current.add(n._id);
+            localStorage.setItem("shownToasts", JSON.stringify(Array.from(shownToastsRef.current)));
         });
-    }, [notifications]);
+    }, [notifications, initialized]);
 
     return null;
 }
