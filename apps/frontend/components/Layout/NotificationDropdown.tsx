@@ -39,12 +39,11 @@ export function NotificationDropdown({
 
     const handleAcceptInvite = async (e: React.MouseEvent, n: any) => {
         e.stopPropagation();
-        // Delete notification immediately for instant UI feedback
-        deleteNotification(n._id);
-        // Then make API calls in background
         try {
             await api.post(`/orgs/${n.metadata.orgId}/invite/accept`);
             await fetchUser();
+            // Mark as read instead of deleting
+            markAsRead(n._id);
         } catch (error) {
             console.error("Failed to accept invite:", error);
         }
@@ -52,11 +51,10 @@ export function NotificationDropdown({
 
     const handleRejectInvite = async (e: React.MouseEvent, n: any) => {
         e.stopPropagation();
-        // Delete notification immediately for instant UI feedback
-        deleteNotification(n._id);
-        // Then make API call in background
         try {
             await api.post(`/orgs/${n.metadata.orgId}/invite/reject`);
+            // Mark as read instead of deleting
+            markAsRead(n._id);
         } catch (error) {
             console.error("Failed to reject invite:", error);
         }
