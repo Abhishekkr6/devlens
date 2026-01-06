@@ -54,6 +54,38 @@ export function GlobalNotificationListener() {
             ) {
                 console.log("[GlobalNotificationListener] ✅ Adding notification to store:", event.data);
                 addNotification(event.data);
+
+                // Show one-time toast for specific notification types
+                const oneTimeToastTypes = ["Invite Accepted", "Invite Rejected", "Member Left"];
+                if (oneTimeToastTypes.includes(event.data.title)) {
+                    // Check if we've already shown this notification as toast
+                    const shownToasts = JSON.parse(localStorage.getItem("shownToasts") || "[]");
+
+                    if (!shownToasts.includes(event.data._id)) {
+                        // Show toast based on notification type
+                        if (event.data.title === "Invite Accepted") {
+                            toast.success(event.data.title, {
+                                description: event.data.message,
+                                duration: 5000,
+                            });
+                        } else if (event.data.title === "Invite Rejected") {
+                            toast.error(event.data.title, {
+                                description: event.data.message,
+                                duration: 5000,
+                            });
+                        } else if (event.data.title === "Member Left") {
+                            toast.info(event.data.title, {
+                                description: event.data.message,
+                                duration: 5000,
+                            });
+                        }
+
+                        // Mark this notification as shown
+                        shownToasts.push(event.data._id);
+                        localStorage.setItem("shownToasts", JSON.stringify(shownToasts));
+                    }
+                }
+
                 console.log("[GlobalNotificationListener] Notification added successfully");
             }
             // Handle org:removed events
