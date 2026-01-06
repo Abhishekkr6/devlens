@@ -155,8 +155,8 @@ export default function Topbar() {
       if (
         notificationRef.current &&
         !notificationRef.current.contains(event.target as Node) &&
-        notificationDropdownRef.current &&
-        !notificationDropdownRef.current.contains(event.target as Node)
+        (!notificationDropdownRef.current ||
+          !notificationDropdownRef.current.contains(event.target as Node))
       ) {
         setNotificationOpen(false);
       }
