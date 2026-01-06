@@ -86,7 +86,7 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
                 )}
             >
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/40">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/40" onMouseDown={(e) => e.stopPropagation()}>
                     <div className="flex items-center gap-2">
                         <Bell className="h-4 w-4 text-slate-400" />
                         <h3 className="text-sm font-semibold text-white">
@@ -117,6 +117,7 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
                         WebkitOverflowScrolling: 'touch'
                     }}
                     onWheel={(e) => e.stopPropagation()}
+                    onMouseDown={(e) => e.stopPropagation()}
                 >
                     {notifications.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
@@ -204,6 +205,7 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
                 <Link
                     href="/notifications"
                     onClick={onClose}
+                    onMouseDown={(e) => e.stopPropagation()}
                     className="block text-center py-2.5 text-[11px] font-medium text-slate-400 hover:text-white transition-colors bg-slate-900/40 border-t border-white/10"
                 >
                     View all notifications →

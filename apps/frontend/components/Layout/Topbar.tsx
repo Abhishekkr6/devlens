@@ -152,6 +152,7 @@ export default function Topbar() {
       ) {
         setOrgDropdownOpen(false);
       }
+
       if (
         notificationRef.current &&
         !notificationRef.current.contains(event.target as Node) &&
