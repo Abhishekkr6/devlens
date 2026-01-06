@@ -82,6 +82,7 @@ export function NotificationDropdown({
                 "bg-slate-950/80 backdrop-blur-xl",
                 "shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
             )}
+            onClick={(e) => e.stopPropagation()}
         >
             {/* Header */}
             <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-slate-900/40">
@@ -132,7 +133,13 @@ export function NotificationDropdown({
                     notifications.map((n) => (
                         <div
                             key={n._id}
-                            onClick={() => markAsRead(n._id)}
+                            onClick={(e) => {
+                                // Only mark as read if clicking on the item itself, not on buttons
+                                const target = e.target as HTMLElement;
+                                if (!target.closest('button')) {
+                                    markAsRead(n._id);
+                                }
+                            }}
                             className={cn(
                                 "group relative flex gap-3 p-4 cursor-pointer transition-all",
                                 "hover:bg-white/5",
