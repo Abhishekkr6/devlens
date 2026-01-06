@@ -7,6 +7,7 @@ import { Toaster } from "sonner";
 import { GlobalNotificationListener } from "../components/GlobalNotificationListener";
 import { NotificationToaster } from "../components/NotificationToaster";
 import { GlobalInviteToaster } from "../components/GlobalInviteToaster";
+import { GlobalToastManager } from "../components/GlobalToastManager";
 
 export const metadata: Metadata = {
   title: "TeamPulse | Developer Activity & Insights",
@@ -31,6 +32,9 @@ export default function RootLayout({
 
         {/* Store → Toast */}
         <NotificationToaster />
+
+        {/* One-time toast manager */}
+        <GlobalToastManager />
 
         {/* Sonner UI */}
         <Toaster position="bottom-right" richColors expand />

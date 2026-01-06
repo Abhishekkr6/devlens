@@ -11,8 +11,14 @@ export function GlobalInviteToaster() {
     const deleteNotification = useNotificationStore((s) => s.deleteNotification);
     const { fetchUser } = useUserStore();
 
-    // Prevent duplicate toasts
+    // Prevent duplicate toasts using localStorage
     const shown = useRef(new Set<string>());
+
+    useEffect(() => {
+        // Load previously shown toasts from localStorage
+        const shownToasts = JSON.parse(localStorage.getItem("shownInviteToasts") || "[]");
+        shown.current = new Set(shownToasts);
+    }, []);
 
     useEffect(() => {
         console.log("[GlobalInviteToaster] Notifications changed:", {
@@ -39,6 +45,10 @@ export function GlobalInviteToaster() {
             console.log("[GlobalInviteToaster] 🎉 Showing invite toast:", n);
             shown.current.add(n._id);
 
+            // Save to localStorage
+            const shownToasts = Array.from(shown.current);
+            localStorage.setItem("shownInviteToasts", JSON.stringify(shownToasts));
+
             toast.custom(
                 (t) => (
                     <InviteToast
@@ -46,7 +56,6 @@ export function GlobalInviteToaster() {
                         notification={n}
                         onDone={() => {
                             console.log(`[GlobalInviteToaster] Toast done, removing from shown: ${n._id}`);
-                            shown.current.delete(n._id);
                             deleteNotification(n._id);
                         }}
                         fetchUser={fetchUser}
