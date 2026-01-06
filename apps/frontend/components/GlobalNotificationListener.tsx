@@ -101,7 +101,6 @@ export function GlobalNotificationListener() {
             console.log("[GlobalNotificationListener] Cleaning up...");
             unsubscribe();
         };
-    }, [user?.id, user?._id, addNotification, fetchUser, removeOrgFromUser, activeOrgId, router]);
-
+    }, [user?.id, user?._id]);
     return null;
 }
