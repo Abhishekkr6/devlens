@@ -59,9 +59,18 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
       return res.status(200).json({ success: true });
     }
 
-    const repo = await RepoModel.findOne({ name: fullRepoName });
+    logger.info({ fullRepoName }, "🔍 Webhook received for repo");
+
+    // Case-insensitive search for the repository
+    const repo = await RepoModel.findOne({
+      $or: [
+        { name: { $regex: new RegExp(`^${fullRepoName}$`, "i") } },
+        { providerRepoId: { $regex: new RegExp(`^${fullRepoName}$`, "i") } }
+      ]
+    });
+
     if (!repo) {
-      logger.warn({ repo: fullRepoName }, "⚠️ Unknown repo");
+      logger.warn({ repo: fullRepoName }, "⚠️ Unknown repo - lookup failed");
       return res.status(200).send("OK");
     }
 
