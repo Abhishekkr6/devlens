@@ -39,15 +39,27 @@ export function NotificationDropdown({
 
     const handleAcceptInvite = async (e: React.MouseEvent, n: any) => {
         e.stopPropagation();
-        await api.post(`/orgs/${n.metadata.orgId}/invite/accept`);
-        await fetchUser();
-        await deleteNotification(n._id);
+        // Delete notification immediately for instant UI feedback
+        deleteNotification(n._id);
+        // Then make API calls in background
+        try {
+            await api.post(`/orgs/${n.metadata.orgId}/invite/accept`);
+            await fetchUser();
+        } catch (error) {
+            console.error("Failed to accept invite:", error);
+        }
     };
 
     const handleRejectInvite = async (e: React.MouseEvent, n: any) => {
         e.stopPropagation();
-        await api.post(`/orgs/${n.metadata.orgId}/invite/reject`);
-        await deleteNotification(n._id);
+        // Delete notification immediately for instant UI feedback
+        deleteNotification(n._id);
+        // Then make API call in background
+        try {
+            await api.post(`/orgs/${n.metadata.orgId}/invite/reject`);
+        } catch (error) {
+            console.error("Failed to reject invite:", error);
+        }
     };
 
     const getIcon = (type: NotificationType) => {
