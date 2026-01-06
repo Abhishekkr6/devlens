@@ -76,6 +76,7 @@ export function NotificationDropdown({
     return (
         <div
             onClick={(e) => e.stopPropagation()}
+            onMouseDown={(e) => e.stopPropagation()}
             className={cn(
                 "absolute left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 mt-3 w-[calc(100vw-2rem)] sm:w-[22rem] max-w-[22rem] z-[150]",
                 "rounded-2xl overflow-hidden",
