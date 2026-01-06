@@ -75,6 +75,7 @@ export default function Topbar() {
   const [loadingMembers, setLoadingMembers] = useState(false);
   const teamDropdownRef = useRef<HTMLDivElement>(null);
   const notificationRef = useRef<HTMLDivElement>(null);
+  const notificationDropdownRef = useRef<HTMLDivElement>(null);
 
   const { unreadCount, fetchNotifications } = useNotificationStore();
 
@@ -153,7 +154,9 @@ export default function Topbar() {
       }
       if (
         notificationRef.current &&
-        !notificationRef.current.contains(event.target as Node)
+        !notificationRef.current.contains(event.target as Node) &&
+        notificationDropdownRef.current &&
+        !notificationDropdownRef.current.contains(event.target as Node)
       ) {
         setNotificationOpen(false);
       }
@@ -365,6 +368,7 @@ export default function Topbar() {
                   )}
                 </button>
                 <NotificationDropdown
+                  ref={notificationDropdownRef}
                   isOpen={notificationOpen}
                   onClose={() => setNotificationOpen(false)}
                 />
@@ -520,6 +524,7 @@ export default function Topbar() {
                   )}
                 </button>
                 <NotificationDropdown
+                  ref={notificationDropdownRef}
                   isOpen={notificationOpen}
                   onClose={() => setNotificationOpen(false)}
                 />
