@@ -153,11 +153,15 @@ export default function Topbar() {
         setOrgDropdownOpen(false);
       }
 
+
+      // Check if click is inside notification dropdown by looking for data attribute
+      const clickedElement = event.target as HTMLElement;
+      const isInsideNotificationDropdown = clickedElement.closest('[data-notification-dropdown="true"]');
+
       if (
         notificationRef.current &&
         !notificationRef.current.contains(event.target as Node) &&
-        (!notificationDropdownRef.current ||
-          !notificationDropdownRef.current.contains(event.target as Node))
+        !isInsideNotificationDropdown
       ) {
         setNotificationOpen(false);
       }

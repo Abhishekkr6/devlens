@@ -75,6 +75,7 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
         return (
             <div
                 ref={ref}
+                data-notification-dropdown="true"
                 onClick={(e) => e.stopPropagation()}
                 onMouseDown={(e) => e.stopPropagation()}
                 className={cn(
