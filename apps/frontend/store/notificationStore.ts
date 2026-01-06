@@ -38,8 +38,27 @@ export const useNotificationStore = create<NotificationState>((set, get) => ({
             set({ loading: true });
             const res = await api.get("/notifications");
             const notifications = res.data?.data || [];
-            const unreadCount = notifications.filter((n: Notification) => !n.read).length;
-            set({ notifications, unreadCount });
+
+            // Auto-delete "Invite Accepted" and "Invite Rejected" notifications
+            // These are one-time informational messages that shouldn't persist
+            const notificationsToDelete = notifications.filter((n: Notification) =>
+                n.title === "Invite Accepted" || n.title === "Invite Rejected"
+            );
+
+            // Delete them in the background (don't await to avoid blocking)
+            notificationsToDelete.forEach((n: Notification) => {
+                api.delete(`/notifications/${n._id}`).catch(err =>
+                    console.error("Failed to auto-delete notification:", err)
+                );
+            });
+
+            // Filter out the auto-deleted notifications from the UI
+            const filteredNotifications = notifications.filter((n: Notification) =>
+                n.title !== "Invite Accepted" && n.title !== "Invite Rejected"
+            );
+
+            const unreadCount = filteredNotifications.filter((n: Notification) => !n.read).length;
+            set({ notifications: filteredNotifications, unreadCount });
         } catch (err) {
             console.error("Failed to fetch notifications", err);
         } finally {
