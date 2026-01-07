@@ -21,12 +21,16 @@ app.get("/", (req, res) => {
    1) RAW BODY FOR GITHUB → MUST BE FIRST
 ------------------------------------------------------ */
 app.use("/api/v1/webhooks/github", express.raw({ type: "application/json" }));
+app.use("/api/v1/webhooks/test-github", express.raw({ type: "application/json" }));
 
 /* -----------------------------------------------------
    2) REGISTER WEBHOOK ROUTES IMMEDIATELY AFTER RAW
 ------------------------------------------------------ */
 import webhookRoutes from "./routes/webhook.routes";
+import webhookTestRoutes from "./routes/webhook-test.routes";
 app.use("/api/v1/webhooks", webhookRoutes);
+app.use("/api/v1/webhooks", webhookTestRoutes);
+
 
 /* -----------------------------------------------------
    3) NORMAL PARSERS AFTER WEBHOOK ONLY

@@ -71,8 +71,11 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
       return res.status(200).send("OK");
     }
 
+    logger.info({ repoId: repo._id, repoFullName: repo.repoFullName }, "Repository found in database");
+
     const webhookSecret = process.env.WEBHOOK_SECRET;
     if (!webhookSecret) {
+      logger.error("WEBHOOK_SECRET environment variable is not set");
       throw new Error("WEBHOOK_SECRET not configured");
     }
 
@@ -86,6 +89,9 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
       logger.warn({ fullRepoName }, "Invalid webhook signature");
       return res.status(403).json({ error: "Invalid signature" });
     }
+
+    logger.info({ fullRepoName, event }, "Webhook signature verified successfully");
+
 
     /* -------------------------------------------
        PUSH EVENT
@@ -174,7 +180,23 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
     logger.info({ event, repo: fullRepoName }, "Webhook processed successfully");
     return res.status(200).json({ success: true });
   } catch (err) {
-    logger.error({ err }, "Webhook processing failed");
-    return res.status(500).json({ success: false });
+    const errorMessage = err instanceof Error ? err.message : String(err);
+    const errorStack = err instanceof Error ? err.stack : undefined;
+    const event = req.headers["x-github-event"] as string;
+
+    logger.error({
+      err,
+      errorMessage,
+      errorStack,
+      event,
+      hasBody: !!req.body,
+      bodyType: typeof req.body,
+      isBuffer: Buffer.isBuffer(req.body)
+    }, "Webhook processing failed");
+
+    return res.status(500).json({
+      success: false,
+      error: errorMessage // Include error in response for debugging
+    });
   }
 };
