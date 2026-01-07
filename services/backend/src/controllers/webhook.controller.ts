@@ -61,32 +61,16 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
 
     logger.info({ fullRepoName }, "🔍 Webhook received for repo");
 
-    // Escape special regex characters for safe pattern matching
-    const escapeRegex = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const escapedRepoName = escapeRegex(fullRepoName);
-
     // Case-insensitive search for the repository
     const repo = await RepoModel.findOne({
       $or: [
-        { name: { $regex: new RegExp(`^${escapedRepoName}$`, "i") } },
-        { providerRepoId: { $regex: new RegExp(`^${escapedRepoName}$`, "i") } }
+        { name: { $regex: new RegExp(`^${fullRepoName}$`, "i") } },
+        { providerRepoId: { $regex: new RegExp(`^${fullRepoName}$`, "i") } }
       ]
     });
 
     if (!repo) {
-      logger.warn(
-        {
-          repo: fullRepoName,
-          escapedRepo: escapedRepoName,
-          totalReposInDB: await RepoModel.countDocuments()
-        },
-        "⚠️ Unknown repo - lookup failed"
-      );
-
-      // Debug: Log all repos in DB for comparison
-      const allRepos = await RepoModel.find({}, { name: 1, providerRepoId: 1, orgId: 1 }).limit(20);
-      logger.debug({ allRepos }, "📋 All repositories in database for debugging");
-
+      logger.warn({ repo: fullRepoName }, "⚠️ Unknown repo - lookup failed");
       return res.status(200).send("OK");
     }
 
