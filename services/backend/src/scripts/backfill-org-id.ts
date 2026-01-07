@@ -18,7 +18,7 @@ const runBackfill = async () => {
         for (const repo of repos) {
             const orgId = repo.orgId;
             if (!orgId) {
-                logger.warn(`Repo ${repo.name} (${repo._id}) has no orgId, skipping`);
+                logger.warn(`Repo ${repo.repoName} (${repo._id}) has no orgId, skipping`);
                 continue;
             }
 
@@ -27,14 +27,14 @@ const runBackfill = async () => {
                 { repoId: repo._id, orgId: { $exists: false } },
                 { $set: { orgId: orgId } }
             );
-            logger.info(`Updated ${commitResult.modifiedCount} commits for repo ${repo.name}`);
+            logger.info(`Updated ${commitResult.modifiedCount} commits for repo ${repo.repoName}`);
 
             // Update PRs
             const prResult = await PRModel.updateMany(
                 { repoId: repo._id, orgId: { $exists: false } },
                 { $set: { orgId: orgId } }
             );
-            logger.info(`Updated ${prResult.modifiedCount} PRs for repo ${repo.name}`);
+            logger.info(`Updated ${prResult.modifiedCount} PRs for repo ${repo.repoName}`);
         }
 
         logger.info("Backfill completed successfully");

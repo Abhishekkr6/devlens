@@ -142,16 +142,16 @@ export const getDeveloperDetail = async (req: Request, res: Response) => {
     const authoredMergedPRs = prDocs.filter((pr) => pr.authorGithubId === githubId && pr.mergedAt);
     const avgReviewTimeHours = authoredMergedPRs.length
       ? Number(
-          (
-            authoredMergedPRs
-              .map((pr) => {
-                const end = pr.mergedAt ? new Date(pr.mergedAt).getTime() : new Date(pr.updatedAt ?? pr.createdAt ?? now).getTime();
-                const start = pr.createdAt ? new Date(pr.createdAt).getTime() : end;
-                return Math.max((end - start) / (1000 * 60 * 60), 0);
-              })
-              .reduce((sum, val) => sum + val, 0) / authoredMergedPRs.length
-          ).toFixed(1)
-        )
+        (
+          authoredMergedPRs
+            .map((pr) => {
+              const end = pr.mergedAt ? new Date(pr.mergedAt).getTime() : new Date(pr.updatedAt ?? pr.createdAt ?? now).getTime();
+              const start = pr.createdAt ? new Date(pr.createdAt).getTime() : end;
+              return Math.max((end - start) / (1000 * 60 * 60), 0);
+            })
+            .reduce((sum, val) => sum + val, 0) / authoredMergedPRs.length
+        ).toFixed(1)
+      )
       : null;
 
     const avgReviewPrev = (() => {
@@ -175,8 +175,8 @@ export const getDeveloperDetail = async (req: Request, res: Response) => {
 
     const repoDocs = repoIds.length
       ? await RepoModel.find({ _id: { $in: repoIds } })
-          .select("name url")
-          .lean()
+        .select("repoName url")
+        .lean()
       : [];
 
     const repoMap = new Map(repoDocs.map((repo) => [String(repo._id), repo]));
@@ -186,7 +186,7 @@ export const getDeveloperDetail = async (req: Request, res: Response) => {
       const repo = repoId ? repoMap.get(repoId) : null;
       return {
         repoId,
-        name: repo?.name || "Unknown repo",
+        name: (repo as any)?.repoName || "Unknown repo",
         url: repo?.url,
         commits: entry?.commits ?? 0,
       };
