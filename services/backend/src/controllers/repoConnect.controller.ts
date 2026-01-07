@@ -4,7 +4,7 @@ import crypto from "crypto";
 import logger from "../utils/logger";
 import { UserModel } from "../models/user.model";
 import { Types } from "mongoose";
-import { verifyRepositoryExists } from "../services/github.service";
+import { verifyRepositoryExists, createRepositoryWebhook } from "../services/github.service";
 
 export const connectRepo = async (req: any, res: Response) => {
   try {
@@ -97,7 +97,40 @@ export const connectRepo = async (req: any, res: Response) => {
       orgId: orgObjectId,
       webhookSecretHash,
       connectedAt: new Date(),
+      webhookStatus: "pending",     // Initial status
     });
+
+    // ✅ CREATE WEBHOOK AUTOMATICALLY
+    const backendUrl = process.env.BACKEND_URL || "https://teampulse-w2s8.onrender.com";
+    const webhookUrl = `${backendUrl}/api/v1/webhooks/github`;
+
+    logger.info({ repo: repoFullName, webhookUrl }, "Creating GitHub webhook");
+
+    const webhookResult = await createRepositoryWebhook(
+      repoFullName,
+      user.githubAccessToken,
+      webhookUrl,
+      secret
+    );
+
+    // Update repository with webhook creation result
+    if (webhookResult.success && webhookResult.webhookId) {
+      repo.webhookId = webhookResult.webhookId;
+      repo.webhookStatus = "active";
+      await repo.save();
+      logger.info(
+        { repo: repoFullName, webhookId: webhookResult.webhookId },
+        "Webhook created successfully"
+      );
+    } else {
+      repo.webhookStatus = "failed";
+      repo.webhookError = webhookResult.error || "Unknown error";
+      await repo.save();
+      logger.warn(
+        { repo: repoFullName, error: webhookResult.error },
+        "Webhook creation failed (repo still connected)"
+      );
+    }
 
     await UserModel.findByIdAndUpdate(
       userId,
@@ -108,7 +141,14 @@ export const connectRepo = async (req: any, res: Response) => {
       { new: true }
     );
 
-    return res.json({ success: true, data: repo });
+    return res.json({
+      success: true,
+      data: repo,
+      webhook: {
+        created: webhookResult.success,
+        error: webhookResult.error,
+      },
+    });
   } catch (err: any) {
     logger.error({ err }, "CONNECT REPO ERROR");
     return res.status(500).json({

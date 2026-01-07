@@ -10,6 +10,9 @@ export interface IRepo extends Document {
   url?: string;
   defaultBranch?: string;
   webhookSecretHash?: string;
+  webhookId?: number;        // GitHub webhook ID
+  webhookStatus?: "active" | "failed" | "pending";
+  webhookError?: string;     // Error message if webhook creation failed
   connectedAt?: Date;
 }
 
@@ -48,6 +51,12 @@ const RepoSchema = new Schema<IRepo>(
     url: String,
     defaultBranch: String,
     webhookSecretHash: String,
+    webhookId: Number,
+    webhookStatus: {
+      type: String,
+      enum: ["active", "failed", "pending"],
+    },
+    webhookError: String,
     connectedAt: Date,
   },
   { timestamps: true }
