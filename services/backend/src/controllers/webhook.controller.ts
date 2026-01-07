@@ -61,12 +61,42 @@ if (redisUrl) {
   }
 }
 
+/* -------------------------------------------
+   WEBHOOK IDEMPOTENCY TRACKING
+-------------------------------------------- */
+const processedDeliveries = new Set<string>();
+const MAX_CACHE_SIZE = 1000;
+
+function trackWebhookDelivery(deliveryId: string): boolean {
+  if (processedDeliveries.has(deliveryId)) {
+    return true; // Already processed
+  }
+
+  processedDeliveries.add(deliveryId);
+
+  // Simple LRU: remove oldest if cache too large
+  if (processedDeliveries.size > MAX_CACHE_SIZE) {
+    const firstItem = processedDeliveries.values().next().value;
+    if (firstItem) {
+      processedDeliveries.delete(firstItem);
+    }
+  }
+
+  return false; // New delivery
+}
 
 /* -------------------------------------------
    WEBHOOK HANDLER (FINAL FIX)
 -------------------------------------------- */
 export const githubWebhookHandler = async (req: Request, res: Response) => {
   try {
+    // Idempotency check - prevent duplicate webhook processing
+    const deliveryId = req.headers["x-github-delivery"] as string;
+    if (deliveryId && trackWebhookDelivery(deliveryId)) {
+      logger.info({ deliveryId }, "Duplicate webhook delivery detected, skipping processing");
+      return res.status(200).json({ success: true, duplicate: true });
+    }
+
     // Check if body exists and is a Buffer
     if (!req.body || !Buffer.isBuffer(req.body) || req.body.length === 0) {
       logger.error({ bodyType: typeof req.body, isBuffer: Buffer.isBuffer(req.body) }, "Invalid or missing raw body");
@@ -158,10 +188,18 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
 
       // Queue processing (optional if Redis available)
       if (commitQueue) {
-        await commitQueue.add("commit-batch", {
-          repoId: repo._id,
-          commitIds: commitDocs.map((d) => d._id),
-        });
+        await commitQueue.add(
+          "commit-batch",
+          {
+            repoId: repo._id,
+            commitIds: commitDocs.map((d) => d._id),
+          },
+          {
+            attempts: 1, // Only 1 attempt, no retries
+            removeOnComplete: true, // Auto-delete after success
+            removeOnFail: true, // Auto-delete after failure
+          }
+        );
         logger.info(
           { repo: repo.repoFullName, commits: commitDocs.length },
           "Push processed and queued for analysis"
@@ -205,11 +243,19 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
 
       // Queue processing (optional if Redis available)
       if (prQueue) {
-        await prQueue.add("pr-analysis", {
-          prId: savedPR._id,
-          repoId: repo._id,
-          trigger: "webhook",
-        });
+        await prQueue.add(
+          "pr-analysis",
+          {
+            prId: savedPR._id,
+            repoId: repo._id,
+            trigger: "webhook",
+          },
+          {
+            attempts: 1, // Only 1 attempt, no retries
+            removeOnComplete: true, // Auto-delete after success
+            removeOnFail: true, // Auto-delete after failure
+          }
+        );
         logger.info(
           { repo: repo.repoFullName, pr: pr.number },
           "PR processed and queued for analysis"

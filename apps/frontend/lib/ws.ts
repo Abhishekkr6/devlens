@@ -2,6 +2,8 @@
 
 let socket: WebSocket | null = null;
 const listeners: ((event: unknown) => void)[] = [];
+let retryCount = 0;
+const MAX_RETRIES = 5;
 
 const DEFAULT_REMOTE_WS = "wss://teampulse-w2s8.onrender.com";
 
@@ -42,14 +44,24 @@ export const connectWS = () => {
   socket.onopen = () => {
     console.log("[WS] ✅ Connected successfully");
     console.log("[WS] Active listeners:", listeners.length);
+    retryCount = 0; // Reset retry counter on successful connection
   };
 
   socket.onclose = () => {
-    console.log("[WS] ❌ Disconnected. Reconnecting in 2s...");
+    if (retryCount >= MAX_RETRIES) {
+      console.warn(`[WS] ❌ Max retry attempts (${MAX_RETRIES}) reached. Stopping reconnection.`);
+      return;
+    }
+
+    retryCount++;
+    // Exponential backoff: 1s, 2s, 4s, 8s, 16s (max 30s)
+    const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+
+    console.log(`[WS] ❌ Disconnected. Reconnecting in ${delay / 1000}s... (Attempt ${retryCount}/${MAX_RETRIES})`);
     setTimeout(() => {
       socket = null;
       connectWS();
-    }, 2000);
+    }, delay);
   };
 
   socket.onerror = (error) => {
