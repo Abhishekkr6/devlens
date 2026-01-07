@@ -36,16 +36,18 @@ const prQueue = new Queue("pr-analysis", {
 -------------------------------------------- */
 export const githubWebhookHandler = async (req: Request, res: Response) => {
   try {
-    const rawBody = req.body as Buffer;
-    if (!rawBody) {
-      logger.error("Raw body missing");
-      return res.status(400).json({ success: false });
+    // Check if body exists and is a Buffer
+    if (!req.body || !Buffer.isBuffer(req.body) || req.body.length === 0) {
+      logger.error({ bodyType: typeof req.body, isBuffer: Buffer.isBuffer(req.body) }, "Invalid or missing raw body");
+      return res.status(400).json({ success: false, error: "Invalid request body" });
     }
 
+    const rawBody = req.body as Buffer;
     const signature = req.headers["x-hub-signature-256"] as string;
     const event = req.headers["x-github-event"] as string;
 
     if (!signature) {
+      logger.warn("Missing webhook signature");
       return res.status(401).json({ error: "Missing signature" });
     }
 
@@ -53,7 +55,7 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
     const fullRepoName: string | undefined = payload?.repository?.full_name;
 
     if (!fullRepoName) {
-      logger.warn("Missing repository.full_name");
+      logger.warn({ event, repository: payload?.repository }, "Missing repository.full_name in webhook payload");
       return res.status(200).send("OK");
     }
 
@@ -169,6 +171,7 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
       );
     }
 
+    logger.info({ event, repo: fullRepoName }, "Webhook processed successfully");
     return res.status(200).json({ success: true });
   } catch (err) {
     logger.error({ err }, "Webhook processing failed");
