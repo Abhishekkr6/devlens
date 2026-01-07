@@ -8,28 +8,59 @@ import IORedis from "ioredis";
 import logger from "../utils/logger";
 
 /* -------------------------------------------
-   REDIS CONNECTION
+   REDIS CONNECTION (WITH ERROR HANDLING)
 -------------------------------------------- */
 const redisUrl = process.env.REDIS_URL;
 if (!redisUrl) {
-  throw new Error("REDIS_URL environment variable is not set");
+  logger.warn("REDIS_URL environment variable is not set - queue processing disabled");
 }
 
-const redis = new IORedis(redisUrl, {
-  tls: { rejectUnauthorized: false },
-  maxRetriesPerRequest: null,
-});
+let redis: IORedis | null = null;
+let commitQueue: Queue | null = null;
+let prQueue: Queue | null = null;
 
-/* -------------------------------------------
-   QUEUES
--------------------------------------------- */
-const commitQueue = new Queue("commit-processing", {
-  connection: redis,
-});
+if (redisUrl) {
+  try {
+    redis = new IORedis(redisUrl, {
+      tls: { rejectUnauthorized: false },
+      maxRetriesPerRequest: null,
+    });
 
-const prQueue = new Queue("pr-analysis", {
-  connection: redis,
-});
+    // Handle connection errors
+    redis.on("error", (err) => {
+      logger.warn(
+        { err: err.message },
+        "Redis connection error - queue processing may fail"
+      );
+    });
+
+    redis.on("connect", () => {
+      logger.info("Redis connected successfully");
+    });
+
+    /* -------------------------------------------
+       QUEUES
+    -------------------------------------------- */
+    commitQueue = new Queue("commit-processing", {
+      connection: redis,
+    });
+
+    prQueue = new Queue("pr-analysis", {
+      connection: redis,
+    });
+
+    logger.info("Redis and queues initialized");
+  } catch (err) {
+    logger.warn(
+      { err: err instanceof Error ? err.message : String(err) },
+      "Redis initialization failed - queue processing disabled. Webhooks will still save data to database."
+    );
+    redis = null;
+    commitQueue = null;
+    prQueue = null;
+  }
+}
+
 
 /* -------------------------------------------
    WEBHOOK HANDLER (FINAL FIX)
@@ -125,15 +156,22 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
         )
       );
 
-      await commitQueue.add("commit-batch", {
-        repoId: repo._id,
-        commitIds: commitDocs.map((d) => d._id),
-      });
-
-      logger.info(
-        { repo: repo.repoFullName, commits: commitDocs.length },
-        "Push processed"
-      );
+      // Queue processing (optional if Redis available)
+      if (commitQueue) {
+        await commitQueue.add("commit-batch", {
+          repoId: repo._id,
+          commitIds: commitDocs.map((d) => d._id),
+        });
+        logger.info(
+          { repo: repo.repoFullName, commits: commitDocs.length },
+          "Push processed and queued for analysis"
+        );
+      } else {
+        logger.info(
+          { repo: repo.repoFullName, commits: commitDocs.length },
+          "Push processed (queue unavailable - background processing skipped)"
+        );
+      }
     }
 
     /* -------------------------------------------
@@ -165,16 +203,23 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
         { upsert: true, new: true }
       );
 
-      await prQueue.add("pr-analysis", {
-        prId: savedPR._id,
-        repoId: repo._id,
-        trigger: "webhook",
-      });
-
-      logger.info(
-        { repo: repo.repoFullName, pr: pr.number },
-        "PR processed"
-      );
+      // Queue processing (optional if Redis available)
+      if (prQueue) {
+        await prQueue.add("pr-analysis", {
+          prId: savedPR._id,
+          repoId: repo._id,
+          trigger: "webhook",
+        });
+        logger.info(
+          { repo: repo.repoFullName, pr: pr.number },
+          "PR processed and queued for analysis"
+        );
+      } else {
+        logger.info(
+          { repo: repo.repoFullName, pr: pr.number },
+          "PR processed (queue unavailable - background processing skipped)"
+        );
+      }
     }
 
     logger.info({ event, repo: fullRepoName }, "Webhook processed successfully");
