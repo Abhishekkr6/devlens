@@ -8,7 +8,7 @@ import IORedis from "ioredis";
 import logger from "../utils/logger";
 
 /* -------------------------------------------
-   FIXED REDIS CONNECTION FOR UPSTASH
+   REDIS CONNECTION
 -------------------------------------------- */
 const redisUrl = process.env.REDIS_URL;
 if (!redisUrl) {
@@ -21,7 +21,7 @@ const redis = new IORedis(redisUrl, {
 });
 
 /* -------------------------------------------
-   BULLMQ QUEUES (fixed)
+   QUEUES
 -------------------------------------------- */
 const commitQueue = new Queue("commit-processing", {
   connection: redis,
@@ -32,81 +32,82 @@ const prQueue = new Queue("pr-analysis", {
 });
 
 /* -------------------------------------------
-   WEBHOOK HANDLER
+   WEBHOOK HANDLER (FINAL FIX)
 -------------------------------------------- */
 export const githubWebhookHandler = async (req: Request, res: Response) => {
   try {
     const rawBody = req.body as Buffer;
-
     if (!rawBody) {
-      logger.error("❌ raw body missing");
-      return res.status(400).json({ success: false, message: "No raw body" });
+      logger.error("Raw body missing");
+      return res.status(400).json({ success: false });
     }
 
     const signature = req.headers["x-hub-signature-256"] as string;
     const event = req.headers["x-github-event"] as string;
 
     if (!signature) {
-      logger.warn({ headers: req.headers }, "❌ Missing signature header");
       return res.status(401).json({ error: "Missing signature" });
     }
 
     const payload = JSON.parse(rawBody.toString());
+    const fullRepoName: string | undefined = payload?.repository?.full_name;
 
-    const fullRepoName = payload.repository?.full_name;
     if (!fullRepoName) {
-      logger.warn("⚠️ Missing repo name in payload");
-      return res.status(200).json({ success: true });
+      logger.warn("Missing repository.full_name");
+      return res.status(200).send("OK");
     }
 
-    logger.info({ fullRepoName }, "🔍 Webhook received for repo");
-
-    // Case-insensitive search for the repository
+    /* -------------------------------------------
+       ✅ CORRECT REPO LOOKUP (NO REGEX)
+    -------------------------------------------- */
     const repo = await RepoModel.findOne({
-      $or: [
-        { name: { $regex: new RegExp(`^${fullRepoName}$`, "i") } },
-        { providerRepoId: { $regex: new RegExp(`^${fullRepoName}$`, "i") } }
-      ]
+      repoFullName: fullRepoName,
     });
 
     if (!repo) {
-      logger.warn({ repo: fullRepoName }, "⚠️ Unknown repo - lookup failed");
+      logger.warn({ fullRepoName }, "Webhook received for unknown repo");
       return res.status(200).send("OK");
     }
 
     const webhookSecret = process.env.WEBHOOK_SECRET;
     if (!webhookSecret) {
-      logger.error("WEBHOOK_SECRET environment variable is not set");
-      return res.status(500).json({ success: false, error: "Server configuration error" });
+      throw new Error("WEBHOOK_SECRET not configured");
     }
 
-    const ok = verifyGithubSignature(
+    const isValid = verifyGithubSignature(
       webhookSecret,
       rawBody,
       signature
     );
 
-    if (!ok) {
-      logger.warn({ repo: fullRepoName }, "❌ Invalid signature");
+    if (!isValid) {
+      logger.warn({ fullRepoName }, "Invalid webhook signature");
       return res.status(403).json({ error: "Invalid signature" });
     }
 
+    /* -------------------------------------------
+       PUSH EVENT
+    -------------------------------------------- */
     if (event === "push") {
       const commits = payload.commits || [];
 
       const commitDocs = await Promise.all(
-        commits.map(async (c: any) =>
+        commits.map((c: any) =>
           CommitModel.findOneAndUpdate(
-            { sha: c.id },
+            {
+              sha: c.id,
+              repoId: repo._id, // 🔥 IMPORTANT (multi-repo safe)
+            },
             {
               sha: c.id,
               repoId: repo._id,
               orgId: repo.orgId,
-              authorGithubId: c.author.username,
-              authorName: c.author.name,
+              authorGithubId: c.author?.username ?? null,
+              authorName: c.author?.name ?? null,
               message: c.message,
               timestamp: c.timestamp,
-              filesChangedCount: c.modified.length + c.added.length + c.removed.length,
+              filesChangedCount:
+                c.modified.length + c.added.length + c.removed.length,
               additions: c.added.length,
               deletions: c.removed.length,
               files: [...c.modified, ...c.added, ...c.removed],
@@ -116,38 +117,35 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
         )
       );
 
-      await commitQueue.add(
-        "commit-batch",
-        {
-          repoId: repo._id,
-          commitIds: commitDocs.map((d) => d._id),
-        },
-        {
-          attempts: 3,
-          backoff: {
-            type: "exponential",
-            delay: 2000,
-          },
-          removeOnComplete: true,
-          removeOnFail: 20,
-        }
-      );
+      await commitQueue.add("commit-batch", {
+        repoId: repo._id,
+        commitIds: commitDocs.map((d) => d._id),
+      });
 
-      logger.info({ repoId: repo._id, commits: commits.length }, "✅ Push event processed");
+      logger.info(
+        { repo: repo.repoFullName, commits: commitDocs.length },
+        "Push processed"
+      );
     }
 
+    /* -------------------------------------------
+       PULL REQUEST EVENT
+    -------------------------------------------- */
     if (event === "pull_request") {
       const pr = payload.pull_request;
 
       const savedPR = await PRModel.findOneAndUpdate(
-        { providerPrId: pr.id },
+        {
+          providerPrId: pr.id,
+          repoId: repo._id,
+        },
         {
           providerPrId: pr.id,
           repoId: repo._id,
           orgId: repo.orgId,
           number: pr.number,
           title: pr.title,
-          authorGithubId: pr.user.login,
+          authorGithubId: pr.user?.login ?? null,
           state: pr.state,
           createdAt: pr.created_at,
           mergedAt: pr.merged_at,
@@ -165,12 +163,15 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
         trigger: "webhook",
       });
 
-      logger.info({ repoId: repo._id, prNumber: pr.number }, "✅ PR event processed");
+      logger.info(
+        { repo: repo.repoFullName, pr: pr.number },
+        "PR processed"
+      );
     }
 
     return res.status(200).json({ success: true });
   } catch (err) {
-    logger.error({ err }, "❌ Webhook Error");
+    logger.error({ err }, "Webhook processing failed");
     return res.status(500).json({ success: false });
   }
 };

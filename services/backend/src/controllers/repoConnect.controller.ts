@@ -8,94 +8,105 @@ import { verifyRepositoryExists } from "../services/github.service";
 
 export const connectRepo = async (req: any, res: Response) => {
   try {
-    logger.debug("------ DEBUG START ------");
-    logger.debug({ body: req.body }, "REQ BODY");
-    logger.debug({ orgId: req.params.orgId }, "ORG ID");
-    logger.debug({ hasWebhookSecret: Boolean(process.env.WEBHOOK_SECRET) }, "WEBHOOK_SECRET configured");
-
     const { orgId } = req.params;
     const { repoFullName } = req.body; // "owner/repo"
 
-    if (!repoFullName)
-      return res
-        .status(400)
-        .json({ success: false, error: "repoFullName required" });
-
-    if (!orgId || !Types.ObjectId.isValid(orgId)) {
-      return res
-        .status(400)
-        .json({ success: false, error: "Valid organization id required" });
+    if (!repoFullName || !repoFullName.includes("/")) {
+      return res.status(400).json({
+        success: false,
+        error: "repoFullName must be in owner/repo format",
+      });
     }
 
-    // Get user's GitHub token
+    if (!orgId || !Types.ObjectId.isValid(orgId)) {
+      return res.status(400).json({
+        success: false,
+        error: "Valid organization id required",
+      });
+    }
+
     const userId = req.user?.id || req.user?._id;
     if (!userId || !Types.ObjectId.isValid(String(userId))) {
-      return res
-        .status(401)
-        .json({ success: false, error: "User not authenticated" });
+      return res.status(401).json({
+        success: false,
+        error: "User not authenticated",
+      });
     }
 
     const user = await UserModel.findById(userId);
     if (!user || !user.githubAccessToken) {
-      return res
-        .status(401)
-        .json({ success: false, error: "GitHub token not found" });
+      return res.status(401).json({
+        success: false,
+        error: "GitHub token not found",
+      });
     }
 
-    // Check if repo is already connected
+    const orgObjectId = new Types.ObjectId(orgId);
+
+    // ✅ CORRECT duplicate check
     const existingRepo = await RepoModel.findOne({
-      providerRepoId: repoFullName,
-      orgId: orgId
+      repoFullName,
+      orgId: orgObjectId,
     });
 
     if (existingRepo) {
       return res.status(409).json({
         success: false,
-        error: "Repository already connected to this organization"
+        error: "Repository already connected to this organization",
       });
     }
 
-    // Verify that the repository exists on GitHub
-    const verifyResult = await verifyRepositoryExists(repoFullName, user.githubAccessToken);
-    if (!verifyResult.exists) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          error: `Repository not found: ${verifyResult.reason || "The specified repository does not exist on GitHub"}`
-        });
+    // ✅ GitHub API verification (must return repo data)
+    const verifyResult = await verifyRepositoryExists(
+      repoFullName,
+      user.githubAccessToken
+    );
+
+    if (!verifyResult.exists || !verifyResult.repo) {
+      return res.status(404).json({
+        success: false,
+        error: "Repository does not exist on GitHub",
+      });
     }
+
+    const githubRepo = verifyResult.repo;
+    const [owner, repoName] = repoFullName.split("/");
 
     const secret = process.env.WEBHOOK_SECRET;
     if (!secret) {
       return res.status(500).json({
         success: false,
-        error: "Server configuration error: WEBHOOK_SECRET not set"
+        error: "WEBHOOK_SECRET not set",
       });
     }
-    const hashed = crypto.createHash("sha256").update(secret).digest("hex");
 
-    const orgObjectId = new Types.ObjectId(orgId);
+    const webhookSecretHash = crypto
+      .createHash("sha256")
+      .update(secret)
+      .digest("hex");
 
+    // ✅ CORRECT save
     const repo = await RepoModel.create({
       provider: "github",
-      providerRepoId: repoFullName,
+      repoFullName,                 // "owner/repo"
+      repoName,                     // "repo"
+      owner,                        // "owner"
+      providerRepoId: githubRepo.id, // ✅ NUMBER
+      url: githubRepo.html_url,
+      defaultBranch: githubRepo.default_branch,
       orgId: orgObjectId,
-      name: repoFullName,
-      webhookSecretHash: hashed,
+      webhookSecretHash,
       connectedAt: new Date(),
     });
 
-    if (userId && Types.ObjectId.isValid(String(userId))) {
-      await UserModel.findByIdAndUpdate(
-        userId,
-        {
-          defaultOrgId: orgObjectId,
-          $addToSet: { orgIds: orgObjectId },
-        },
-        { new: true }
-      );
-    }
+    await UserModel.findByIdAndUpdate(
+      userId,
+      {
+        defaultOrgId: orgObjectId,
+        $addToSet: { orgIds: orgObjectId },
+      },
+      { new: true }
+    );
 
     return res.json({ success: true, data: repo });
   } catch (err: any) {

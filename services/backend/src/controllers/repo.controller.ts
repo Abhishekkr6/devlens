@@ -142,21 +142,11 @@ export const getRepos = async (req: Request, res: Response) => {
 
       return {
         id: repoId,
-        name: repo.name,
+        name: (repo as any).repoName,
         provider: repo.provider,
         url: repo.url,
-        language:
-          typeof (repo as any)?.language === "string"
-            ? (repo as any).language
-            : typeof (repo as any)?.metadata?.primaryLanguage === "string"
-              ? (repo as any).metadata.primaryLanguage
-              : undefined,
-        description:
-          typeof (repo as any)?.description === "string"
-            ? (repo as any).description
-            : typeof (repo as any)?.metadata?.description === "string"
-              ? (repo as any).metadata.description
-              : "",
+        language: undefined, // Not in IRepo schema
+        description: "", // Not in IRepo schema
         health,
         stats: {
           commits: totalCommits,
@@ -498,24 +488,11 @@ export const getRepoDetail = async (req: Request, res: Response) => {
       return "healthy" as const;
     })();
 
-    const resolveLanguage = () => {
-      if (typeof (repoDoc as any)?.language === "string")
-        return (repoDoc as any).language;
-      if (typeof (repoDoc as any)?.metadata?.primaryLanguage === "string") {
-        return (repoDoc as any).metadata.primaryLanguage;
-      }
-      return undefined;
-    };
+    // Language not in IRepo schema
+    const resolveLanguage = () => undefined;
 
-    const resolveDescription = () => {
-      if (typeof (repoDoc as any)?.metadata?.description === "string") {
-        return (repoDoc as any).metadata.description;
-      }
-      if (typeof (repoDoc as any)?.description === "string") {
-        return (repoDoc as any).description;
-      }
-      return "";
-    };
+    // Description not in IRepo schema
+    const resolveDescription = () => "";
 
     const metrics = {
       totalCommits: {
@@ -563,7 +540,7 @@ export const getRepoDetail = async (req: Request, res: Response) => {
       data: {
         repo: {
           id: String(repoDoc._id),
-          name: repoDoc.name,
+          name: repoDoc.repoName,
           description: resolveDescription(),
           url: repoDoc.url,
           language: resolveLanguage(),
