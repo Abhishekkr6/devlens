@@ -8,7 +8,7 @@ import { useNotificationStore } from "../store/notificationStore";
 import { toast } from "sonner";
 
 export function GlobalNotificationListener() {
-    const { user, fetchUser, removeOrgFromUser, activeOrgId } = useUserStore();
+    const { user, fetchUser, removeOrgFromUser, activeOrgId, activeOrgSlug } = useUserStore();
     const { addNotification } = useNotificationStore();
     const router = useRouter();
     const fetchUserCalled = useRef(false);
@@ -67,7 +67,7 @@ export function GlobalNotificationListener() {
                 removeOrgFromUser(event.orgId);
 
                 // Get updated state after removal
-                const { user: updatedUser, activeOrgId: newActiveOrgId } = useUserStore.getState();
+                const { user: updatedUser, activeOrgId: newActiveOrgId, activeOrgSlug: newActiveSlug } = useUserStore.getState();
 
                 // Show toast notification
                 toast.error(`You have been removed from ${event.orgName}`, {
@@ -77,9 +77,9 @@ export function GlobalNotificationListener() {
                 // Navigate based on remaining orgs
                 if (updatedUser?.orgIds && updatedUser.orgIds.length > 0) {
                     // User has other orgs, switch to the new active org
-                    if (newActiveOrgId) {
-                        console.log("[GlobalNotificationListener] Switching to org:", newActiveOrgId);
-                        router.push(`/organization/${newActiveOrgId}/repos`);
+                    if (newActiveSlug) {
+                        console.log("[GlobalNotificationListener] Switching to org:", newActiveSlug);
+                        router.push(`/organization/${newActiveSlug}/repos`);
                     }
                 } else {
                     // User has no orgs left, redirect to organization page

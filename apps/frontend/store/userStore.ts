@@ -7,6 +7,7 @@ import { isAxiosError } from "axios";
 export interface Org {
   id: string;
   name: string;
+  slug: string;
   role: "ADMIN" | "MEMBER" | "VIEWER";
 }
 
@@ -24,9 +25,10 @@ interface UserState {
   user: User | null;
   loading: boolean;
   activeOrgId: string | null;
+  activeOrgSlug: string | null;
   fetchUser: (opts?: { silent?: boolean }) => Promise<void>;
   logout: () => Promise<void>;
-  setActiveOrganization: (id: string) => void;
+  setActiveOrganization: (id: string, slug?: string | null) => void;
   removeOrgFromUser: (orgId: string) => void;
 }
 
@@ -34,6 +36,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   user: null,
   loading: true,
   activeOrgId: null,
+  activeOrgSlug: null,
 
   fetchUser: async (opts) => {
     // 1. Recover/Clean orgId from localStorage
@@ -60,14 +63,19 @@ export const useUserStore = create<UserState>((set, get) => ({
       const orgs = rawOrgs.map((o: any) => ({
         ...o,
         id: o.id || o._id,
+        slug: o.slug || '',
         role: o.role || "VIEWER",
       }));
 
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);
+      const activeSlug = orgs.find((o: Org) => o.id === activeId)?.slug ?? null;
 
       if (activeId) {
         try {
           localStorage.setItem("orgId", String(activeId));
+          if (activeSlug) {
+            localStorage.setItem("orgSlug", String(activeSlug));
+          }
         } catch { }
       }
 
@@ -79,6 +87,7 @@ export const useUserStore = create<UserState>((set, get) => ({
           }
           : null,
         activeOrgId: activeId,
+        activeOrgSlug: activeSlug,
         loading: false,
       });
     } catch (err) {
@@ -95,7 +104,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     }
   },
 
-  setActiveOrganization: (id) => {
+  setActiveOrganization: (id, slug) => {
     // Safety check: ensure id is a string
     let safeId = id;
     if (typeof id === 'object' && id !== null) {
@@ -103,10 +112,20 @@ export const useUserStore = create<UserState>((set, get) => ({
       safeId = id.id || id._id || String(id);
     }
 
-    set({ activeOrgId: String(safeId) });
+    // Get slug from param or find it in user's orgs
+    let safeSlug = slug;
+    if (!safeSlug) {
+      const org = get().user?.orgIds?.find(o => o.id === String(safeId));
+      safeSlug = org?.slug ?? null;
+    }
+
+    set({ activeOrgId: String(safeId), activeOrgSlug: safeSlug });
 
     try {
       localStorage.setItem("orgId", String(safeId));
+      if (safeSlug) {
+        localStorage.setItem("orgSlug", String(safeSlug));
+      }
     } catch { }
   },
 
@@ -123,6 +142,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     set({
       user: null,
       activeOrgId: null,
+      activeOrgSlug: null,
       loading: false,
     });
 
@@ -138,15 +158,21 @@ export const useUserStore = create<UserState>((set, get) => ({
     const updatedOrgs = user.orgIds.filter((o) => o.id !== orgId);
 
     let newActiveId = activeOrgId;
+    let newActiveSlug = get().activeOrgSlug;
     if (activeOrgId === orgId) {
       newActiveId = updatedOrgs.length > 0 ? updatedOrgs[0].id : null;
+      newActiveSlug = updatedOrgs.length > 0 ? updatedOrgs[0].slug : null;
       if (newActiveId) {
         try {
           localStorage.setItem("orgId", newActiveId);
+          if (newActiveSlug) {
+            localStorage.setItem("orgSlug", newActiveSlug);
+          }
         } catch { }
       } else {
         try {
           localStorage.removeItem("orgId");
+          localStorage.removeItem("orgSlug");
         } catch { }
       }
     }
@@ -157,6 +183,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         orgIds: updatedOrgs,
       },
       activeOrgId: newActiveId,
+      activeOrgSlug: newActiveSlug,
     });
   },
 }));

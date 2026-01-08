@@ -22,7 +22,7 @@ router.post("/orgs", authMiddleware, validate(createOrgSchema), createOrg);
 
 // Org delete
 router.delete(
-  "/orgs/:orgId",
+  "/orgs/:orgSlug",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   deleteOrg
@@ -30,7 +30,7 @@ router.delete(
 
 // Repo list in org
 router.get(
-  "/orgs/:orgId/repos",
+  "/orgs/:orgSlug/repos",
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
   getRepos
@@ -38,7 +38,7 @@ router.get(
 
 // Repo detail
 router.get(
-  "/orgs/:orgId/repos/:repoId",
+  "/orgs/:orgSlug/repos/:repoId",
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
   getRepoDetail
@@ -46,7 +46,7 @@ router.get(
 
 // Connect repo
 router.post(
-  "/orgs/:orgId/repos/connect",
+  "/orgs/:orgSlug/repos/connect",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   connectRepo
@@ -54,7 +54,7 @@ router.post(
 
 // Delete repo
 router.delete(
-  "/orgs/:orgId/repos/:repoId",
+  "/orgs/:orgSlug/repos/:repoId",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   deleteRepo
@@ -62,7 +62,7 @@ router.delete(
 
 // Org alerts
 router.get(
-  "/orgs/:orgId/alerts",
+  "/orgs/:orgSlug/alerts",
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER"]),
   getAlertSummary
@@ -70,7 +70,7 @@ router.get(
 
 // Acknowledge alert
 router.post(
-  "/orgs/:orgId/alerts/:alertId/acknowledge",
+  "/orgs/:orgSlug/alerts/:alertId/acknowledge",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   acknowledgeAlert
@@ -78,20 +78,20 @@ router.post(
 
 // Invite user to org
 router.post(
-  "/orgs/:orgId/invite",
+  "/orgs/:orgSlug/invite",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   inviteUser
 );
 
 // Invite Flow
-router.post("/orgs/:orgId/invite/accept", authMiddleware, acceptInvite);
-router.post("/orgs/:orgId/invite/reject", authMiddleware, rejectInvite);
-router.delete("/orgs/:orgId/leave", authMiddleware, leaveOrg);
+router.post("/orgs/:orgSlug/invite/accept", authMiddleware, acceptInvite);
+router.post("/orgs/:orgSlug/invite/reject", authMiddleware, rejectInvite);
+router.delete("/orgs/:orgSlug/leave", authMiddleware, leaveOrg);
 
 // Update member role
 router.patch(
-  "/orgs/:orgId/members/:userId",
+  "/orgs/:orgSlug/members/:userId",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   updateMemberRole
@@ -99,7 +99,7 @@ router.patch(
 
 // Remove member
 router.delete(
-  "/orgs/:orgId/members/:userId",
+  "/orgs/:orgSlug/members/:userId",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   removeMember
@@ -109,7 +109,7 @@ router.get("/orgs", authMiddleware, getUserOrgs);
 
 // Get organization members
 router.get(
-  "/orgs/:orgId/members",
+  "/orgs/:orgSlug/members",
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
   getOrgMembers

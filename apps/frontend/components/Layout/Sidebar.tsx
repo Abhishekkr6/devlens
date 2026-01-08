@@ -7,18 +7,18 @@ import { useUserStore } from "../../store/userStore";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { activeOrgId } = useUserStore();
+  const { activeOrgSlug } = useUserStore();
 
   // Generate organization-aware links
-  const links = activeOrgId ? [
-    { name: "Overview", href: `/organization/${activeOrgId}`, icon: LayoutDashboard },
-    { name: "Activity", href: `/organization/${activeOrgId}/activity`, icon: Activity },
-    { name: "PRs", href: `/organization/${activeOrgId}/prs`, icon: GitPullRequest },
-    { name: "Alerts", href: `/organization/${activeOrgId}/alerts`, icon: Bell },
-    { name: "Developers", href: `/organization/${activeOrgId}/developers`, icon: Users },
-    { name: "Repos", href: `/organization/${activeOrgId}/repos`, icon: FolderGit2 },
-    { name: "Team", href: `/organization/${activeOrgId}/team`, icon: UserPlus },
-    { name: "Settings", href: `/organization/${activeOrgId}/settings`, icon: Settings },
+  const links = activeOrgSlug ? [
+    { name: "Overview", href: `/organization/${activeOrgSlug}`, icon: LayoutDashboard },
+    { name: "Activity", href: `/organization/${activeOrgSlug}/activity`, icon: Activity },
+    { name: "PRs", href: `/organization/${activeOrgSlug}/prs`, icon: GitPullRequest },
+    { name: "Alerts", href: `/organization/${activeOrgSlug}/alerts`, icon: Bell },
+    { name: "Developers", href: `/organization/${activeOrgSlug}/developers`, icon: Users },
+    { name: "Repos", href: `/organization/${activeOrgSlug}/repos`, icon: FolderGit2 },
+    { name: "Team", href: `/organization/${activeOrgSlug}/team`, icon: UserPlus },
+    { name: "Settings", href: `/organization/${activeOrgSlug}/settings`, icon: Settings },
   ] : [];
 
   return (

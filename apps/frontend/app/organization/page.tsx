@@ -278,7 +278,7 @@ export default function OrganizationPage() {
                         <button
                           onClick={() => {
                             setActiveOrganization(o._id);
-                            router.push(`/organization/${o._id}/repos`);
+                            router.push(`/organization/${o.slug}/repos`);
                           }}
                           className="rounded-lg bg-background border border-border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
                         >
