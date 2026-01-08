@@ -396,7 +396,7 @@ export default function Topbar() {
                     <div className="p-4 border-b border-border">
                       <div className="flex items-center justify-between">
                         <h3 className="text-sm font-semibold text-text-primary">Team Members</h3>
-                        {activeOrgId && (
+                        {activeOrgSlug && (
                           <Link
                             href={`/organization/${activeOrgSlug}/team`}
                             onClick={() => setTeamDropdownOpen(false)}
@@ -459,7 +459,7 @@ export default function Topbar() {
                       )}
                     </div>
 
-                    {activeOrgId && (
+                    {activeOrgSlug && (
                       <div className="p-3 border-t border-border">
                         <Link
                           href={`/organization/${activeOrgSlug}/team`}
@@ -617,7 +617,7 @@ export default function Topbar() {
                 <nav className="flex flex-col gap-2 text-sm font-medium text-text-secondary">
                   {renderNavLinks("w-full")}
 
-                  {activeOrgId && (
+                  {activeOrgSlug && (
                     <Link
                       href={`/organization/${activeOrgSlug}/team`}
                       onClick={closeMobileNav}

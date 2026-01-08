@@ -7,7 +7,7 @@ import { useUserStore } from "../../store/userStore";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { activeOrgSlug } = useUserStore();
+  const { activeOrgId, activeOrgSlug } = useUserStore();
 
   // Generate organization-aware links
   const links = activeOrgSlug ? [

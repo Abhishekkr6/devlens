@@ -277,7 +277,7 @@ export default function OrganizationPage() {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => {
-                            setActiveOrganization(o._id);
+                            setActiveOrganization(o._id, o.slug);
                             router.push(`/organization/${o.slug}/repos`);
                           }}
                           className="rounded-lg bg-background border border-border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"

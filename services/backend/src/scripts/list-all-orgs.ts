@@ -19,7 +19,7 @@ const listAllOrgs = async () => {
         console.log(`  ID: ${org._id}`);
         console.log(`  Repos: ${repoCount}`);
         console.log(`  Commits: ${commitCount}`);
-        console.log(`  URL: https://teampulse18.vercel.app/organization/${org.slug}`);
+        console.log(`  URL: https://teampulse18.vercel.app/organization/${org._id}`);
 
         if (repoCount > 0) {
             const repos = await RepoModel.find({ orgId: org._id }, 'repoFullName').lean();

@@ -7,21 +7,24 @@ export const requireOrgRole =
   (allowedRoles: ("ADMIN" | "MEMBER" | "VIEWER")[]) =>
     async (req: any, res: any, next: any) => {
       try {
-        const { orgId, orgSlug } = req.params;
-        const orgIdentifier = orgSlug || orgId; // Prefer slug if available
+        const { orgId } = req.params;
         const userId = req.user?.id || req.user?._id;
 
         if (!userId) {
           return res.status(401).json({ error: "User not found in request" });
         }
 
-        // Check if identifier looks like MongoDB ObjectId (24 hex characters)
-        const isObjectId = /^[0-9a-fA-F]{24}$/.test(orgIdentifier);
+        // Support both ID and slug
+        let org;
+        if (Types.ObjectId.isValid(orgId)) {
+          // Try finding by ID first
+          org = await OrgModel.findById(orgId);
+        }
 
-        // Fetch org by ID or slug
-        const org = isObjectId
-          ? await OrgModel.findById(orgIdentifier)
-          : await OrgModel.findOne({ slug: orgIdentifier });
+        // If not found by ID or not a valid ObjectId, try slug
+        if (!org) {
+          org = await OrgModel.findOne({ slug: orgId });
+        }
 
         if (!org) {
           return res.status(404).json({ error: "Org not found" });

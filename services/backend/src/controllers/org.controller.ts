@@ -490,7 +490,7 @@ export const acceptInvite = async (req: any, res: Response) => {
         type: "success",
         title: "Invite Accepted",
         message: `${user.name || "A user"} accepted your invite to ${org.name}.`,
-        link: `/organization/${org.slug}/team`,
+        link: `/organization/${org._id}/team`,
       });
     }
 
@@ -571,7 +571,7 @@ export const leaveOrg = async (req: any, res: Response) => {
         type: "info",
         title: "Member Left",
         message: message,
-        link: `/organization/${org.slug}/team`,
+        link: `/organization/${org._id}/team`,
       });
     }
 
@@ -582,7 +582,7 @@ export const leaveOrg = async (req: any, res: Response) => {
         type: "info",
         title: "Member Left",
         message: message,
-        link: `/organization/${org.slug}/team`,
+        link: `/organization/${org._id}/team`,
       });
     }
 

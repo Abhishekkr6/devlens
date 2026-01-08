@@ -28,7 +28,7 @@ interface UserState {
   activeOrgSlug: string | null;
   fetchUser: (opts?: { silent?: boolean }) => Promise<void>;
   logout: () => Promise<void>;
-  setActiveOrganization: (id: string, slug?: string | null) => void;
+  setActiveOrganization: (id: string, slug?: string) => void;
   removeOrgFromUser: (orgId: string) => void;
 }
 
@@ -60,22 +60,18 @@ export const useUserStore = create<UserState>((set, get) => ({
 
       // backend returns org objects (id + name)
       const rawOrgs = Array.isArray(payload.orgs) ? payload.orgs : [];
-      const orgs = rawOrgs.map((o: any) => ({
+      const orgs: Org[] = rawOrgs.map((o: any) => ({
         ...o,
         id: o.id || o._id,
-        slug: o.slug || '',
         role: o.role || "VIEWER",
       }));
 
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);
-      const activeSlug = orgs.find((o: Org) => o.id === activeId)?.slug ?? null;
+      const activeSlug = activeId ? orgs.find(o => o.id === activeId)?.slug ?? null : null;
 
       if (activeId) {
         try {
           localStorage.setItem("orgId", String(activeId));
-          if (activeSlug) {
-            localStorage.setItem("orgSlug", String(activeSlug));
-          }
         } catch { }
       }
 
@@ -112,20 +108,14 @@ export const useUserStore = create<UserState>((set, get) => ({
       safeId = id.id || id._id || String(id);
     }
 
-    // Get slug from param or find it in user's orgs
-    let safeSlug = slug;
-    if (!safeSlug) {
-      const org = get().user?.orgIds?.find(o => o.id === String(safeId));
-      safeSlug = org?.slug ?? null;
-    }
+    // If slug not provided, try to find it from user's orgs
+    const { user } = get();
+    const orgSlug = slug || user?.orgIds?.find(o => o.id === String(safeId))?.slug || null;
 
-    set({ activeOrgId: String(safeId), activeOrgSlug: safeSlug });
+    set({ activeOrgId: String(safeId), activeOrgSlug: orgSlug });
 
     try {
       localStorage.setItem("orgId", String(safeId));
-      if (safeSlug) {
-        localStorage.setItem("orgSlug", String(safeSlug));
-      }
     } catch { }
   },
 
@@ -165,14 +155,10 @@ export const useUserStore = create<UserState>((set, get) => ({
       if (newActiveId) {
         try {
           localStorage.setItem("orgId", newActiveId);
-          if (newActiveSlug) {
-            localStorage.setItem("orgSlug", newActiveSlug);
-          }
         } catch { }
       } else {
         try {
           localStorage.removeItem("orgId");
-          localStorage.removeItem("orgSlug");
         } catch { }
       }
     }
