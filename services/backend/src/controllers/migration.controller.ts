@@ -25,9 +25,17 @@ export const runMultiOrgMigration = async (req: Request, res: Response) => {
 
         logger.info("Starting multi-org migration via API...");
 
-        const db = (await import("mongoose")).connection.db;
+        // Import mongoose and get database connection
+        const mongoose = await import("mongoose");
+
+        // Wait for connection to be ready
+        if (mongoose.connection.readyState !== 1) {
+            throw new Error("Database not connected. ReadyState: " + mongoose.connection.readyState);
+        }
+
+        const db = mongoose.connection.db;
         if (!db) {
-            throw new Error("Database not connected");
+            throw new Error("Database connection.db is undefined");
         }
 
         // ============================================
