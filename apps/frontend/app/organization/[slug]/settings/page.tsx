@@ -10,8 +10,8 @@ import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
 import { AlertTriangle, Trash2 } from "lucide-react";
 
-export default function SettingsPage({ params }: { params: Promise<{ id: string }> }) {
-    const { id: orgId } = use(params);
+export default function SettingsPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug: orgId } = use(params);
     const router = useRouter();
     const { user, fetchUser, setActiveOrganization } = useUserStore();
 
