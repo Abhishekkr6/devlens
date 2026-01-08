@@ -1,0 +1,24 @@
+﻿
+=== FIELDS IN DATABASE ===
+[
+  '_id',
+  'provider',
+  'providerRepoId',
+  'orgId',
+  'name',
+  'url',
+  'defaultBranch',
+  'webhookSecretHash'
+]
+
+=== SAMPLE REPO (first one) ===
+_id: 69206d055a07f2319319f05c
+provider: "github"
+providerRepoId: "temp"
+orgId: null
+name: "Abhishekkr6/teampulse"
+url: "https://github.com/Abhishekkr6/teampulse"
+defaultBranch: "main"
+webhookSecretHash: null
+
+=== TOTAL REPOS: 8 ===
