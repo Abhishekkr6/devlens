@@ -121,18 +121,26 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
     }
 
     /* -------------------------------------------
-       ✅ CORRECT REPO LOOKUP (NO REGEX)
+       ✅ MULTI-ORG FIX: Find ALL repos that match this webhook
+       (same repo can be connected to multiple organizations)
     -------------------------------------------- */
-    const repo = await RepoModel.findOne({
+    const repos = await RepoModel.find({
       repoFullName: fullRepoName,
     });
 
-    if (!repo) {
+    if (!repos || repos.length === 0) {
       logger.warn({ fullRepoName }, "Webhook received for unknown repo");
       return res.status(200).send("OK");
     }
 
-    logger.info({ repoId: repo._id, repoFullName: repo.repoFullName }, "Repository found in database");
+    logger.info(
+      {
+        repoFullName: fullRepoName,
+        orgCount: repos.length,
+        orgIds: repos.map(r => r.orgId)
+      },
+      "Repository found - processing for multiple organizations"
+    );
 
     const webhookSecret = process.env.WEBHOOK_SECRET;
     if (!webhookSecret) {
@@ -155,116 +163,178 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
 
 
     /* -------------------------------------------
-       PUSH EVENT
+       PUSH EVENT - MULTI-ORG FAN-OUT
     -------------------------------------------- */
     if (event === "push") {
       const commits = payload.commits || [];
 
-      const commitDocs = await Promise.all(
-        commits.map((c: any) =>
-          CommitModel.findOneAndUpdate(
-            {
-              sha: c.id,
-              repoId: repo._id, // 🔥 IMPORTANT (multi-repo safe)
-            },
-            {
-              sha: c.id,
-              repoId: repo._id,
-              orgId: repo.orgId,
-              authorGithubId: c.author?.username ?? null,
-              authorName: c.author?.name ?? null,
-              message: c.message,
-              timestamp: c.timestamp,
-              filesChangedCount:
-                c.modified.length + c.added.length + c.removed.length,
-              additions: c.added.length,
-              deletions: c.removed.length,
-              files: [...c.modified, ...c.added, ...c.removed],
-            },
-            { upsert: true, new: true }
-          )
-        )
-      );
+      // 🔥 CRITICAL: Process webhook for EACH organization that connected this repo
+      for (const repo of repos) {
+        // Per-org idempotency check
+        const orgDeliveryKey = `${deliveryId}-${repo.orgId}`;
+        if (deliveryId && trackWebhookDelivery(orgDeliveryKey)) {
+          logger.info(
+            { deliveryId, orgId: repo.orgId },
+            "Duplicate webhook delivery for this org, skipping"
+          );
+          continue; // Skip this org, but continue processing for other orgs
+        }
 
-      // Queue processing (optional if Redis available)
-      if (commitQueue) {
-        await commitQueue.add(
-          "commit-batch",
+        logger.info(
           {
+            orgId: repo.orgId,
             repoId: repo._id,
-            commitIds: commitDocs.map((d) => d._id),
+            commitCount: commits.length
           },
-          {
-            attempts: 1, // Only 1 attempt, no retries
-            removeOnComplete: true, // Auto-delete after success
-            removeOnFail: true, // Auto-delete after failure
-          }
+          "Processing push event for organization"
         );
-        logger.info(
-          { repo: repo.repoFullName, commits: commitDocs.length },
-          "Push processed and queued for analysis"
+
+        const commitDocs = await Promise.all(
+          commits.map((c: any) =>
+            CommitModel.findOneAndUpdate(
+              {
+                orgId: repo.orgId, // 🔥 MULTI-TENANT: Scoped by orgId
+                sha: c.id,         // 🔥 Combined with sha for uniqueness
+              },
+              {
+                sha: c.id,
+                repoId: repo._id,
+                orgId: repo.orgId, // 🔥 CRITICAL: Each org gets its own commit record
+                authorGithubId: c.author?.username ?? null,
+                authorName: c.author?.name ?? null,
+                message: c.message,
+                timestamp: c.timestamp,
+                filesChangedCount:
+                  c.modified.length + c.added.length + c.removed.length,
+                additions: c.added.length,
+                deletions: c.removed.length,
+                files: [...c.modified, ...c.added, ...c.removed],
+              },
+              { upsert: true, new: true }
+            )
+          )
         );
-      } else {
-        logger.info(
-          { repo: repo.repoFullName, commits: commitDocs.length },
-          "Push processed (queue unavailable - background processing skipped)"
-        );
+
+        // Queue processing per org (optional if Redis available)
+        if (commitQueue) {
+          await commitQueue.add(
+            "commit-batch",
+            {
+              repoId: repo._id,
+              orgId: repo.orgId, // 🔥 Include orgId in job data
+              commitIds: commitDocs.map((d) => d._id),
+            },
+            {
+              attempts: 1,
+              removeOnComplete: true,
+              removeOnFail: true,
+            }
+          );
+          logger.info(
+            {
+              orgId: repo.orgId,
+              repo: repo.repoFullName,
+              commits: commitDocs.length
+            },
+            "Push processed and queued for analysis (org-scoped)"
+          );
+        } else {
+          logger.info(
+            {
+              orgId: repo.orgId,
+              repo: repo.repoFullName,
+              commits: commitDocs.length
+            },
+            "Push processed for org (queue unavailable - background processing skipped)"
+          );
+        }
       }
     }
 
     /* -------------------------------------------
-       PULL REQUEST EVENT
+       PULL REQUEST EVENT - MULTI-ORG FAN-OUT
     -------------------------------------------- */
     if (event === "pull_request") {
       const pr = payload.pull_request;
 
-      const savedPR = await PRModel.findOneAndUpdate(
-        {
-          providerPrId: pr.id,
-          repoId: repo._id,
-        },
-        {
-          providerPrId: pr.id,
-          repoId: repo._id,
-          orgId: repo.orgId,
-          number: pr.number,
-          title: pr.title,
-          authorGithubId: pr.user?.login ?? null,
-          state: pr.state,
-          createdAt: pr.created_at,
-          mergedAt: pr.merged_at,
-          closedAt: pr.closed_at,
-          filesChanged: pr.changed_files,
-          additions: pr.additions,
-          deletions: pr.deletions,
-        },
-        { upsert: true, new: true }
-      );
+      // 🔥 CRITICAL: Process webhook for EACH organization that connected this repo
+      for (const repo of repos) {
+        // Per-org idempotency check
+        const orgDeliveryKey = `${deliveryId}-${repo.orgId}`;
+        if (deliveryId && trackWebhookDelivery(orgDeliveryKey)) {
+          logger.info(
+            { deliveryId, orgId: repo.orgId },
+            "Duplicate webhook delivery for this org, skipping"
+          );
+          continue; // Skip this org, but continue processing for other orgs
+        }
 
-      // Queue processing (optional if Redis available)
-      if (prQueue) {
-        await prQueue.add(
-          "pr-analysis",
+        logger.info(
           {
-            prId: savedPR._id,
+            orgId: repo.orgId,
             repoId: repo._id,
-            trigger: "webhook",
+            prNumber: pr.number
+          },
+          "Processing pull_request event for organization"
+        );
+
+        const savedPR = await PRModel.findOneAndUpdate(
+          {
+            orgId: repo.orgId,      // 🔥 MULTI-TENANT: Scoped by orgId
+            providerPrId: pr.id,    // 🔥 Combined with providerPrId for uniqueness
           },
           {
-            attempts: 1, // Only 1 attempt, no retries
-            removeOnComplete: true, // Auto-delete after success
-            removeOnFail: true, // Auto-delete after failure
-          }
+            providerPrId: pr.id,
+            repoId: repo._id,
+            orgId: repo.orgId,      // 🔥 CRITICAL: Each org gets its own PR record
+            number: pr.number,
+            title: pr.title,
+            authorGithubId: pr.user?.login ?? null,
+            state: pr.state,
+            createdAt: pr.created_at,
+            mergedAt: pr.merged_at,
+            closedAt: pr.closed_at,
+            filesChanged: pr.changed_files,
+            additions: pr.additions,
+            deletions: pr.deletions,
+          },
+          { upsert: true, new: true }
         );
-        logger.info(
-          { repo: repo.repoFullName, pr: pr.number },
-          "PR processed and queued for analysis"
-        );
-      } else {
-        logger.info(
-          { repo: repo.repoFullName, pr: pr.number },
-          "PR processed (queue unavailable - background processing skipped)"
-        );
+
+        // Queue processing per org (optional if Redis available)
+        if (prQueue) {
+          await prQueue.add(
+            "pr-analysis",
+            {
+              prId: savedPR._id,
+              repoId: repo._id,
+              orgId: repo.orgId,  // 🔥 Include orgId in job data
+              trigger: "webhook",
+            },
+            {
+              attempts: 1,
+              removeOnComplete: true,
+              removeOnFail: true,
+            }
+          );
+          logger.info(
+            {
+              orgId: repo.orgId,
+              repo: repo.repoFullName,
+              pr: pr.number
+            },
+            "PR processed and queued for analysis (org-scoped)"
+          );
+        } else {
+          logger.info(
+            {
+              orgId: repo.orgId,
+              repo: repo.repoFullName,
+              pr: pr.number
+            },
+            "PR processed for org (queue unavailable - background processing skipped)"
+          );
+        }
       }
     }
 

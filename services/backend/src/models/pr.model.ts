@@ -24,9 +24,9 @@ export interface IPR extends Document {
 
 const PRSchema = new Schema<IPR>(
   {
-    providerPrId: { type: String, required: true, unique: true },
-    repoId: { type: Schema.Types.ObjectId, ref: "Repo" },
-    orgId: { type: Schema.Types.ObjectId, ref: "Org" },
+    providerPrId: { type: String, required: true }, // 🔥 REMOVED global uniqueness for multi-org support
+    repoId: { type: Schema.Types.ObjectId, ref: "Repo", required: true },
+    orgId: { type: Schema.Types.ObjectId, ref: "Org", required: true }, // 🔥 Now REQUIRED for multi-tenant isolation
     number: Number,
     title: String,
     authorGithubId: String,
@@ -47,9 +47,13 @@ const PRSchema = new Schema<IPR>(
   { timestamps: true }
 );
 
+// 🔥 MULTI-TENANT INDEXES
+// Allow same PR (providerPrId) across different orgs, but unique within each org
+PRSchema.index({ orgId: 1, providerPrId: 1 }, { unique: true });
+
+// Query optimization indexes
 PRSchema.index({ orgId: 1, state: 1, createdAt: -1 });
 PRSchema.index({ repoId: 1, state: 1, createdAt: -1 });
 PRSchema.index({ riskScore: -1 });
-PRSchema.index({ providerPrId: 1 }, { unique: true });
 
 export const PRModel = model<IPR>("PullRequest", PRSchema);

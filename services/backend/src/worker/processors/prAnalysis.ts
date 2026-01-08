@@ -100,8 +100,9 @@ export const prAnalysisHandler = async (job: Job) => {
         if (pr.riskScore >= HIGH_RISK_THRESHOLD) {
             logger.warn({ prNumber: pr.number, riskScore: pr.riskScore }, "[alert] HIGH RISK DETECTED");
 
+            // 🔥 MULTI-TENANT FIX: Use correct orgId from PR record
             await AlertModel.create({
-                orgId: null, // TODO: map repo.orgId later
+                orgId: pr.orgId, // ✅ FIXED: Use PR's orgId for proper multi-tenant isolation
                 repoId: pr.repoId,
                 type: "HIGH_RISK_PR",
                 severity: "high",
