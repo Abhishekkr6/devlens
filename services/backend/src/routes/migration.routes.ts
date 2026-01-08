@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { runMultiOrgMigration } from "../controllers/migration.controller";
+import { debugMigrationSecret } from "../controllers/debug.controller";
 
 const router = Router();
 
@@ -13,5 +14,11 @@ const router = Router();
  */
 router.get("/multi-org", runMultiOrgMigration);
 router.post("/multi-org", runMultiOrgMigration);
+
+/**
+ * GET /api/migration/debug
+ * Debug endpoint to check secret status
+ */
+router.get("/debug", debugMigrationSecret);
 
 export default router;
