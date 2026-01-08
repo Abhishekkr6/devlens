@@ -11,12 +11,16 @@ import logger from "../utils/logger";
 export const runMultiOrgMigration = async (req: Request, res: Response) => {
     try {
         // Security: Check migration secret
-        const migrationSecret = process.env.MIGRATION_SECRET || "your-secret-key-here";
+        // Use environment variable or fallback to hardcoded secret (for initial deployment)
+        const migrationSecret = process.env.MIGRATION_SECRET || "35051fb10f54799debc5f44e2d8e0716f158b75cb7ce20a69e8cd4f4eeb57c44";
         const providedSecret = req.headers["x-migration-secret"] || req.query.secret;
 
         if (providedSecret !== migrationSecret) {
-            logger.warn("Unauthorized migration attempt");
-            return res.status(403).json({ error: "Unauthorized" });
+            logger.warn({ providedSecret: providedSecret ? "***" : "none" }, "Unauthorized migration attempt");
+            return res.status(403).json({
+                error: "Unauthorized",
+                hint: "Provide correct secret via ?secret=xxx or X-Migration-Secret header"
+            });
         }
 
         logger.info("Starting multi-org migration via API...");
