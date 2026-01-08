@@ -70,8 +70,6 @@ export const useUserStore = create<UserState>((set, get) => ({
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);
       const activeSlug = activeId ? orgs.find((o: Org) => o.id === activeId)?.slug ?? null : null;
 
-      console.log("[userStore] Setting active org:", { activeId, activeSlug, orgs });
-
       if (activeId) {
         try {
           localStorage.setItem("orgId", String(activeId));

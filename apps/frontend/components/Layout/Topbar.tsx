@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useParams } from "next/navigation";
 import {
   Activity,
   Bell,
@@ -69,6 +69,10 @@ export default function Topbar() {
   };
   const pathname = usePathname();
   const router = useRouter();
+  const params = useParams();
+
+  // Use URL slug as primary source of truth, fallback to store slug
+  const currentOrgSlug = (params?.slug as string) || activeOrgSlug;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -220,7 +224,7 @@ export default function Topbar() {
 
   const isActive = (href: string) => {
     // strict match for overview (organization root)
-    if (activeOrgSlug && href === `/organization/${activeOrgSlug}`) {
+    if (currentOrgSlug && href === `/organization/${currentOrgSlug}`) {
       return pathname === href;
     }
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -228,7 +232,7 @@ export default function Topbar() {
 
   const renderNavLinks = (className?: string) =>
     navLinks.map(({ name, href, icon: Icon }) => {
-      const resolvedHref = activeOrgSlug ? href(activeOrgSlug) : "/organization";
+      const resolvedHref = currentOrgSlug ? href(currentOrgSlug) : "/organization";
       const active = isActive(resolvedHref);
       return (
         <Link
@@ -247,7 +251,7 @@ export default function Topbar() {
     });
 
   const dockItems = navLinks.map(({ name, href, icon: Icon }) => {
-    const resolvedHref = activeOrgSlug ? href(activeOrgSlug) : "/organization";
+    const resolvedHref = currentOrgSlug ? href(currentOrgSlug) : "/organization";
     return {
       title: name,
       href: resolvedHref,
