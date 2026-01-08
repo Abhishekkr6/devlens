@@ -58,16 +58,19 @@ export const useUserStore = create<UserState>((set, get) => ({
       const payload = res.data?.data ?? {};
       const rawUser = payload.user ?? null;
 
-      // backend returns org objects (id + name)
+      // backend returns org objects (id + name + slug)
       const rawOrgs = Array.isArray(payload.orgs) ? payload.orgs : [];
       const orgs: Org[] = rawOrgs.map((o: any) => ({
         ...o,
         id: o.id || o._id,
+        slug: o.slug,
         role: o.role || "VIEWER",
       }));
 
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);
-      const activeSlug = activeId ? orgs.find(o => o.id === activeId)?.slug ?? null : null;
+      const activeSlug = activeId ? orgs.find((o: Org) => o.id === activeId)?.slug ?? null : null;
+
+      console.log("[userStore] Setting active org:", { activeId, activeSlug, orgs });
 
       if (activeId) {
         try {
