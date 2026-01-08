@@ -80,6 +80,7 @@ import dashboardRoutes from "./routes/dashboard.routes";
 import prRoutes from "./routes/pr.routes";
 import developerRoutes from "./routes/developer.routes";
 import notificationRoutes from "./routes/notification.routes";
+import migrationRoutes from "./routes/migration.routes";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", healthRoutes);
@@ -89,6 +90,7 @@ app.use("/api/v1", dashboardRoutes);
 app.use("/api/v1/pr", prRoutes);
 app.use("/api/v1/developers", developerRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
+app.use("/api/v1/migration", migrationRoutes); // 🔧 Migration endpoint
 
 app.use(errorHandler);
 
