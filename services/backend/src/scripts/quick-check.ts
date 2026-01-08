@@ -1,35 +1,46 @@
-import "dotenv/config";
 import mongoose from "mongoose";
-import { RepoModel } from "../models/repo.model";
-import { CommitModel } from "../models/commit.model";
+import "dotenv/config";
 
-const checkStatus = async () => {
-    await mongoose.connect(process.env.MONGO_URL!);
+const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/teampulse";
 
-    console.log("\n=== REPOSITORIES ===\n");
-    const repos = await RepoModel.find({}).lean();
-    repos.forEach((r: any) => {
-        console.log(`${r.repoFullName}`);
-        console.log(`  webhookId: ${r.webhookId || "MISSING"}`);
-        console.log(`  status: ${r.webhookStatus || "NOT SET"}`);
+async function quickCheck() {
+    await mongoose.connect(MONGO_URL);
+    const db = mongoose.connection.db!;
+
+    // Check commits indexes
+    const commitsCollection = db.collection("commits");
+    const indexes = await commitsCollection.indexes();
+
+    console.log("\n=== COMMITS INDEXES ===");
+    indexes.forEach(idx => {
+        console.log(`${idx.name}: ${JSON.stringify(idx.key)} ${idx.unique ? '(UNIQUE)' : ''}`);
     });
 
-    console.log("\n=== COMMITS COUNT ===\n");
-    const commits = await CommitModel.aggregate([
-        { $lookup: { from: "repos", localField: "repoId", foreignField: "_id", as: "repo" } },
-        { $unwind: "$repo" },
-        { $group: { _id: "$repoId", count: { $sum: 1 }, name: { $first: "$repo.repoFullName" } } }
+    const hasOld = indexes.some(i => i.name === "sha_1" && i.unique);
+    const hasNew = indexes.some(i => i.name === "orgId_1_sha_1" && i.unique);
+
+    console.log(`\nOld sha_1 index (should be GONE): ${hasOld ? '❌ EXISTS' : '✅ REMOVED'}`);
+    console.log(`New orgId_1_sha_1 index (should EXIST): ${hasNew ? '✅ EXISTS' : '❌ MISSING'}`);
+
+    // Count docs
+    const totalCommits = await commitsCollection.countDocuments({});
+    console.log(`\nTotal commits in DB: ${totalCommits}`);
+
+    // Find repos in multiple orgs
+    const { RepoModel } = await import("../models/repo.model");
+    const sharedRepos = await RepoModel.aggregate([
+        { $group: { _id: "$repoFullName", count: { $sum: 1 }, orgs: { $push: "$orgId" } } },
+        { $match: { count: { $gt: 1 } } }
     ]);
 
-    commits.forEach((c: any) => {
-        console.log(`${c.name}: ${c.count} commits`);
-    });
-
-    if (commits.length === 0) {
-        console.log("NO COMMITS FOUND!");
+    console.log(`\nRepos in multiple orgs: ${sharedRepos.length}`);
+    if (sharedRepos.length > 0) {
+        sharedRepos.forEach(r => {
+            console.log(`  ${r._id}: ${r.count} orgs (${r.orgs.join(", ")})`);
+        });
     }
 
     await mongoose.disconnect();
-};
+}
 
-checkStatus().catch(console.error);
+quickCheck().catch(console.error);

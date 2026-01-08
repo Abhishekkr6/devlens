@@ -16,6 +16,8 @@ export interface ICommit extends Document {
   files?: string[];
   modulePaths?: string[];
   processed?: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 const CommitSchema = new Schema<ICommit>(
