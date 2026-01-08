@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import logger from "../utils/logger";
+import mongoose from "mongoose";
 
 /**
  * 🔒 PROTECTED MIGRATION ENDPOINT
@@ -25,10 +26,7 @@ export const runMultiOrgMigration = async (req: Request, res: Response) => {
 
         logger.info("Starting multi-org migration via API...");
 
-        // Import mongoose and get database connection
-        const mongoose = await import("mongoose");
-
-        // Wait for connection to be ready
+        // Check database connection
         if (mongoose.connection.readyState !== 1) {
             throw new Error("Database not connected. ReadyState: " + mongoose.connection.readyState);
         }
