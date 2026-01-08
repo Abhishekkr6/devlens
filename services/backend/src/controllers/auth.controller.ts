@@ -30,7 +30,7 @@ export const githubLogin = async (req: Request, res: Response) => {
     `https://github.com/login/oauth/authorize` +
     `?client_id=${clientId}` +
     `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-    `&scope=user:email`;
+    `&scope=user:email,admin:repo_hook`;
 
   return res.redirect(redirect);
 };
