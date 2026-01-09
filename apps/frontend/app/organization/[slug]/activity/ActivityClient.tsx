@@ -45,13 +45,13 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgId) return;
+        if (!orgSlug) return;
         const loadActivity = async () => {
             try {
                 setLoading(true);
                 const [timelineRes, prsRes] = await Promise.all([
-                    api.get(`/orgs/${orgId}/activity/commits`),
-                    api.get(`/orgs/${orgId}/prs`),
+                    api.get(`/orgs/slug/${orgSlug}/activity/commits`),
+                    api.get(`/orgs/slug/${orgSlug}/prs`),
                 ]);
 
                 setTimeline(timelineRes.data?.data || []);
@@ -66,7 +66,7 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
         };
 
         loadActivity();
-    }, [orgId]);
+    }, [orgSlug]);
 
     const formatTimeAgo = (input?: string) => {
         if (!input) return "Just now";

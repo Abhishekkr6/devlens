@@ -64,7 +64,7 @@ export default function DashboardClient({ orgSlug, orgId: propOrgId }: { orgSlug
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     const loadData = useCallback(async () => {
-        if (!orgId) return;
+        if (!orgSlug) return;
         try {
             setLoading(true);
 
@@ -138,7 +138,7 @@ export default function DashboardClient({ orgSlug, orgId: propOrgId }: { orgSlug
     }, [loadData]);
 
     useEffect(() => {
-        if (!orgId || !lastEvent) return;
+        if (!orgSlug || !lastEvent) return;
         if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT" && lastEvent.type !== "COMMIT_PROCESSED" && lastEvent.type !== "org:joined") return;
 
         const now = Date.now();
