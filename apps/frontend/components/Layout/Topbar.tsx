@@ -33,7 +33,7 @@ type User = {
   name: string;
   avatarUrl: string;
   email?: string;
-  orgIds?: { id: string; name: string; slug: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
+  orgIds?: { _id: string; id: string; name: string; slug: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
 };
 
 const navLinks = [
@@ -194,7 +194,7 @@ export default function Topbar() {
     }
   };
 
-  const currentOrg = user?.orgIds?.find((o) => o.id === activeOrgId);
+  const currentOrg = user?.orgIds?.find((o) => o._id === activeOrgId);
 
   const getRoleIcon = (role: string) => {
     switch (role) {

@@ -113,7 +113,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
     // If slug not provided, try to find it from user's orgs
     const { user } = get();
-    const orgSlug = slug || user?.orgIds?.find(o => o.id === String(safeId))?.slug || null;
+    const orgSlug = slug || user?.orgIds?.find(o => o._id === String(safeId))?.slug || null;
 
     set({ activeOrgId: String(safeId), activeOrgSlug: orgSlug });
 

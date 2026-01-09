@@ -92,9 +92,12 @@ const getInitials = (name: string) => {
     .slice(0, 2) || "?";
 };
 
-export default function TeamPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: orgId } = use(params);
+export default function TeamPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug: orgSlug } = use(params);
   const router = useRouter();
+
+  const user = useUserStore((state) => state.user);
+  const orgId = user?.orgIds?.find(o => o.slug === orgSlug)?._id;
 
   const [members, setMembers] = useState<Member[]>([]);
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null);
@@ -107,11 +110,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
-
-
-  const user = useUserStore((state) => state.user);
-
-  const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));
+  const currentOrg = user?.orgIds?.find((o) => String(o._id) === String(orgId));
   const userRole = currentOrg?.role || "VIEWER";
   const isAdmin = userRole === "ADMIN";
 

@@ -24,7 +24,7 @@ export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: 
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     // Find users role in current org
-    const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));
+    const currentOrg = user?.orgIds?.find((o) => String(o._id) === String(orgId));
     const userRole = currentOrg?.role || "VIEWER";
     const isAdmin = userRole === "ADMIN";
 

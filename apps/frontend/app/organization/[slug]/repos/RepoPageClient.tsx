@@ -30,7 +30,7 @@ export default function RepoPageClient({ orgSlug, orgId: propOrgId }: { orgSlug?
   const currentOrgId = orgIdFromSlug ?? propOrgId ?? activeOrgId ?? null;
 
   // Find users role in current org
-  const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(currentOrgId));
+  const currentOrg = user?.orgIds?.find((o) => String(o._id) === String(currentOrgId));
   const userRole = currentOrg?.role || "VIEWER";
   const isAdmin = userRole === "ADMIN";
 
