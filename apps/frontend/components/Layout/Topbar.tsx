@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useParams } from "next/navigation";
 import {
   Activity,
   Bell,
@@ -26,14 +26,13 @@ import { FloatingDock } from "../Ui/floating-dock";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useUserStore } from "../../store/userStore";
 import { useNotificationStore } from "../../store/notificationStore";
-import { getBackendBase } from "../../lib/api";
 import { api } from "../../lib/api";
 
 type User = {
   name: string;
   avatarUrl: string;
   email?: string;
-  orgIds?: { id: string; name: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
+  orgIds?: { _id: string; id: string; name: string; slug: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
 };
 
 const navLinks = [
@@ -61,13 +60,16 @@ type TeamMember = {
 
 
 export default function Topbar() {
-  const { user, loading, activeOrgId } = useUserStore() as {
+  const { user, activeOrgId } = useUserStore() as {
     user: User | null;
-    loading: boolean;
     activeOrgId: string | null;
   };
   const pathname = usePathname();
   const router = useRouter();
+  const params = useParams();
+
+  // Use URL id as primary source of truth, fallback to store id
+  const currentOrgId = (params?.id as string) || activeOrgId;
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [teamDropdownOpen, setTeamDropdownOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
@@ -132,8 +134,10 @@ export default function Topbar() {
   const { setActiveOrganization } = useUserStore();
 
   const handleOrgSwitch = (orgId: string) => {
-    setActiveOrganization(orgId);
+    const org = user?.orgIds?.find(o => o.id === orgId || o._id === orgId);
+    setActiveOrganization(orgId, org?.slug);
     setOrgDropdownOpen(false);
+    // Prefer ID for navigation
     router.push(`/organization/${orgId}/repos`);
   };
 
@@ -189,7 +193,7 @@ export default function Topbar() {
     }
   };
 
-  const currentOrg = user?.orgIds?.find((o) => o.id === activeOrgId);
+  const currentOrg = user?.orgIds?.find((o) => o._id === activeOrgId || o.id === activeOrgId);
 
   const getRoleIcon = (role: string) => {
     switch (role) {
@@ -219,7 +223,7 @@ export default function Topbar() {
 
   const isActive = (href: string) => {
     // strict match for overview (organization root)
-    if (activeOrgId && href === `/organization/${activeOrgId}`) {
+    if (currentOrgId && href === `/organization/${currentOrgId}`) {
       return pathname === href;
     }
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -227,7 +231,7 @@ export default function Topbar() {
 
   const renderNavLinks = (className?: string) =>
     navLinks.map(({ name, href, icon: Icon }) => {
-      const resolvedHref = activeOrgId ? href(activeOrgId) : "/organization";
+      const resolvedHref = currentOrgId ? href(currentOrgId) : "/organization";
       const active = isActive(resolvedHref);
       return (
         <Link
@@ -246,7 +250,7 @@ export default function Topbar() {
     });
 
   const dockItems = navLinks.map(({ name, href, icon: Icon }) => {
-    const resolvedHref = activeOrgId ? href(activeOrgId) : "/organization";
+    const resolvedHref = currentOrgId ? href(currentOrgId) : "/organization";
     return {
       title: name,
       href: resolvedHref,

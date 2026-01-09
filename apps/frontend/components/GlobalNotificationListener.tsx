@@ -8,7 +8,7 @@ import { useNotificationStore } from "../store/notificationStore";
 import { toast } from "sonner";
 
 export function GlobalNotificationListener() {
-    const { user, fetchUser, removeOrgFromUser, activeOrgId } = useUserStore();
+    const { user, fetchUser, removeOrgFromUser } = useUserStore();
     const { addNotification } = useNotificationStore();
     const router = useRouter();
     const fetchUserCalled = useRef(false);
@@ -36,6 +36,7 @@ export function GlobalNotificationListener() {
         console.log("[GlobalNotificationListener] ✅ User loaded, setting up WebSocket listener");
         connectWS();
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const unsubscribe = subscribeWS((event: any) => {
             console.log("[GlobalNotificationListener] Event received:", event);
 
@@ -101,6 +102,6 @@ export function GlobalNotificationListener() {
             console.log("[GlobalNotificationListener] Cleaning up...");
             unsubscribe();
         };
-    }, [user?.id, user?._id]);
+    }, [user?.id, user?._id, addNotification, fetchUser, removeOrgFromUser, router]);
     return null;
 }

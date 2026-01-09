@@ -5,12 +5,14 @@ import { api } from "../lib/api";
 import { isAxiosError } from "axios";
 
 export interface Org {
+  _id: string; // MongoDB ID from backend
   id: string;
   name: string;
+  slug?: string;
   role: "ADMIN" | "MEMBER" | "VIEWER";
 }
 
-interface User {
+export interface User {
   id?: string;
   _id?: string;
   login?: string;
@@ -24,9 +26,10 @@ interface UserState {
   user: User | null;
   loading: boolean;
   activeOrgId: string | null;
+  activeOrgSlug: string | null;
   fetchUser: (opts?: { silent?: boolean }) => Promise<void>;
   logout: () => Promise<void>;
-  setActiveOrganization: (id: string) => void;
+  setActiveOrganization: (id: string, slug?: string) => void;
   removeOrgFromUser: (orgId: string) => void;
 }
 
@@ -34,6 +37,7 @@ export const useUserStore = create<UserState>((set, get) => ({
   user: null,
   loading: true,
   activeOrgId: null,
+  activeOrgSlug: null,
 
   fetchUser: async (opts) => {
     // 1. Recover/Clean orgId from localStorage
@@ -55,15 +59,20 @@ export const useUserStore = create<UserState>((set, get) => ({
       const payload = res.data?.data ?? {};
       const rawUser = payload.user ?? null;
 
-      // backend returns org objects (id + name)
+      // backend returns org objects (id + name + slug)
       const rawOrgs = Array.isArray(payload.orgs) ? payload.orgs : [];
-      const orgs = rawOrgs.map((o: any) => ({
+      type BackendOrg = { _id?: string; id?: string; name: string; slug?: string; role?: "ADMIN" | "MEMBER" | "VIEWER" };
+
+      const orgs: Org[] = rawOrgs.map((o: BackendOrg) => ({
         ...o,
-        id: o.id || o._id,
+        _id: o._id || o.id || "", // MongoDB _id from backend
+        id: o.id || o._id || "",
+        slug: o.slug,
         role: o.role || "VIEWER",
       }));
 
       const activeId = get().activeOrgId ?? (orgs[0]?.id ?? null);
+      const activeSlug = activeId ? orgs.find((o: Org) => o.id === activeId)?.slug ?? null : null;
 
       if (activeId) {
         try {
@@ -79,6 +88,7 @@ export const useUserStore = create<UserState>((set, get) => ({
           }
           : null,
         activeOrgId: activeId,
+        activeOrgSlug: activeSlug,
         loading: false,
       });
     } catch (err) {
@@ -90,12 +100,13 @@ export const useUserStore = create<UserState>((set, get) => ({
       set({
         user: null,
         activeOrgId: null,
+        activeOrgSlug: null,
         loading: false,
       });
     }
   },
 
-  setActiveOrganization: (id) => {
+  setActiveOrganization: (id, slug) => {
     // Safety check: ensure id is a string
     let safeId = id;
     if (typeof id === 'object' && id !== null) {
@@ -103,7 +114,11 @@ export const useUserStore = create<UserState>((set, get) => ({
       safeId = id.id || id._id || String(id);
     }
 
-    set({ activeOrgId: String(safeId) });
+    // If slug not provided, try to find it from user's orgs
+    const { user } = get();
+    const orgSlug = slug || user?.orgIds?.find(o => o.id === String(safeId) || o._id === String(safeId))?.slug || null;
+
+    set({ activeOrgId: String(safeId), activeOrgSlug: orgSlug });
 
     try {
       localStorage.setItem("orgId", String(safeId));
@@ -123,6 +138,7 @@ export const useUserStore = create<UserState>((set, get) => ({
     set({
       user: null,
       activeOrgId: null,
+      activeOrgSlug: null,
       loading: false,
     });
 
@@ -138,8 +154,16 @@ export const useUserStore = create<UserState>((set, get) => ({
     const updatedOrgs = user.orgIds.filter((o) => o.id !== orgId);
 
     let newActiveId = activeOrgId;
+    let newActiveSlug = null;
+
     if (activeOrgId === orgId) {
-      newActiveId = updatedOrgs.length > 0 ? updatedOrgs[0].id : null;
+      if (updatedOrgs.length > 0) {
+        newActiveId = updatedOrgs[0].id;
+        newActiveSlug = updatedOrgs[0].slug || null;
+      } else {
+        newActiveId = null;
+      }
+
       if (newActiveId) {
         try {
           localStorage.setItem("orgId", newActiveId);
@@ -149,6 +173,9 @@ export const useUserStore = create<UserState>((set, get) => ({
           localStorage.removeItem("orgId");
         } catch { }
       }
+    } else if (activeOrgId) {
+      // Keep existing active slug if we didn't remove the active org
+      newActiveSlug = user.orgIds.find(o => o.id === activeOrgId)?.slug || null;
     }
 
     set({
@@ -157,6 +184,7 @@ export const useUserStore = create<UserState>((set, get) => ({
         orgIds: updatedOrgs,
       },
       activeOrgId: newActiveId,
+      activeOrgSlug: newActiveSlug,
     });
   },
 }));

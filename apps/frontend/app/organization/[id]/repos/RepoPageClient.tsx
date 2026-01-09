@@ -11,7 +11,7 @@ type Repo = {
   name: string;
 };
 
-export default function RepoPageClient({ orgSlug }: { orgSlug?: string }) {
+export default function RepoPageClient({ orgId }: { orgId: string }) {
   const [connectParams, setConnectParams] = useState({ fullName: "" });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
@@ -22,12 +22,13 @@ export default function RepoPageClient({ orgSlug }: { orgSlug?: string }) {
   const [repoToDelete, setRepoToDelete] = useState<Repo | null>(null);
   const [isDeletingRepo, setIsDeletingRepo] = useState(false);
 
-  const activeOrgId = useUserStore((state) => state.activeOrgId);
   const user = useUserStore((state) => state.user);
-  const currentOrgId = orgSlug ?? activeOrgId ?? null;
+
+  // Use prop orgId
+  const currentOrgId = orgId;
 
   // Find users role in current org
-  const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(currentOrgId));
+  const currentOrg = user?.orgIds?.find((o: { _id?: string; role?: string }) => String(o._id) === String(currentOrgId));
   const userRole = currentOrg?.role || "VIEWER";
   const isAdmin = userRole === "ADMIN";
 

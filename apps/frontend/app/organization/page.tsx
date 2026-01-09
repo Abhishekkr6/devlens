@@ -5,7 +5,7 @@ import { api } from "../../lib/api";
 import { useRouter } from "next/navigation";
 import { Card } from "../../components/Ui/Card";
 import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
-import { useUserStore } from "../../store/userStore";
+import { useUserStore, Org } from "../../store/userStore";
 import { Trash2, LogOut } from "lucide-react";
 import { toast } from "sonner";
 import { connectWS, subscribeWS } from "../../lib/ws";
@@ -13,10 +13,10 @@ import { connectWS, subscribeWS } from "../../lib/ws";
 export default function OrganizationPage() {
   const [name, setName] = useState("");
   const [slug, setSlug] = useState("");
-  const [orgs, setOrgs] = useState<any[]>([]);
+  const [orgs, setOrgs] = useState<Org[]>([]);
   const [loading, setLoading] = useState(false);
-  const [deletingOrg, setDeletingOrg] = useState<any>(null);
-  const [leavingOrg, setLeavingOrg] = useState<any>(null); // New state for leave confirmation
+  const [deletingOrg, setDeletingOrg] = useState<Org | null>(null);
+  const [leavingOrg, setLeavingOrg] = useState<Org | null>(null); // New state for leave confirmation
   const [isDeleting, setIsDeleting] = useState(false);
   const [isLeaving, setIsLeaving] = useState(false);
   const [nameError, setNameError] = useState("");
@@ -44,7 +44,8 @@ export default function OrganizationPage() {
     connectWS();
 
     // Subscribe to events
-    const unsubscribe = subscribeWS((event: any) => {
+    const unsubscribe = subscribeWS((e: unknown) => {
+      const event = e as { type: string; userId?: string; org: Org };
       // 1. Invite Received -> Toast Only (don't add to list yet)
       if (event.type === "org:invited" && event.userId === user?.id) {
         toast.info(`You have been invited to ${event.org.name}`);
@@ -121,8 +122,9 @@ export default function OrganizationPage() {
       setName("");
       setSlug("");
       toast.success(`Organization "${org.name}" created successfully`);
-    } catch (e: any) {
-      console.error("Failed to create organization", e);
+    } catch (err: unknown) {
+      console.error("Failed to create organization", err);
+      const e = err as { response?: { data?: { error?: { message?: string } } }; message?: string };
 
       // Handle backend errors
       const errorMessage = e.response?.data?.error?.message || "Failed to create organization";
@@ -151,8 +153,9 @@ export default function OrganizationPage() {
       setDeletingOrg(null);
       toast.success("Organization deleted successfully");
       await fetchUser(); // Ensure global state is updated
-    } catch (e: any) {
-      console.error("Failed to delete organization", e);
+    } catch (err: unknown) {
+      console.error("Failed to delete organization", err);
+      const e = err as { response?: { data?: { error?: { message?: string } } }; message?: string };
       toast.error(e.response?.data?.error?.message || "Failed to delete organization");
     } finally {
       setIsDeleting(false);
@@ -169,8 +172,9 @@ export default function OrganizationPage() {
       setLeavingOrg(null);
       toast.success("You have left the organization");
       await fetchUser();
-    } catch (e: any) {
-      console.error("Failed to leave organization", e);
+    } catch (err: unknown) {
+      console.error("Failed to leave organization", err);
+      const e = err as { response?: { data?: { error?: { message?: string } } }; message?: string };
       toast.error(e.response?.data?.error?.message || "Failed to leave organization");
     } finally {
       setIsLeaving(false);
@@ -277,7 +281,7 @@ export default function OrganizationPage() {
                       <div className="flex items-center gap-2 shrink-0">
                         <button
                           onClick={() => {
-                            setActiveOrganization(o._id);
+                            setActiveOrganization(o._id, o.slug);
                             router.push(`/organization/${o._id}/repos`);
                           }}
                           className="rounded-lg bg-background border border-border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"

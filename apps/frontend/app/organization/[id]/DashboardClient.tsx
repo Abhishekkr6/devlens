@@ -44,7 +44,7 @@ type PRStatusSummary = {
 
 const emptyStatus: PRStatusSummary = { open: 0, review: 0, merged: 0 };
 
-export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
+export default function DashboardClient({ orgId }: { orgId: string }) {
     const [data, setData] = useState<DashboardData | null>(null);
     const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
     const [riskBuckets, setRiskBuckets] = useState<RiskBucket[]>([]);
@@ -58,21 +58,25 @@ export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
     const retryRef = useRef(0);
     const [errorMessage, setErrorMessage] = useState("");
 
+    // Ref to hold the loadData function to allow safe recursion/timeout call
+    const loadDataRef = useRef<() => void>(() => { });
+
     const loadData = useCallback(async () => {
-        if (!orgSlug) return;
+        if (!orgId) return;
+
         try {
             setLoading(true);
 
             const [dashRes, timelineRes, prsRes] = await Promise.all([
-                api.get(`/orgs/slug/${orgSlug}/dashboard`),
-                api.get(`/orgs/slug/${orgSlug}/activity/commits`),
-                api.get(`/orgs/slug/${orgSlug}/prs`),
+                api.get(`/orgs/${orgId}/dashboard`),
+                api.get(`/orgs/${orgId}/activity/commits`),
+                api.get(`/orgs/${orgId}/prs`),
             ]);
 
             setData(dashRes.data?.data ?? null);
 
             const timelineData = Array.isArray(timelineRes.data?.data)
-                ? timelineRes.data.data.map((d: any) => ({ date: d._id, count: d.total }))
+                ? timelineRes.data.data.map((d: { _id: string; total: number }) => ({ date: d._id, count: d.total }))
                 : [];
             setTimeline(timelineData);
 
@@ -85,7 +89,7 @@ export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
 
             const statusSummary: PRStatusSummary = { ...emptyStatus };
 
-            prs.forEach((p: any) => {
+            prs.forEach((p: { riskScore?: number; state?: string }) => {
                 const r = p.riskScore || 0;
                 const normalized = r <= 1 ? r * 100 : r;
 
@@ -103,8 +107,9 @@ export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
             setPrStatusCounts(statusSummary);
             setErrorType(null); // Clear errors on success
             setLoading(false); // Success - stop loading
-        } catch (e: any) {
-            console.error("Dashboard load error:", e);
+        } catch (err: unknown) {
+            console.error("Dashboard load error:", err);
+            const e = err as { response?: { data?: { error?: { message?: string } }, status?: number }, message?: string };
             const msg = e.response?.data?.error?.message || e.message || "Unknown error";
 
             // Auto-Retry Logic (Race condition fix)
@@ -112,7 +117,7 @@ export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
                 console.log("Auto-retrying dashboard load...");
                 retryRef.current += 1;
                 setTimeout(() => {
-                    loadData();
+                    loadDataRef.current(); // Call via Ref
                 }, 1000); // Wait 1s and retry
                 // Keep loading true!
                 return;
@@ -126,14 +131,19 @@ export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
             }
             setLoading(false); // Failure - stop loading
         }
-    }, [orgSlug]);
+    }, [orgId]);
+
+    // Update the ref whenever loadData changes
+    useEffect(() => {
+        loadDataRef.current = loadData;
+    }, [loadData]);
 
     useEffect(() => {
         loadData();
     }, [loadData]);
 
     useEffect(() => {
-        if (!orgSlug || !lastEvent) return;
+        if (!orgId || !lastEvent) return;
         if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT" && lastEvent.type !== "COMMIT_PROCESSED" && lastEvent.type !== "org:joined") return;
 
         const now = Date.now();
@@ -141,7 +151,7 @@ export default function DashboardClient({ orgSlug }: { orgSlug: string }) {
 
         loadData();
         setLastRefresh(now);
-    }, [lastEvent, lastRefresh, loadData, orgSlug]);
+    }, [lastEvent, lastRefresh, loadData, orgId]);
 
     const commitTrend = useMemo(() => {
         if (!timeline.length) return null;

@@ -10,7 +10,7 @@ import { Card } from "../../../../components/Ui/Card";
 import { Button } from "../../../../components/Ui/Button";
 import { Select } from "../../../../components/Ui/Select";
 import { ConfirmDialog } from "../../../../components/Ui/ConfirmDialog";
-import { useUserStore } from "../../../../store/userStore";
+import { useUserStore, Org } from "../../../../store/userStore";
 import { toast } from "sonner";
 import {
   UserPlus,
@@ -93,8 +93,11 @@ const getInitials = (name: string) => {
 };
 
 export default function TeamPage({ params }: { params: Promise<{ id: string }> }) {
-  const { id: orgId } = use(params);
+  const { id } = use(params);
+  const orgId = id;
   const router = useRouter();
+
+  const user = useUserStore((state) => state.user);
 
   const [members, setMembers] = useState<Member[]>([]);
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null);
@@ -107,11 +110,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
   const [isRemoving, setIsRemoving] = useState(false);
 
-
-
-  const user = useUserStore((state) => state.user);
-
-  const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));
+  const currentOrg = user?.orgIds?.find((o: Org) => String(o._id) === String(orgId));
   const userRole = currentOrg?.role || "VIEWER";
   const isAdmin = userRole === "ADMIN";
 
@@ -120,7 +119,8 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       fetchMembers();
       connectWS();
 
-      const unsubscribe = subscribeWS((event: any) => {
+      const unsubscribe = subscribeWS((e: unknown) => {
+        const event = e as { type: string; org?: { _id: string }; member?: Member };
         console.log("WS Event received:", event); // Log the event for debugging
         if (event.type === "org:joined") {
           // Robust ID comparison (handle string vs objectid)
@@ -129,12 +129,12 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
             // 1. Optimistic Update (Immediate)
             if (event.member) {
               setMembers((prev) => {
-                const newMemberId = String(event.member.userId);
+                const newMemberId = String(event.member!.userId);
                 // Prevent duplicates
                 if (prev.some(m => String(m.userId) === newMemberId)) return prev;
-                return [...prev, event.member];
+                return [...prev, event.member!];
               });
-              toast.success(`${event.member.user.name || "A user"} joined the team`);
+              toast.success(`${event.member.user?.name || "A user"} joined the team`);
             }
 
             // 2. Fetch Latest (Guarantee Consistency without Reload)
@@ -179,8 +179,9 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       setInviteEmail("");
       await fetchMembers();
       setShowInviteForm(false);
-    } catch (err: any) {
-      toast.error(err.response?.data?.error?.message || "Failed to invite user");
+    } catch (err: unknown) {
+      const e = err as { response?: { data?: { error?: { message?: string } } } };
+      toast.error(e.response?.data?.error?.message || "Failed to invite user");
     } finally {
       setInviting(false);
     }
@@ -194,9 +195,10 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
       setMembers(members.filter(m => m.userId !== memberToRemove));
       toast.success("Member removed successfully");
       setMemberToRemove(null);
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error("Remove failed", err);
-      toast.error(err.response?.data?.error || "Failed to remove member");
+      const e = err as { response?: { data?: { error?: string } } };
+      toast.error(e.response?.data?.error || "Failed to remove member");
     } finally {
       setIsRemoving(false);
     }
@@ -205,7 +207,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
   const handleRoleUpdate = async (userId: string, newRole: string) => {
     try {
       await api.patch(`/orgs/${orgId}/members/${userId}`, { role: newRole });
-      setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as any } : m));
+      setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as "ADMIN" | "MEMBER" | "VIEWER" } : m));
       toast.success("Role updated");
     } catch (err) {
       console.error("Update role failed", err);
@@ -257,7 +259,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
                     { label: "Viewer", value: "VIEWER" },
                   ]}
                   value={inviteRole}
-                  onChange={(val) => setInviteRole(val as any)}
+                  onChange={(val) => setInviteRole(val as "ADMIN" | "MEMBER" | "VIEWER")}
                 />
               </div>
               <Button onClick={handleInvite} disabled={inviting} className="border border-indigo-200 dark:border-indigo-800">

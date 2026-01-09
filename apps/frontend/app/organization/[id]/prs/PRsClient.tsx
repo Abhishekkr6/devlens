@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Search } from "lucide-react";
 import { api } from "../../../../lib/api";
 import { useLiveStore } from "../../../../store/liveStore";
+import { useUserStore } from "../../../../store/userStore";
 import { Button } from "../../../../components/Ui/Button";
 import { Card } from "../../../../components/Ui/Card";
 import { Select } from "../../../../components/Ui/Select";
@@ -133,7 +134,7 @@ type TableRow = {
     createdAtLabel: string;
 };
 
-export default function PRsClient({ orgId }: { orgId: string }) {
+export default function PRsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
     const [prs, setPrs] = useState<PR[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -143,8 +144,12 @@ export default function PRsClient({ orgId }: { orgId: string }) {
     const [selectedPrId, setSelectedPrId] = useState<string | null>(null);
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
+    // Convert slug to orgId using userStore
+    const { user } = useUserStore();
+    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
+
     useEffect(() => {
-        if (!orgId) return;
+        if (!orgSlug || !orgId) return; // Need both
         let isMounted = true;
 
         api
@@ -166,7 +171,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         return () => {
             isMounted = false;
         };
-    }, [orgId]);
+    }, [orgSlug]);
 
     useEffect(() => {
         if (!lastEvent) return;

@@ -14,7 +14,17 @@ export const requireOrgRole =
           return res.status(401).json({ error: "User not found in request" });
         }
 
-        const org = await OrgModel.findById(orgId);
+        // Support both ID and slug
+        let org;
+        if (Types.ObjectId.isValid(orgId)) {
+          // Try finding by ID first
+          org = await OrgModel.findById(orgId);
+        }
+
+        // If not found by ID or not a valid ObjectId, try slug
+        if (!org) {
+          org = await OrgModel.findOne({ slug: orgId });
+        }
         if (!org) {
           return res.status(404).json({ error: "Org not found" });
         }

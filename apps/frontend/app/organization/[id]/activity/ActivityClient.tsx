@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { api } from "../../../../lib/api";
 import { Card } from "../../../../components/Ui/Card";
 import { Badge } from "../../../../components/Ui/Badge";
+import { useUserStore } from "../../../../store/userStore";
 import {
     GitCommit,
     GitPullRequest,
@@ -34,13 +35,17 @@ type ActivityEvent = {
     kind: "commit" | "pr" | "review";
 };
 
-export default function ActivityClient({ orgId }: { orgId: string }) {
+export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
     const [timeline, setTimeline] = useState<Commit[]>([]);
     const [prs, setPrs] = useState<PR[]>([]);
     const [loading, setLoading] = useState(true);
 
+    // Get orgId from slug if provided, otherwise use propOrgId
+    const { user } = useUserStore();
+    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
+
     useEffect(() => {
-        if (!orgId) return;
+        if (!orgSlug || !orgId) return; // Need both
         const loadActivity = async () => {
             try {
                 setLoading(true);
@@ -61,7 +66,7 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
         };
 
         loadActivity();
-    }, [orgId]);
+    }, [orgSlug]);
 
     const formatTimeAgo = (input?: string) => {
         if (!input) return "Just now";
