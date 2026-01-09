@@ -66,6 +66,35 @@ export const runMultiOrgMigration = async (req: Request, res: Response) => {
         }
 
         // ============================================
+        // REPOS COLLECTION
+        // ============================================
+        const reposCollection = db.collection("repos");
+        const repoIndexes = await reposCollection.indexes();
+
+        // Drop old unique index on repoFullName if exists
+        const oldRepoIndex = repoIndexes.find((idx) => idx.name === "repoFullName_1");
+        if (oldRepoIndex && oldRepoIndex.unique) {
+            logger.info("Dropping old repoFullName_1 index...");
+            await reposCollection.dropIndex("repoFullName_1");
+            logger.info("✅ Dropped repoFullName_1 index");
+        } else {
+            logger.info("ℹ️  repoFullName_1 unique index not found (already migrated)");
+        }
+
+        // Create new composite index
+        const newRepoIndex = repoIndexes.find((idx) => idx.name === "repoFullName_1_orgId_1");
+        if (!newRepoIndex) {
+            logger.info("Creating repoFullName_1_orgId_1 composite index...");
+            await reposCollection.createIndex(
+                { repoFullName: 1, orgId: 1 },
+                { unique: true, name: "repoFullName_1_orgId_1" }
+            );
+            logger.info("✅ Created repoFullName_1_orgId_1 index");
+        } else {
+            logger.info("ℹ️  repoFullName_1_orgId_1 index already exists");
+        }
+
+        // ============================================
         // PULL REQUESTS COLLECTION
         // ============================================
         const prsCollection = db.collection("pullrequests");

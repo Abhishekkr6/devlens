@@ -21,12 +21,13 @@ import "dotenv/config";
  * - No data loss expected
  */
 
-const MONGO_URL = process.env.MONGO_URL || "mongodb://localhost:27017/teampulse";
+const MONGO_URL = process.env.MONGO_URL || "mongodb://127.0.0.1:27017/teampulse";
 
 async function migrateIndexes() {
     try {
         console.log("🔌 Connecting to MongoDB...");
-        await mongoose.connect(MONGO_URL);
+        console.log("🔌 Connecting to MongoDB at:", MONGO_URL.replace(/:([^:@]+)@/, ":****@"));
+        await mongoose.connect(MONGO_URL, { serverSelectionTimeoutMS: 5000 });
         console.log("✅ Connected to MongoDB");
 
         const db = mongoose.connection.db;
@@ -145,6 +146,20 @@ async function migrateIndexes() {
             console.log("✅ Created repoFullName_1_orgId_1 index");
         } else {
             console.log("ℹ️  repoFullName_1_orgId_1 index already exists");
+        }
+
+        // Ensure non-unique index on repoFullName for fast lookups
+        const repoLookupIndex = repoIndexes.find((idx) => idx.name === "repoFullName_1");
+        // If we dropped the unique one, we might want a non-unique one.
+        // Or if it didn't exist, we create it.
+        // NOTE: dropIndex removes it completely.
+        if (!repoLookupIndex) { // It was just dropped above if unique
+            console.log("🔧 Creating non-unique index for lookups: repoFullName_1");
+            await reposCollection.createIndex(
+                { repoFullName: 1 },
+                { unique: false, name: "repoFullName_1" }
+            );
+            console.log("✅ Created non-unique repoFullName_1 index");
         }
 
         // ============================================

@@ -53,6 +53,7 @@ export const commitProcessingHandler = async (job: Job) => {
             JSON.stringify({
                 type: "COMMIT_PROCESSED",
                 repoId,
+                orgId: job.data.orgId, // 🔥 Included for UI filtering
                 commitCount: commits.length,
                 timestamp: Date.now(),
             })

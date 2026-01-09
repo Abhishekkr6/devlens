@@ -122,6 +122,20 @@ export const connectRepo = async (req: any, res: Response) => {
         { repo: repoFullName, webhookId: webhookResult.webhookId },
         "Webhook created successfully"
       );
+    } else if (webhookResult.error && (
+      webhookResult.error.includes("Hook already exists") ||
+      webhookResult.error.includes("already exists") ||
+      webhookResult.error.includes("422") // GitHub returns 422 Unprocessable Entity for duplicates
+    )) {
+      // ✅ SUCCESS: Webhook already exists (created by another org), which is what we want.
+      // We mark this as active because the events will FAN-OUT to this org too.
+      repo.webhookStatus = "active";
+      repo.webhookError = undefined; // Clear error
+      await repo.save();
+      logger.info(
+        { repo: repoFullName },
+        "Webhook already exists (multi-org connection successful)"
+      );
     } else {
       repo.webhookStatus = "failed";
       repo.webhookError = webhookResult.error || "Unknown error";
