@@ -61,7 +61,7 @@ export default function DashboardClient({ orgSlug, orgId: propOrgId }: { orgSlug
 
     // Convert slug to orgId using userStore
     const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find((o: { _id: string; slug: string }) => o.slug === orgSlug)?._id : propOrgId;
+    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     const loadData = useCallback(async () => {
         if (!orgId) return;

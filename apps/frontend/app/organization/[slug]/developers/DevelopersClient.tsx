@@ -93,7 +93,7 @@ export default function DevelopersClient({ orgSlug, orgId: propOrgId }: { orgSlu
 
     // Convert slug to orgId using userStore
     const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find((o: { _id: string; slug: string }) => o.slug === orgSlug)?._id : propOrgId;
+    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
         if (!orgId) return;

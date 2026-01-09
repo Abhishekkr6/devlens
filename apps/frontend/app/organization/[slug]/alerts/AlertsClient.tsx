@@ -21,7 +21,7 @@ export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: 
     const user = useUserStore((state) => state.user);
 
     // Convert slug to orgId using userStore
-    const orgId = orgSlug ? user?.orgIds?.find((o: { _id: string; slug: string }) => o.slug === orgSlug)?._id : propOrgId;
+    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     // Find users role in current org
     const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));
