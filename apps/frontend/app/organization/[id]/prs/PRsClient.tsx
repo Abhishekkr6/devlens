@@ -134,7 +134,7 @@ type TableRow = {
     createdAtLabel: string;
 };
 
-export default function PRsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
+export default function PRsClient({ orgId }: { orgId: string }) {
     const [prs, setPrs] = useState<PR[]>([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -144,12 +144,10 @@ export default function PRsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: str
     const [selectedPrId, setSelectedPrId] = useState<string | null>(null);
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
-    // Convert slug to orgId using userStore
     const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgSlug || !orgId) return; // Need both
+        if (!orgId) return;
         let isMounted = true;
 
         api
@@ -171,7 +169,7 @@ export default function PRsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: str
         return () => {
             isMounted = false;
         };
-    }, [orgSlug]);
+    }, [orgId]);
 
     useEffect(() => {
         if (!lastEvent) return;

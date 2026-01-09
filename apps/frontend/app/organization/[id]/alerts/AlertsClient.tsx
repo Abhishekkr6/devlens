@@ -13,18 +13,15 @@ interface Alert {
     createdAt: string;
 }
 
-export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
+export default function AlertsClient({ orgId }: { orgId: string }) {
     const [alerts, setAlerts] = useState<Alert[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     const user = useUserStore((state) => state.user);
 
-    // Convert slug to orgId using userStore
-    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
-
     // Find users role in current org
-    const currentOrg = user?.orgIds?.find((o) => String(o._id) === String(orgId));
+    const currentOrg = user?.orgIds?.find((o: any) => String(o._id) === String(orgId));
     const userRole = currentOrg?.role || "VIEWER";
     const isAdmin = userRole === "ADMIN";
 
@@ -42,8 +39,8 @@ export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: 
     };
 
     useEffect(() => {
-        if (orgSlug) fetchAlerts();
-    }, [orgSlug]);
+        if (orgId) fetchAlerts();
+    }, [orgId]);
 
     const handleAcknowledge = async (alertId: string) => {
         if (!confirm("Mark this alert as resolved?")) return;

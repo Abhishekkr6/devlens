@@ -84,7 +84,7 @@ const getInitials = (name: string) => {
         .slice(0, 2) || "?";
 };
 
-export default function DevelopersClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
+export default function DevelopersClient({ orgId }: { orgId: string }) {
     const [developers, setDevelopers] = useState<Developer[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState("");
@@ -93,10 +93,9 @@ export default function DevelopersClient({ orgSlug, orgId: propOrgId }: { orgSlu
 
     // Convert slug to orgId using userStore
     const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgSlug || !orgId) return; // Need both
+        if (!orgId) return;
         const fetchDevelopers = async () => {
             try {
                 setLoading(true);
@@ -112,7 +111,7 @@ export default function DevelopersClient({ orgSlug, orgId: propOrgId }: { orgSlu
         };
 
         fetchDevelopers();
-    }, [orgSlug]);
+    }, [orgId]);
 
     const roleOptions = useMemo(() => {
         const uniqueRoles = new Set<string>();

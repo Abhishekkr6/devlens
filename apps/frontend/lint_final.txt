@@ -37,42 +37,40 @@ C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\notificati
   127:59  error    Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\DashboardClient.tsx
-   14:10   warning  'useUserStore' is defined but never used                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-unused-vars
-   77:49   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
-   90:29   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
-  108:21   error    Unexpected any. Specify a different type                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      @typescript-eslint/no-explicit-any
-  117:21   error    Error: Cannot access variable before it is declared
+  142:9    error  Error: Calling setState synchronously within an effect can trigger cascading renders
 
-`loadData` is accessed before it is declared, which prevents the earlier access from updating when this value changes over time.
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
 
-C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\DashboardClient.tsx:117:21
-  115 |                 retryRef.current += 1;
-  116 |                 setTimeout(() => {
-> 117 |                     loadData();
-      |                     ^^^^^^^^ `loadData` accessed before it is declared
-  118 |                 }, 1000); // Wait 1s and retry
-  119 |                 // Keep loading true!
-  120 |                 return;
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
 
-C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\DashboardClient.tsx:62:5
-   60 |     const [errorMessage, setErrorMessage] = useState("");
-   61 |
->  62 |     const loadData = useCallback(async () => {
-      |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->  63 |         if (!orgId) return;
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
->  64 |
-      …
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 130 |         }
-      | ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> 131 |     }, [orgId]);
-      | ^^^^^^^^^^^^^^^^^ `loadData` is declared here
-  132 |
-  133 |     useEffect(() => {
-  134 |         loadData();  react-hooks/immutability
-  184:118  error    `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               react/no-unescaped-entities
-  186:21   error    Do not use an `<a>` element to navigate to `/organization/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @next/next/no-html-link-for-pages
+C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\DashboardClient.tsx:142:9
+  140 |
+  141 |     useEffect(() => {
+> 142 |         loadData();
+      |         ^^^^^^^^ Avoid calling setState() directly within an effect
+  143 |     }, [loadData]);
+  144 |
+  145 |     useEffect(() => {                                                                react-hooks/set-state-in-effect
+  152:9    error  Error: Calling setState synchronously within an effect can trigger cascading renders
+
+Effects are intended to synchronize state between React and external systems such as manually updating the DOM, state management libraries, or other platform APIs. In general, the body of an effect should do one or both of the following:
+* Update external systems with the latest state from React.
+* Subscribe for updates from some external system, calling setState in a callback function when external state changes.
+
+Calling setState synchronously within an effect body causes cascading renders that can hurt performance, and is not recommended. (https://react.dev/learn/you-might-not-need-an-effect).
+
+C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\DashboardClient.tsx:152:9
+  150 |         if (now - lastRefresh < 5000) return;
+  151 |
+> 152 |         loadData();
+      |         ^^^^^^^^ Avoid calling setState() directly within an effect
+  153 |         setLastRefresh(now);
+  154 |     }, [lastEvent, lastRefresh, loadData, orgId]);
+  155 |  react-hooks/set-state-in-effect
+  192:118  error  `'` can be escaped with `&apos;`, `&lsquo;`, `&#39;`, `&rsquo;`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     react/no-unescaped-entities
+  194:21   error  Do not use an `<a>` element to navigate to `/organization/`. Use `<Link />` from `next/link` instead. See: https://nextjs.org/docs/messages/no-html-link-for-pages                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  @next/next/no-html-link-for-pages
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\activity\ActivityClient.tsx
   12:5   warning  'Search' is defined but never used                                                                        @typescript-eslint/no-unused-vars
@@ -96,9 +94,7 @@ C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organizati
   147:13  warning  'user' is assigned a value but never used  @typescript-eslint/no-unused-vars
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\repos\RepoPageClient.tsx
-  25:9   warning  'activeOrgId' is assigned a value but never used  @typescript-eslint/no-unused-vars
-  32:45  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
-  69:19  error    Unexpected any. Specify a different type          @typescript-eslint/no-explicit-any
+  68:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\[id]\settings\page.tsx
   63:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
@@ -119,9 +115,6 @@ C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organizati
   204:9   warning  'handleRoleUpdate' is assigned a value but never used                                                            @typescript-eslint/no-unused-vars
   207:82  error    Unexpected any. Specify a different type                                                                         @typescript-eslint/no-explicit-any
   259:59  error    Unexpected any. Specify a different type                                                                         @typescript-eslint/no-explicit-any
-
-C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\organization\page.tsx
-  280:0  error  Parsing error: Merge conflict marker encountered
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\app\page.tsx
     4:8   warning  'Link' is defined but never used                                                                                                                                                                                                                                                         @typescript-eslint/no-unused-vars
@@ -152,7 +145,7 @@ C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\Glo
   82:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\GlobalNotificationListener.tsx
-  80:0  error  Parsing error: Merge conflict marker encountered
+  105:8  warning  React Hook useEffect has missing dependencies: 'addNotification', 'fetchUser', 'removeOrgFromUser', 'router', and 'user?.name'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\GlobalToastManager.tsx
   27:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
@@ -186,13 +179,9 @@ C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\Lay
   39:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
   51:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
 
-C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\Layout\Sidebar.tsx
-  10:24  warning  'activeOrgSlug' is assigned a value but never used  @typescript-eslint/no-unused-vars
-
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\Layout\Topbar.tsx
    29:10  warning  'getBackendBase' is defined but never used                                                                           @typescript-eslint/no-unused-vars
-   64:17  warning  'loading' is assigned a value but never used                                                                         @typescript-eslint/no-unused-vars
-  132:6   warning  React Hook useEffect has a missing dependency: 'fetchTeamMembers'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
+  131:6   warning  React Hook useEffect has a missing dependency: 'fetchTeamMembers'. Either include it or remove the dependency array  react-hooks/exhaustive-deps
 
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\NotificationToaster.tsx
   23:9  error  Error: Calling setState synchronously within an effect can trigger cascading renders
@@ -237,8 +226,5 @@ C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\components\Ui\
 C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\middleware.ts
   3:28  warning  'req' is defined but never used  @typescript-eslint/no-unused-vars
 
-C:\Users\Abhishek Tiwari\OneDrive\Desktop\teampulse\apps\frontend\store\userStore.ts
-  64:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
-
-✖ 97 problems (49 errors, 48 warnings)
+✖ 88 problems (43 errors, 45 warnings)
 

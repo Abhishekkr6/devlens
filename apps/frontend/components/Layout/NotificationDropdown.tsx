@@ -14,6 +14,7 @@ import { cn } from "../../lib/utils";
 import {
     useNotificationStore,
     NotificationType,
+    Notification,
 } from "../../store/notificationStore";
 import { api } from "../../lib/api";
 import { useUserStore } from "../../store/userStore";
@@ -36,10 +37,10 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
 
         if (!isOpen) return null;
 
-        const handleAcceptInvite = async (e: React.MouseEvent, n: any) => {
+        const handleAcceptInvite = async (e: React.MouseEvent, n: Notification) => {
             e.stopPropagation();
             try {
-                await api.post(`/orgs/${n.metadata.orgId}/invite/accept`);
+                await api.post(`/orgs/${n.metadata?.orgId}/invite/accept`);
                 await fetchUser();
                 // Mark as read instead of deleting
                 markAsRead(n._id);
@@ -48,10 +49,10 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
             }
         };
 
-        const handleRejectInvite = async (e: React.MouseEvent, n: any) => {
+        const handleRejectInvite = async (e: React.MouseEvent, n: Notification) => {
             e.stopPropagation();
             try {
-                await api.post(`/orgs/${n.metadata.orgId}/invite/reject`);
+                await api.post(`/orgs/${n.metadata?.orgId}/invite/reject`);
                 // Mark as read instead of deleting
                 markAsRead(n._id);
             } catch (error) {
