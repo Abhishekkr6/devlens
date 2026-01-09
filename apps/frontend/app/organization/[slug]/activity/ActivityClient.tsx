@@ -45,13 +45,13 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgSlug) return;
+        if (!orgSlug || !orgId) return; // Need both
         const loadActivity = async () => {
             try {
                 setLoading(true);
                 const [timelineRes, prsRes] = await Promise.all([
-                    api.get(`/orgs/slug/${orgSlug}/activity/commits`),
-                    api.get(`/orgs/slug/${orgSlug}/prs`),
+                    api.get(`/orgs/${orgId}/activity/commits`),
+                    api.get(`/orgs/${orgId}/prs`),
                 ]);
 
                 setTimeline(timelineRes.data?.data || []);

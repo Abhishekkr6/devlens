@@ -29,9 +29,10 @@ export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: 
     const isAdmin = userRole === "ADMIN";
 
     const fetchAlerts = async () => {
+        if (!orgId) return; // Need orgId for API call
         try {
             setLoading(true);
-            const res = await api.get(`/orgs/slug/${orgSlug}/alerts`);
+            const res = await api.get(`/orgs/${orgId}/alerts`);
             setAlerts(res.data.data || []);
         } catch (error) {
             console.error("Alerts fetch error", error);
@@ -48,7 +49,7 @@ export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: 
         if (!confirm("Mark this alert as resolved?")) return;
         try {
             setActiveId(alertId);
-            await api.post(`/orgs/slug/${orgSlug}/alerts/${alertId}/acknowledge`);
+            await api.post(`/orgs/${orgId}/alerts/${alertId}/acknowledge`);
             // Refresh list
             await fetchAlerts();
         } catch (error) {

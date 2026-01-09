@@ -149,11 +149,11 @@ export default function PRsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: str
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgSlug) return;
+        if (!orgSlug || !orgId) return; // Need both
         let isMounted = true;
 
         api
-            .get(`/orgs/slug/${orgSlug}/prs`)
+            .get(`/orgs/${orgId}/prs`)
             .then((res) => {
                 if (!isMounted) return;
                 setPrs(res.data?.data?.items || []);

@@ -64,14 +64,14 @@ export default function DashboardClient({ orgSlug, orgId: propOrgId }: { orgSlug
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     const loadData = useCallback(async () => {
-        if (!orgSlug) return;
+        if (!orgSlug || !orgId) return; // Need both slug (from URL) and ID (from conversion)
         try {
             setLoading(true);
 
             const [dashRes, timelineRes, prsRes] = await Promise.all([
-                api.get(`/orgs/slug/${orgSlug}/dashboard`),
-                api.get(`/orgs/slug/${orgSlug}/activity/commits`),
-                api.get(`/orgs/slug/${orgSlug}/prs`),
+                api.get(`/orgs/${orgId}/dashboard`),
+                api.get(`/orgs/${orgId}/activity/commits`),
+                api.get(`/orgs/${orgId}/prs`),
             ]);
 
             setData(dashRes.data?.data ?? null);
@@ -138,7 +138,7 @@ export default function DashboardClient({ orgSlug, orgId: propOrgId }: { orgSlug
     }, [loadData]);
 
     useEffect(() => {
-        if (!orgSlug || !lastEvent) return;
+        if (!orgSlug || !orgId || !lastEvent) return;
         if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT" && lastEvent.type !== "COMMIT_PROCESSED" && lastEvent.type !== "org:joined") return;
 
         const now = Date.now();

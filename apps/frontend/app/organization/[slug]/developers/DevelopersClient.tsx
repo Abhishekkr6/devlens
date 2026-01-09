@@ -96,11 +96,11 @@ export default function DevelopersClient({ orgSlug, orgId: propOrgId }: { orgSlu
     const orgId = orgSlug ? user?.orgIds?.find(o => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgSlug) return;
+        if (!orgSlug || !orgId) return; // Need both
         const fetchDevelopers = async () => {
             try {
                 setLoading(true);
-                const response = await api.get(`/orgs/slug/${orgSlug}/developers`);
+                const response = await api.get(`/orgs/${orgId}/developers`);
                 const payload: Developer[] = Array.isArray(response.data?.data) ? response.data.data : [];
                 setDevelopers(payload);
             } catch (error) {
