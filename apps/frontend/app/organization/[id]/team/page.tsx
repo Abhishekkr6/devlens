@@ -92,8 +92,8 @@ const getInitials = (name: string) => {
     .slice(0, 2) || "?";
 };
 
-export default function TeamPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug: orgId } = use(params);
+export default function TeamPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: orgId } = use(params);
   const router = useRouter();
 
   const [members, setMembers] = useState<Member[]>([]);

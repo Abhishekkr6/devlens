@@ -33,17 +33,17 @@ type User = {
   name: string;
   avatarUrl: string;
   email?: string;
-  orgIds?: { id: string; name: string; slug: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
+  orgIds?: { id: string; name: string; role?: "ADMIN" | "MEMBER" | "VIEWER" }[];
 };
 
 const navLinks = [
-  { name: "Overview", href: (slug: string) => `/organization/${slug}`, icon: LayoutDashboard },
-  { name: "Activity", href: (slug: string) => `/organization/${slug}/activity`, icon: Activity },
-  { name: "Pull Requests", href: (slug: string) => `/organization/${slug}/prs`, icon: GitPullRequest },
-  { name: "Alerts", href: (slug: string) => `/organization/${slug}/alerts`, icon: Bell },
-  { name: "Developers", href: (slug: string) => `/organization/${slug}/developers`, icon: Users },
-  { name: "Repositories", href: (slug: string) => `/organization/${slug}/repos`, icon: FolderGit2 },
-  { name: "Settings", href: (slug: string) => `/organization/${slug}/settings`, icon: SettingsIcon },
+  { name: "Overview", href: (id: string) => `/organization/${id}`, icon: LayoutDashboard },
+  { name: "Activity", href: (id: string) => `/organization/${id}/activity`, icon: Activity },
+  { name: "Pull Requests", href: (id: string) => `/organization/${id}/prs`, icon: GitPullRequest },
+  { name: "Alerts", href: (id: string) => `/organization/${id}/alerts`, icon: Bell },
+  { name: "Developers", href: (id: string) => `/organization/${id}/developers`, icon: Users },
+  { name: "Repositories", href: (id: string) => `/organization/${id}/repos`, icon: FolderGit2 },
+  { name: "Settings", href: (id: string) => `/organization/${id}/settings`, icon: SettingsIcon },
 ];
 
 type TeamMember = {
@@ -61,11 +61,10 @@ type TeamMember = {
 
 
 export default function Topbar() {
-  const { user, loading, activeOrgId, activeOrgSlug } = useUserStore() as {
+  const { user, loading, activeOrgId } = useUserStore() as {
     user: User | null;
     loading: boolean;
     activeOrgId: string | null;
-    activeOrgSlug: string | null;
   };
   const pathname = usePathname();
   const router = useRouter();
@@ -132,10 +131,10 @@ export default function Topbar() {
   const orgDropdownRef = useRef<HTMLDivElement>(null);
   const { setActiveOrganization } = useUserStore();
 
-  const handleOrgSwitch = (orgId: string, orgSlug: string) => {
-    setActiveOrganization(orgId, orgSlug);
+  const handleOrgSwitch = (orgId: string) => {
+    setActiveOrganization(orgId);
     setOrgDropdownOpen(false);
-    router.push(`/organization/${orgSlug}/repos`);
+    router.push(`/organization/${orgId}/repos`);
   };
 
   // Close dropdown when clicking outside
@@ -220,7 +219,7 @@ export default function Topbar() {
 
   const isActive = (href: string) => {
     // strict match for overview (organization root)
-    if (activeOrgSlug && href === `/organization/${activeOrgSlug}`) {
+    if (activeOrgId && href === `/organization/${activeOrgId}`) {
       return pathname === href;
     }
     return pathname === href || pathname.startsWith(`${href}/`);
@@ -228,7 +227,7 @@ export default function Topbar() {
 
   const renderNavLinks = (className?: string) =>
     navLinks.map(({ name, href, icon: Icon }) => {
-      const resolvedHref = activeOrgSlug ? href(activeOrgSlug) : "/organization";
+      const resolvedHref = activeOrgId ? href(activeOrgId) : "/organization";
       const active = isActive(resolvedHref);
       return (
         <Link
@@ -247,7 +246,7 @@ export default function Topbar() {
     });
 
   const dockItems = navLinks.map(({ name, href, icon: Icon }) => {
-    const resolvedHref = activeOrgSlug ? href(activeOrgSlug) : "/organization";
+    const resolvedHref = activeOrgId ? href(activeOrgId) : "/organization";
     return {
       title: name,
       href: resolvedHref,
@@ -314,7 +313,7 @@ export default function Topbar() {
                       {user.orgIds.map((org) => (
                         <button
                           key={org.id}
-                          onClick={() => handleOrgSwitch(org.id, org.slug)}
+                          onClick={() => handleOrgSwitch(org.id)}
                           className={`flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left text-sm transition-colors cursor-pointer ${activeOrgId === org.id
                             ? "bg-indigo-50 dark:bg-brand/20 text-indigo-700 dark:text-brand"
                             : "text-text-secondary hover:bg-surface"
@@ -398,7 +397,7 @@ export default function Topbar() {
                         <h3 className="text-sm font-semibold text-text-primary">Team Members</h3>
                         {activeOrgId && (
                           <Link
-                            href={`/organization/${activeOrgSlug}/team`}
+                            href={`/organization/${activeOrgId}/team`}
                             onClick={() => setTeamDropdownOpen(false)}
                             className="text-xs text-brand hover:text-brand/80 font-medium"
                           >
@@ -462,7 +461,7 @@ export default function Topbar() {
                     {activeOrgId && (
                       <div className="p-3 border-t border-border">
                         <Link
-                          href={`/organization/${activeOrgSlug}/team`}
+                          href={`/organization/${activeOrgId}/team`}
                           onClick={() => setTeamDropdownOpen(false)}
                           className="flex items-center gap-2 w-full rounded-lg px-3 py-2 text-sm font-medium text-brand hover:bg-brand/10 transition-colors"
                         >
@@ -619,7 +618,7 @@ export default function Topbar() {
 
                   {activeOrgId && (
                     <Link
-                      href={`/organization/${activeOrgSlug}/team`}
+                      href={`/organization/${activeOrgId}/team`}
                       onClick={closeMobileNav}
                       className="flex shrink-0 items-center gap-2 rounded-full px-3 py-2 transition-colors text-text-secondary hover:bg-surface hover:text-brand w-full"
                     >
