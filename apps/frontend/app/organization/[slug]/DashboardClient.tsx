@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
+import { useUserStore } from "../../../store/userStore";
 import { Card } from "../../../components/Ui/Card";
 import CommitLineChart from "../../../components/Charts/CommitLineChart";
 import PRRiskBarChart from "../../../components/Charts/PRRiskBarChart";
@@ -44,7 +45,7 @@ type PRStatusSummary = {
 
 const emptyStatus: PRStatusSummary = { open: 0, review: 0, merged: 0 };
 
-export default function DashboardClient({ orgId }: { orgId: string }) {
+export default function DashboardClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
     const [data, setData] = useState<DashboardData | null>(null);
     const [timeline, setTimeline] = useState<TimelineEntry[]>([]);
     const [riskBuckets, setRiskBuckets] = useState<RiskBucket[]>([]);
@@ -58,15 +59,19 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     const retryRef = useRef(0);
     const [errorMessage, setErrorMessage] = useState("");
 
+    // Convert slug to orgId using userStore
+    const { user } = useUserStore();
+    const orgId = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : propOrgId;
+
     const loadData = useCallback(async () => {
         if (!orgId) return;
         try {
             setLoading(true);
 
             const [dashRes, timelineRes, prsRes] = await Promise.all([
-                api.get(`/orgs/${orgId}/dashboard`),
-                api.get(`/orgs/${orgId}/activity/commits`),
-                api.get(`/orgs/${orgId}/prs`),
+                api.get(`/orgs/slug/${orgSlug}/dashboard`),
+                api.get(`/orgs/slug/${orgSlug}/activity/commits`),
+                api.get(`/orgs/slug/${orgSlug}/prs`),
             ]);
 
             setData(dashRes.data?.data ?? null);
@@ -126,7 +131,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
             }
             setLoading(false); // Failure - stop loading
         }
-    }, [orgId]);
+    }, [orgSlug]);
 
     useEffect(() => {
         loadData();
@@ -141,7 +146,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
         loadData();
         setLastRefresh(now);
-    }, [lastEvent, lastRefresh, loadData, orgId]);
+    }, [lastEvent, lastRefresh, loadData, orgSlug]);
 
     const commitTrend = useMemo(() => {
         if (!timeline.length) return null;

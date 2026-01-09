@@ -14,6 +14,7 @@ import {
 import { Card } from "../../../../components/Ui/Card";
 import { Select } from "../../../../components/Ui/Select";
 import { api } from "../../../../lib/api";
+import { useUserStore } from "../../../../store/userStore";
 
 interface Developer {
     githubId: string;
@@ -83,12 +84,16 @@ const getInitials = (name: string) => {
         .slice(0, 2) || "?";
 };
 
-export default function DevelopersClient({ orgId }: { orgId: string }) {
+export default function DevelopersClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
     const [developers, setDevelopers] = useState<Developer[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [activityFilter, setActivityFilter] = useState<string>("all");
     const [roleFilter, setRoleFilter] = useState<string>("all");
+
+    // Convert slug to orgId using userStore
+    const { user } = useUserStore();
+    const orgId = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : propOrgId;
 
     useEffect(() => {
         if (!orgId) return;
@@ -228,7 +233,7 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
     );
 }
 
-function DeveloperCard({ developer, orgId }: { developer: Developer; orgId: string }) {
+function DeveloperCard({ developer, orgId }: { developer: Developer; orgId?: string }) {
     const activityColor = getActivityColor(developer.weeklyActivity);
     const progressColor = getProgressColor(developer.weeklyActivity);
     const levelLabel = ACTIVITY_FILTER_LABELS[getActivityLevel(developer.weeklyActivity)];

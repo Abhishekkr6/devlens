@@ -13,12 +13,15 @@ interface Alert {
     createdAt: string;
 }
 
-export default function AlertsClient({ orgId }: { orgId: string }) {
+export default function AlertsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
     const [alerts, setAlerts] = useState<Alert[]>([]);
     const [loading, setLoading] = useState(true);
     const [activeId, setActiveId] = useState<string | null>(null);
 
     const user = useUserStore((state) => state.user);
+
+    // Convert slug to orgId using userStore
+    const orgId = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : propOrgId;
 
     // Find users role in current org
     const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(orgId));

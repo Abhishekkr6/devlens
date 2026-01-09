@@ -11,7 +11,7 @@ type Repo = {
   name: string;
 };
 
-export default function RepoPageClient({ orgId }: { orgId?: string }) {
+export default function RepoPageClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
   const [connectParams, setConnectParams] = useState({ fullName: "" });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
@@ -24,7 +24,10 @@ export default function RepoPageClient({ orgId }: { orgId?: string }) {
 
   const activeOrgId = useUserStore((state) => state.activeOrgId);
   const user = useUserStore((state) => state.user);
-  const currentOrgId = orgId ?? activeOrgId ?? null;
+
+  // Convert slug to orgId using userStore
+  const orgIdFromSlug = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : undefined;
+  const currentOrgId = orgIdFromSlug ?? propOrgId ?? activeOrgId ?? null;
 
   // Find users role in current org
   const currentOrg = user?.orgIds?.find((o) => String(o.id) === String(currentOrgId));
