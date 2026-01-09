@@ -109,6 +109,45 @@ async function migrateIndexes() {
         }
 
         // ============================================
+        // REPOS COLLECTION
+        // ============================================
+        console.log("\n📊 Migrating Repos collection...");
+        const reposCollection = db.collection("repos");
+
+        // List current indexes
+        const repoIndexes = await reposCollection.indexes();
+        console.log("Current indexes:", repoIndexes.map((idx) => idx.name));
+
+        // Drop old global unique index on 'repoFullName' if it exists
+        const oldRepoNameIndex = repoIndexes.find(
+            (idx) => idx.name === "repoFullName_1"
+        );
+        if (oldRepoNameIndex && oldRepoNameIndex.unique) {
+            console.log("⚠️  Dropping old global unique index: repoFullName_1");
+            await reposCollection.dropIndex("repoFullName_1");
+            console.log("✅ Dropped repoFullName_1 index");
+        } else {
+            console.log(
+                "ℹ️  No unique repoFullName_1 index found (already migrated or never existed)"
+            );
+        }
+
+        // Create new composite unique index (repoFullName + orgId)
+        const newRepoIndex = repoIndexes.find(
+            (idx) => idx.name === "repoFullName_1_orgId_1"
+        );
+        if (!newRepoIndex) {
+            console.log("🔧 Creating composite unique index: repoFullName_1_orgId_1");
+            await reposCollection.createIndex(
+                { repoFullName: 1, orgId: 1 },
+                { unique: true, name: "repoFullName_1_orgId_1" }
+            );
+            console.log("✅ Created repoFullName_1_orgId_1 index");
+        } else {
+            console.log("ℹ️  repoFullName_1_orgId_1 index already exists");
+        }
+
+        // ============================================
         // VERIFY MIGRATION
         // ============================================
         console.log("\n🔍 Verifying migration...");
