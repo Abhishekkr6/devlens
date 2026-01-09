@@ -5,6 +5,7 @@ import { api } from "../lib/api";
 import { isAxiosError } from "axios";
 
 export interface Org {
+  _id: string; // MongoDB ID from backend
   id: string;
   name: string;
   slug: string;
@@ -62,6 +63,7 @@ export const useUserStore = create<UserState>((set, get) => ({
       const rawOrgs = Array.isArray(payload.orgs) ? payload.orgs : [];
       const orgs: Org[] = rawOrgs.map((o: any) => ({
         ...o,
+        _id: o._id || o.id, // MongoDB _id from backend
         id: o.id || o._id,
         slug: o.slug,
         role: o.role || "VIEWER",

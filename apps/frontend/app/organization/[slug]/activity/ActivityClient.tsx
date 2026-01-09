@@ -42,7 +42,7 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
 
     // Get orgId from slug if provided, otherwise use propOrgId
     const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : propOrgId;
+    const orgId = orgSlug ? user?.orgIds?.find((o: { _id: string; slug: string }) => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
         if (!orgId) return;

@@ -26,7 +26,7 @@ export default function RepoPageClient({ orgSlug, orgId: propOrgId }: { orgSlug?
   const user = useUserStore((state) => state.user);
 
   // Convert slug to orgId using userStore
-  const orgIdFromSlug = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : undefined;
+  const orgIdFromSlug = orgSlug ? user?.orgIds?.find((o: { _id: string; slug: string }) => o.slug === orgSlug)?._id : undefined;
   const currentOrgId = orgIdFromSlug ?? propOrgId ?? activeOrgId ?? null;
 
   // Find users role in current org

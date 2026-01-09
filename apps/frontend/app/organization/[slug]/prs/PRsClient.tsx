@@ -146,7 +146,7 @@ export default function PRsClient({ orgSlug, orgId: propOrgId }: { orgSlug?: str
 
     // Convert slug to orgId using userStore
     const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find((o: { id: string; slug: string }) => o.slug === orgSlug)?.id : propOrgId;
+    const orgId = orgSlug ? user?.orgIds?.find((o: { _id: string; slug: string }) => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
         if (!orgId) return;
