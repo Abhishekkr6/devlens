@@ -150,24 +150,33 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         if (!orgId) return;
         let isMounted = true;
 
-        api
-            .get(`/orgs/${orgId}/prs`)
-            .then((res) => {
-                if (!isMounted) return;
-                setPrs(res.data?.data?.items || []);
-            })
-            .catch((err) => {
-                console.error("PR load error", err);
-                if (!isMounted) return;
-                setPrs([]);
-            })
-            .finally(() => {
-                if (!isMounted) return;
-                setLoading(false);
-            });
+        const loadPRs = () => {
+            api
+                .get(`/orgs/${orgId}/prs`)
+                .then((res) => {
+                    if (!isMounted) return;
+                    setPrs(res.data?.data?.items || []);
+                })
+                .catch((err) => {
+                    console.error("PR load error", err);
+                    if (!isMounted) return;
+                    setPrs([]);
+                })
+                .finally(() => {
+                    if (!isMounted) return;
+                    setLoading(false);
+                });
+        };
+
+        // Initial load
+        loadPRs();
+
+        // 🔥 Automatic polling every 60 seconds
+        const interval = setInterval(loadPRs, 60000);
 
         return () => {
             isMounted = false;
+            clearInterval(interval);
         };
     }, [orgId]);
 

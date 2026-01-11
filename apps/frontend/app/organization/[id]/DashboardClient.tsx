@@ -138,10 +138,24 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
         loadDataRef.current = loadData;
     }, [loadData]);
 
+    // Initial load
     useEffect(() => {
         loadData();
     }, [loadData]);
 
+    // 🔥 NEW: Automatic polling for real-time updates (replaces Redis pub/sub)
+    // Polls every 30 seconds to keep dashboard data fresh
+    useEffect(() => {
+        if (!orgId) return;
+
+        const pollInterval = setInterval(() => {
+            loadData();
+        }, 30000); // Poll every 30 seconds
+
+        return () => clearInterval(pollInterval);
+    }, [orgId, loadData]);
+
+    // Event-based refresh (keeps existing behavior for immediate updates)
     useEffect(() => {
         if (!orgId || !lastEvent) return;
         if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT" && lastEvent.type !== "COMMIT_PROCESSED" && lastEvent.type !== "org:joined") return;

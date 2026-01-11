@@ -47,7 +47,13 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
       }
     };
 
+    // Initial load
     fetchRepos();
+
+    // 🔥 Automatic polling every 45 seconds
+    const interval = setInterval(fetchRepos, 45000);
+
+    return () => clearInterval(interval);
   }, [currentOrgId]);
 
   const handleConnect = async () => {

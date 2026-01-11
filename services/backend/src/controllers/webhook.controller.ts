@@ -3,63 +3,8 @@ import { verifyGithubSignature } from "../utils/verifySignature";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
 import { RepoModel } from "../models/repo.model";
-import { Queue } from "bullmq";
-import IORedis from "ioredis";
+import { analyzeCommitModules } from "../services/moduleAnalyzer";
 import logger from "../utils/logger";
-
-/* -------------------------------------------
-   REDIS CONNECTION (WITH ERROR HANDLING)
--------------------------------------------- */
-const redisUrl = process.env.REDIS_URL;
-if (!redisUrl) {
-  logger.warn("REDIS_URL environment variable is not set - queue processing disabled");
-}
-
-let redis: IORedis | null = null;
-let commitQueue: Queue | null = null;
-let prQueue: Queue | null = null;
-
-if (redisUrl) {
-  try {
-    redis = new IORedis(redisUrl, {
-      tls: { rejectUnauthorized: false },
-      maxRetriesPerRequest: null,
-    });
-
-    // Handle connection errors
-    redis.on("error", (err) => {
-      logger.warn(
-        { err: err.message },
-        "Redis connection error - queue processing may fail"
-      );
-    });
-
-    redis.on("connect", () => {
-      logger.info("Redis connected successfully");
-    });
-
-    /* -------------------------------------------
-       QUEUES
-    -------------------------------------------- */
-    commitQueue = new Queue("commit-processing", {
-      connection: redis,
-    });
-
-    prQueue = new Queue("pr-analysis", {
-      connection: redis,
-    });
-
-    logger.info("Redis and queues initialized");
-  } catch (err) {
-    logger.warn(
-      { err: err instanceof Error ? err.message : String(err) },
-      "Redis initialization failed - queue processing disabled. Webhooks will still save data to database."
-    );
-    redis = null;
-    commitQueue = null;
-    prQueue = null;
-  }
-}
 
 /* -------------------------------------------
    WEBHOOK IDEMPOTENCY TRACKING
@@ -215,39 +160,18 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
           )
         );
 
-        // Queue processing per org (optional if Redis available)
-        if (commitQueue) {
-          await commitQueue.add(
-            "commit-batch",
-            {
-              repoId: repo._id,
-              orgId: repo.orgId, // 🔥 Include orgId in job data
-              commitIds: commitDocs.map((d) => d._id),
-            },
-            {
-              attempts: 1,
-              removeOnComplete: true,
-              removeOnFail: true,
-            }
-          );
-          logger.info(
-            {
-              orgId: repo.orgId,
-              repo: repo.repoFullName,
-              commits: commitDocs.length
-            },
-            "Push processed and queued for analysis (org-scoped)"
-          );
-        } else {
-          logger.info(
-            {
-              orgId: repo.orgId,
-              repo: repo.repoFullName,
-              commits: commitDocs.length
-            },
-            "Push processed for org (queue unavailable - background processing skipped)"
-          );
-        }
+        // 🔥 NEW: Inline module analysis (replaces background queue processing)
+        // This processes commits immediately instead of queuing them
+        await analyzeCommitModules(commitDocs);
+
+        logger.info(
+          {
+            orgId: repo.orgId,
+            repo: repo.repoFullName,
+            commits: commitDocs.length
+          },
+          "Push processed with inline module analysis (org-scoped)"
+        );
       }
     }
 
@@ -301,40 +225,14 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
           { upsert: true, new: true }
         );
 
-        // Queue processing per org (optional if Redis available)
-        if (prQueue) {
-          await prQueue.add(
-            "pr-analysis",
-            {
-              prId: savedPR._id,
-              repoId: repo._id,
-              orgId: repo.orgId,  // 🔥 Include orgId in job data
-              trigger: "webhook",
-            },
-            {
-              attempts: 1,
-              removeOnComplete: true,
-              removeOnFail: true,
-            }
-          );
-          logger.info(
-            {
-              orgId: repo.orgId,
-              repo: repo.repoFullName,
-              pr: pr.number
-            },
-            "PR processed and queued for analysis (org-scoped)"
-          );
-        } else {
-          logger.info(
-            {
-              orgId: repo.orgId,
-              repo: repo.repoFullName,
-              pr: pr.number
-            },
-            "PR processed for org (queue unavailable - background processing skipped)"
-          );
-        }
+        logger.info(
+          {
+            orgId: repo.orgId,
+            repo: repo.repoFullName,
+            pr: pr.number
+          },
+          "PR processed and saved to database (org-scoped)"
+        );
       }
     }
 
