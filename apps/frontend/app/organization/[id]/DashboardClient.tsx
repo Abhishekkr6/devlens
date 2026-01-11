@@ -61,11 +61,14 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     // Ref to hold the loadData function to allow safe recursion/timeout call
     const loadDataRef = useRef<() => void>(() => { });
 
-    const loadData = useCallback(async () => {
+    const loadData = useCallback(async (isBackgroundPoll = false) => {
         if (!orgId) return;
 
         try {
-            setLoading(true);
+            // Only show loading on initial load, not on background polls
+            if (!isBackgroundPoll) {
+                setLoading(true);
+            }
 
             const [dashRes, timelineRes, prsRes] = await Promise.all([
                 api.get(`/orgs/${orgId}/dashboard`),
@@ -145,11 +148,12 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
     // 🔥 NEW: Automatic polling for real-time updates (replaces Redis pub/sub)
     // Polls every 30 seconds to keep dashboard data fresh
+    // Uses background flag to prevent visible loading state
     useEffect(() => {
         if (!orgId) return;
 
         const pollInterval = setInterval(() => {
-            loadData();
+            loadData(true); // true = background poll, no loading spinner
         }, 30000); // Poll every 30 seconds
 
         return () => clearInterval(pollInterval);

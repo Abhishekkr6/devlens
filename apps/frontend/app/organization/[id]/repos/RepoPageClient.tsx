@@ -35,23 +35,28 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
   useEffect(() => {
     if (!currentOrgId) return;
 
-    const fetchRepos = async () => {
+    const fetchRepos = async (isBackgroundPoll = false) => {
       try {
-        setLoading(true);
+        // Only show loading on initial load, not on background polls
+        if (!isBackgroundPoll) {
+          setLoading(true);
+        }
         const res = await api.get(`/orgs/${currentOrgId}/repos`);
         setRepos(res.data.data || []);
       } catch (err) {
         console.error("Repo load failed", err);
       } finally {
-        setLoading(false);
+        if (!isBackgroundPoll) {
+          setLoading(false);
+        }
       }
     };
 
     // Initial load
-    fetchRepos();
+    fetchRepos(false);
 
-    // 🔥 Automatic polling every 45 seconds
-    const interval = setInterval(fetchRepos, 45000);
+    // 🔥 Automatic polling every 45 seconds (background mode)
+    const interval = setInterval(() => fetchRepos(true), 45000);
 
     return () => clearInterval(interval);
   }, [currentOrgId]);

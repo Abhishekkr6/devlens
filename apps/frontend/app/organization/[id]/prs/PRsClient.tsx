@@ -150,7 +150,12 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         if (!orgId) return;
         let isMounted = true;
 
-        const loadPRs = () => {
+        const loadPRs = (isBackgroundPoll = false) => {
+            // Only show loading on initial load
+            if (!isBackgroundPoll && isMounted) {
+                setLoading(true);
+            }
+
             api
                 .get(`/orgs/${orgId}/prs`)
                 .then((res) => {
@@ -163,16 +168,16 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                     setPrs([]);
                 })
                 .finally(() => {
-                    if (!isMounted) return;
+                    if (!isMounted || isBackgroundPoll) return;
                     setLoading(false);
                 });
         };
 
         // Initial load
-        loadPRs();
+        loadPRs(false);
 
-        // 🔥 Automatic polling every 60 seconds
-        const interval = setInterval(loadPRs, 60000);
+        // 🔥 Automatic polling every 60 seconds (background mode)
+        const interval = setInterval(() => loadPRs(true), 60000);
 
         return () => {
             isMounted = false;
