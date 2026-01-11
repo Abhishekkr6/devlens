@@ -45,7 +45,7 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
     const orgId = orgSlug ? user?.orgIds?.find((o: any) => o.slug === orgSlug)?._id : propOrgId;
 
     useEffect(() => {
-        if (!orgSlug || !orgId) return; // Need both
+        if (!orgId) return; // Need orgId to load data
         const loadActivity = async () => {
             try {
                 setLoading(true);
@@ -66,7 +66,7 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
         };
 
         loadActivity();
-    }, [orgSlug]);
+    }, [orgId]);
 
     const formatTimeAgo = (input?: string) => {
         if (!input) return "Just now";
