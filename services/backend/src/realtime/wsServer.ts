@@ -1,36 +1,28 @@
 import { WebSocketServer } from "ws";
-import Redis from "ioredis";
 import logger from "../utils/logger";
 
+/**
+ * WebSocket Server (Simplified without Redis)
+ * 
+ * Basic WebSocket server for future real-time features.
+ * Currently not used as frontend uses polling for updates.
+ */
 export const attachWebSocket = (server: any) => {
   const wss = new WebSocketServer({ server });
 
-  logger.info("[WS] WebSocket attached to Express server");
+  logger.info("[WS] WebSocket server attached (polling-based updates active)");
 
   wss.on("connection", (ws) => {
     logger.info("[WS] Client connected");
-    ws.on("close", () => logger.info("[WS] Client disconnected"));
-  });
 
-  const redisUrl = process.env.REDIS_URL;
-  if (!redisUrl) {
-    logger.warn("[WS] REDIS_URL not set, WebSocket real-time features may not work");
-    return;
-  }
-  const redis = new Redis(redisUrl);
-
-  redis.subscribe("events", () => {
-    logger.info("[WS] Subscribed to Redis events");
-  });
-
-  redis.on("message", (_, message) => {
-    const event = JSON.parse(message);
-    logger.info({ eventType: event.type }, "[WS] Broadcasting event to clients");
-
-    wss.clients.forEach((client) => {
-      try {
-        client.send(JSON.stringify(event));
-      } catch { }
+    ws.on("close", () => {
+      logger.info("[WS] Client disconnected");
     });
+
+    // Send initial connection confirmation
+    ws.send(JSON.stringify({
+      type: "connected",
+      message: "WebSocket connected - using polling for updates"
+    }));
   });
 };
