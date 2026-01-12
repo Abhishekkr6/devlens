@@ -187,8 +187,8 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                 {/* Main Content */}
                 <div className="lg:col-span-2 space-y-4 sm:space-y-6">
                     {/* Contribution Activity */}
-                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
+                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-5 sm:p-8 shadow-sm">
+                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">
                             Contribution Activity
                         </h2>
                         <ContributionHeatmap data={profile.contributionActivity} />
@@ -299,14 +299,16 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                             ))}
                         </div>
 
-                        {/* Action Buttons */}
-                        <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
-                            <button className="w-full rounded-lg bg-brand px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white hover:bg-brand/90 transition-colors">
-                                Send Message
-                            </button>
-                            <button className="w-full rounded-lg border border-border bg-background px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-text-primary hover:bg-surface transition-colors">
+                        {/* Action Button */}
+                        <div className="mt-4 sm:mt-6">
+                            <a
+                                href={`https://github.com/${profile.profile.githubId}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center justify-center w-full rounded-lg border border-border bg-background px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-text-primary hover:bg-surface transition-colors"
+                            >
                                 View GitHub
-                            </button>
+                            </a>
                         </div>
                     </Card>
                 </div>
