@@ -172,3 +172,195 @@ export const getDevelopers = async (req: Request, res: Response) => {
     return res.status(500).json({ success: false });
   }
 };
+
+export const getDeveloperProfile = async (req: Request, res: Response) => {
+  try {
+    const { orgId, developerId } = req.params;
+
+    if (!orgId || !developerId) {
+      return res.status(400).json({
+        success: false,
+        message: "orgId and developerId are required"
+      });
+    }
+
+    const orgObjectId = new Types.ObjectId(orgId);
+
+    // Fetch developer's commits
+    const commits = await CommitModel.find({
+      orgId: orgObjectId,
+      authorGithubId: developerId
+    })
+      .sort({ timestamp: -1 })
+      .select("message timestamp repoId filesChangedCount")
+      .populate("repoId", "repoName")
+      .lean();
+
+    // Fetch developer's PRs
+    const prs = await PRModel.find({
+      orgId: orgObjectId,
+      authorGithubId: developerId
+    })
+      .sort({ createdAt: -1 })
+      .select("title number state createdAt mergedAt repoId")
+      .populate("repoId", "repoName")
+      .lean();
+
+    // Get user info
+    const user = await UserModel.findOne({ githubId: developerId })
+      .select("githubId name login avatarUrl role email")
+      .lean();
+
+    // Calculate metrics
+    const totalCommits = commits.length;
+    const totalPRs = prs.length;
+
+    // Get commits from last week for trend
+    const oneWeekAgo = new Date();
+    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+    const twoWeeksAgo = new Date();
+    twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
+
+    const lastWeekCommits = commits.filter(c => c.timestamp && new Date(c.timestamp) >= oneWeekAgo).length;
+    const prevWeekCommits = commits.filter(c => {
+      if (!c.timestamp) return false;
+      const date = new Date(c.timestamp);
+      return date >= twoWeeksAgo && date < oneWeekAgo;
+    }).length;
+
+    const commitsChange = prevWeekCommits > 0
+      ? `${((lastWeekCommits - prevWeekCommits) / prevWeekCommits * 100).toFixed(0)}%`
+      : "+0%";
+
+    // Calculate PR trends
+    const lastWeekPRs = prs.filter(p => p.createdAt && new Date(p.createdAt) >= oneWeekAgo).length;
+    const prevWeekPRs = prs.filter(p => {
+      if (!p.createdAt) return false;
+      const date = new Date(p.createdAt);
+      return date >= twoWeeksAgo && date < oneWeekAgo;
+    }).length;
+
+    const prsChange = prevWeekPRs > 0
+      ? `${((lastWeekPRs - prevWeekPRs) / prevWeekPRs * 100).toFixed(0)}%`
+      : "+0%";
+
+    // Calculate contribution activity (last 52 weeks)
+    const contributionActivity: Array<{ date: string; count: number }> = [];
+    const today = new Date();
+    for (let i = 51; i >= 0; i--) {
+      const date = new Date(today);
+      date.setDate(date.getDate() - (i * 7));
+      const weekStart = new Date(date);
+      weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+
+      const weekEnd = new Date(weekStart);
+      weekEnd.setDate(weekEnd.getDate() + 7);
+
+      const count = commits.filter(c => {
+        if (!c.timestamp) return false;
+        const commitDate = new Date(c.timestamp);
+        return commitDate >= weekStart && commitDate < weekEnd;
+      }).length;
+
+      contributionActivity.push({
+        date: weekStart.toISOString().split('T')[0],
+        count
+      });
+    }
+
+    // Get recent activity (last 10 items)
+    const recentActivity: any[] = [];
+
+    commits.slice(0, 5).forEach((commit: any) => {
+      recentActivity.push({
+        type: "commit",
+        message: commit.message,
+        repo: commit.repoId?.repoName || "unknown",
+        timestamp: commit.timestamp
+      });
+    });
+
+    prs.slice(0, 5).forEach((pr: any) => {
+      recentActivity.push({
+        type: pr.state === "merged" ? "pr_merged" : "pr_opened",
+        message: pr.title,
+        repo: pr.repoId?.repoName || "unknown",
+        timestamp: pr.createdAt,
+        prNumber: pr.number
+      });
+    });
+
+    // Sort by timestamp
+    recentActivity.sort((a, b) =>
+      new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+    );
+
+    // Get active repositories
+    const repoCommitCounts: Record<string, { commits: number; prs: number; name: string }> = {};
+
+    commits.forEach((commit: any) => {
+      const repoName = commit.repoId?.repoName || "unknown";
+      if (!repoCommitCounts[repoName]) {
+        repoCommitCounts[repoName] = { commits: 0, prs: 0, name: repoName };
+      }
+      repoCommitCounts[repoName].commits++;
+    });
+
+    prs.forEach((pr: any) => {
+      const repoName = pr.repoId?.repoName || "unknown";
+      if (!repoCommitCounts[repoName]) {
+        repoCommitCounts[repoName] = { commits: 0, prs: 0, name: repoName };
+      }
+      repoCommitCounts[repoName].prs++;
+    });
+
+    const activeRepos = Object.values(repoCommitCounts)
+      .sort((a, b) => (b.commits + b.prs) - (a.commits + a.prs))
+      .slice(0, 5)
+      .map(repo => ({
+        name: repo.name,
+        role: "Contributor",
+        commits: repo.commits,
+        prs: repo.prs
+      }));
+
+    // Calculate weekly activity percentage (based on commits in last 7 days)
+    const weeklyActivity = Math.min(100, Math.round((lastWeekCommits / 20) * 100));
+
+    return res.json({
+      success: true,
+      data: {
+        profile: {
+          githubId: developerId,
+          name: user?.name || user?.login || developerId,
+          email: user?.email || `${developerId}@example.com`,
+          avatarUrl: user?.avatarUrl || `https://github.com/${developerId}.png`,
+          joinedAt: commits.length > 0 && commits[commits.length - 1].timestamp
+            ? new Date(commits[commits.length - 1].timestamp!).toISOString().split('T')[0]
+            : new Date().toISOString().split('T')[0],
+          weeklyActivity
+        },
+        metrics: {
+          totalCommits,
+          commitsChange,
+          totalPRs,
+          prsChange,
+          codeReviews: 0, // Placeholder - would need review data
+          reviewsChange: "+0%",
+          avgReviewTime: "N/A",
+          reviewTimeChange: "+0%"
+        },
+        contributionActivity,
+        recentActivity: recentActivity.slice(0, 10),
+        activeRepos
+      }
+    });
+  } catch (err) {
+    console.error("getDeveloperProfile error:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch developer profile"
+    });
+  }
+};
+

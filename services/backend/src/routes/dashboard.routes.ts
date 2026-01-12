@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getDashboardStats } from "../controllers/dashboard.controller";
 import { getCommitTimeline, getAllActivities } from "../controllers/activity.controller";
-import { getDevelopers } from "../controllers/developer.controller";
+import { getDevelopers, getDeveloperProfile } from "../controllers/developer.controller";
 import { listPRs } from "../controllers/prList.controller";
 import { getAlertSummary } from "../controllers/alertSummary.controller";
 import { requireOrgAccess } from "../middlewares/authOrg";
@@ -43,6 +43,13 @@ router.get(
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
   getAllActivities
+);
+
+router.get(
+  "/orgs/:orgId/developers/:developerId",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  getDeveloperProfile
 );
 
 export default router;

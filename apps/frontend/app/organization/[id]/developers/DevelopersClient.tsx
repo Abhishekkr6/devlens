@@ -237,8 +237,8 @@ function DeveloperCard({ developer, orgId }: { developer: Developer; orgId?: str
     const progressColor = getProgressColor(developer.weeklyActivity);
     const levelLabel = ACTIVITY_FILTER_LABELS[getActivityLevel(developer.weeklyActivity)];
 
-    return (
-        <Card className="group h-full rounded-2xl border border-border bg-background p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg">
+    const cardContent = (
+        <Card className="group h-full rounded-2xl border border-border bg-background p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg cursor-pointer">
             <div className="flex items-start justify-between">
                 <div className="flex flex-1 items-center gap-3">
                     <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-indigo-500 to-indigo-400 text-white">
@@ -284,6 +284,16 @@ function DeveloperCard({ developer, orgId }: { developer: Developer; orgId?: str
             </div>
         </Card>
     );
+
+    if (orgId) {
+        return (
+            <Link href={`/organization/${orgId}/developers/${developer.githubId}`}>
+                {cardContent}
+            </Link>
+        );
+    }
+
+    return cardContent;
 }
 
 function StatBlock({
