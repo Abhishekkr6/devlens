@@ -214,7 +214,9 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
             number: pr.number,
             title: pr.title,
             authorGithubId: pr.user?.login ?? null,
-            state: pr.state,
+            // 🔥 FIX: GitHub sends 'closed' for both closed and merged PRs
+            // We need to check merged_at to determine if it was actually merged
+            state: pr.merged_at ? "merged" : pr.state,
             createdAt: pr.created_at,
             mergedAt: pr.merged_at,
             closedAt: pr.closed_at,
