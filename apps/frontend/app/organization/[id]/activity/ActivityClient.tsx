@@ -1,72 +1,79 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { api } from "../../../../lib/api";
 import { Card } from "../../../../components/Ui/Card";
-import { Badge } from "../../../../components/Ui/Badge";
-import { useUserStore } from "../../../../store/userStore";
 import {
     GitCommit,
     GitPullRequest,
     MessageSquare,
-    Search,
 } from "lucide-react";
 
-type Commit = {
-    _id: string;
-    total: number;
-};
-
-type PR = {
-    _id?: string;
-    number?: number;
-    title?: string;
-    state?: string;
-    repoId?: string;
-    createdAt?: string;
-};
-
-type ActivityEvent = {
+type Activity = {
     id: string;
+    type: string;
     title: string;
     subtitle: string;
     tag: string;
+    author: string;
     timestamp: string;
-    kind: "commit" | "pr" | "review";
+    icon: string;
 };
 
-export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?: string; orgId?: string }) {
-    const [timeline, setTimeline] = useState<Commit[]>([]);
-    const [prs, setPrs] = useState<PR[]>([]);
-    const [loading, setLoading] = useState(true);
+type ActivityResponse = {
+    items: Activity[];
+    page: number;
+    pageSize: number;
+    total: number;
+};
 
-    // Get orgId from slug if provided, otherwise use propOrgId
-    const { user } = useUserStore();
-    const orgId = orgSlug ? user?.orgIds?.find((o: any) => o.slug === orgSlug)?._id : propOrgId;
+export default function ActivityClient({ orgId }: { orgId: string }) {
+    const [activities, setActivities] = useState<Activity[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(true);
+    const [loadingMore, setLoadingMore] = useState(false);
+
+    const loadActivities = async (pageNum: number, append = false) => {
+        try {
+            if (!append) {
+                setLoading(true);
+            } else {
+                setLoadingMore(true);
+            }
+
+            const response = await api.get(`/orgs/${orgId}/activities?page=${pageNum}&pageSize=50`);
+            const data: ActivityResponse = response.data?.data;
+
+            if (data && data.items) {
+                if (append) {
+                    setActivities(prev => [...prev, ...data.items]);
+                } else {
+                    setActivities(data.items);
+                }
+                setHasMore(data.items.length === data.pageSize);
+            }
+        } catch (err) {
+            console.error("Activity load failed", err);
+            if (!append) {
+                setActivities([]);
+            }
+        } finally {
+            setLoading(false);
+            setLoadingMore(false);
+        }
+    };
 
     useEffect(() => {
-        if (!orgId) return; // Need orgId to load data
-        const loadActivity = async () => {
-            try {
-                setLoading(true);
-                const [timelineRes, prsRes] = await Promise.all([
-                    api.get(`/orgs/${orgId}/activity/commits`),
-                    api.get(`/orgs/${orgId}/prs`),
-                ]);
-
-                setTimeline(timelineRes.data?.data || []);
-                setPrs(prsRes.data?.data?.items || []);
-            } catch (err) {
-                console.error("Activity load failed", err);
-                setTimeline([]);
-                setPrs([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        loadActivity();
+        if (!orgId) return;
+        loadActivities(1, false);
     }, [orgId]);
+
+    const loadMore = () => {
+        const nextPage = page + 1;
+        setPage(nextPage);
+        loadActivities(nextPage, true);
+    };
 
     const formatTimeAgo = (input?: string) => {
         if (!input) return "Just now";
@@ -89,131 +96,110 @@ export default function ActivityClient({ orgSlug, orgId: propOrgId }: { orgSlug?
         return `${diffYears} year${diffYears === 1 ? "" : "s"} ago`;
     };
 
-    const summary = useMemo(() => {
-        const totalCommits = timeline.reduce((sum, commit) => sum + (commit.total ?? 0), 0);
-        const openPrs = prs.filter((pr) => pr.state?.toLowerCase() === "open").length;
-        const reviewPrs = prs.filter((pr) => pr.state?.toLowerCase() === "review").length;
-        const mergedPrs = prs.filter((pr) => pr.state?.toLowerCase() === "merged").length;
+    const getActivityIcon = (activity: Activity) => {
+        const iconType = activity.icon || activity.type;
 
-        return {
-            commits: totalCommits,
-            prsOpened: openPrs,
-            reviews: reviewPrs || mergedPrs,
-        };
-    }, [timeline, prs]);
+        if (iconType === "commit") {
+            return {
+                Icon: GitCommit,
+                bgColor: "bg-blue-50 dark:bg-blue-900/20",
+                iconColor: "text-blue-600 dark:text-blue-400",
+            };
+        } else if (iconType === "pr_merged" || activity.type === "pr_merged") {
+            return {
+                Icon: GitCommit,
+                bgColor: "bg-blue-50 dark:bg-blue-900/20",
+                iconColor: "text-blue-600 dark:text-blue-400",
+            };
+        } else if (iconType === "pr" || activity.type.startsWith("pr")) {
+            return {
+                Icon: GitPullRequest,
+                bgColor: "bg-purple-50 dark:bg-purple-900/20",
+                iconColor: "text-purple-600 dark:text-purple-400",
+            };
+        } else {
+            return {
+                Icon: MessageSquare,
+                bgColor: "bg-green-50 dark:bg-green-900/20",
+                iconColor: "text-green-600 dark:text-green-400",
+            };
+        }
+    };
 
-    const recentEvents = useMemo(() => {
-        const commitEvents: ActivityEvent[] = timeline.slice(-5).map((commit) => ({
-            id: `commit-${commit._id}`,
-            title: `${commit.total} commit${commit.total === 1 ? "" : "s"} pushed`,
-            subtitle: "Activity captured",
-            tag: "commits",
-            timestamp: commit._id,
-            kind: "commit",
-        }));
-
-        const prEvents: ActivityEvent[] = prs.slice(0, 5).map((pr) => ({
-            id: pr._id ?? `pr-${pr.number}`,
-            title: pr.title || `Pull request #${pr.number ?? ""}`,
-            subtitle:
-                pr.state?.toLowerCase() === "merged"
-                    ? "Merged to main branch"
-                    : pr.state?.toLowerCase() === "open"
-                        ? "Opened for review"
-                        : `PR ${pr.state ?? "updated"}`,
-            tag: pr.repoId ? `repo:${pr.repoId}` : "pull-requests",
-            timestamp: pr.createdAt || new Date().toISOString(),
-            kind: pr.state?.toLowerCase() === "review" ? "review" : "pr",
-        }));
-
-        return [...prEvents, ...commitEvents]
-            .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-            .slice(0, 8);
-    }, [timeline, prs]);
+    if (loading) {
+        return (
+            <div className="flex h-[50vh] w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-3">
+                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+                    <p className="text-sm text-text-secondary animate-pulse">Loading activities...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-6">
             <header className="space-y-2">
-                <h1 className="text-3xl font-semibold text-text-primary">Activity</h1>
-                <p className="text-sm text-text-secondary">
-                    Recent commits and pull requests for this organization.
-                </p>
+                <h1 className="text-3xl font-semibold text-text-primary">Recent Activity</h1>
             </header>
 
-            {loading ? (
-                <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
-                    Loading activity…
-                </Card>
-            ) : recentEvents.length === 0 ? (
-                <Card className="rounded-2xl border-0 bg-background p-6 text-sm text-text-secondary shadow-md">
-                    No activity recorded yet for this organization.
+            {activities.length === 0 ? (
+                <Card className="rounded-2xl border border-border bg-background p-8 text-center shadow-sm">
+                    <p className="text-sm text-text-secondary">No activity recorded yet for this organization.</p>
                 </Card>
             ) : (
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-                    <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-                        <h2 className="text-lg font-semibold text-text-primary">Recent Activity</h2>
-                        <p className="text-sm text-text-secondary mb-6">Latest updates from your team</p>
+                <div className="space-y-4">
+                    {activities.map((activity) => {
+                        const { Icon, bgColor, iconColor } = getActivityIcon(activity);
 
-                        <div className="space-y-4">
-                            {recentEvents.map((event) => {
-                                const iconClasses = "h-10 w-10 flex items-center justify-center rounded-xl shrink-0";
-                                const baseIconStyles =
-                                    event.kind === "commit"
-                                        ? "bg-white text-indigo-600 shadow-sm"
-                                        : event.kind === "review"
-                                            ? "bg-white text-emerald-600 shadow-sm"
-                                            : "bg-white text-amber-600 shadow-sm";
+                        return (
+                            <div
+                                key={activity.id}
+                                className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
+                            >
+                                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
+                                    <Icon className={`h-5 w-5 ${iconColor}`} />
+                                </div>
 
-                                return (
-                                    <div
-                                        key={event.id}
-                                        className="flex flex-col gap-3 rounded-2xl border border-border p-4 sm:flex-row sm:items-center sm:gap-4"
-                                    >
-                                        <span className={`${iconClasses} ${baseIconStyles}`}>
-                                            {event.kind === "commit" && <GitCommit className="h-5 w-5" />}
-                                            {event.kind === "pr" && <GitPullRequest className="h-5 w-5" />}
-                                            {event.kind === "review" && <MessageSquare className="h-5 w-5" />}
-                                        </span>
-
-                                        <div className="flex-1 space-y-1">
-                                            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-                                                <div className="text-sm font-semibold text-text-primary">{event.title}</div>
-                                                <div className="text-xs text-text-secondary">{formatTimeAgo(event.timestamp)}</div>
-                                            </div>
-                                            <p className="text-xs uppercase tracking-wide text-text-secondary">{event.subtitle}</p>
-                                            <Badge type={event.kind === "review" ? "success" : event.kind === "commit" ? "info" : "warning"}>
-                                                {event.tag}
-                                            </Badge>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-start justify-between gap-2">
+                                        <div className="flex-1 min-w-0">
+                                            <h3 className="text-sm font-semibold text-text-primary truncate">
+                                                {activity.title}
+                                            </h3>
+                                            <p className="text-xs text-text-secondary mt-0.5">
+                                                {activity.subtitle}
+                                            </p>
                                         </div>
+                                        <span className="text-xs text-text-secondary whitespace-nowrap">
+                                            {formatTimeAgo(activity.timestamp)}
+                                        </span>
                                     </div>
-                                );
-                            })}
-                        </div>
-                    </Card>
 
-                    <div className="space-y-6">
-                        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-                            <h2 className="text-lg font-semibold text-text-primary">Weekly Summary</h2>
-                            <p className="text-sm text-text-secondary mb-6">Snapshot of the last 30 days</p>
-
-                            <div className="space-y-5">
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
-                                    <p className="text-3xl font-semibold text-text-primary">{summary.commits}</p>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs opened</p>
-                                    <p className="text-3xl font-semibold text-text-primary">{summary.prsOpened}</p>
-                                </div>
-
-                                <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Reviews/Merged</p>
-                                    <p className="text-3xl font-semibold text-text-primary">{summary.reviews}</p>
+                                    <div className="flex items-center gap-2 mt-2">
+                                        <span className="inline-flex items-center rounded-md bg-surface px-2 py-1 text-xs font-medium text-text-secondary border border-border">
+                                            {activity.tag}
+                                        </span>
+                                        <span className="text-xs text-text-secondary">
+                                            by {activity.author}
+                                        </span>
+                                    </div>
                                 </div>
                             </div>
-                        </Card>
-                    </div>
+                        );
+                    })}
+
+                    {hasMore && (
+                        <div className="flex justify-center pt-4">
+                            <button
+                                onClick={loadMore}
+                                disabled={loadingMore}
+                                className="rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            >
+                                {loadingMore ? "Loading..." : "Load More"}
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
