@@ -151,59 +151,59 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
         return (
             <div className="flex h-[50vh] w-full items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-                    <p className="text-sm text-text-secondary animate-pulse">Loading activities...</p>
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+                    <p className="text-xs sm:text-sm text-text-secondary animate-pulse">Loading activities...</p>
                 </div>
             </div>
         );
     }
 
     return (
-        <div className="space-y-6">
-            <header className="space-y-2">
-                <h1 className="text-3xl font-semibold text-text-primary">Recent Activity</h1>
+        <div className="space-y-4 sm:space-y-6">
+            <header className="space-y-1 sm:space-y-2">
+                <h1 className="text-2xl sm:text-3xl font-semibold text-text-primary">Recent Activity</h1>
             </header>
 
             {activities.length === 0 ? (
-                <Card className="rounded-2xl border border-border bg-background p-8 text-center shadow-sm">
-                    <p className="text-sm text-text-secondary">No activity recorded yet for this organization.</p>
+                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-8 text-center shadow-sm">
+                    <p className="text-xs sm:text-sm text-text-secondary">No activity recorded yet for this organization.</p>
                 </Card>
             ) : (
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                     {/* Main Activity Feed */}
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                         {activities.map((activity) => {
                             const { Icon, bgColor, iconColor } = getActivityIcon(activity);
 
                             return (
                                 <div
                                     key={activity.id}
-                                    className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
+                                    className="flex items-start gap-2 sm:gap-4 rounded-lg sm:rounded-xl border border-border bg-background p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow"
                                 >
-                                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
-                                        <Icon className={`h-5 w-5 ${iconColor}`} />
+                                    <div className={`flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
+                                        <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${iconColor}`} />
                                     </div>
 
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-start justify-between gap-2">
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-sm font-semibold text-text-primary truncate">
+                                                <h3 className="text-xs sm:text-sm font-semibold text-text-primary truncate">
                                                     {activity.title}
                                                 </h3>
-                                                <p className="text-xs text-text-secondary mt-0.5">
+                                                <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5">
                                                     {activity.subtitle}
                                                 </p>
                                             </div>
-                                            <span className="text-xs text-text-secondary whitespace-nowrap">
+                                            <span className="text-[10px] sm:text-xs text-text-secondary whitespace-nowrap">
                                                 {formatTimeAgo(activity.timestamp)}
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <span className="inline-flex items-center rounded-md bg-surface px-2 py-1 text-xs font-medium text-text-secondary border border-border">
+                                        <div className="flex items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
+                                            <span className="inline-flex items-center rounded-md bg-surface px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium text-text-secondary border border-border">
                                                 {activity.tag}
                                             </span>
-                                            <span className="text-xs text-text-secondary">
+                                            <span className="text-[10px] sm:text-xs text-text-secondary">
                                                 by {activity.author}
                                             </span>
                                         </div>
@@ -213,11 +213,11 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                         })}
 
                         {hasMore && (
-                            <div className="flex justify-center pt-4">
+                            <div className="flex justify-center pt-3 sm:pt-4">
                                 <button
                                     onClick={loadMore}
                                     disabled={loadingMore}
-                                    className="rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="rounded-lg bg-brand px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     {loadingMore ? "Loading..." : "Load More"}
                                 </button>
@@ -226,25 +226,25 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                     </div>
 
                     {/* Weekly Summary Sidebar */}
-                    <div className="space-y-6">
-                        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm sticky top-6">
-                            <h2 className="text-lg font-semibold text-text-primary mb-4">Weekly Summary</h2>
-                            <p className="text-sm text-text-secondary mb-6">Activity from the last 7 days</p>
+                    <div className="space-y-4 sm:space-y-6">
+                        <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm sticky top-6">
+                            <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">Weekly Summary</h2>
+                            <p className="text-xs sm:text-sm text-text-secondary mb-4 sm:mb-6">Activity from the last 7 days</p>
 
-                            <div className="space-y-5">
+                            <div className="space-y-4 sm:space-y-5">
                                 <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
-                                    <p className="text-3xl font-semibold text-text-primary">{weeklySummary.commits}</p>
+                                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
+                                    <p className="text-2xl sm:text-3xl font-semibold text-text-primary">{weeklySummary.commits}</p>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Opened</p>
-                                    <p className="text-3xl font-semibold text-text-primary">{weeklySummary.prsOpened}</p>
+                                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Opened</p>
+                                    <p className="text-2xl sm:text-3xl font-semibold text-text-primary">{weeklySummary.prsOpened}</p>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Merged</p>
-                                    <p className="text-3xl font-semibold text-text-primary">{weeklySummary.prsMerged}</p>
+                                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Merged</p>
+                                    <p className="text-2xl sm:text-3xl font-semibold text-text-primary">{weeklySummary.prsMerged}</p>
                                 </div>
                             </div>
                         </Card>

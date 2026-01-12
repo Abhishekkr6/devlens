@@ -191,8 +191,8 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
         return (
             <div className="flex h-[50vh] w-full items-center justify-center">
                 <div className="flex flex-col items-center gap-3">
-                    <div className="h-8 w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
-                    <p className="text-sm text-text-secondary animate-pulse">Loading dashboard...</p>
+                    <div className="h-6 w-6 sm:h-8 sm:w-8 animate-spin rounded-full border-2 border-brand border-t-transparent" />
+                    <p className="text-xs sm:text-sm text-text-secondary animate-pulse">Loading dashboard...</p>
                 </div>
             </div>
         );
@@ -270,49 +270,49 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     ];
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
             <header>
-                <h1 className="text-3xl font-semibold text-text-primary">Overview</h1>
-                <p className="mt-1 text-sm text-text-secondary">Real-time team activity and metrics for your organization</p>
+                <h1 className="text-2xl sm:text-3xl font-semibold text-text-primary">Overview</h1>
+                <p className="mt-1 text-xs sm:text-sm text-text-secondary">Real-time team activity and metrics for your organization</p>
             </header>
 
-            <section className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <section className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-4">
                 {statCards.map(({ label, value, icon: Icon, trend, helper }) => (
-                    <Card key={label} className="rounded-2xl border border-border bg-background p-6 shadow-sm hover:shadow-md transition-shadow">
+                    <Card key={label} className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex items-start justify-between">
                             <div>
-                                <p className="text-xs font-semibold uppercase tracking-wide text-text-secondary">
+                                <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-text-secondary">
                                     {label}
                                 </p>
-                                <p className="mt-3 text-3xl font-semibold text-text-primary">{value}</p>
+                                <p className="mt-2 sm:mt-3 text-2xl sm:text-3xl font-semibold text-text-primary">{value}</p>
                             </div>
-                            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-black/10 dark:bg-slate-900 border border-border/50 dark:border-white/10 text-brand dark:text-white">
-                                <Icon className="h-5 w-5" />
+                            <span className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-lg bg-black/10 dark:bg-slate-900 border border-border/50 dark:border-white/10 text-brand dark:text-white">
+                                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                             </span>
                         </div>
                         {trend !== null ? (
-                            <span className={`mt-4 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold ${trend >= 0 ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400"
+                            <span className={`mt-3 sm:mt-4 inline-flex items-center gap-1 rounded-full px-2 sm:px-2.5 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold ${trend >= 0 ? "bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 dark:text-emerald-400" : "bg-rose-50 dark:bg-rose-900/20 text-rose-600 dark:text-rose-400"
                                 }`}>
-                                {trend >= 0 ? <ArrowUpRight className="h-3.5 w-3.5" /> : <ArrowDownRight className="h-3.5 w-3.5" />}
+                                {trend >= 0 ? <ArrowUpRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" /> : <ArrowDownRight className="h-3 w-3 sm:h-3.5 sm:w-3.5" />}
                                 {Math.abs(trend).toFixed(1)}% {trend >= 0 ? "increase" : "decrease"}
                             </span>
-                        ) : <p className="mt-4 text-xs text-text-secondary">{helper}</p>}
+                        ) : <p className="mt-3 sm:mt-4 text-[10px] sm:text-xs text-text-secondary">{helper}</p>}
                     </Card>
                 ))
                 }
             </section>
 
-            <section className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-                <Card className="lg:col-span-2 rounded-2xl border border-border bg-background p-6 shadow-sm">
-                    <div className="flex items-center justify-between mb-6">
+            <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
+                <Card className="lg:col-span-2 rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
                         <div>
-                            <h2 className="text-lg font-semibold text-text-primary">Weekly Activity</h2>
-                            <p className="text-sm text-text-secondary">Commit trend for the past month</p>
+                            <h2 className="text-base sm:text-lg font-semibold text-text-primary">Weekly Activity</h2>
+                            <p className="text-xs sm:text-sm text-text-secondary">Commit trend for the past month</p>
                         </div>
                     </div>
-                    <div className="h-64">
+                    <div className="h-48 sm:h-64">
                         {timeline.length === 0 ? (
-                            <div className="flex h-full items-center justify-center rounded-xl bg-surface text-sm text-text-secondary">
+                            <div className="flex h-full items-center justify-center rounded-xl bg-surface text-xs sm:text-sm text-text-secondary">
                                 No activity recorded.
                             </div>
                         ) : (
@@ -321,39 +321,39 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                     </div>
                 </Card>
 
-                <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-text-primary mb-6">PR Status</h2>
-                    <ul className="space-y-4">
+                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
+                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">PR Status</h2>
+                    <ul className="space-y-3 sm:space-y-4">
                         {[{ label: "Open", value: prStatusCounts.open }, { label: "Review", value: prStatusCounts.review }, { label: "Merged", value: prStatusCounts.merged }].map((item) => (
-                            <li key={item.label} className="flex items-center justify-between rounded-xl border border-border bg-surface px-4 py-3">
-                                <span className="text-sm font-medium text-text-secondary">{item.label}</span>
-                                <span className="text-lg font-semibold text-text-primary">{item.value}</span>
+                            <li key={item.label} className="flex items-center justify-between rounded-lg sm:rounded-xl border border-border bg-surface px-3 sm:px-4 py-2 sm:py-3">
+                                <span className="text-xs sm:text-sm font-medium text-text-secondary">{item.label}</span>
+                                <span className="text-base sm:text-lg font-semibold text-text-primary">{item.value}</span>
                             </li>
                         ))}
                     </ul>
-                    <div className="mt-6 rounded-xl border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 px-4 py-3 text-xs text-indigo-700 dark:text-indigo-400">
+                    <div className="mt-4 sm:mt-6 rounded-lg sm:rounded-xl border border-indigo-100 dark:border-indigo-900 bg-indigo-50 dark:bg-indigo-900/20 px-3 sm:px-4 py-2 sm:py-3 text-[10px] sm:text-xs text-indigo-700 dark:text-indigo-400">
                         Average merge time is {data.kpis.avgPRTimeHours}h.
                     </div>
                 </Card>
             </section>
 
-            <section className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-text-primary mb-6">PR Risk Distribution</h2>
+            <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
+                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
+                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">PR Risk Distribution</h2>
                     <PRRiskBarChart data={riskBuckets} />
                 </Card>
 
-                <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-                    <h2 className="text-lg font-semibold text-text-primary mb-4">Top Contributors</h2>
-                    <div className="space-y-4">
+                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
+                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">Top Contributors</h2>
+                    <div className="space-y-3 sm:space-y-4">
                         {data.charts.contributorBreakdown.map((c, i) => (
                             <div key={i} className="flex items-center justify-between border-b border-border pb-2 last:border-0">
-                                <span className="text-sm font-medium text-text-secondary">{c.name}</span>
-                                <span className="text-sm font-bold text-brand dark:text-indigo-400">{c.commits} commits</span>
+                                <span className="text-xs sm:text-sm font-medium text-text-secondary">{c.name}</span>
+                                <span className="text-xs sm:text-sm font-bold text-brand dark:text-indigo-400">{c.commits} commits</span>
                             </div>
                         ))}
                         {data.charts.contributorBreakdown.length === 0 && (
-                            <p className="text-sm text-text-secondary">No contributor data</p>
+                            <p className="text-xs sm:text-sm text-text-secondary">No contributor data</p>
                         )}
                     </div>
                 </Card>

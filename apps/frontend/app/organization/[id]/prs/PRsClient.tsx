@@ -286,7 +286,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         if (loading) {
             return (
                 <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-sm text-text-secondary">
+                    <td colSpan={7} className="px-3 sm:px-6 py-8 sm:py-10 text-center text-xs sm:text-sm text-text-secondary">
                         Loading pull requests...
                     </td>
                 </tr>
@@ -296,7 +296,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         if (!filteredRows.length) {
             return (
                 <tr>
-                    <td colSpan={7} className="px-6 py-10 text-center text-sm text-text-secondary">
+                    <td colSpan={7} className="px-3 sm:px-6 py-8 sm:py-10 text-center text-xs sm:text-sm text-text-secondary">
                         No pull requests match the current filters.
                     </td>
                 </tr>
@@ -313,34 +313,34 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         }`}
                     onClick={() => setSelectedPrId(row.id)}
                 >
-                    <td className="px-6 py-4 align-middle">
-                        <div className="text-sm font-semibold text-text-primary">{row.title}</div>
-                        <div className="mt-1 text-xs text-text-secondary">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <div className="text-xs sm:text-sm font-semibold text-text-primary">{row.title}</div>
+                        <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-text-secondary">
                             #{row.number} - {row.createdAtLabel}
                         </div>
                     </td>
-                    <td className="px-6 py-4 align-middle text-sm text-text-secondary">{row.repo}</td>
-                    <td className="px-6 py-4 align-middle text-sm text-text-secondary">{row.author}</td>
-                    <td className={`px-6 py-4 align-middle font-mono text-sm ${getRiskAccent(row.riskValue)}`}>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.repo}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.author}</td>
+                    <td className={`px-3 sm:px-6 py-3 sm:py-4 align-middle font-mono text-xs sm:text-sm ${getRiskAccent(row.riskValue)}`}>
                         {row.riskValue === undefined ? UNKNOWN_LABEL : row.riskValue}
                     </td>
-                    <td className="px-6 py-4 align-middle">
-                        <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold ${row.statusClass}`}>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
+                        <span className={`inline-flex rounded-full px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold ${row.statusClass}`}>
                             {row.statusText}
                         </span>
                     </td>
-                    <td className="px-6 py-4 align-middle text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
-                    <td className="px-6 py-4 align-middle text-right">
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
+                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
                         <Button
                             aria-label="View pull request"
-                            className="h-8 w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary cursor-pointer"
+                            className="h-6 w-6 sm:h-8 sm:w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary cursor-pointer"
                             onClick={(event) => {
                                 event.stopPropagation();
                                 setSelectedPrId(row.id);
                             }}
                             variant="ghost"
                         >
-                            <ChevronRight className="h-4 w-4" />
+                            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
                         </Button>
                     </td>
                 </tr>
@@ -394,16 +394,16 @@ export default function PRsClient({ orgId }: { orgId: string }) {
 
             <Card className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
                 <ScrollableWithHints>
-                    <table className="min-w-full table-auto text-sm text-text-secondary">
-                        <thead className="bg-surface text-left text-xs font-semibold uppercase tracking-wide text-text-secondary">
+                    <table className="min-w-full table-auto text-xs sm:text-sm text-text-secondary">
+                        <thead className="bg-surface text-left text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-text-secondary">
                             <tr>
-                                <th className="px-6 py-4 font-semibold">Title</th>
-                                <th className="px-6 py-4 font-semibold">Repo</th>
-                                <th className="px-6 py-4 font-semibold">Author</th>
-                                <th className="px-6 py-4 font-semibold">Risk</th>
-                                <th className="px-6 py-4 font-semibold">Status</th>
-                                <th className="px-6 py-4 font-semibold">Reviewers</th>
-                                <th className="px-6 py-4" aria-label="Open" />
+                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Title</th>
+                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Repo</th>
+                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Author</th>
+                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Risk</th>
+                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Status</th>
+                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Reviewers</th>
+                                <th className="px-3 sm:px-6 py-3 sm:py-4" aria-label="Open" />
                             </tr>
                         </thead>
                         <tbody>{renderTableBody()}</tbody>

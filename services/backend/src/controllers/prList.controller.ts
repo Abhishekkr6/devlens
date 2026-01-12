@@ -10,7 +10,7 @@ export const listPRs = async (req: Request, res: Response) => {
     }
 
     const page = Math.max(Number(req.query.page) || 1, 1);
-    const pageSize = Math.min(Number(req.query.pageSize) || 20, 100);
+    const pageSize = Math.min(Number(req.query.pageSize) || 100, 100);
 
     const skip = (page - 1) * pageSize;
     const orgObjectId = new Types.ObjectId(orgId);
@@ -20,22 +20,31 @@ export const listPRs = async (req: Request, res: Response) => {
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(pageSize)
-        .select("title number state riskScore createdAt repoId")
+        .select("title number state riskScore createdAt repoId authorGithubId reviewers")
+        .populate("repoId", "repoName") // Populate repo details
         .lean(),
 
       PRModel.countDocuments({ orgId: orgObjectId }),
     ]);
 
+    // Transform items to include repo name directly
+    const transformedItems = items.map((pr: any) => ({
+      ...pr,
+      repoName: pr.repoId?.repoName || null,
+      authorName: pr.authorGithubId || null, // Use GitHub ID as name for now
+    }));
+
     return res.json({
       success: true,
       data: {
-        items,
+        items: transformedItems,
         page,
         pageSize,
         total,
       },
     });
   } catch (err) {
+    console.error("listPRs error:", err);
     return res.status(500).json({ success: false });
   }
 };
