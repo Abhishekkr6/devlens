@@ -189,7 +189,7 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                     {/* Contribution Activity */}
                     <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
                         <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
-                            Contribution Activity (52 weeks)
+                            Contribution Activity
                         </h2>
                         <ContributionHeatmap data={profile.contributionActivity} />
                     </Card>
@@ -199,20 +199,44 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                         <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
                             Recent Activity
                         </h2>
-                        <div className="space-y-3 sm:space-y-4">
+                        <div className="space-y-4 sm:space-y-5">
                             {profile.recentActivity.map((activity, index) => {
                                 const { Icon, color } = getActivityIcon(activity.type);
+                                const activityTitle = activity.type === "commit"
+                                    ? activity.message
+                                    : activity.type === "pr_merged"
+                                        ? "Code review completed"
+                                        : activity.message;
+                                const activitySubtitle = activity.type === "commit"
+                                    ? `Merged to main branch`
+                                    : activity.type === "pr_merged"
+                                        ? `Approved PR #${activity.prNumber} with suggestions`
+                                        : `PR #${activity.prNumber} opened for review`;
+
                                 return (
-                                    <div key={index} className="flex items-start gap-2 sm:gap-3">
-                                        <Icon className={`h-4 w-4 sm:h-5 sm:w-5 mt-0.5 ${color}`} />
+                                    <div key={index} className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0">
+                                        <div className={`mt-1 ${color}`}>
+                                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+                                        </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs sm:text-sm text-text-primary truncate">
-                                                {activity.message}
+                                            <p className="text-xs sm:text-sm font-medium text-text-primary">
+                                                {activityTitle}
                                             </p>
                                             <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5">
-                                                {activity.repo} • {formatTimeAgo(activity.timestamp)}
+                                                {activitySubtitle}
                                             </p>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-blue-700 dark:text-blue-400">
+                                                    {activity.repo}
+                                                </span>
+                                                <span className="text-[10px] sm:text-xs text-text-secondary">
+                                                    by {profile.profile.name}
+                                                </span>
+                                            </div>
                                         </div>
+                                        <span className="text-[10px] sm:text-xs text-text-secondary whitespace-nowrap">
+                                            {formatTimeAgo(activity.timestamp)}
+                                        </span>
                                     </div>
                                 );
                             })}
@@ -248,25 +272,41 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                         <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
                             Active Repositories
                         </h2>
-                        <div className="space-y-2 sm:space-y-3">
+                        <div className="space-y-3">
                             {profile.activeRepos.map((repo, index) => (
                                 <div
                                     key={index}
-                                    className="flex items-center justify-between rounded-lg bg-surface px-2 sm:px-3 py-2"
+                                    className="flex items-center justify-between py-2"
                                 >
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs sm:text-sm font-medium text-text-primary truncate">
+                                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                                        <GitCommit className="h-4 w-4 text-text-secondary shrink-0" />
+                                        <span className="text-xs sm:text-sm font-medium text-text-primary truncate">
                                             {repo.name}
-                                        </p>
-                                        <p className="text-[10px] sm:text-xs text-text-secondary">{repo.role}</p>
+                                        </span>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px] sm:text-xs text-text-secondary">
-                                            {repo.commits} • {repo.prs}
-                                        </p>
+                                    <div className="flex items-center gap-2 sm:gap-3">
+                                        <span className="text-[10px] sm:text-xs text-text-secondary">
+                                            {repo.role}
+                                        </span>
+                                        <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
+                                            <GitCommit className="h-3 w-3" />
+                                            <span>{repo.commits}</span>
+                                            <GitPullRequest className="h-3 w-3 ml-1" />
+                                            <span>{repo.prs}</span>
+                                        </div>
                                     </div>
                                 </div>
                             ))}
+                        </div>
+
+                        {/* Action Buttons */}
+                        <div className="mt-4 sm:mt-6 space-y-2 sm:space-y-3">
+                            <button className="w-full rounded-lg bg-brand px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white hover:bg-brand/90 transition-colors">
+                                Send Message
+                            </button>
+                            <button className="w-full rounded-lg border border-border bg-background px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-text-primary hover:bg-surface transition-colors">
+                                View GitHub
+                            </button>
                         </div>
                     </Card>
                 </div>
@@ -314,32 +354,84 @@ function MetricCard({
 function ContributionHeatmap({ data }: { data: Array<{ date: string; count: number }> }) {
     const getColor = (count: number) => {
         if (count === 0) return "bg-slate-100 dark:bg-slate-800";
-        if (count < 3) return "bg-emerald-200 dark:bg-emerald-900";
-        if (count < 6) return "bg-emerald-400 dark:bg-emerald-700";
-        if (count < 10) return "bg-emerald-600 dark:bg-emerald-500";
-        return "bg-emerald-800 dark:bg-emerald-300";
+        if (count < 3) return "bg-blue-200 dark:bg-blue-900";
+        if (count < 6) return "bg-blue-400 dark:bg-blue-700";
+        if (count < 10) return "bg-blue-600 dark:bg-blue-500";
+        return "bg-blue-800 dark:bg-blue-300";
     };
 
+    // Group data by weeks (last 26 weeks for better display)
+    const weeks: Array<Array<{ date: string; count: number; day: number }>> = [];
+    const last26Weeks = data.slice(-26);
+
+    last26Weeks.forEach((item) => {
+        const date = new Date(item.date);
+        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+
+        // Find or create week
+        const weekIndex = weeks.length - 1;
+        if (weeks.length === 0 || dayOfWeek === 0) {
+            weeks.push([]);
+        }
+
+        weeks[weeks.length - 1].push({
+            ...item,
+            day: dayOfWeek
+        });
+    });
+
+    // Fill in missing days with empty cells
+    const filledWeeks = weeks.map(week => {
+        const filled = Array(7).fill(null).map((_, index) => {
+            const existing = week.find(d => d.day === index);
+            return existing || { date: '', count: 0, day: index };
+        });
+        return filled.slice(0, 5); // Only show Sun-Thu
+    });
+
+    const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'];
+
     return (
-        <div className="overflow-x-auto">
-            <div className="inline-flex gap-0.5 sm:gap-1">
-                {data.map((item, index) => (
-                    <div
-                        key={index}
-                        className={`h-2 w-2 sm:h-3 sm:w-3 rounded-sm ${getColor(item.count)}`}
-                        title={`${item.date}: ${item.count} commits`}
-                    />
-                ))}
+        <div className="space-y-2">
+            <p className="text-xs sm:text-sm text-text-secondary">Contribution Activity (26 weeks)</p>
+            <div className="overflow-x-auto">
+                <div className="inline-flex gap-1">
+                    {/* Day labels */}
+                    <div className="flex flex-col gap-1 pr-2">
+                        {dayLabels.map((label, index) => (
+                            <div key={index} className="h-2.5 sm:h-3 flex items-center">
+                                <span className="text-[8px] sm:text-[10px] text-text-secondary w-6 sm:w-8">{label}</span>
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Contribution grid */}
+                    {filledWeeks.map((week, weekIndex) => (
+                        <div key={weekIndex} className="flex flex-col gap-1">
+                            {week.map((day, dayIndex) => (
+                                <div
+                                    key={dayIndex}
+                                    className={`h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm ${getColor(day.count)}`}
+                                    title={day.date ? `${day.date}: ${day.count} commits` : ''}
+                                />
+                            ))}
+                        </div>
+                    ))}
+                </div>
             </div>
-            <p className="text-[10px] sm:text-xs text-text-secondary mt-2">
-                Less <span className="inline-flex gap-0.5 sm:gap-1 mx-1 sm:mx-2">
-                    <span className="h-2 w-2 sm:h-3 sm:w-3 rounded-sm bg-slate-100 dark:bg-slate-800" />
-                    <span className="h-2 w-2 sm:h-3 sm:w-3 rounded-sm bg-emerald-200 dark:bg-emerald-900" />
-                    <span className="h-2 w-2 sm:h-3 sm:w-3 rounded-sm bg-emerald-400 dark:bg-emerald-700" />
-                    <span className="h-2 w-2 sm:h-3 sm:w-3 rounded-sm bg-emerald-600 dark:bg-emerald-500" />
-                    <span className="h-2 w-2 sm:h-3 sm:w-3 rounded-sm bg-emerald-800 dark:bg-emerald-300" />
-                </span> More
-            </p>
+
+            {/* Legend */}
+            <div className="flex items-center gap-2 text-[10px] sm:text-xs text-text-secondary">
+                <span>Less</span>
+                <div className="flex gap-1">
+                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-slate-100 dark:bg-slate-800" />
+                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-200 dark:bg-blue-900" />
+                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-400 dark:bg-blue-700" />
+                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-600 dark:bg-blue-500" />
+                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-800 dark:bg-blue-300" />
+                </div>
+                <span>More</span>
+            </div>
         </div>
     );
 }
