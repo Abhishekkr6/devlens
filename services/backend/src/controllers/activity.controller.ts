@@ -55,7 +55,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
       .sort({ timestamp: -1 })
       .limit(pageSize * 2) // Fetch more to ensure we have enough after merging
       .select("sha authorName message timestamp repoId createdAt")
-      .populate("repoId", "name")
+      .populate("repoId", "repoName")
       .lean();
 
     // Fetch PRs with repo details
@@ -63,7 +63,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 })
       .limit(pageSize * 2)
       .select("number title state authorGithubId createdAt mergedAt updatedAt repoId")
-      .populate("repoId", "name")
+      .populate("repoId", "repoName")
       .lean();
 
     // Transform commits to activity format
@@ -72,7 +72,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
       type: "commit",
       title: commit.message || "Commit",
       subtitle: "Merged to main branch",
-      tag: commit.repoId?.name || "unknown-repo",
+      tag: commit.repoId?.repoName || "unknown-repo",
       author: commit.authorName || "Unknown",
       timestamp: commit.timestamp || commit.createdAt,
       icon: "commit",
@@ -103,7 +103,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
         type,
         title: pr.title || `Pull request #${pr.number}`,
         subtitle,
-        tag: pr.repoId?.name || "unknown-repo",
+        tag: pr.repoId?.repoName || "unknown-repo",
         author: pr.authorGithubId || "Unknown",
         timestamp: pr.mergedAt || pr.createdAt || pr.updatedAt,
         icon: state === "merged" ? "pr_merged" : "pr",

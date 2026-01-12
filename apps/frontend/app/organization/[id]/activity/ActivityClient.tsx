@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { api } from "../../../../lib/api";
 import { Card } from "../../../../components/Ui/Card";
 import {
@@ -126,6 +126,27 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
         }
     };
 
+    // Calculate weekly summary
+    const weeklySummary = useMemo(() => {
+        const now = Date.now();
+        const weekAgo = now - 7 * 24 * 60 * 60 * 1000;
+
+        const weeklyActivities = activities.filter(activity => {
+            const activityTime = new Date(activity.timestamp).getTime();
+            return activityTime >= weekAgo;
+        });
+
+        const commits = weeklyActivities.filter(a => a.type === "commit").length;
+        const prsOpened = weeklyActivities.filter(a => a.type === "pr_opened").length;
+        const prsMerged = weeklyActivities.filter(a => a.type === "pr_merged").length;
+
+        return {
+            commits,
+            prsOpened,
+            prsMerged,
+        };
+    }, [activities]);
+
     if (loading) {
         return (
             <div className="flex h-[50vh] w-full items-center justify-center">
@@ -148,58 +169,86 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
                     <p className="text-sm text-text-secondary">No activity recorded yet for this organization.</p>
                 </Card>
             ) : (
-                <div className="space-y-4">
-                    {activities.map((activity) => {
-                        const { Icon, bgColor, iconColor } = getActivityIcon(activity);
+                <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                    {/* Main Activity Feed */}
+                    <div className="space-y-4">
+                        {activities.map((activity) => {
+                            const { Icon, bgColor, iconColor } = getActivityIcon(activity);
 
-                        return (
-                            <div
-                                key={activity.id}
-                                className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
-                            >
-                                <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
-                                    <Icon className={`h-5 w-5 ${iconColor}`} />
+                            return (
+                                <div
+                                    key={activity.id}
+                                    className="flex items-start gap-4 rounded-xl border border-border bg-background p-4 shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
+                                        <Icon className={`h-5 w-5 ${iconColor}`} />
+                                    </div>
+
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-start justify-between gap-2">
+                                            <div className="flex-1 min-w-0">
+                                                <h3 className="text-sm font-semibold text-text-primary truncate">
+                                                    {activity.title}
+                                                </h3>
+                                                <p className="text-xs text-text-secondary mt-0.5">
+                                                    {activity.subtitle}
+                                                </p>
+                                            </div>
+                                            <span className="text-xs text-text-secondary whitespace-nowrap">
+                                                {formatTimeAgo(activity.timestamp)}
+                                            </span>
+                                        </div>
+
+                                        <div className="flex items-center gap-2 mt-2">
+                                            <span className="inline-flex items-center rounded-md bg-surface px-2 py-1 text-xs font-medium text-text-secondary border border-border">
+                                                {activity.tag}
+                                            </span>
+                                            <span className="text-xs text-text-secondary">
+                                                by {activity.author}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })}
+
+                        {hasMore && (
+                            <div className="flex justify-center pt-4">
+                                <button
+                                    onClick={loadMore}
+                                    disabled={loadingMore}
+                                    className="rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    {loadingMore ? "Loading..." : "Load More"}
+                                </button>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Weekly Summary Sidebar */}
+                    <div className="space-y-6">
+                        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                            <h2 className="text-lg font-semibold text-text-primary mb-4">Weekly Summary</h2>
+                            <p className="text-sm text-text-secondary mb-6">Activity from the last 7 days</p>
+
+                            <div className="space-y-5">
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
+                                    <p className="text-3xl font-semibold text-text-primary">{weeklySummary.commits}</p>
                                 </div>
 
-                                <div className="flex-1 min-w-0">
-                                    <div className="flex items-start justify-between gap-2">
-                                        <div className="flex-1 min-w-0">
-                                            <h3 className="text-sm font-semibold text-text-primary truncate">
-                                                {activity.title}
-                                            </h3>
-                                            <p className="text-xs text-text-secondary mt-0.5">
-                                                {activity.subtitle}
-                                            </p>
-                                        </div>
-                                        <span className="text-xs text-text-secondary whitespace-nowrap">
-                                            {formatTimeAgo(activity.timestamp)}
-                                        </span>
-                                    </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Opened</p>
+                                    <p className="text-3xl font-semibold text-text-primary">{weeklySummary.prsOpened}</p>
+                                </div>
 
-                                    <div className="flex items-center gap-2 mt-2">
-                                        <span className="inline-flex items-center rounded-md bg-surface px-2 py-1 text-xs font-medium text-text-secondary border border-border">
-                                            {activity.tag}
-                                        </span>
-                                        <span className="text-xs text-text-secondary">
-                                            by {activity.author}
-                                        </span>
-                                    </div>
+                                <div className="space-y-1">
+                                    <p className="text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Merged</p>
+                                    <p className="text-3xl font-semibold text-text-primary">{weeklySummary.prsMerged}</p>
                                 </div>
                             </div>
-                        );
-                    })}
-
-                    {hasMore && (
-                        <div className="flex justify-center pt-4">
-                            <button
-                                onClick={loadMore}
-                                disabled={loadingMore}
-                                className="rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                                {loadingMore ? "Loading..." : "Load More"}
-                            </button>
-                        </div>
-                    )}
+                        </Card>
+                    </div>
                 </div>
             )}
         </div>
