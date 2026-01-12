@@ -227,7 +227,7 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
 
                     {/* Weekly Summary Sidebar */}
                     <div className="space-y-6">
-                        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
+                        <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm sticky top-6">
                             <h2 className="text-lg font-semibold text-text-primary mb-4">Weekly Summary</h2>
                             <p className="text-sm text-text-secondary mb-6">Activity from the last 7 days</p>
 
