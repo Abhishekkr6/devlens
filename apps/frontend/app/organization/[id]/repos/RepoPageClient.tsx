@@ -264,68 +264,54 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
           {filteredRepos.map((repo) => {
             const healthBadge = getHealthBadge(repo.health);
             return (
-              <Card key={repo.id} className="rounded-2xl border border-border bg-white dark:bg-gray-900 p-5 shadow-sm hover:shadow-md transition-shadow relative">
-                {/* Header: Icon + Name on left, Health badge on right */}
+              <Card key={repo.id} className="rounded-2xl border border-border bg-background p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow">
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <GitCommit className="h-5 w-5 text-gray-700 dark:text-gray-300 shrink-0" />
-                    <h3 className="text-base font-semibold text-gray-900 dark:text-white truncate">{repo.name}</h3>
+                    <GitCommit className="h-4 w-4 text-text-secondary shrink-0" />
+                    <h3 className="text-sm sm:text-base font-semibold text-text-primary truncate">{repo.name}</h3>
                   </div>
-                  <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${healthBadge.className} ml-2 shrink-0`}>
+                  {isAdmin && (
+                    <button
+                      onClick={() => setRepoToDelete(repo)}
+                      className="text-text-secondary hover:text-red-600 cursor-pointer ml-2"
+                      title="Disconnect"
+                    >
+                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                      </svg>
+                    </button>
+                  )}
+                </div>
+
+                <p className="text-[10px] sm:text-xs text-text-secondary mb-3 line-clamp-2">
+                  {repo.description || "No description available"}
+                </p>
+
+                <div className="flex items-center gap-2 mb-4">
+                  {repo.language && (
+                    <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-blue-700 dark:text-blue-400">
+                      {repo.language}
+                    </span>
+                  )}
+                  <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] sm:text-xs font-medium ${healthBadge.className}`}>
                     {healthBadge.text}
                   </span>
                 </div>
 
-                {/* Description */}
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 min-h-[40px]">
-                  {repo.description || "Core API backend service for all platform endpoints"}
-                </p>
-
-                {/* Language Badge */}
-                <div className="mb-4">
-                  {repo.language && (
-                    <span className="inline-block text-sm font-medium text-gray-900 dark:text-white">
-                      {repo.language}
-                    </span>
-                  )}
-                </div>
-
-                {/* Stats Section - Three boxes with gray backgrounds */}
-                <div className="grid grid-cols-3 gap-2">
-                  {/* Commits */}
-                  <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg py-3 px-2">
-                    <GitCommit className="h-4 w-4 text-gray-600 dark:text-gray-400 mb-1" />
-                    <div className="text-xl font-semibold text-gray-900 dark:text-white">{repo.stats.commits}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Commits</div>
+                <div className="flex items-center justify-between pt-3 border-t border-border">
+                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
+                    <GitCommit className="h-3 w-3" />
+                    <span>{repo.stats.commits}</span>
                   </div>
-
-                  {/* PRs */}
-                  <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg py-3 px-2">
-                    <GitPullRequest className="h-4 w-4 text-gray-600 dark:text-gray-400 mb-1" />
-                    <div className="text-xl font-semibold text-gray-900 dark:text-white">{repo.stats.prs}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">PRs</div>
+                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
+                    <GitPullRequest className="h-3 w-3" />
+                    <span>{repo.stats.prs}</span>
                   </div>
-
-                  {/* Contributors */}
-                  <div className="flex flex-col items-center justify-center bg-gray-100 dark:bg-gray-800 rounded-lg py-3 px-2">
-                    <Users className="h-4 w-4 text-gray-600 dark:text-gray-400 mb-1" />
-                    <div className="text-xl font-semibold text-gray-900 dark:text-white">{repo.stats.contributors}</div>
-                    <div className="text-xs text-gray-600 dark:text-gray-400">Contributors</div>
+                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
+                    <Users className="h-3 w-3" />
+                    <span>{repo.stats.contributors}</span>
                   </div>
                 </div>
-
-                {/* Delete button - positioned absolutely in top right if admin */}
-                {isAdmin && (
-                  <button
-                    onClick={() => setRepoToDelete(repo)}
-                    className="absolute top-3 right-3 text-gray-400 hover:text-red-600 cursor-pointer opacity-0 hover:opacity-100 transition-opacity"
-                    title="Disconnect"
-                  >
-                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                  </button>
-                )}
               </Card>
             );
           })}
