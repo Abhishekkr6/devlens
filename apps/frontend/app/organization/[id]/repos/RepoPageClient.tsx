@@ -264,54 +264,65 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
           {filteredRepos.map((repo) => {
             const healthBadge = getHealthBadge(repo.health);
             return (
-              <Card key={repo.id} className="rounded-2xl border border-border bg-background p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow">
+              <Card key={repo.id} className="rounded-2xl border border-border bg-white dark:bg-[#1a1a1a] p-6 shadow-sm hover:shadow-md transition-shadow relative">
+                {/* Header with icon, name and health badge */}
                 <div className="flex items-start justify-between mb-3">
-                  <div className="flex items-center gap-2 flex-1 min-w-0">
-                    <GitCommit className="h-4 w-4 text-text-secondary shrink-0" />
-                    <h3 className="text-sm sm:text-base font-semibold text-text-primary truncate">{repo.name}</h3>
+                  <div className="flex items-center gap-2.5 flex-1 min-w-0">
+                    <svg className="h-5 w-5 text-gray-700 dark:text-gray-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white truncate">{repo.name}</h3>
                   </div>
-                  {isAdmin && (
-                    <button
-                      onClick={() => setRepoToDelete(repo)}
-                      className="text-text-secondary hover:text-red-600 cursor-pointer ml-2"
-                      title="Disconnect"
-                    >
-                      <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  )}
-                </div>
-
-                <p className="text-[10px] sm:text-xs text-text-secondary mb-3 line-clamp-2">
-                  {repo.description || "No description available"}
-                </p>
-
-                <div className="flex items-center gap-2 mb-4">
-                  {repo.language && (
-                    <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-blue-700 dark:text-blue-400">
-                      {repo.language}
-                    </span>
-                  )}
-                  <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-[10px] sm:text-xs font-medium ${healthBadge.className}`}>
+                  <span className={`inline-flex items-center rounded-md px-2.5 py-1 text-xs font-medium ${healthBadge.className} ml-2 shrink-0`}>
                     {healthBadge.text}
                   </span>
                 </div>
 
-                <div className="flex items-center justify-between pt-3 border-t border-border">
-                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
-                    <GitCommit className="h-3 w-3" />
-                    <span>{repo.stats.commits}</span>
+                {/* Description */}
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-4 line-clamp-2 min-h-[40px]">
+                  {repo.description || "No description available"}
+                </p>
+
+                {/* Language Badge */}
+                {repo.language && (
+                  <div className="mb-4">
+                    <span className="text-sm font-medium text-gray-900 dark:text-white">
+                      {repo.language}
+                    </span>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
-                    <GitPullRequest className="h-3 w-3" />
-                    <span>{repo.stats.prs}</span>
+                )}
+
+                {/* Stats Grid */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-gray-100 dark:bg-[#2a2a2a] rounded-lg p-3 flex flex-col items-center justify-center">
+                    <GitCommit className="h-5 w-5 text-gray-600 dark:text-gray-400 mb-1.5" />
+                    <div className="text-2xl font-semibold text-gray-900 dark:text-white">{repo.stats.commits}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Commits</div>
                   </div>
-                  <div className="flex items-center gap-1 text-[10px] sm:text-xs text-text-secondary">
-                    <Users className="h-3 w-3" />
-                    <span>{repo.stats.contributors}</span>
+                  <div className="bg-gray-100 dark:bg-[#2a2a2a] rounded-lg p-3 flex flex-col items-center justify-center">
+                    <GitPullRequest className="h-5 w-5 text-gray-600 dark:text-gray-400 mb-1.5" />
+                    <div className="text-2xl font-semibold text-gray-900 dark:text-white">{repo.stats.prs}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">PRs</div>
+                  </div>
+                  <div className="bg-gray-100 dark:bg-[#2a2a2a] rounded-lg p-3 flex flex-col items-center justify-center">
+                    <Users className="h-5 w-5 text-gray-600 dark:text-gray-400 mb-1.5" />
+                    <div className="text-2xl font-semibold text-gray-900 dark:text-white">{repo.stats.contributors}</div>
+                    <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">Contributors</div>
                   </div>
                 </div>
+
+                {/* Delete button - positioned absolutely */}
+                {isAdmin && (
+                  <button
+                    onClick={() => setRepoToDelete(repo)}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-red-600 cursor-pointer opacity-0 hover:opacity-100 transition-opacity"
+                    title="Disconnect"
+                  >
+                    <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </button>
+                )}
               </Card>
             );
           })}
