@@ -548,6 +548,20 @@ export const getRepoDetail = async (req: Request, res: Response) => {
           health,
           alerts: alertsSummary,
           updatedAt: (repoDoc as any)?.updatedAt ?? null,
+          settings: repoDoc.settings || {
+            alertThresholds: {
+              churnRate: 30,
+              openPRs: 10,
+              highRiskPRs: 3,
+              criticalAlerts: 1,
+            },
+            notifications: {
+              email: true,
+              highRiskPRAlerts: true,
+              criticalAlerts: true,
+              weeklySummary: false,
+            },
+          },
         },
         metrics,
         topContributors,
@@ -599,5 +613,110 @@ export const deleteRepo = async (req: Request, res: Response) => {
     return res
       .status(500)
       .json({ success: false, error: "Failed to delete repository" });
+  }
+};
+
+export const updateRepoSettings = async (req: Request, res: Response) => {
+  try {
+    const { orgId, repoId } = req.params;
+    const { alertThresholds, notifications } = req.body;
+
+    if (!repoId || !Types.ObjectId.isValid(repoId)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid repository identifier" });
+    }
+
+    if (!orgId || !Types.ObjectId.isValid(orgId)) {
+      return res
+        .status(400)
+        .json({ success: false, error: "Invalid organization identifier" });
+    }
+
+    const repoObjectId = new Types.ObjectId(repoId);
+    const orgObjectId = new Types.ObjectId(orgId);
+
+    // Verify repo belongs to org
+    const repo = await RepoModel.findOne({
+      _id: repoObjectId,
+      orgId: orgObjectId,
+    });
+
+    if (!repo) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Repository not found" });
+    }
+
+    // Build update object
+    const updateObj: any = {};
+
+    if (alertThresholds) {
+      if (alertThresholds.churnRate !== undefined) {
+        updateObj["settings.alertThresholds.churnRate"] = alertThresholds.churnRate;
+      }
+      if (alertThresholds.openPRs !== undefined) {
+        updateObj["settings.alertThresholds.openPRs"] = alertThresholds.openPRs;
+      }
+      if (alertThresholds.highRiskPRs !== undefined) {
+        updateObj["settings.alertThresholds.highRiskPRs"] = alertThresholds.highRiskPRs;
+      }
+      if (alertThresholds.criticalAlerts !== undefined) {
+        updateObj["settings.alertThresholds.criticalAlerts"] = alertThresholds.criticalAlerts;
+      }
+    }
+
+    if (notifications) {
+      if (notifications.email !== undefined) {
+        updateObj["settings.notifications.email"] = notifications.email;
+      }
+      if (notifications.highRiskPRAlerts !== undefined) {
+        updateObj["settings.notifications.highRiskPRAlerts"] = notifications.highRiskPRAlerts;
+      }
+      if (notifications.criticalAlerts !== undefined) {
+        updateObj["settings.notifications.criticalAlerts"] = notifications.criticalAlerts;
+      }
+      if (notifications.weeklySummary !== undefined) {
+        updateObj["settings.notifications.weeklySummary"] = notifications.weeklySummary;
+      }
+    }
+
+    // Update repository settings
+    const updatedRepo = await RepoModel.findByIdAndUpdate(
+      repoObjectId,
+      { $set: updateObj },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedRepo) {
+      return res
+        .status(404)
+        .json({ success: false, error: "Failed to update settings" });
+    }
+
+    return res.json({
+      success: true,
+      data: {
+        settings: updatedRepo.settings || {
+          alertThresholds: {
+            churnRate: 30,
+            openPRs: 10,
+            highRiskPRs: 3,
+            criticalAlerts: 1,
+          },
+          notifications: {
+            email: true,
+            highRiskPRAlerts: true,
+            criticalAlerts: true,
+            weeklySummary: false,
+          },
+        },
+      },
+    });
+  } catch (error) {
+    console.error("UPDATE REPO SETTINGS ERROR:", error);
+    return res
+      .status(500)
+      .json({ success: false, error: "Failed to update settings" });
   }
 };

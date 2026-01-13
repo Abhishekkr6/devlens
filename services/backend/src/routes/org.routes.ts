@@ -7,11 +7,12 @@ import {
   rejectInvite,
   leaveOrg,
 } from "../controllers/org.controller";
-import { getRepoDetail, getRepos, deleteRepo } from "../controllers/repo.controller";
+import { getRepoDetail, getRepos, deleteRepo, updateRepoSettings } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
 import { getAlertSummary, acknowledgeAlert } from "../controllers/alertSummary.controller";
 import { validate } from "../middlewares/validate";
 import { createOrgSchema } from "../validators/org.validator";
+import { updateRepoSettingsSchema } from "../validators/repoSettings.validator";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { requireOrgRole } from "../middlewares/requireOrgRole";
 
@@ -58,6 +59,15 @@ router.delete(
   authMiddleware,
   requireOrgRole(["ADMIN"]),
   deleteRepo
+);
+
+// Update repo settings
+router.patch(
+  "/orgs/:orgId/repos/:repoId/settings",
+  authMiddleware,
+  requireOrgRole(["ADMIN"]),
+  validate(updateRepoSettingsSchema),
+  updateRepoSettings
 );
 
 // Org alerts

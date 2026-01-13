@@ -197,7 +197,10 @@ export default function RepoDetailClient({
                             View on GitHub
                             <ExternalLink className="h-4 w-4" />
                         </a>
-                        <button className="rounded-xl border border-brand bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 cursor-pointer flex items-center gap-2">
+                        <button
+                            onClick={() => router.push(`/organization/${orgId}/repos/${repoId}/settings`)}
+                            className="rounded-xl border border-brand bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 cursor-pointer flex items-center gap-2"
+                        >
                             Configure
                         </button>
                     </div>
