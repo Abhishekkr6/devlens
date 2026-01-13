@@ -1,4 +1,5 @@
 import RepoDetailClient from "./RepoDetailClient";
+import DashboardLayout from "@/components/Layout/DashboardLayout";
 
 export default async function RepoDetailPage({
     params,
@@ -7,5 +8,9 @@ export default async function RepoDetailPage({
 }) {
     const { id, repoId } = await params;
 
-    return <RepoDetailClient orgId={id} repoId={repoId} />;
+    return (
+        <DashboardLayout>
+            <RepoDetailClient orgId={id} repoId={repoId} />
+        </DashboardLayout>
+    );
 }
