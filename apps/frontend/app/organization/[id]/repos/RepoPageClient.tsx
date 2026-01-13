@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
 import { Card } from "../../../../components/Ui/Card";
 import { ConfirmDialog } from "../../../../components/Ui/ConfirmDialog";
@@ -22,6 +23,7 @@ type Repo = {
 };
 
 export default function RepoPageClient({ orgId }: { orgId: string }) {
+  const router = useRouter();
   const [connectParams, setConnectParams] = useState({ fullName: "" });
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
@@ -264,7 +266,11 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
           {filteredRepos.map((repo) => {
             const healthBadge = getHealthBadge(repo.health);
             return (
-              <Card key={repo.id} className="rounded-2xl border border-border bg-background p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow">
+              <Card
+                key={repo.id}
+                className="rounded-2xl border border-border bg-background p-4 sm:p-5 shadow-sm hover:shadow-md transition-all cursor-pointer"
+                onClick={() => router.push(`/organization/${orgId}/repos/${repo.id}`)}
+              >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2 flex-1 min-w-0">
                     <GitCommit className="h-4 w-4 text-text-secondary shrink-0" />
@@ -272,7 +278,10 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
                   </div>
                   {isAdmin && (
                     <button
-                      onClick={() => setRepoToDelete(repo)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setRepoToDelete(repo);
+                      }}
                       className="text-text-secondary hover:text-red-600 cursor-pointer ml-2"
                       title="Disconnect"
                     >
