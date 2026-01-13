@@ -346,12 +346,7 @@ export default function RepoDetailClient({
 
             {/* Recent Pull Requests */}
             <div>
-                <div className="flex items-center justify-between mb-4">
-                    <h2 className="text-lg font-semibold text-text-primary">Recent Pull Requests</h2>
-                    <button className="text-sm text-brand hover:text-brand/80 cursor-pointer">
-                        Repository Settings
-                    </button>
-                </div>
+                <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Pull Requests</h2>
                 <Card className="rounded-2xl border border-border bg-background shadow-sm overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full">

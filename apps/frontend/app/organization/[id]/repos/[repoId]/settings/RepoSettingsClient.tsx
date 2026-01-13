@@ -252,7 +252,9 @@ export default function RepoSettingsClient({
             {/* Alert Configuration */}
             <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                    <AlertTriangle className="h-5 w-5 text-amber-600" />
+                    <div className="p-2 rounded-lg border border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
+                        <AlertTriangle className="h-5 w-5 text-amber-600" />
+                    </div>
                     <h2 className="text-lg font-semibold text-text-primary">Alert Configuration</h2>
                 </div>
                 <div className="space-y-6">
@@ -266,7 +268,7 @@ export default function RepoSettingsClient({
                             max="100"
                             value={churnRateThreshold}
                             onChange={(e) => setChurnRateThreshold(Number(e.target.value))}
-                            className="w-full h-2 bg-surface rounded-lg appearance-none cursor-pointer accent-brand"
+                            className="w-full h-2 bg-surface rounded-lg appearance-none cursor-pointer accent-brand border border-border"
                             disabled={!isAdmin}
                         />
                         <p className="text-xs text-text-secondary mt-1">
@@ -326,7 +328,9 @@ export default function RepoSettingsClient({
             {/* Notification Preferences */}
             <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                    <Bell className="h-5 w-5 text-blue-600" />
+                    <div className="p-2 rounded-lg border border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20">
+                        <Bell className="h-5 w-5 text-blue-600" />
+                    </div>
                     <h2 className="text-lg font-semibold text-text-primary">Notification Preferences</h2>
                 </div>
                 <div className="space-y-4">
@@ -403,7 +407,9 @@ export default function RepoSettingsClient({
             {/* Webhook Status */}
             <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
                 <div className="flex items-center gap-2 mb-4">
-                    <Webhook className="h-5 w-5 text-purple-600" />
+                    <div className="p-2 rounded-lg border border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-purple-950/20">
+                        <Webhook className="h-5 w-5 text-purple-600" />
+                    </div>
                     <h2 className="text-lg font-semibold text-text-primary">Webhook Status</h2>
                 </div>
                 <div className="space-y-4">
