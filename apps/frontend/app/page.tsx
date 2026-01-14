@@ -58,12 +58,12 @@ function Navbar() {
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-6">
-          <button className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+          <Link href="/features" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
             Features
-          </button>
-          <button className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+          </Link>
+          <Link href="/how-it-works" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
             How it works
-          </button>
+          </Link>
           <button
             onClick={handleLogin}
             className="flex items-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-medium transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 cursor-pointer"
@@ -94,12 +94,12 @@ function Navbar() {
           <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/50 dark:border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden backdrop-blur-xl bg-slate-950/80">
             {/* Content */}
             <div className="relative p-4 flex flex-col gap-4">
-              <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
+              <Link href="/features" className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
                 Features
-              </button>
-              <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
+              </Link>
+              <Link href="/how-it-works" className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
                 How it works
-              </button>
+              </Link>
               <button
                 onClick={handleLogin}
                 className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-4 py-3 rounded-lg text-sm font-medium w-full cursor-pointer transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
@@ -451,9 +451,9 @@ function Footer() {
         </p>
 
         <div className="flex gap-6 text-sm text-text-secondary">
-          <a href="#" className="hover:text-text-primary">Privacy</a>
-          <a href="#" className="hover:text-text-primary">Terms</a>
-          <a href="#" className="hover:text-text-primary">GitHub</a>
+          <a href="/privacy" className="hover:text-text-primary">Privacy</a>
+          <a href="/terms" className="hover:text-text-primary">Terms</a>
+          <a href="/github" className="hover:text-text-primary">GitHub</a>
         </div>
       </div>
     </footer>
