@@ -122,7 +122,11 @@ export function Combobox({
                     </div>
 
                     {/* Options List */}
-                    <div className="max-h-60 overflow-y-auto p-1">
+                    <div
+                        className="max-h-60 overflow-y-scroll p-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
+                        onWheel={(e) => e.stopPropagation()}
+                        onTouchMove={(e) => e.stopPropagation()}
+                    >
                         {filteredOptions.length === 0 ? (
                             <div className="px-3 py-6 text-center text-sm text-text-secondary">
                                 {emptyMessage}
