@@ -105,7 +105,7 @@ export function Combobox({
 
             {/* Dropdown */}
             {isOpen && !loading && (
-                <div className="absolute z-50 mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 shadow-2xl animate-in fade-in-0 zoom-in-95">
+                <div className="absolute z-[100] mt-2 w-full rounded-xl border border-slate-700 bg-slate-950 shadow-2xl animate-in fade-in-0 zoom-in-95">
                     {/* Search Input */}
                     <div className="p-2 border-b border-border">
                         <div className="relative">
@@ -122,7 +122,7 @@ export function Combobox({
                     </div>
 
                     {/* Options List */}
-                    <div className="max-h-60 overflow-y-auto overscroll-contain p-1 scroll-smooth" style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-y' }}>
+                    <div className="max-h-60 overflow-y-auto p-1">
                         {filteredOptions.length === 0 ? (
                             <div className="px-3 py-6 text-center text-sm text-text-secondary">
                                 {emptyMessage}
