@@ -652,7 +652,17 @@ export const deleteOrg = async (req: any, res: Response) => {
  */
 export const getUserGithubRepos = async (req: any, res: Response) => {
   try {
-    const user = req.user;
+    const userId = req.user?.id || req.user?._id || req.userId;
+
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        error: "Not authenticated"
+      });
+    }
+
+    // Fetch full user object from database to get githubAccessToken
+    const user = await UserModel.findById(userId).select('githubAccessToken');
 
     if (!user?.githubAccessToken) {
       return res.status(401).json({
