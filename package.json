@@ -1,4 +1,9 @@
 {
+  "scripts": {
+    "dev": "npx concurrently -n \"FRONTEND,BACKEND\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run dev:frontend\" \"npm run dev:backend\"",
+    "dev:frontend": "cd apps/frontend && npm run dev",
+    "dev:backend": "cd services/backend && npm run dev"
+  },
   "dependencies": {
     "@types/mongoose": "^5.11.96",
     "@types/ws": "^8.18.1",
@@ -9,6 +14,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@types/cookie-parser": "^1.4.10"
+    "@types/cookie-parser": "^1.4.10",
+    "concurrently": "^9.2.1"
   }
 }

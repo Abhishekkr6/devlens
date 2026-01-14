@@ -40,11 +40,10 @@ function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "bg-background/95 dark:bg-background/95 backdrop-blur-xl border-b border-border/50 dark:border-border/30 py-3 shadow-lg"
-          : "bg-background/85 dark:bg-background/90 backdrop-blur-xl py-5"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
+        ? "bg-background/95 dark:bg-background/95 backdrop-blur-xl border-b border-border/50 dark:border-border/30 py-3 shadow-lg"
+        : "bg-background/85 dark:bg-background/90 backdrop-blur-xl py-5"
+        }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
@@ -87,14 +86,12 @@ function Navbar() {
       {mobileMenuOpen && (
         <>
           {/* Backdrop overlay with blur - covers entire screen behind menu */}
-          <div 
-            className="md:hidden fixed inset-0 bg-background/95 dark:bg-background/98 backdrop-blur-2xl z-[45]" 
-            onClick={() => setMobileMenuOpen(false)} 
+          <div
+            className="md:hidden fixed inset-0 bg-background/95 dark:bg-background/98 backdrop-blur-2xl z-[45]"
+            onClick={() => setMobileMenuOpen(false)}
           />
           {/* Menu container - completely solid background with no transparency */}
-          <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/50 dark:border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden">
-            {/* Solid background layer */}
-            <div className="absolute inset-0 bg-background dark:bg-background" />
+          <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/50 dark:border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden backdrop-blur-xl bg-slate-950/80">
             {/* Content */}
             <div className="relative p-4 flex flex-col gap-4">
               <button className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
@@ -180,10 +177,13 @@ function Hero() {
               <Github className="w-5 h-5" />
               Continue with GitHub
             </button>
-            <button className="flex items-center justify-center gap-2 bg-surface text-text-primary border border-border px-8 py-4 rounded-xl text-lg font-medium hover:brightness-95 transition-colors cursor-pointer">
+            <Link
+              href="/demo"
+              className="flex items-center justify-center gap-2 bg-surface text-text-primary border border-border px-8 py-4 rounded-xl text-lg font-medium hover:brightness-95 transition-colors cursor-pointer"
+            >
               <LayoutDashboard className="w-5 h-5 text-text-secondary" />
               View Dashboard Demo
-            </button>
+            </Link>
           </motion.div>
 
           <motion.div
