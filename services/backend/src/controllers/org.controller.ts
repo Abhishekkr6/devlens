@@ -4,6 +4,7 @@ import { OrgModel } from "../models/org.model";
 import { UserModel } from "../models/user.model";
 import { createNotification } from "../services/notification.service";
 import { publishEvent } from "../realtime/publisher";
+import { getUserRepositories } from "../services/github.service";
 
 /**
  * CREATE ORGANIZATION
@@ -641,6 +642,51 @@ export const deleteOrg = async (req: any, res: Response) => {
     return res.status(500).json({
       success: false,
       error: { message: "Failed to delete organization" }
+    });
+  }
+};
+
+/**
+ * GET USER'S GITHUB REPOSITORIES
+ * - Fetches all repositories accessible to the authenticated user from GitHub
+ */
+export const getUserGithubRepos = async (req: any, res: Response) => {
+  try {
+    const user = req.user;
+
+    if (!user?.githubAccessToken) {
+      return res.status(401).json({
+        success: false,
+        error: "Not authenticated with GitHub"
+      });
+    }
+
+    const repos = await getUserRepositories(user.githubAccessToken);
+
+    // Format the response to include only necessary fields
+    const formattedRepos = repos.map((repo: any) => ({
+      id: repo.id,
+      name: repo.name,
+      full_name: repo.full_name,
+      description: repo.description,
+      language: repo.language,
+      private: repo.private,
+      owner: {
+        login: repo.owner.login,
+        avatar_url: repo.owner.avatar_url
+      },
+      updated_at: repo.updated_at
+    }));
+
+    return res.status(200).json({
+      success: true,
+      data: formattedRepos
+    });
+  } catch (error: any) {
+    console.error("GET GITHUB REPOS ERROR:", error);
+    return res.status(500).json({
+      success: false,
+      error: error.message || "Failed to fetch repositories"
     });
   }
 };

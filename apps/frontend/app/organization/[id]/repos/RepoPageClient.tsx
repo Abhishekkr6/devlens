@@ -8,6 +8,7 @@ import { ConfirmDialog } from "../../../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../../../store/userStore";
 import { Search, GitCommit, GitPullRequest, Users } from "lucide-react";
 import { Select } from "../../../../components/Ui/Select";
+import { Combobox } from "../../../../components/Ui/Combobox";
 
 type Repo = {
   id: string;
@@ -28,6 +29,11 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
   const [isConnecting, setIsConnecting] = useState(false);
   const [connectError, setConnectError] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+
+  // GitHub repositories state
+  const [githubRepos, setGithubRepos] = useState<any[]>([]);
+  const [isFetchingRepos, setIsFetchingRepos] = useState(false);
+  const [fetchReposError, setFetchReposError] = useState<string | null>(null);
 
   const [repos, setRepos] = useState<Repo[]>([]);
   const [loading, setLoading] = useState(false);
@@ -68,6 +74,27 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
     const interval = setInterval(() => fetchRepos(true), 45000);
     return () => clearInterval(interval);
   }, [currentOrgId]);
+
+  // Fetch GitHub repositories when form opens
+  useEffect(() => {
+    if (showForm && currentOrgId) {
+      fetchGithubRepos();
+    }
+  }, [showForm, currentOrgId]);
+
+  const fetchGithubRepos = async () => {
+    try {
+      setIsFetchingRepos(true);
+      setFetchReposError(null);
+      const res = await api.get(`/orgs/${currentOrgId}/github/repos`);
+      setGithubRepos(res.data.data || []);
+    } catch (err: any) {
+      console.error("Failed to fetch GitHub repos", err);
+      setFetchReposError(err.response?.data?.error || "Failed to fetch repositories from GitHub");
+    } finally {
+      setIsFetchingRepos(false);
+    }
+  };
 
   const handleConnect = async () => {
     if (!currentOrgId || !connectParams.fullName) return;
@@ -168,17 +195,32 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
           <h3 className="mb-4 text-base sm:text-lg font-medium text-text-primary">Connect a GitHub Repository</h3>
           <div className="space-y-4">
             <div>
-              <label className="text-xs sm:text-sm font-medium text-text-secondary">Repository Full Name (owner/repo)</label>
-              <input
-                className="mt-1 w-full rounded-xl border border-border bg-background px-3 py-2 text-xs sm:text-sm placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
-                placeholder="facebook/react"
+              <label className="text-xs sm:text-sm font-medium text-text-secondary">Select Repository</label>
+              <Combobox
+                options={githubRepos.map((repo) => ({
+                  value: repo.full_name,
+                  label: repo.full_name,
+                  description: repo.description || "No description",
+                  metadata: repo,
+                }))}
                 value={connectParams.fullName}
-                onChange={(e) => setConnectParams({ ...connectParams, fullName: e.target.value })}
+                onChange={(value) => setConnectParams({ ...connectParams, fullName: value })}
+                placeholder="Select a repository"
+                searchPlaceholder="Search repositories..."
+                loading={isFetchingRepos}
+                className="mt-1"
+                emptyMessage={fetchReposError || "No repositories found"}
               />
               <p className="mt-1 text-[10px] sm:text-xs text-text-secondary">
-                Ensure the TeamPulse GitHub App is installed on this repository.
+                {isFetchingRepos ? "Loading your repositories..." : "Select a repository from your GitHub account."}
               </p>
             </div>
+
+            {fetchReposError && (
+              <div className="rounded-lg bg-amber-50 dark:bg-amber-900/30 p-3 text-xs sm:text-sm text-amber-600 dark:text-amber-400">
+                {fetchReposError}
+              </div>
+            )}
 
             {connectError && (
               <div className="rounded-lg bg-red-50 dark:bg-rose-900/30 p-3 text-xs sm:text-sm text-red-600 dark:text-red-400">

@@ -6,6 +6,7 @@ import {
   acceptInvite,
   rejectInvite,
   leaveOrg,
+  getUserGithubRepos,
 } from "../controllers/org.controller";
 import { getRepoDetail, getRepos, deleteRepo, updateRepoSettings } from "../controllers/repo.controller";
 import { connectRepo } from "../controllers/repoConnect.controller";
@@ -123,6 +124,14 @@ router.get(
   authMiddleware,
   requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
   getOrgMembers
+);
+
+// Get user's GitHub repositories
+router.get(
+  "/orgs/:orgId/github/repos",
+  authMiddleware,
+  requireOrgRole(["ADMIN", "MEMBER", "VIEWER"]),
+  getUserGithubRepos
 );
 
 export default router;

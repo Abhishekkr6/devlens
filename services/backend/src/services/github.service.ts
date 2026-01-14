@@ -181,3 +181,28 @@ export const createRepositoryWebhook = async (
   }
 };
 
+/**
+ * Fetch all repositories accessible to the authenticated user
+ * @param token - GitHub access token
+ * @returns Array of repository objects
+ */
+export const getUserRepositories = async (token: string) => {
+  if (!token) throw new Error("Missing GitHub access token");
+
+  try {
+    const res = await axios.get("https://api.github.com/user/repos", {
+      headers: { Authorization: `token ${token}` },
+      params: {
+        per_page: 100,
+        sort: 'updated',
+        affiliation: 'owner,collaborator,organization_member'
+      }
+    });
+    return res.data;
+  } catch (error: any) {
+    const status = error?.response?.status;
+    const data = error?.response?.data;
+    throw new Error(`GitHub repos fetch failed${status ? ` (status ${status})` : ""}: ${data ? JSON.stringify(data) : error?.message}`);
+  }
+};
+
