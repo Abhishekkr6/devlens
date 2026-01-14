@@ -105,7 +105,7 @@ export function Combobox({
 
             {/* Dropdown */}
             {isOpen && !loading && (
-                <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-background shadow-lg animate-in fade-in-0 zoom-in-95">
+                <div className="absolute z-50 mt-2 w-full rounded-xl border border-border bg-slate-900/95 dark:bg-slate-900/95 shadow-lg animate-in fade-in-0 zoom-in-95">
                     {/* Search Input */}
                     <div className="p-2 border-b border-border">
                         <div className="relative">
@@ -116,7 +116,7 @@ export function Combobox({
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 placeholder={searchPlaceholder}
-                                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-background text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-slate-800/50 dark:bg-slate-800/50 text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                             />
                         </div>
                     </div>
