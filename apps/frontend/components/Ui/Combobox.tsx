@@ -133,15 +133,15 @@ export function Combobox({
                                     key={option.value}
                                     type="button"
                                     onClick={() => handleSelect(option.value)}
-                                    className={`w-full flex items-start gap-2 px-3 py-2 text-left rounded-lg hover:bg-surface transition-colors ${value === option.value ? "bg-brand/10" : ""
+                                    className={`w-full flex cursor-pointer items-start gap-2 px-3 py-2 text-left rounded-lg hover:bg-slate-800 transition-colors ${value === option.value ? "bg-indigo-500/20" : ""
                                         }`}
                                 >
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-text-primary truncate">
+                                        <div className="text-sm font-medium text-slate-200 truncate">
                                             {option.label}
                                         </div>
                                         {option.description && (
-                                            <div className="text-xs text-text-secondary truncate mt-0.5">
+                                            <div className="text-xs text-slate-400 truncate mt-0.5">
                                                 {option.description}
                                             </div>
                                         )}
