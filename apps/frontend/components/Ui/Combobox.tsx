@@ -122,7 +122,7 @@ export function Combobox({
                     </div>
 
                     {/* Options List */}
-                    <div className="max-h-60 overflow-y-auto p-1">
+                    <div className="max-h-60 overflow-y-auto overscroll-contain p-1" style={{ touchAction: 'pan-y' }}>
                         {filteredOptions.length === 0 ? (
                             <div className="px-3 py-6 text-center text-sm text-text-secondary">
                                 {emptyMessage}
