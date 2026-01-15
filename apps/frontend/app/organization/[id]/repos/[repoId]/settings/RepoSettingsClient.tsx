@@ -57,7 +57,6 @@ export default function RepoSettingsClient({
     const [weeklySummary, setWeeklySummary] = useState(false);
 
     const [showDisconnectDialog, setShowDisconnectDialog] = useState(false);
-    const [showClearDataDialog, setShowClearDataDialog] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
 
@@ -90,8 +89,7 @@ export default function RepoSettingsClient({
             } catch (err: unknown) {
                 console.error("Failed to fetch repo data", err);
                 if (typeof err === "object" && err !== null && "response" in err) {
-                    // @ts-expect-error: err.response may exist on axios errors
-                    setError(err.response?.data?.error || "Failed to load repository");
+                    setError((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Failed to load repository");
                 } else {
                     setError("Failed to load repository");
                 }
@@ -124,9 +122,13 @@ export default function RepoSettingsClient({
             });
 
             alert("Settings saved successfully!");
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Failed to save settings", err);
-            alert(err.response?.data?.error || "Failed to save settings");
+            if (typeof err === "object" && err !== null && "response" in err) {
+                alert((err as { response?: { data?: { error?: string } } }).response?.data?.error || "Failed to save settings");
+            } else {
+                alert("Failed to save settings");
+            }
         } finally {
             setIsSaving(false);
         }
@@ -275,6 +277,7 @@ export default function RepoSettingsClient({
                             onChange={(e) => setChurnRateThreshold(Number(e.target.value))}
                             className="w-full h-2 border rounded-lg appearance-none cursor-pointer bg-surface accent-brand border-border"
                             disabled={!isAdmin}
+                            title="Churn Rate Threshold"
                         />
                         <p className="mt-1 text-xs text-text-secondary">
                             Alert when code churn rate exceeds this percentage
@@ -309,6 +312,7 @@ export default function RepoSettingsClient({
                                 className="w-full px-3 py-2 text-sm border rounded-xl border-border bg-background focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                                 min="1"
                                 disabled={!isAdmin}
+                                placeholder="Enter high-risk PRs threshold"
                             />
                             <p className="mt-1 text-xs text-text-secondary">Alert when high-risk PRs exceed this count</p>
                         </div>
@@ -324,6 +328,7 @@ export default function RepoSettingsClient({
                                 className="w-full px-3 py-2 text-sm border rounded-xl border-border bg-background focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                                 min="1"
                                 disabled={!isAdmin}
+                                placeholder="Enter critical alerts threshold"
                             />
                             <p className="mt-1 text-xs text-text-secondary">Alert when critical alerts exceed this count</p>
                         </div>
@@ -352,8 +357,9 @@ export default function RepoSettingsClient({
                                 onChange={(e) => setEmailNotifications(e.target.checked)}
                                 className="sr-only peer"
                                 disabled={!isAdmin}
+                                title="Email Notifications"
                             />
-                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
                         </label>
                     </div>
 
@@ -369,8 +375,9 @@ export default function RepoSettingsClient({
                                 onChange={(e) => setHighRiskAlerts(e.target.checked)}
                                 className="sr-only peer"
                                 disabled={!isAdmin}
+                                title="High-Risk PR Alerts"
                             />
-                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
                         </label>
                     </div>
 
@@ -386,8 +393,9 @@ export default function RepoSettingsClient({
                                 onChange={(e) => setCriticalAlerts(e.target.checked)}
                                 className="sr-only peer"
                                 disabled={!isAdmin}
+                                title="Critical Alerts"
                             />
-                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
                         </label>
                     </div>
 
@@ -403,8 +411,9 @@ export default function RepoSettingsClient({
                                 onChange={(e) => setWeeklySummary(e.target.checked)}
                                 className="sr-only peer"
                                 disabled={!isAdmin}
+                                title="Weekly Summary"
                             />
-                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
+                            <div className="w-11 h-6 bg-surface peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
                         </label>
                     </div>
                 </div>
