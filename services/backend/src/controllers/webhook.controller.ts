@@ -3,6 +3,7 @@ import { verifyGithubSignature } from "../utils/verifySignature";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
 import { RepoModel } from "../models/repo.model";
+import { AlertModel } from "../models/alert.model";
 import { analyzeCommitModules } from "../services/moduleAnalyzer";
 import logger from "../utils/logger";
 
@@ -280,6 +281,72 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
           },
           { upsert: true, new: true }
         );
+
+        // 🔥 NEW: Create alert for high-risk PRs (score >= 0.6)
+        if (riskScore >= 0.6 && pr.state === 'open') {
+          // Check if alert already exists for this PR
+          const existingAlert = await AlertModel.findOne({
+            orgId: repo.orgId,
+            type: 'high_risk_pr',
+            'metadata.prNumber': pr.number,
+            'metadata.repoId': repo._id.toString(),
+            resolvedAt: null, // Only check unresolved alerts
+          });
+
+          if (!existingAlert) {
+            await AlertModel.create({
+              orgId: repo.orgId,
+              repoId: repo._id,
+              type: 'high_risk_pr',
+              severity: 'high',
+              metadata: {
+                prNumber: pr.number,
+                prTitle: pr.title,
+                repoId: repo._id.toString(),
+                repoName: repo.repoFullName,
+                riskScore,
+                filesChanged: pr.changed_files,
+                linesChanged: (pr.additions || 0) + (pr.deletions || 0),
+                author: pr.user?.login,
+              },
+            });
+
+            logger.info(
+              {
+                orgId: repo.orgId,
+                prNumber: pr.number,
+                riskScore,
+              },
+              "High-risk PR alert created"
+            );
+          }
+        }
+
+        // 🔥 NEW: Auto-resolve alert when PR is merged or closed
+        if (pr.state === 'closed' || pr.merged_at) {
+          await AlertModel.updateMany(
+            {
+              orgId: repo.orgId,
+              type: 'high_risk_pr',
+              'metadata.prNumber': pr.number,
+              'metadata.repoId': repo._id.toString(),
+              resolvedAt: null,
+            },
+            {
+              resolvedAt: new Date(),
+              resolvedBy: 'system',
+            }
+          );
+
+          logger.info(
+            {
+              orgId: repo.orgId,
+              prNumber: pr.number,
+              state: pr.state,
+            },
+            "High-risk PR alert auto-resolved (PR closed/merged)"
+          );
+        }
 
         logger.info(
           {
