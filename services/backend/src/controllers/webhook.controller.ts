@@ -31,6 +31,51 @@ function trackWebhookDelivery(deliveryId: string): boolean {
 }
 
 /* -------------------------------------------
+   PR RISK SCORE CALCULATION
+   🔥 Calculates risk score based on PR complexity
+-------------------------------------------- */
+interface PRData {
+  changed_files?: number;
+  additions?: number;
+  deletions?: number;
+  created_at?: string;
+}
+
+/**
+ * Calculate risk score for a PR based on multiple factors
+ * @param pr - Pull request data from GitHub webhook
+ * @returns Risk score between 0 and 1 (0.7+ is high risk)
+ * 
+ * Formula:
+ * - Files changed: 40% weight (normalized to max 20 files)
+ * - Total lines changed: 40% weight (normalized to max 500 lines)
+ * - PR age without merge: 20% weight (normalized to max 7 days)
+ */
+function calculatePRRiskScore(pr: PRData): number {
+  // Factor 1: Files changed (40% weight)
+  const filesChanged = pr.changed_files || 0;
+  const fileScore = Math.min(filesChanged / 20, 1.0) * 0.4;
+
+  // Factor 2: Total lines changed (40% weight)
+  const additions = pr.additions || 0;
+  const deletions = pr.deletions || 0;
+  const totalLines = additions + deletions;
+  const lineScore = Math.min(totalLines / 500, 1.0) * 0.4;
+
+  // Factor 3: PR age (20% weight)
+  // Older PRs without merge are riskier
+  const createdAt = pr.created_at ? new Date(pr.created_at) : new Date();
+  const ageInDays = (Date.now() - createdAt.getTime()) / (1000 * 60 * 60 * 24);
+  const ageScore = Math.min(ageInDays / 7, 1.0) * 0.2;
+
+  // Total risk score (0-1 range)
+  const riskScore = fileScore + lineScore + ageScore;
+
+  // Round to 2 decimal places
+  return Math.round(riskScore * 100) / 100;
+}
+
+/* -------------------------------------------
    WEBHOOK HANDLER (FINAL FIX)
 -------------------------------------------- */
 export const githubWebhookHandler = async (req: Request, res: Response) => {
@@ -202,6 +247,14 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
           "Processing pull_request event for organization"
         );
 
+        // 🔥 Calculate risk score based on PR complexity
+        const riskScore = calculatePRRiskScore({
+          changed_files: pr.changed_files,
+          additions: pr.additions,
+          deletions: pr.deletions,
+          created_at: pr.created_at,
+        });
+
         const savedPR = await PRModel.findOneAndUpdate(
           {
             orgId: repo.orgId,      // 🔥 MULTI-TENANT: Scoped by orgId
@@ -223,6 +276,7 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
             filesChanged: pr.changed_files,
             additions: pr.additions,
             deletions: pr.deletions,
+            riskScore,              // 🔥 NEW: Store calculated risk score
           },
           { upsert: true, new: true }
         );
@@ -231,7 +285,10 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
           {
             orgId: repo.orgId,
             repo: repo.repoFullName,
-            pr: pr.number
+            pr: pr.number,
+            riskScore,              // 🔥 Log risk score for debugging
+            filesChanged: pr.changed_files,
+            linesChanged: (pr.additions || 0) + (pr.deletions || 0)
           },
           "PR processed and saved to database (org-scoped)"
         );
