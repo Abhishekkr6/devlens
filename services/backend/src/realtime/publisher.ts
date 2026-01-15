@@ -1,15 +1,29 @@
 import logger from "../utils/logger";
+import { broadcastToClients } from "./wsServer";
 
 /**
- * Event Publisher (No-op without Redis)
+ * Event Publisher with WebSocket Broadcasting
  * 
- * This function is kept for backward compatibility but does nothing
- * since we've moved to polling-based updates instead of Redis pub/sub.
+ * Broadcasts real-time events to all connected WebSocket clients
  */
 export const publishEvent = async (event: any) => {
-    logger.debug(
-        { eventType: event.type },
-        "Event publish skipped - using polling instead of Redis pub/sub"
-    );
-    // No-op: Frontend uses polling for updates
+    try {
+        logger.info({
+            message: "[Publisher] Publishing event:",
+            type: event.type,
+            userId: event.userId,
+            timestamp: new Date().toISOString()
+        });
+
+        // Broadcast to all connected WebSocket clients
+        broadcastToClients(event);
+
+        logger.info("[Publisher] ✅ Event published successfully");
+    } catch (error) {
+        logger.error({
+            message: "[Publisher] ❌ Error publishing event:",
+            error: error instanceof Error ? error.message : String(error)
+        });
+        throw error;
+    }
 };

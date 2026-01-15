@@ -10,10 +10,11 @@ import { toast } from "sonner";
 
 export function GlobalNotificationListener() {
     const { user, fetchUser, removeOrgFromUser } = useUserStore();
-    const { addNotification } = useNotificationStore();
+    const { addNotification, fetchNotifications } = useNotificationStore();
     const { playSound } = useNotificationSound();
     const router = useRouter();
     const fetchUserCalled = useRef(false);
+    const initialNotificationsFetched = useRef(false);
 
     useEffect(() => {
         console.log("[GlobalNotificationListener] Initializing...");
@@ -37,6 +38,15 @@ export function GlobalNotificationListener() {
 
         console.log("[GlobalNotificationListener] ✅ User loaded, setting up WebSocket listener");
         connectWS();
+
+        // Fetch initial notifications from DB on page load
+        if (!initialNotificationsFetched.current) {
+            console.log("[GlobalNotificationListener] 📥 Fetching initial notifications from DB...");
+            initialNotificationsFetched.current = true;
+            fetchNotifications().catch(err => {
+                console.error("[GlobalNotificationListener] Failed to fetch initial notifications:", err);
+            });
+        }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const unsubscribe = subscribeWS((event: any) => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { api } from "../../lib/api";
 import { useRouter } from "next/navigation";
 import { Card } from "../../components/Ui/Card";
@@ -28,7 +28,7 @@ export default function OrganizationPage() {
   // 🔥 NEW: Subscribe to notification store for real-time updates
   const notifications = useNotificationStore((s) => s.notifications);
   const deleteNotification = useNotificationStore((s) => s.deleteNotification);
-
+  const fetchNotifications = useNotificationStore((s) => s.fetchNotifications);
 
   // Filter for invite notifications only
   const inviteNotifications = notifications.filter((n) => n.type === "invite" && !n.read);
@@ -45,27 +45,15 @@ export default function OrganizationPage() {
     }
   };
 
-  const notificationsFetched = useRef(false);
-
   useEffect(() => {
     fetchOrgs();
 
-    // Fetch notifications when page loads (only once)
-    if ((user?.id || user?._id) && !notificationsFetched.current) {
+    // Fetch notifications when page loads
+    if (user?.id || user?._id) {
       console.log("[OrganizationPage] Fetching notifications...");
-      useNotificationStore.getState().fetchNotifications();
-      notificationsFetched.current = true;
+      fetchNotifications();
     }
-  }, [user?.id, user?._id]); // Removed fetchNotifications from deps
-
-  // 🔥 DEBUG: Log when notifications change
-  useEffect(() => {
-    console.log("[OrganizationPage] Notifications updated:", {
-      total: notifications.length,
-      invites: inviteNotifications.length,
-      inviteIds: inviteNotifications.map(n => n._id)
-    });
-  }, [notifications, inviteNotifications]);
+  }, [user?.id, user?._id, fetchNotifications]);
 
   const validateName = (value: string): string => {
     if (!value.trim()) {
