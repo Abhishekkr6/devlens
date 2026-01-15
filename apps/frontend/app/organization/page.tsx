@@ -8,7 +8,6 @@ import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
 import { useUserStore, Org } from "../../store/userStore";
 import { Trash2, LogOut } from "lucide-react";
 import { toast } from "sonner";
-import { connectWS, subscribeWS } from "../../lib/ws";
 
 export default function OrganizationPage() {
   const [name, setName] = useState("");
@@ -40,31 +39,11 @@ export default function OrganizationPage() {
   useEffect(() => {
     fetchOrgs();
 
-    // Connect to WS
-    connectWS();
-
-    // Subscribe to events
-    const unsubscribe = subscribeWS((e: unknown) => {
-      const event = e as { type: string; userId?: string; org: Org };
-      // 1. Invite Received -> Toast Only (don't add to list yet)
-      if (event.type === "org:invited" && event.userId === user?.id) {
-        toast.info(`You have been invited to ${event.org.name}`);
-      }
-
-      // 2. Org Joined -> Add to List (Instant Update)
-      if (event.type === "org:joined" && event.userId === user?.id) {
-        setOrgs((prev) => {
-          if (prev.find((o) => o._id === event.org._id)) return prev;
-          return [...prev, event.org];
-        });
-        toast.success(` joined ${event.org.name}`);
-      }
-    });
-
-    return () => {
-      unsubscribe();
-    };
-  }, [user?.id]);
+    // 🔥 REMOVED: Local WebSocket subscription
+    // GlobalNotificationListener already handles all notification events
+    // including team invites (notification:created with type="invite")
+    // This prevents duplicate subscriptions and conflicts
+  }, []);
 
   const validateName = (value: string): string => {
     if (!value.trim()) {

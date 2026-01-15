@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
 import { useNotificationStore } from "@/store/notificationStore";
+import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/userStore";
 
@@ -10,6 +11,7 @@ export function GlobalInviteToaster() {
     const notifications = useNotificationStore((s) => s.notifications);
     const deleteNotification = useNotificationStore((s) => s.deleteNotification);
     const { fetchUser } = useUserStore();
+    const { playSound } = useNotificationSound();
 
     // Prevent duplicate toasts using localStorage
     const shown = useRef(new Set<string>());
@@ -49,6 +51,9 @@ export function GlobalInviteToaster() {
             const shownToasts = Array.from(shown.current);
             localStorage.setItem("shownInviteToasts", JSON.stringify(shownToasts));
 
+            // 🔥 NEW: Play invite sound (double beep)
+            playSound("invite");
+
             toast.custom(
                 (t) => (
                     <InviteToast
@@ -67,7 +72,7 @@ export function GlobalInviteToaster() {
                 }
             );
         });
-    }, [notifications, deleteNotification, fetchUser]);
+    }, [notifications, deleteNotification, fetchUser, playSound]);
 
     return null;
 }
