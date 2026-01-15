@@ -58,11 +58,20 @@ export function GlobalNotificationListener() {
                 console.log("[GlobalNotificationListener] ✅ Adding notification to store:", event.data);
                 addNotification(event.data);
 
-                // 🔥 NOTE: Team invite toasts are handled by GlobalInviteToaster
-                // which shows a better UI with Accept/Reject buttons
-
-                // 🔥 Instant toast for high-risk alerts
-                if (event.data.type === "alert") {
+                // 🔥 NEW: Instant toast for team invites
+                if (event.data.type === "invite") {
+                    playSound("invite");
+                    toast.info(`Team Invite: ${event.data.title}`, {
+                        description: event.data.message,
+                        duration: 7000,
+                        action: {
+                            label: "View",
+                            onClick: () => router.push("/notifications")
+                        }
+                    });
+                }
+                // 🔥 NEW: Instant toast for high-risk alerts
+                else if (event.data.type === "alert") {
                     playSound("alert");
                     toast.error(`Alert: ${event.data.title}`, {
                         description: event.data.message,

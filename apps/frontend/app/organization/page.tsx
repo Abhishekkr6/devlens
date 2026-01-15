@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Card } from "../../components/Ui/Card";
 import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
 import { useUserStore, Org } from "../../store/userStore";
+import { useNotificationStore } from "../../store/notificationStore";
 import { Trash2, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
@@ -24,6 +25,14 @@ export default function OrganizationPage() {
   const router = useRouter();
   const { setActiveOrganization, user, fetchUser } = useUserStore();
 
+  // 🔥 NEW: Subscribe to notification store for real-time updates
+  const notifications = useNotificationStore((s) => s.notifications);
+  const deleteNotification = useNotificationStore((s) => s.deleteNotification);
+  const fetchNotifications = useNotificationStore((s) => s.fetchNotifications);
+
+  // Filter for invite notifications only
+  const inviteNotifications = notifications.filter((n) => n.type === "invite" && !n.read);
+
   const fetchOrgs = async () => {
     try {
       setLoading(true);
@@ -39,16 +48,12 @@ export default function OrganizationPage() {
   useEffect(() => {
     fetchOrgs();
 
-    // 🔥 FIX: Fetch notifications when page loads
-    // This ensures any existing notifications are loaded into the store
-    import("../../store/notificationStore").then(({ useNotificationStore }) => {
-      const fetchNotifications = useNotificationStore.getState().fetchNotifications;
-      if (user?.id || user?._id) {
-        console.log("[OrganizationPage] Fetching notifications...");
-        fetchNotifications();
-      }
-    });
-  }, [user?.id, user?._id]);
+    // Fetch notifications when page loads
+    if (user?.id || user?._id) {
+      console.log("[OrganizationPage] Fetching notifications...");
+      fetchNotifications();
+    }
+  }, [user?.id, user?._id, fetchNotifications]);
 
   const validateName = (value: string): string => {
     if (!value.trim()) {
@@ -167,6 +172,31 @@ export default function OrganizationPage() {
 
   const disabled = !name.trim() || !slug.trim();
 
+  // Handle invite actions
+  const handleAcceptInvite = async (notificationId: string, orgId: string) => {
+    try {
+      await api.post(`/orgs/${orgId}/invite/accept`);
+      await fetchUser();
+      await fetchOrgs();
+      await deleteNotification(notificationId);
+      toast.success("Invitation accepted");
+    } catch (err) {
+      console.error("Failed to accept invite", err);
+      toast.error("Failed to accept invite");
+    }
+  };
+
+  const handleRejectInvite = async (notificationId: string, orgId: string) => {
+    try {
+      await api.post(`/orgs/${orgId}/invite/reject`);
+      await deleteNotification(notificationId);
+      toast.info("Invitation rejected");
+    } catch (err) {
+      console.error("Failed to reject invite", err);
+      toast.error("Failed to reject invite");
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
       <div className="w-full max-w-2xl space-y-8">
@@ -181,6 +211,43 @@ export default function OrganizationPage() {
         </div>
 
         <div className="grid gap-6">
+          {/* 🔥 NEW: Invite Notifications Section */}
+          {inviteNotifications.length > 0 && (
+            <div className="space-y-3">
+              {inviteNotifications.map((notification) => (
+                <Card key={notification._id} className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 p-5 shadow-sm">
+                  <div className="flex items-start gap-4">
+                    <div className="h-10 w-10 shrink-0 rounded-full bg-indigo-500/20 flex items-center justify-center">
+                      <span className="text-indigo-400 text-lg font-bold">+</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="text-base font-semibold text-text-primary mb-1">
+                        {notification.title}
+                      </h3>
+                      <p className="text-sm text-text-secondary">
+                        {notification.message}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => handleRejectInvite(notification._id, notification.metadata?.orgId || "")}
+                        className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary bg-background border border-border hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 hover:border-rose-500 transition-colors cursor-pointer"
+                      >
+                        Reject
+                      </button>
+                      <button
+                        onClick={() => handleAcceptInvite(notification._id, notification.metadata?.orgId || "")}
+                        className="rounded-lg px-4 py-2 text-sm font-semibold text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm cursor-pointer"
+                      >
+                        Accept
+                      </button>
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          )}
+
           {/* Create Org Card */}
           <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm hover:shadow-md transition-shadow">
             <h2 className="text-lg font-semibold text-text-primary mb-4">Create New Organization</h2>
