@@ -50,22 +50,34 @@ export function GlobalNotificationListener() {
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const unsubscribe = subscribeWS((event: any) => {
-            console.log("[GlobalNotificationListener] Event received:", event);
+            console.log("[GlobalNotificationListener] 📡 RAW Event received:", event);
 
             const userId = user?.id || user?._id;
-            console.log("[GlobalNotificationListener] Checking event:", {
-                eventType: event.type,
+            const eventUserIdStr = String(event.userId);
+            const userIdStr = String(userId);
+            
+            console.log("[GlobalNotificationListener] 🔍 ID Matching Debug:", {
                 eventUserId: event.userId,
+                eventUserIdStr: eventUserIdStr,
                 currentUserId: userId,
-                match: String(event.userId) === String(userId)
+                userIdStr: userIdStr,
+                typesMatch: typeof eventUserIdStr === typeof userIdStr,
+                valuesMatch: eventUserIdStr === userIdStr,
+                eventType: event.type,
+                eventData: event.data
             });
 
             // Handle notification:created events
             if (
                 event.type === "notification:created" &&
-                String(event.userId) === String(userId)
+                eventUserIdStr === userIdStr
             ) {
-                console.log("[GlobalNotificationListener] ✅ Adding notification to store:", event.data);
+                console.log("[GlobalNotificationListener] ✅ NOTIFICATION MATCHED! Adding to store:", {
+                    notificationId: event.data?._id,
+                    notificationType: event.data?.type,
+                    notificationTitle: event.data?.title,
+                    fullData: event.data
+                });
                 addNotification(event.data);
 
                 // 🔥 NEW: Instant toast for team invites
@@ -156,10 +168,12 @@ export function GlobalNotificationListener() {
                     router.push("/organization");
                 }
             } else {
-                console.log("[GlobalNotificationListener] ❌ Event ignored:", {
-                    reason: !["notification:created", "org:removed", "invite:accepted", "invite:rejected"].includes(event.type)
-                        ? "Wrong event type"
-                        : "User ID mismatch"
+                console.log("[GlobalNotificationListener] ❌ Event not matched:", {
+                    reason: event.type !== "notification:created" 
+                        ? `Wrong event type (got: ${event.type})`
+                        : "User ID mismatch",
+                    eventType: event.type,
+                    expectedType: "notification:created"
                 });
             }
         });

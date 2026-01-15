@@ -74,13 +74,17 @@ export const connectWS = () => {
       console.log("[WS] 📨 Message received:", {
         type: data.type,
         userId: data.userId,
-        data: data.data,
-        fullEvent: data
+        dataKeys: data.data ? Object.keys(data.data) : null,
+        fullPayload: data
       });
       console.log(`[WS] Broadcasting to ${listeners.length} listener(s)`);
       listeners.forEach((cb, index) => {
-        console.log(`[WS] Calling listener #${index + 1}`);
-        cb(data);
+        try {
+          console.log(`[WS] Calling listener #${index + 1}`);
+          cb(data);
+        } catch (error) {
+          console.error(`[WS] Listener #${index + 1} threw an error:`, error);
+        }
       });
     } catch (error) {
       console.error("[WS] Failed to parse message:", error, msg.data);

@@ -177,7 +177,7 @@ export const inviteUser = async (req: any, res: Response) => {
     // Removed the part where we push to user.orgIds immediately
 
     // 7️⃣ Create Notification with Metadata
-    await createNotification({
+    const notification = await createNotification({
       recipientId: user._id,
       type: "invite",
       title: "New Organization Invite",
@@ -188,17 +188,8 @@ export const inviteUser = async (req: any, res: Response) => {
       },
     });
 
-    // 7.5️⃣ Publish Real-time Event
-    await publishEvent({
-      type: "org:invited",
-      userId: user._id, // Target user
-      org: {
-        _id: org._id,
-        name: org.name,
-        slug: org.slug,
-        createdBy: org.createdBy,
-      },
-    });
+    // Note: publishEvent is already called inside createNotification()
+    // No need to call it again here
 
     // 8️⃣ Response
     return res.status(200).json({

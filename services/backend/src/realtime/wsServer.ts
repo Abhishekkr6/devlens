@@ -43,17 +43,33 @@ export const broadcastToClients = (event: any) => {
     return;
   }
 
-  logger.info(`[WS] Broadcasting event to ${connectedClients.size} client(s): type=${event.type}, userId=${event.userId}`);
+  const totalClients = connectedClients.size;
+  logger.info(`[WS] 📢 Broadcasting event: type=${event.type}, userId=${event.userId}, totalConnectedClients=${totalClients}`);
+
+  if (totalClients === 0) {
+    logger.warn(`[WS] ⚠️ No connected clients to broadcast to!`);
+    return;
+  }
+
+  let sentCount = 0;
+  let failedCount = 0;
 
   connectedClients.forEach((ws) => {
     try {
       if (ws.readyState === ws.OPEN) {
         ws.send(JSON.stringify(event));
-        logger.debug(`[WS] ✅ Event sent to client for userId: ${event.userId}`);
+        sentCount++;
+        logger.debug(`[WS] ✅ Event sent. Total sent: ${sentCount}`);
+      } else {
+        logger.warn(`[WS] Client not in OPEN state: readyState=${ws.readyState}`);
+        failedCount++;
       }
     } catch (error) {
-      logger.error({ message: "[WS] Failed to send event to client:", error });
+      logger.error({ message: "[WS] Failed to send event:", error });
       connectedClients.delete(ws);
+      failedCount++;
     }
   });
+
+  logger.info(`[WS] 📊 Broadcast summary: totalClients=${totalClients}, sentCount=${sentCount}, failedCount=${failedCount}, eventType=${event.type}, targetUserId=${event.userId}`);
 };
