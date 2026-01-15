@@ -184,7 +184,7 @@ export default function OrganizationPage() {
   const disabled = !name.trim() || !slug.trim();
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
       <div className="w-full max-w-2xl space-y-8">
         <div className="text-center">
           <div className="mx-auto h-12 w-12 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200/50 dark:shadow-none">

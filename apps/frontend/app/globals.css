@@ -50,6 +50,8 @@ h6 {
 [data-sonner-toaster] {
   --width: 356px;
   --toast-gap: 20px;
+  position: fixed !important;
+  z-index: 9999 !important;
 }
 
 [data-sonner-toast] {
