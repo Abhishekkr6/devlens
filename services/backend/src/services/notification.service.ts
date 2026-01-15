@@ -13,19 +13,19 @@ interface CreateNotificationParams {
 
 export const createNotification = async (params: CreateNotificationParams) => {
     try {
-        logger.info("[NotificationService] Creating notification:", {
+        logger.info({
             recipientId: params.recipientId,
             type: params.type,
             title: params.title
-        });
+        }, "[NotificationService] Creating notification");
 
         // 1. Save to DB
         const notification = await NotificationModel.create(params);
-        logger.info("[NotificationService] ✅ Notification saved to DB:", {
+        logger.info({
             notificationId: notification._id,
             recipientId: notification.recipientId,
             type: notification.type
-        });
+        }, "[NotificationService] ✅ Notification saved to DB");
 
         // 2. Publish Real-time Event
         const eventPayload = {
@@ -34,11 +34,11 @@ export const createNotification = async (params: CreateNotificationParams) => {
             data: notification.toObject ? notification.toObject() : notification,
         };
 
-        logger.info("[NotificationService] 📤 Publishing WebSocket event...", {
+        logger.info({
             type: eventPayload.type,
             userId: eventPayload.userId,
             notificationId: notification._id
-        });
+        }, "[NotificationService] 📤 Publishing WebSocket event");
 
         await publishEvent(eventPayload);
 
