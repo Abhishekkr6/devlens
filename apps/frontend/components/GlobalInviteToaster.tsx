@@ -44,7 +44,7 @@ export function GlobalInviteToaster() {
                 return;
             }
 
-            console.log("[GlobalInviteToaster] 🎉 Showing invite toast:", n);
+            console.log("[GlobalInviteToaster] 🎉 Invite notification received (toast disabled):", n);
             shown.current.add(n._id);
 
             // Save to localStorage
@@ -52,26 +52,27 @@ export function GlobalInviteToaster() {
             localStorage.setItem("shownInviteToasts", JSON.stringify(shownToasts));
 
             // 🔥 NEW: Play invite sound (double beep)
-            playSound("invite");
+            // playSound("invite");
 
-            toast.custom(
-                (t) => (
-                    <InviteToast
-                        toastId={t}
-                        notification={n}
-                        onDone={() => {
-                            console.log(`[GlobalInviteToaster] Toast done, removing from shown: ${n._id}`);
-                            deleteNotification(n._id);
-                        }}
-                        fetchUser={fetchUser}
-                    />
-                ),
-                {
-                    duration: Infinity,
-                    position: "bottom-right",
-                    style: { zIndex: 9999 }, // 🔥 Ensure toast appears above all content
-                }
-            );
+            // 🚫 DISABLED: Organization invite toasts removed from UI
+            // toast.custom(
+            //     (t) => (
+            //         <InviteToast
+            //             toastId={t}
+            //             notification={n}
+            //             onDone={() => {
+            //                 console.log(`[GlobalInviteToaster] Toast done, removing from shown: ${n._id}`);
+            //                 deleteNotification(n._id);
+            //             }}
+            //             fetchUser={fetchUser}
+            //         />
+            //     ),
+            //     {
+            //         duration: Infinity,
+            //         position: "bottom-right",
+            //         style: { zIndex: 9999 }, // 🔥 Ensure toast appears above all content
+            //     }
+            // );
         });
     }, [notifications, deleteNotification, fetchUser, playSound]);
 
