@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { toast } from "sonner";
-import { useNotificationStore } from "@/store/notificationStore";
+import { useNotificationStore, type Notification } from "@/store/notificationStore";
 import { useNotificationSound } from "@/hooks/useNotificationSound";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/userStore";
@@ -85,13 +85,13 @@ function InviteToast({
     fetchUser,
 }: {
     toastId: string | number;
-    notification: any;
+    notification: Notification;
     onDone: () => void;
     fetchUser: () => Promise<void>;
 }) {
     const handleAccept = async () => {
         try {
-            await api.post(`/orgs/${notification.metadata.orgId}/invite/accept`);
+            await api.post(`/orgs/${notification.metadata?.orgId}/invite/accept`);
             await fetchUser();
             toast.success("Invitation accepted");
             toast.dismiss(toastId);
@@ -103,7 +103,7 @@ function InviteToast({
 
     const handleReject = async () => {
         try {
-            await api.post(`/orgs/${notification.metadata.orgId}/invite/reject`);
+            await api.post(`/orgs/${notification.metadata?.orgId}/invite/reject`);
             toast.info("Invitation rejected");
             toast.dismiss(toastId);
             onDone();
@@ -129,6 +129,15 @@ function InviteToast({
             </div>
 
             <div className="flex items-center gap-2 justify-end">
+                <button
+                    onClick={() => {
+                        toast.dismiss(toastId);
+                        onDone();
+                    }}
+                    className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-slate-700 transition cursor-pointer"
+                >
+                    Dismiss
+                </button>
                 <button
                     onClick={handleReject}
                     className="h-7 px-3 rounded-lg text-xs font-medium text-slate-300 bg-white/5 hover:bg-rose-500/20 hover:text-rose-400 transition cursor-pointer"
