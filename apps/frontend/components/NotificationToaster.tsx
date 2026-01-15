@@ -3,11 +3,13 @@
 import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { useNotificationStore } from "@/store/notificationStore";
+import { useNotificationSound } from "@/hooks/useNotificationSound";
 
 export function NotificationToaster() {
     const notifications = useNotificationStore((s) => s.notifications);
     const [initialized, setInitialized] = useState(false);
     const shownRef = useRef(new Set<string>());
+    const { playSound } = useNotificationSound();
 
     // Load shown toasts from localStorage on mount
     useEffect(() => {
@@ -39,13 +41,24 @@ export function NotificationToaster() {
             shownRef.current.add(n._id);
             localStorage.setItem("shownGeneralToasts", JSON.stringify(Array.from(shownRef.current)));
 
+            // 🔥 NEW: Play sound based on notification type
+            if (n.type === "invite") {
+                playSound("invite");
+            } else if (n.type === "alert") {
+                playSound("alert");
+            } else if (n.type === "success") {
+                playSound("success");
+            } else {
+                playSound("notification");
+            }
+
             toast(n.title, {
                 description: n.message,
                 position: "bottom-right",
                 duration: 5000,
             });
         });
-    }, [notifications, initialized]);
+    }, [notifications, initialized, playSound]);
 
     return null;
 }

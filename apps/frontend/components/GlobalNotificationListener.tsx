@@ -5,11 +5,13 @@ import { useRouter } from "next/navigation";
 import { connectWS, subscribeWS } from "../lib/ws";
 import { useUserStore } from "../store/userStore";
 import { useNotificationStore } from "../store/notificationStore";
+import { useNotificationSound } from "../hooks/useNotificationSound";
 import { toast } from "sonner";
 
 export function GlobalNotificationListener() {
     const { user, fetchUser, removeOrgFromUser } = useUserStore();
     const { addNotification } = useNotificationStore();
+    const { playSound } = useNotificationSound();
     const router = useRouter();
     const fetchUserCalled = useRef(false);
 
@@ -55,7 +57,62 @@ export function GlobalNotificationListener() {
             ) {
                 console.log("[GlobalNotificationListener] ✅ Adding notification to store:", event.data);
                 addNotification(event.data);
+
+                // 🔥 NEW: Instant toast for team invites
+                if (event.data.type === "invite") {
+                    playSound("invite");
+                    toast.info(`Team Invite: ${event.data.title}`, {
+                        description: event.data.message,
+                        duration: 7000,
+                        action: {
+                            label: "View",
+                            onClick: () => router.push("/notifications")
+                        }
+                    });
+                }
+                // 🔥 NEW: Instant toast for high-risk alerts
+                else if (event.data.type === "alert") {
+                    playSound("alert");
+                    toast.error(`Alert: ${event.data.title}`, {
+                        description: event.data.message,
+                        duration: 7000,
+                        action: {
+                            label: "View",
+                            onClick: () => {
+                                const orgId = event.data.metadata?.orgId;
+                                if (orgId) {
+                                    router.push(`/organization/${orgId}/alerts`);
+                                }
+                            }
+                        }
+                    });
+                }
+
                 console.log("[GlobalNotificationListener] Notification added successfully");
+            }
+            // 🔥 NEW: Handle invite accepted events
+            else if (
+                event.type === "invite:accepted" &&
+                String(event.userId) === String(userId)
+            ) {
+                console.log("[GlobalNotificationListener] ✅ Invite accepted:", event);
+                playSound("success");
+                toast.success(`${event.userName || "User"} joined your team!`, {
+                    description: `${event.orgName || "Organization"}`,
+                    duration: 5000,
+                });
+            }
+            // 🔥 NEW: Handle invite rejected events
+            else if (
+                event.type === "invite:rejected" &&
+                String(event.userId) === String(userId)
+            ) {
+                console.log("[GlobalNotificationListener] ✅ Invite rejected:", event);
+                playSound("notification");
+                toast.info(`${event.userName || "User"} declined the invite`, {
+                    description: `${event.orgName || "Organization"}`,
+                    duration: 5000,
+                });
             }
             // Handle org:removed events
             else if (
@@ -71,6 +128,7 @@ export function GlobalNotificationListener() {
                 const { user: updatedUser, activeOrgId: newActiveOrgId } = useUserStore.getState();
 
                 // Show toast notification
+                playSound("alert");
                 toast.error(`You have been removed from ${event.orgName}`, {
                     duration: 5000,
                 });
@@ -89,7 +147,7 @@ export function GlobalNotificationListener() {
                 }
             } else {
                 console.log("[GlobalNotificationListener] ❌ Event ignored:", {
-                    reason: !["notification:created", "org:removed"].includes(event.type)
+                    reason: !["notification:created", "org:removed", "invite:accepted", "invite:rejected"].includes(event.type)
                         ? "Wrong event type"
                         : "User ID mismatch"
                 });
@@ -102,6 +160,6 @@ export function GlobalNotificationListener() {
             console.log("[GlobalNotificationListener] Cleaning up...");
             unsubscribe();
         };
-    }, [user?.id, user?._id, addNotification, fetchUser, removeOrgFromUser, router]);
+    }, [user?.id, user?._id, addNotification, fetchUser, removeOrgFromUser, router, playSound]);
     return null;
 }
