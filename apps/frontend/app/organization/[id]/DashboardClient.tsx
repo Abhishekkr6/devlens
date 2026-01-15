@@ -103,9 +103,8 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                 const state = (p.state || "").toLowerCase();
                 if (state === "open") statusSummary.open += 1;
                 else if (state === "merged") statusSummary.merged += 1;
-                // Only count as "review" if it's not closed and not in other states
-                // "closed" PRs should not be counted in any category
-                else if (state !== "closed" && state !== "draft") statusSummary.review += 1;
+                else if (state === "review") statusSummary.review += 1;
+                // Note: closed and draft PRs are not counted in any category
             });
 
             setRiskBuckets(buckets);

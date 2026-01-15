@@ -238,6 +238,129 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
       }
     }
 
+    /* -------------------------------------------
+       PULL REQUEST REVIEW EVENT - MULTI-ORG FAN-OUT
+       🔥 NEW: Handle review submissions to update PR review status
+    -------------------------------------------- */
+    if (event === "pull_request_review") {
+      const pr = payload.pull_request;
+      const review = payload.review;
+
+      // 🔥 CRITICAL: Process webhook for EACH organization that connected this repo
+      for (const repo of repos) {
+        // Per-org idempotency check
+        const orgDeliveryKey = `${deliveryId}-${repo.orgId}`;
+        if (deliveryId && trackWebhookDelivery(orgDeliveryKey)) {
+          logger.info(
+            { deliveryId, orgId: repo.orgId },
+            "Duplicate webhook delivery for this org, skipping"
+          );
+          continue; // Skip this org, but continue processing for other orgs
+        }
+
+        logger.info(
+          {
+            orgId: repo.orgId,
+            repoId: repo._id,
+            prNumber: pr.number,
+            reviewState: review.state,
+            reviewer: review.user?.login
+          },
+          "Processing pull_request_review event for organization"
+        );
+
+        // Find existing PR and update review information
+        const existingPR = await PRModel.findOne({
+          orgId: repo.orgId,
+          providerPrId: pr.id,
+        });
+
+        if (existingPR) {
+          // Update reviewers array (avoid duplicates)
+          const reviewers = existingPR.reviewers || [];
+          const reviewerLogin = review.user?.login;
+
+          if (reviewerLogin && !reviewers.some((r: any) => r.login === reviewerLogin)) {
+            reviewers.push({
+              login: reviewerLogin,
+              state: review.state,
+              submittedAt: review.submitted_at,
+            });
+          } else if (reviewerLogin) {
+            // Update existing reviewer's state
+            const existingReviewer = reviewers.find((r: any) => r.login === reviewerLogin);
+            if (existingReviewer) {
+              existingReviewer.state = review.state;
+              existingReviewer.submittedAt = review.submitted_at;
+            }
+          }
+
+          await PRModel.findOneAndUpdate(
+            {
+              orgId: repo.orgId,
+              providerPrId: pr.id,
+            },
+            {
+              reviewers,
+              lastReviewAt: review.submitted_at,
+              // Update state to 'review' if PR is still open and has reviews
+              state: existingPR.state === 'open' && reviewers.length > 0 ? 'review' : existingPR.state,
+            },
+            { new: true }
+          );
+
+          logger.info(
+            {
+              orgId: repo.orgId,
+              repo: repo.repoFullName,
+              pr: pr.number,
+              reviewersCount: reviewers.length
+            },
+            "PR review processed and saved to database (org-scoped)"
+          );
+        } else {
+          logger.warn(
+            {
+              orgId: repo.orgId,
+              providerPrId: pr.id,
+              prNumber: pr.number
+            },
+            "PR not found for review event - creating new PR record"
+          );
+
+          // Create PR if it doesn't exist (edge case)
+          await PRModel.findOneAndUpdate(
+            {
+              orgId: repo.orgId,
+              providerPrId: pr.id,
+            },
+            {
+              providerPrId: pr.id,
+              repoId: repo._id,
+              orgId: repo.orgId,
+              number: pr.number,
+              title: pr.title,
+              authorGithubId: pr.user?.login ?? null,
+              state: 'review', // Set to review since we got a review event
+              createdAt: pr.created_at,
+              mergedAt: pr.merged_at,
+              closedAt: pr.closed_at,
+              filesChanged: pr.changed_files,
+              additions: pr.additions,
+              deletions: pr.deletions,
+              reviewers: [{
+                login: review.user?.login,
+                state: review.state,
+                submittedAt: review.submitted_at,
+              }],
+              lastReviewAt: review.submitted_at,
+            },
+            { upsert: true, new: true }
+          );
+        }
+      }
+    }
+
     logger.info({ event, repo: fullRepoName }, "Webhook processed successfully");
     return res.status(200).json({ success: true });
   } catch (err) {
