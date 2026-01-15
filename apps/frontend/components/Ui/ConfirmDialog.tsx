@@ -65,7 +65,7 @@ export function ConfirmDialog({
                     <button
                         onClick={onConfirm}
                         disabled={isLoading}
-                        className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 active:bg-rose-800 rounded-xl transition-colors shadow-lg shadow-rose-500/20 disabled:opacity-50 disabled:cursor-not-allowed min-w-[80px]"
+                        className="flex items-center justify-center px-4 py-2 text-sm font-medium text-white bg-rose-600 hover:bg-rose-700 active:bg-rose-800 rounded-xl transition-colors shadow-lg shadow-rose-500/20 disabled:opacity-50 disabled:cursor-not-allowed min-w-20"
                     >
                         {isLoading ? (
                             <div className="w-4 h-4 border-2 rounded-full animate-spin border-white/20 border-t-white" />
