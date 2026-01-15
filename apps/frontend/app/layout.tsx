@@ -37,11 +37,14 @@ export default function RootLayout({
         <GlobalToastManager />
 
         {/* Sonner UI */}
-        <Toaster 
-          position="bottom-right" 
-          richColors 
-          expand 
-          toastOptions={{ className: 'font-body' }} 
+        <Toaster
+          position="bottom-right"
+          richColors
+          expand
+          toastOptions={{
+            className: 'font-body',
+            style: { zIndex: 9999 } // 🔥 Ensure toasts appear above all content
+          }}
         />
 
         <GlobalInviteToaster />

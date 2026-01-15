@@ -69,6 +69,7 @@ export function GlobalInviteToaster() {
                 {
                     duration: Infinity,
                     position: "bottom-right",
+                    style: { zIndex: 9999 }, // 🔥 Ensure toast appears above all content
                 }
             );
         });
