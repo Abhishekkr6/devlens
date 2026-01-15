@@ -45,6 +45,28 @@ export default function OrganizationPage() {
     // This prevents duplicate subscriptions and conflicts
   }, []);
 
+  // 🔥 DEBUG: Log notification store state
+  useEffect(() => {
+    console.log("[OrganizationPage] User state:", {
+      userId: user?.id,
+      _id: user?._id,
+      name: user?.name,
+      orgsCount: user?.orgIds?.length
+    });
+  }, [user]);
+
+  useEffect(() => {
+    // Import notification store to debug
+    import("../../store/notificationStore").then(({ useNotificationStore }) => {
+      const notifications = useNotificationStore.getState().notifications;
+      console.log("[OrganizationPage] Notification store:", {
+        total: notifications.length,
+        invites: notifications.filter((n: any) => n.type === "invite").length,
+        unread: notifications.filter((n: any) => !n.read).length
+      });
+    });
+  }, []);
+
   const validateName = (value: string): string => {
     if (!value.trim()) {
       return "Organization name is required";
