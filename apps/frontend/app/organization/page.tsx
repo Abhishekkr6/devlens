@@ -39,33 +39,16 @@ export default function OrganizationPage() {
   useEffect(() => {
     fetchOrgs();
 
-    // 🔥 REMOVED: Local WebSocket subscription
-    // GlobalNotificationListener already handles all notification events
-    // including team invites (notification:created with type="invite")
-    // This prevents duplicate subscriptions and conflicts
-  }, []);
-
-  // 🔥 DEBUG: Log notification store state
-  useEffect(() => {
-    console.log("[OrganizationPage] User state:", {
-      userId: user?.id,
-      _id: user?._id,
-      name: user?.name,
-      orgsCount: user?.orgIds?.length
-    });
-  }, [user]);
-
-  useEffect(() => {
-    // Import notification store to debug
+    // 🔥 FIX: Fetch notifications when page loads
+    // This ensures any existing notifications are loaded into the store
     import("../../store/notificationStore").then(({ useNotificationStore }) => {
-      const notifications = useNotificationStore.getState().notifications;
-      console.log("[OrganizationPage] Notification store:", {
-        total: notifications.length,
-        invites: notifications.filter((n: any) => n.type === "invite").length,
-        unread: notifications.filter((n: any) => !n.read).length
-      });
+      const fetchNotifications = useNotificationStore.getState().fetchNotifications;
+      if (user?.id || user?._id) {
+        console.log("[OrganizationPage] Fetching notifications...");
+        fetchNotifications();
+      }
     });
-  }, []);
+  }, [user?.id, user?._id]);
 
   const validateName = (value: string): string => {
     if (!value.trim()) {
