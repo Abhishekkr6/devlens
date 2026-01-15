@@ -20,6 +20,8 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
     const [loading, setLoading] = useState(true);
     const [activeId, setActiveId] = useState<string | null>(null);
     const [filter, setFilter] = useState<"all" | "unresolved" | "resolved">("unresolved");
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [alertToResolve, setAlertToResolve] = useState<string | null>(null);
 
     const user = useUserStore((state) => state.user);
 
@@ -46,17 +48,29 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
     }, [orgId]);
 
     const handleAcknowledge = async (alertId: string) => {
-        if (!confirm("Mark this alert as resolved?")) return;
+        setAlertToResolve(alertId);
+        setShowConfirmModal(true);
+    };
+
+    const confirmResolve = async () => {
+        if (!alertToResolve) return;
         try {
-            setActiveId(alertId);
-            await api.post(`/orgs/${orgId}/alerts/${alertId}/acknowledge`);
+            setActiveId(alertToResolve);
+            setShowConfirmModal(false);
+            await api.post(`/orgs/${orgId}/alerts/${alertToResolve}/acknowledge`);
             await fetchAlerts();
         } catch (error) {
             console.error("Acknowledge failed", error);
             alert("Failed to acknowledge alert");
         } finally {
             setActiveId(null);
+            setAlertToResolve(null);
         }
+    };
+
+    const cancelResolve = () => {
+        setShowConfirmModal(false);
+        setAlertToResolve(null);
     };
 
     const filteredAlerts = alerts.filter((alert) => {
@@ -286,7 +300,7 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
                                             <button
                                                 onClick={() => handleAcknowledge(alert._id)}
                                                 disabled={activeId === alert._id}
-                                                className="shrink-0 rounded-lg bg-emerald-600 dark:bg-emerald-500 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                className="shrink-0 rounded-lg bg-emerald-600 dark:bg-emerald-500 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
                                             >
                                                 {activeId === alert._id ? "Resolving..." : "Mark Resolved"}
                                             </button>
@@ -298,6 +312,43 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
                     </div>
                 )}
             </section>
+
+            {/* Confirmation Modal */}
+            {showConfirmModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
+                    <div className="bg-background border border-border rounded-2xl shadow-2xl max-w-md w-full p-6 animate-in zoom-in-95 duration-200">
+                        <div className="flex items-start gap-4">
+                            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/20">
+                                <CheckCircle className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
+                            </div>
+                            <div className="flex-1">
+                                <h3 className="text-lg font-semibold text-text-primary">
+                                    Mark Alert as Resolved?
+                                </h3>
+                                <p className="mt-2 text-sm text-text-secondary">
+                                    This alert will be moved to the resolved section. You can still view it in the "Resolved" or "All" tabs.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex gap-3 justify-end">
+                            <button
+                                onClick={cancelResolve}
+                                className="rounded-lg border border-border bg-surface px-4 py-2 text-sm font-medium text-text-primary hover:bg-surface/80 transition-colors cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                onClick={confirmResolve}
+                                disabled={!!activeId}
+                                className="rounded-lg bg-emerald-600 dark:bg-emerald-500 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                            >
+                                {activeId ? "Resolving..." : "Confirm"}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

@@ -7,9 +7,11 @@ export const getAlertSummary = async (req: Request, res: Response) => {
     const { orgId } = req.params;
 
     // Security: Ensure we only fetch for this org
+    // 🔥 FIXED: Return ALL alerts (both resolved and unresolved)
+    // Frontend will handle filtering by resolved/unresolved status
     const alerts = await AlertModel.find({
       orgId: new Types.ObjectId(orgId),
-      resolvedAt: null
+      // Removed: resolvedAt: null - now returns both resolved and unresolved
     })
       .sort({ createdAt: -1 })
       .limit(100)
