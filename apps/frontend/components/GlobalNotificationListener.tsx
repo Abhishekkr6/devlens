@@ -123,15 +123,6 @@ export function GlobalNotificationListener() {
                     toast.error(`Alert: ${event.data.title}`, {
                         description: event.data.message,
                         duration: 7000,
-                        action: {
-                            label: "View",
-                            onClick: () => {
-                                const orgId = event.data.metadata?.orgId;
-                                if (orgId) {
-                                    router.push(`/organization/${orgId}/alerts`);
-                                }
-                            }
-                        }
                     });
                 }
 
@@ -149,8 +140,8 @@ export function GlobalNotificationListener() {
                     duration: 5000,
                 });
             }
-            // 🔥 NEW: Handle invite rejected events
-            else if (
+            // 🔥 Handle invite rejected events - DISABLED (handled by GlobalToastManager)
+            /* else if (
                 event.type === "invite:rejected" &&
                 String(event.userId) === String(userId)
             ) {
@@ -160,7 +151,7 @@ export function GlobalNotificationListener() {
                     description: `${event.orgName || "Organization"}`,
                     duration: 5000,
                 });
-            }
+            } */
             // Handle org:removed events
             else if (
                 event.type === "org:removed" &&
