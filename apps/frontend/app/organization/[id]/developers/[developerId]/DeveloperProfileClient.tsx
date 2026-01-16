@@ -362,59 +362,80 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
         return "bg-blue-800 dark:bg-blue-300";
     };
 
-    // Group data by weeks (last 26 weeks for better display)
-    const weeks: Array<Array<{ date: string; count: number; day: number }>> = [];
-    const last26Weeks = data.slice(-26);
+    // Create a map of dates to counts for easy lookup
+    const dataMap = new Map<string, number>();
+    data.forEach(item => {
+        dataMap.set(item.date, item.count);
+    });
 
-    last26Weeks.forEach((item) => {
-        const date = new Date(item.date);
-        const dayOfWeek = date.getDay(); // 0 = Sunday, 6 = Saturday
+    // Generate last 52 weeks of data (GitHub style)
+    const weeks: Array<Array<{ date: string; count: number; dayOfWeek: number }>> = [];
+    const today = new Date();
 
-        // Find or create week
-        const weekIndex = weeks.length - 1;
-        if (weeks.length === 0 || dayOfWeek === 0) {
-            weeks.push([]);
+    // Start from 52 weeks ago
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - (52 * 7));
+
+    // Adjust to start on Sunday
+    const dayOfWeek = startDate.getDay();
+    startDate.setDate(startDate.getDate() - dayOfWeek);
+
+    let currentWeek: Array<{ date: string; count: number; dayOfWeek: number }> = [];
+
+    // Generate 52 weeks × 7 days
+    for (let i = 0; i < 52 * 7; i++) {
+        const currentDate = new Date(startDate);
+        currentDate.setDate(currentDate.getDate() + i);
+
+        const dateStr = currentDate.toISOString().split('T')[0];
+        const count = dataMap.get(dateStr) || 0;
+        const day = currentDate.getDay();
+
+        currentWeek.push({
+            date: dateStr,
+            count,
+            dayOfWeek: day
+        });
+
+        // Start new week on Sunday (day 0)
+        if (day === 6 || i === 52 * 7 - 1) {
+            weeks.push([...currentWeek]);
+            currentWeek = [];
         }
+    }
 
-        weeks[weeks.length - 1].push({
-            ...item,
-            day: dayOfWeek
-        });
-    });
-
-    // Fill in missing days with empty cells
-    const filledWeeks = weeks.map(week => {
-        const filled = Array(7).fill(null).map((_, index) => {
-            const existing = week.find(d => d.day === index);
-            return existing || { date: '', count: 0, day: index };
-        });
-        return filled.slice(0, 5); // Only show Sun-Thu
-    });
-
-    const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu'];
+    const dayLabels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
     return (
-        <div className="space-y-2">
-            <p className="text-xs sm:text-sm text-text-secondary">Contribution Activity (26 weeks)</p>
-            <div className="overflow-x-auto">
-                <div className="inline-flex gap-1">
+        <div className="space-y-3 sm:space-y-4">
+            <p className="text-xs sm:text-sm text-text-secondary">Contribution Activity (52 weeks)</p>
+
+            {/* Scrollable container for mobile */}
+            <div className="overflow-x-auto pb-2">
+                <div className="inline-flex gap-0.5 sm:gap-1 min-w-max">
                     {/* Day labels */}
-                    <div className="flex flex-col gap-1 pr-2">
+                    <div className="flex flex-col gap-0.5 sm:gap-1 pr-1 sm:pr-2">
                         {dayLabels.map((label, index) => (
-                            <div key={index} className="h-2.5 sm:h-3 flex items-center">
-                                <span className="text-[8px] sm:text-[10px] text-text-secondary w-6 sm:w-8">{label}</span>
+                            <div key={index} className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 flex items-center justify-end">
+                                {/* Only show Mon, Wed, Fri labels to avoid clutter */}
+                                {(index === 1 || index === 3 || index === 5) && (
+                                    <span className="text-[8px] sm:text-[9px] md:text-[10px] text-text-secondary pr-1">
+                                        {label}
+                                    </span>
+                                )}
                             </div>
                         ))}
                     </div>
 
                     {/* Contribution grid */}
-                    {filledWeeks.map((week, weekIndex) => (
-                        <div key={weekIndex} className="flex flex-col gap-1">
+                    {weeks.map((week, weekIndex) => (
+                        <div key={weekIndex} className="flex flex-col gap-0.5 sm:gap-1">
                             {week.map((day, dayIndex) => (
                                 <div
                                     key={dayIndex}
-                                    className={`h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm ${getColor(day.count)}`}
-                                    title={day.date ? `${day.date}: ${day.count} commits` : ''}
+                                    className={`h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 rounded-[1px] sm:rounded-sm ${getColor(day.count)} 
+                                        hover:ring-1 hover:ring-blue-400 transition-all cursor-pointer`}
+                                    title={`${day.date}: ${day.count} commit${day.count !== 1 ? 's' : ''}`}
                                 />
                             ))}
                         </div>
@@ -423,14 +444,14 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
             </div>
 
             {/* Legend */}
-            <div className="flex items-center gap-2 text-[10px] sm:text-xs text-text-secondary">
+            <div className="flex items-center gap-2 text-[9px] sm:text-[10px] md:text-xs text-text-secondary">
                 <span>Less</span>
-                <div className="flex gap-1">
-                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-slate-100 dark:bg-slate-800" />
-                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-200 dark:bg-blue-900" />
-                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-400 dark:bg-blue-700" />
-                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-600 dark:bg-blue-500" />
-                    <span className="h-2.5 w-2.5 sm:h-3 sm:w-3 rounded-sm bg-blue-800 dark:bg-blue-300" />
+                <div className="flex gap-0.5 sm:gap-1">
+                    <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 rounded-[1px] sm:rounded-sm bg-slate-100 dark:bg-slate-800" />
+                    <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 rounded-[1px] sm:rounded-sm bg-blue-200 dark:bg-blue-900" />
+                    <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 rounded-[1px] sm:rounded-sm bg-blue-400 dark:bg-blue-700" />
+                    <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 rounded-[1px] sm:rounded-sm bg-blue-600 dark:bg-blue-500" />
+                    <span className="h-2 w-2 sm:h-2.5 sm:w-2.5 md:h-3 md:w-3 rounded-[1px] sm:rounded-sm bg-blue-800 dark:bg-blue-300" />
                 </div>
                 <span>More</span>
             </div>
