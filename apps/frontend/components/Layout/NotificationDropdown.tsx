@@ -42,8 +42,8 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
             try {
                 await api.post(`/orgs/${n.metadata?.orgId}/invite/accept`);
                 await fetchUser();
-                // Mark as read instead of deleting
-                markAsRead(n._id);
+                // Delete notification to remove from all places
+                deleteNotification(n._id);
             } catch (error) {
                 console.error("Failed to accept invite:", error);
             }
@@ -53,12 +53,13 @@ export const NotificationDropdown = forwardRef<HTMLDivElement, NotificationDropd
             e.stopPropagation();
             try {
                 await api.post(`/orgs/${n.metadata?.orgId}/invite/reject`);
-                // Mark as read instead of deleting
-                markAsRead(n._id);
+                // Delete notification to remove from all places
+                deleteNotification(n._id);
             } catch (error) {
                 console.error("Failed to reject invite:", error);
             }
         };
+
 
         const getIcon = (type: NotificationType) => {
             switch (type) {

@@ -10,7 +10,7 @@ import { toast } from "sonner";
 
 export function GlobalNotificationListener() {
     const { user, fetchUser, removeOrgFromUser } = useUserStore();
-    const { addNotification, fetchNotifications } = useNotificationStore();
+    const { addNotification, fetchNotifications, deleteNotification } = useNotificationStore();
     const { playSound } = useNotificationSound();
     const router = useRouter();
     const fetchUserCalled = useRef(false);
@@ -93,6 +93,8 @@ export function GlobalNotificationListener() {
                                         const { api } = await import("@/lib/api");
                                         await api.post(`/orgs/${event.data.metadata?.orgId}/invite/accept`);
                                         await fetchUser();
+                                        // Delete notification from store to remove from all places
+                                        deleteNotification(event.data._id);
                                         toast.success("Invitation accepted");
                                         toast.dismiss(t);
                                     } catch {
@@ -103,6 +105,8 @@ export function GlobalNotificationListener() {
                                     try {
                                         const { api } = await import("@/lib/api");
                                         await api.post(`/orgs/${event.data.metadata?.orgId}/invite/reject`);
+                                        // Delete notification from store to remove from all places
+                                        deleteNotification(event.data._id);
                                         toast.info("Invitation rejected");
                                         toast.dismiss(t);
                                     } catch {
@@ -285,7 +289,7 @@ function InviteNotificationToast({
                     </button>
                     <button
                         onClick={onAccept}
-                        className="h-8 px-4 rounded-lg text-xs font-semibold text-white bg-black-500 hover:bg-black-400 transition cursor-pointer"
+                        className="h-8 px-4 rounded-lg text-xs font-semibold text-white bg-black-500 bg-dark-400 hover:bg-dark-500 transition cursor-pointer"
                     >
                         Accept
                     </button>
