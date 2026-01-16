@@ -55,7 +55,7 @@ export function GlobalNotificationListener() {
             const userId = user?.id || user?._id;
             const eventUserIdStr = String(event.userId);
             const userIdStr = String(userId);
-            
+
             console.log("[GlobalNotificationListener] 🔍 ID Matching Debug:", {
                 eventUserId: event.userId,
                 eventUserIdStr: eventUserIdStr,
@@ -83,14 +83,39 @@ export function GlobalNotificationListener() {
                 // 🔥 NEW: Instant toast for team invites
                 if (event.data.type === "invite") {
                     playSound("invite");
-                    toast.info(`Team Invite: ${event.data.title}`, {
-                        description: event.data.message,
-                        duration: 7000,
-                        action: {
-                            label: "View",
-                            onClick: () => router.push("/notifications")
+                    toast.custom(
+                        (t) => (
+                            <InviteNotificationToast
+                                toastId={t}
+                                notification={event.data}
+                                onAccept={async () => {
+                                    try {
+                                        const { api } = await import("@/lib/api");
+                                        await api.post(`/orgs/${event.data.metadata?.orgId}/invite/accept`);
+                                        await fetchUser();
+                                        toast.success("Invitation accepted");
+                                        toast.dismiss(t);
+                                    } catch {
+                                        toast.error("Failed to accept invite");
+                                    }
+                                }}
+                                onReject={async () => {
+                                    try {
+                                        const { api } = await import("@/lib/api");
+                                        await api.post(`/orgs/${event.data.metadata?.orgId}/invite/reject`);
+                                        toast.info("Invitation rejected");
+                                        toast.dismiss(t);
+                                    } catch {
+                                        toast.error("Failed to reject invite");
+                                    }
+                                }}
+                            />
+                        ),
+                        {
+                            duration: Infinity,
+                            position: "top-right",
                         }
-                    });
+                    );
                 }
                 // 🔥 NEW: Instant toast for high-risk alerts
                 else if (event.data.type === "alert") {
@@ -169,7 +194,7 @@ export function GlobalNotificationListener() {
                 }
             } else {
                 console.log("[GlobalNotificationListener] ❌ Event not matched:", {
-                    reason: event.type !== "notification:created" 
+                    reason: event.type !== "notification:created"
                         ? `Wrong event type (got: ${event.type})`
                         : "User ID mismatch",
                     eventType: event.type,
@@ -184,6 +209,97 @@ export function GlobalNotificationListener() {
             console.log("[GlobalNotificationListener] Cleaning up...");
             unsubscribe();
         };
-    }, [user?.id, user?._id, addNotification, fetchUser, removeOrgFromUser, router, playSound]);
+    }, [user?.id, user?._id, addNotification, fetchUser, fetchNotifications, removeOrgFromUser, router, playSound]);
     return null;
+}
+
+// Custom toast component for team invites with Accept/Reject buttons
+function InviteNotificationToast({
+    toastId,
+    notification,
+    onAccept,
+    onReject,
+}: {
+    toastId: string | number;
+    notification: {
+        title: string;
+        message: string;
+        metadata?: { orgId?: string };
+    };
+    onAccept: () => void;
+    onReject: () => void;
+}) {
+    return (
+        <div className="w-[420px] rounded-xl border border-blue-500/30 bg-blue-950/90 backdrop-blur-xl shadow-2xl p-4 flex items-start gap-3 relative">
+            {/* Close button */}
+            <button
+                onClick={() => {
+                    toast.dismiss(toastId);
+                }}
+                className="absolute top-3 right-3 h-6 w-6 rounded-md flex items-center justify-center text-blue-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                aria-label="Close notification"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            {/* Icon */}
+            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="text-blue-400"
+                >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="16" x2="12" y2="12" />
+                    <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 pr-6">
+                <p className="text-sm font-semibold text-white mb-1">
+                    {notification.title}
+                </p>
+                <p className="text-xs text-blue-200 mb-3">
+                    {notification.message}
+                </p>
+
+                {/* Action buttons */}
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={onReject}
+                        className="h-8 px-4 rounded-lg text-xs font-medium text-blue-200 bg-white/5 hover:bg-white/10 transition cursor-pointer"
+                    >
+                        Reject
+                    </button>
+                    <button
+                        onClick={onAccept}
+                        className="h-8 px-4 rounded-lg text-xs font-semibold text-white bg-blue-500 hover:bg-blue-400 transition cursor-pointer"
+                    >
+                        Accept
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
 }

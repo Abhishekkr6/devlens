@@ -41,6 +41,7 @@ export default function RootLayout({
           position="bottom-right"
           richColors
           expand
+          closeButton
           toastOptions={{
             className: 'font-body',
             style: { zIndex: 9999 } // 🔥 Ensure toasts appear above all content
