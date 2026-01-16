@@ -422,17 +422,20 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     const dayLabels = ['Mon', 'Wed', 'Fri'];
     const dayIndices = [1, 3, 5]; // Mon, Wed, Fri
 
+    // Show fewer weeks on mobile to prevent overflow
+    const displayWeeks = weeks.slice(-26); // Last 26 weeks for mobile
+
     return (
-        <div className="space-y-3">
+        <div className="space-y-2 sm:space-y-3">
             {/* Month labels */}
             <div className="flex items-start">
-                <div className="w-8" /> {/* Spacer for day labels */}
-                <div className="flex-1 relative h-4">
+                <div className="w-6 sm:w-8" /> {/* Spacer for day labels */}
+                <div className="flex-1 relative h-3 sm:h-4">
                     {monthLabels.map((month, index) => (
                         <div
                             key={index}
-                            className="absolute text-[10px] sm:text-xs text-text-secondary"
-                            style={{ left: `${(month.weekIndex / weeks.length) * 100}%` }}
+                            className="absolute text-[9px] sm:text-[10px] md:text-xs text-text-secondary"
+                            style={{ left: `${(month.weekIndex / displayWeeks.length) * 100}%` }}
                         >
                             {month.label}
                         </div>
@@ -441,24 +444,24 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
             </div>
 
             {/* Heatmap grid */}
-            <div className="flex items-start gap-1">
+            <div className="flex items-start gap-0.5 sm:gap-1">
                 {/* Day labels */}
-                <div className="flex flex-col justify-around h-[105px] w-8">
+                <div className="flex flex-col justify-around h-[80px] sm:h-[90px] md:h-[105px] w-6 sm:w-8">
                     {dayLabels.map((label, index) => (
-                        <div key={index} className="text-[9px] sm:text-[10px] text-text-secondary text-right pr-1">
+                        <div key={index} className="text-[8px] sm:text-[9px] md:text-[10px] text-text-secondary text-right pr-0.5 sm:pr-1">
                             {label}
                         </div>
                     ))}
                 </div>
 
-                {/* Contribution grid - No scroll, fit to width */}
-                <div className="flex-1 flex gap-[2px] justify-between">
-                    {weeks.map((week, weekIndex) => (
-                        <div key={weekIndex} className="flex flex-col gap-[2px]">
+                {/* Contribution grid - Responsive sizing */}
+                <div className="flex-1 flex gap-[1px] sm:gap-[2px] justify-between">
+                    {displayWeeks.map((week, weekIndex) => (
+                        <div key={weekIndex} className="flex flex-col gap-[1px] sm:gap-[2px]">
                             {week.map((day, dayIndex) => (
                                 <div
                                     key={dayIndex}
-                                    className={`w-[11px] h-[11px] sm:w-3 sm:h-3 rounded-sm ${getColor(day.count)} 
+                                    className={`w-[8px] h-[8px] sm:w-[10px] sm:h-[10px] md:w-3 md:h-3 rounded-[1px] sm:rounded-sm ${getColor(day.count)} 
                                         hover:ring-1 hover:ring-emerald-400 transition-all cursor-pointer`}
                                     title={`${day.date}: ${day.count} commit${day.count !== 1 ? 's' : ''}`}
                                 />
@@ -469,14 +472,14 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-end gap-2 text-[10px] sm:text-xs text-text-secondary pt-2">
+            <div className="flex items-center justify-end gap-1.5 sm:gap-2 text-[9px] sm:text-[10px] md:text-xs text-text-secondary pt-1 sm:pt-2">
                 <span>Less</span>
-                <div className="flex gap-1">
-                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-slate-100 dark:bg-slate-800" />
-                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-200 dark:bg-emerald-900" />
-                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-400 dark:bg-emerald-700" />
-                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-600 dark:bg-emerald-500" />
-                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-800 dark:bg-emerald-300" />
+                <div className="flex gap-0.5 sm:gap-1">
+                    <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-[1px] sm:rounded-sm bg-slate-100 dark:bg-slate-800" />
+                    <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-[1px] sm:rounded-sm bg-emerald-200 dark:bg-emerald-900" />
+                    <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-[1px] sm:rounded-sm bg-emerald-400 dark:bg-emerald-700" />
+                    <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-[1px] sm:rounded-sm bg-emerald-600 dark:bg-emerald-500" />
+                    <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 md:w-3 md:h-3 rounded-[1px] sm:rounded-sm bg-emerald-800 dark:bg-emerald-300" />
                 </div>
                 <span>More</span>
             </div>
