@@ -424,6 +424,7 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
 
     // Show fewer weeks on mobile to prevent overflow
     const displayWeeks = weeks.slice(-26); // Last 26 weeks for mobile
+    const weeksOffset = weeks.length - displayWeeks.length;
 
     return (
         <div className="space-y-2 sm:space-y-3">
@@ -431,15 +432,19 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
             <div className="flex items-start">
                 <div className="w-6 sm:w-8" /> {/* Spacer for day labels */}
                 <div className="flex-1 relative h-3 sm:h-4">
-                    {monthLabels.map((month, index) => (
-                        <div
-                            key={index}
-                            className="absolute text-[9px] sm:text-[10px] md:text-xs text-text-secondary"
-                            style={{ left: `${(month.weekIndex / displayWeeks.length) * 100}%` }}
-                        >
-                            {month.label}
-                        </div>
-                    ))}
+                    {monthLabels
+                        .filter(month => month.weekIndex >= weeksOffset)
+                        .map((month, index) => (
+                            <div
+                                key={index}
+                                className="absolute text-[9px] sm:text-[10px] md:text-xs text-text-secondary whitespace-nowrap"
+                                style={{ 
+                                    left: `${((month.weekIndex - weeksOffset) / displayWeeks.length) * 100}%` 
+                                }}
+                            >
+                                {month.label}
+                            </div>
+                        ))}
                 </div>
             </div>
 
