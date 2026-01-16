@@ -221,13 +221,13 @@ function InviteNotificationToast({
     onReject: () => void;
 }) {
     return (
-        <div className="w-[420px] rounded-xl border border-blue-500/30 bg-blue-950/90 backdrop-blur-xl shadow-2xl p-4 flex items-start gap-3 relative">
+        <div className="w-[420px] rounded-xl border border-black-500/30 bg-black-950/90 backdrop-blur-xl shadow-2xl p-4 flex items-start gap-3 relative">
             {/* Close button */}
             <button
                 onClick={() => {
                     toast.dismiss(toastId);
                 }}
-                className="absolute top-3 right-3 h-6 w-6 rounded-md flex items-center justify-center text-blue-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                className="absolute top-3 right-3 h-6 w-6 rounded-md flex items-center justify-center text-black-300 hover:text-white hover:bg-white/10 transition cursor-pointer"
                 aria-label="Close notification"
             >
                 <svg
@@ -247,7 +247,7 @@ function InviteNotificationToast({
             </button>
 
             {/* Icon */}
-            <div className="h-10 w-10 rounded-full bg-blue-500/20 flex items-center justify-center shrink-0">
+            <div className="h-10 w-10 rounded-full bg-black-500/20 flex items-center justify-center shrink-0">
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="20"
@@ -271,7 +271,7 @@ function InviteNotificationToast({
                 <p className="text-sm font-semibold text-white mb-1">
                     {notification.title}
                 </p>
-                <p className="text-xs text-blue-200 mb-3">
+                <p className="text-xs text-black-200 mb-3">
                     {notification.message}
                 </p>
 
@@ -279,13 +279,13 @@ function InviteNotificationToast({
                 <div className="flex items-center gap-2">
                     <button
                         onClick={onReject}
-                        className="h-8 px-4 rounded-lg text-xs font-medium text-blue-200 bg-white/5 hover:bg-white/10 transition cursor-pointer"
+                        className="h-8 px-4 rounded-lg text-xs font-medium text-black-200 bg-white/5 hover:bg-white/10 transition cursor-pointer"
                     >
                         Reject
                     </button>
                     <button
                         onClick={onAccept}
-                        className="h-8 px-4 rounded-lg text-xs font-semibold text-white bg-blue-500 hover:bg-blue-400 transition cursor-pointer"
+                        className="h-8 px-4 rounded-lg text-xs font-semibold text-white bg-black-500 hover:bg-black-400 transition cursor-pointer"
                     >
                         Accept
                     </button>

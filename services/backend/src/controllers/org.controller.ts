@@ -513,7 +513,7 @@ export const rejectInvite = async (req: any, res: Response) => {
       const user = await UserModel.findById(userId); // Fetch user name if possible, or just say 'A user'
       await createNotification({
         recipientId: member.invitedBy,
-        type: "alert",
+        type: "info",
         title: "Invite Rejected",
         message: `${user?.name || "A user"} rejected your invite to ${org.name}.`,
       });

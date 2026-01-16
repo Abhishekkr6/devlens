@@ -173,32 +173,6 @@ export default function OrganizationPage() {
 
   const disabled = !name.trim() || !slug.trim();
 
-  // Handle invite actions - DISABLED (now handled by top-right toast)
-  /* const handleAcceptInvite = async (notificationId: string, orgId: string) => {
-    try {
-      await api.post(`/orgs/${orgId}/invite/accept`);
-      await fetchUser();
-      await fetchOrgs();
-      await deleteNotification(notificationId);
-      toast.success("Invitation accepted");
-    } catch (err) {
-      console.error("Failed to accept invite", err);
-      toast.error("Failed to accept invite");
-    }
-  };
-
-  const handleRejectInvite = async (notificationId: string, orgId: string) => {
-    try {
-      await api.post(`/orgs/${orgId}/invite/reject`);
-      await deleteNotification(notificationId);
-      toast.info("Invitation rejected");
-    } catch (err) {
-      console.error("Failed to reject invite", err);
-      toast.error("Failed to reject invite");
-    }
-  }; */
-
-
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
       <div className="w-full max-w-2xl space-y-8">
