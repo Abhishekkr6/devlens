@@ -112,8 +112,33 @@ function InviteToast({
     };
 
     return (
-        <div className="w-[360px] rounded-2xl border border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-2xl p-4 flex flex-col gap-3">
-            <div className="flex gap-3">
+        <div className="w-[360px] rounded-2xl border border-white/10 bg-slate-950/90 backdrop-blur-xl shadow-2xl p-4 flex flex-col gap-3 relative">
+            {/* Close button */}
+            <button
+                onClick={() => {
+                    toast.dismiss(toastId);
+                    onDone();
+                }}
+                className="absolute top-3 right-3 h-6 w-6 rounded-md flex items-center justify-center text-slate-400 hover:text-white hover:bg-white/10 transition cursor-pointer"
+                aria-label="Close notification"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="14"
+                    height="14"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <div className="flex gap-3 pr-6">
                 <div className="h-8 w-8 rounded-full bg-indigo-500/20 flex items-center justify-center shrink-0">
                     <span className="text-indigo-400 text-sm font-bold">+</span>
                 </div>
