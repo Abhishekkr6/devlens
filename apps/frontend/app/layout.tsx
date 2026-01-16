@@ -43,7 +43,10 @@ export default function RootLayout({
           closeButton
           toastOptions={{
             className: 'font-body',
-            style: { zIndex: 9999 } // 🔥 Ensure toasts appear above all content
+            style: {
+              zIndex: 9999, // 🔥 Ensure toasts appear above all content
+              fontFamily: 'var(--font-body)' // 🔥 Apply website font family
+            }
           }}
         />
 
