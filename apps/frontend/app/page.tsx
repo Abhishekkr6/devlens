@@ -447,7 +447,7 @@ function Footer() {
         </div>
 
         <p className="text-text-secondary text-sm">
-          © {new Date().getFullYear()} TeamPulse. Built for engineers.
+          © {new Date().getFullYear()} TeamPulse. Built for engineers by <a href="https://abhishektiwari-18.vercel.app/" className="hover:text-text-primary underline underline-offset-4">Abhishek Tiwari.</a>
         </p>
 
         <div className="flex gap-6 text-sm text-text-secondary">
