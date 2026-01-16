@@ -25,13 +25,14 @@ export default function OrganizationPage() {
   const router = useRouter();
   const { setActiveOrganization, user, fetchUser } = useUserStore();
 
-  // 🔥 NEW: Subscribe to notification store for real-time updates
-  const notifications = useNotificationStore((s) => s.notifications);
-  const deleteNotification = useNotificationStore((s) => s.deleteNotification);
+  // 🔥 Notification store - DISABLED (now using top-right toast)
+  // const notifications = useNotificationStore((s) => s.notifications);
+  // const deleteNotification = useNotificationStore((s) => s.deleteNotification);
   const fetchNotifications = useNotificationStore((s) => s.fetchNotifications);
 
-  // Filter for invite notifications only
-  const inviteNotifications = notifications.filter((n) => n.type === "invite" && !n.read);
+  // Filter for invite notifications only - DISABLED
+  // const inviteNotifications = notifications.filter((n) => n.type === "invite" && !n.read);
+
 
   const fetchOrgs = async () => {
     try {
@@ -172,8 +173,8 @@ export default function OrganizationPage() {
 
   const disabled = !name.trim() || !slug.trim();
 
-  // Handle invite actions
-  const handleAcceptInvite = async (notificationId: string, orgId: string) => {
+  // Handle invite actions - DISABLED (now handled by top-right toast)
+  /* const handleAcceptInvite = async (notificationId: string, orgId: string) => {
     try {
       await api.post(`/orgs/${orgId}/invite/accept`);
       await fetchUser();
@@ -195,7 +196,8 @@ export default function OrganizationPage() {
       console.error("Failed to reject invite", err);
       toast.error("Failed to reject invite");
     }
-  };
+  }; */
+
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
@@ -211,8 +213,8 @@ export default function OrganizationPage() {
         </div>
 
         <div className="grid gap-6">
-          {/* 🔥 NEW: Invite Notifications Section */}
-          {inviteNotifications.length > 0 && (
+          {/* 🔥 Invite Notifications Section - DISABLED (now using top-right toast) */}
+          {/* {inviteNotifications.length > 0 && (
             <div className="space-y-3">
               {inviteNotifications.map((notification) => (
                 <Card key={notification._id} className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 p-5 shadow-sm">
@@ -246,7 +248,8 @@ export default function OrganizationPage() {
                 </Card>
               ))}
             </div>
-          )}
+          )} */}
+
 
           {/* Create Org Card */}
           <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm hover:shadow-md transition-shadow">
