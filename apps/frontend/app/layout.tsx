@@ -6,7 +6,6 @@ import SmoothScroll from "../components/SmoothScroll";
 import { Toaster } from "sonner";
 import { GlobalNotificationListener } from "../components/GlobalNotificationListener";
 import { NotificationToaster } from "../components/NotificationToaster";
-import { GlobalInviteToaster } from "../components/GlobalInviteToaster";
 import { GlobalToastManager } from "../components/GlobalToastManager";
 
 export const metadata: Metadata = {
@@ -48,7 +47,8 @@ export default function RootLayout({
           }}
         />
 
-        <GlobalInviteToaster />
+        {/* GlobalInviteToaster removed - now using top-right notification in GlobalNotificationListener */}
+
 
 
         {children}
