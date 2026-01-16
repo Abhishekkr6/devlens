@@ -324,6 +324,51 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
         prs: repo.prs
       }));
 
+    // Calculate code reviews (count PRs where this developer is a reviewer)
+    const reviewedPRs = await PRModel.find({
+      orgId: orgObjectId,
+      reviewers: { $exists: true, $ne: [] }
+    })
+      .select("reviewers createdAt")
+      .lean();
+
+    let codeReviews = 0;
+    let lastWeekReviews = 0;
+    let prevWeekReviews = 0;
+
+    reviewedPRs.forEach((pr: any) => {
+      const reviewers = Array.isArray(pr?.reviewers) ? pr.reviewers : [];
+      const isReviewer = reviewers.some((reviewer: any) => {
+        const candidate =
+          typeof reviewer === "string"
+            ? reviewer
+            : typeof reviewer?.login === "string"
+              ? reviewer.login
+              : typeof reviewer?.githubId === "string"
+                ? reviewer.githubId
+                : undefined;
+        return candidate === developerId;
+      });
+
+      if (isReviewer) {
+        codeReviews++;
+
+        // Count for trend calculation
+        if (pr.createdAt) {
+          const prDate = new Date(pr.createdAt);
+          if (prDate >= oneWeekAgo) {
+            lastWeekReviews++;
+          } else if (prDate >= twoWeeksAgo && prDate < oneWeekAgo) {
+            prevWeekReviews++;
+          }
+        }
+      }
+    });
+
+    const reviewsChange = prevWeekReviews > 0
+      ? `${((lastWeekReviews - prevWeekReviews) / prevWeekReviews * 100).toFixed(0)}%`
+      : lastWeekReviews > 0 ? "+100%" : "+0%";
+
     // Calculate weekly activity percentage (based on commits in last 7 days)
     const weeklyActivity = Math.min(100, Math.round((lastWeekCommits / 20) * 100));
 
@@ -345,8 +390,8 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
           commitsChange,
           totalPRs,
           prsChange,
-          codeReviews: 0, // Placeholder - would need review data
-          reviewsChange: "+0%",
+          codeReviews,
+          reviewsChange,
           avgReviewTime: "N/A",
           reviewTimeChange: "+0%"
         },
