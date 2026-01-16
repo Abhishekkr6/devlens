@@ -183,66 +183,69 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                 />
             </div>
 
-            <div className="space-y-4 sm:space-y-6">
-                {/* Contribution Activity - Full Width */}
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-5 sm:p-8 shadow-sm">
-                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">
-                        Contribution Activity
-                    </h2>
-                    <ContributionHeatmap data={profile.contributionActivity} />
-                </Card>
+            <div className="grid grid-cols-1 gap-4 sm:gap-6">
+                {/* Main Content - Full Width */}
+                <div className="space-y-4 sm:space-y-6">
+                    {/* Contribution Activity */}
+                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-5 sm:p-8 shadow-sm">
+                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">
+                            Contribution Activity
+                        </h2>
+                        <ContributionHeatmap data={profile.contributionActivity} />
+                    </Card>
 
-                {/* Recent Activity - Full Width */}
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
-                        Recent Activity
-                    </h2>
-                    <div className="space-y-4 sm:space-y-5">
-                        {profile.recentActivity.map((activity, index) => {
-                            const { Icon, color } = getActivityIcon(activity.type);
-                            const activityTitle = activity.type === "commit"
-                                ? activity.message
-                                : activity.type === "pr_merged"
-                                    ? "Code review completed"
-                                    : activity.message;
-                            const activitySubtitle = activity.type === "commit"
-                                ? `Merged to main branch`
-                                : activity.type === "pr_merged"
-                                    ? `Approved PR #${activity.prNumber} with suggestions`
-                                    : `PR #${activity.prNumber} opened for review`;
+                    {/* Recent Activity */}
+                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
+                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
+                            Recent Activity
+                        </h2>
+                        <div className="space-y-4 sm:space-y-5">
+                            {profile.recentActivity.map((activity, index) => {
+                                const { Icon, color } = getActivityIcon(activity.type);
+                                const activityTitle = activity.type === "commit"
+                                    ? activity.message
+                                    : activity.type === "pr_merged"
+                                        ? "Code review completed"
+                                        : activity.message;
+                                const activitySubtitle = activity.type === "commit"
+                                    ? `Merged to main branch`
+                                    : activity.type === "pr_merged"
+                                        ? `Approved PR #${activity.prNumber} with suggestions`
+                                        : `PR #${activity.prNumber} opened for review`;
 
-                            return (
-                                <div key={index} className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0">
-                                    <div className={`mt-1 ${color}`}>
-                                        <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <p className="text-xs sm:text-sm font-medium text-text-primary">
-                                            {activityTitle}
-                                        </p>
-                                        <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5">
-                                            {activitySubtitle}
-                                        </p>
-                                        <div className="flex items-center gap-2 mt-2">
-                                            <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-blue-700 dark:text-blue-400">
-                                                {activity.repo}
-                                            </span>
-                                            <span className="text-[10px] sm:text-xs text-text-secondary">
-                                                by {profile.profile.name}
-                                            </span>
+                                return (
+                                    <div key={index} className="flex items-start gap-3 pb-4 border-b border-border last:border-0 last:pb-0">
+                                        <div className={`mt-1 ${color}`}>
+                                            <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
                                         </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-xs sm:text-sm font-medium text-text-primary">
+                                                {activityTitle}
+                                            </p>
+                                            <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5">
+                                                {activitySubtitle}
+                                            </p>
+                                            <div className="flex items-center gap-2 mt-2">
+                                                <span className="inline-flex items-center rounded-md bg-blue-500/10 px-2 py-0.5 text-[10px] sm:text-xs font-medium text-blue-700 dark:text-blue-400">
+                                                    {activity.repo}
+                                                </span>
+                                                <span className="text-[10px] sm:text-xs text-text-secondary">
+                                                    by {profile.profile.name}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <span className="text-[10px] sm:text-xs text-text-secondary whitespace-nowrap">
+                                            {formatTimeAgo(activity.timestamp)}
+                                        </span>
                                     </div>
-                                    <span className="text-[10px] sm:text-xs text-text-secondary whitespace-nowrap">
-                                        {formatTimeAgo(activity.timestamp)}
-                                    </span>
-                                </div>
-                            );
-                        })}
-                    </div>
-                </Card>
+                                );
+                            })}
+                        </div>
+                    </Card>
+                </div>
 
-                {/* Grid for Quick Info and Active Repos */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+                {/* Sidebar - Below main content on all screens */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                     {/* Quick Info */}
                     <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
                         <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">Quick Info</h2>
@@ -353,10 +356,10 @@ function MetricCard({
 function ContributionHeatmap({ data }: { data: Array<{ date: string; count: number }> }) {
     const getColor = (count: number) => {
         if (count === 0) return "bg-slate-100 dark:bg-slate-800";
-        if (count < 3) return "bg-blue-200 dark:bg-blue-900";
-        if (count < 6) return "bg-blue-400 dark:bg-blue-700";
-        if (count < 10) return "bg-blue-600 dark:bg-blue-500";
-        return "bg-blue-800 dark:bg-blue-300";
+        if (count < 3) return "bg-emerald-200 dark:bg-emerald-900";
+        if (count < 6) return "bg-emerald-400 dark:bg-emerald-700";
+        if (count < 10) return "bg-emerald-600 dark:bg-emerald-500";
+        return "bg-emerald-800 dark:bg-emerald-300";
     };
 
     // Create a map of dates to counts for easy lookup
@@ -366,7 +369,7 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     });
 
     // Generate last 52 weeks of data (GitHub style)
-    const weeks: Array<Array<{ date: string; count: number; dayOfWeek: number }>> = [];
+    const weeks: Array<Array<{ date: string; count: number; dayOfWeek: number; month: number }>> = [];
     const today = new Date();
 
     // Start from 52 weeks ago
@@ -377,7 +380,7 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     const dayOfWeek = startDate.getDay();
     startDate.setDate(startDate.getDate() - dayOfWeek);
 
-    let currentWeek: Array<{ date: string; count: number; dayOfWeek: number }> = [];
+    let currentWeek: Array<{ date: string; count: number; dayOfWeek: number; month: number }> = [];
 
     // Generate 52 weeks × 7 days
     for (let i = 0; i < 52 * 7; i++) {
@@ -387,11 +390,13 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
         const dateStr = currentDate.toISOString().split('T')[0];
         const count = dataMap.get(dateStr) || 0;
         const day = currentDate.getDay();
+        const month = currentDate.getMonth();
 
         currentWeek.push({
             date: dateStr,
             count,
-            dayOfWeek: day
+            dayOfWeek: day,
+            month
         });
 
         // Start new week on Sunday (day 0)
@@ -402,19 +407,15 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     }
 
     // Calculate month labels
-    const monthLabels: Array<{ month: string; offset: number }> = [];
+    const monthLabels: Array<{ label: string; weekIndex: number }> = [];
     let lastMonth = -1;
 
-    weeks.forEach((week, index) => {
-        const firstDay = new Date(week[0].date);
-        const month = firstDay.getMonth();
-
-        if (month !== lastMonth && index > 0) {
-            monthLabels.push({
-                month: firstDay.toLocaleDateString('en-US', { month: 'short' }),
-                offset: index
-            });
-            lastMonth = month;
+    weeks.forEach((week, weekIndex) => {
+        const firstDay = week[0];
+        if (firstDay && firstDay.month !== lastMonth) {
+            const monthName = new Date(firstDay.date).toLocaleDateString('en-US', { month: 'short' });
+            monthLabels.push({ label: monthName, weekIndex });
+            lastMonth = firstDay.month;
         }
     });
 
@@ -422,47 +423,43 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     const dayIndices = [1, 3, 5]; // Mon, Wed, Fri
 
     return (
-        <div className="space-y-2">
+        <div className="space-y-3">
             {/* Month labels */}
-            <div className="flex items-center">
+            <div className="flex items-start">
                 <div className="w-8" /> {/* Spacer for day labels */}
-                <div className="flex-1 flex relative h-4">
-                    {monthLabels.map((label, idx) => (
+                <div className="flex-1 relative h-4">
+                    {monthLabels.map((month, index) => (
                         <div
-                            key={idx}
-                            className="absolute text-[10px] text-text-secondary"
-                            style={{ left: `${(label.offset / 52) * 100}%` }}
+                            key={index}
+                            className="absolute text-[10px] sm:text-xs text-text-secondary"
+                            style={{ left: `${(month.weekIndex / weeks.length) * 100}%` }}
                         >
-                            {label.month}
+                            {month.label}
                         </div>
                     ))}
                 </div>
             </div>
 
-            {/* Contribution grid */}
+            {/* Heatmap grid */}
             <div className="flex items-start gap-1">
                 {/* Day labels */}
-                <div className="flex flex-col gap-[3px] pt-4">
-                    {[0, 1, 2, 3, 4, 5, 6].map((dayIndex) => (
-                        <div key={dayIndex} className="h-[10px] w-8 flex items-center justify-end pr-1">
-                            {dayIndices.includes(dayIndex) && (
-                                <span className="text-[9px] text-text-secondary">
-                                    {dayLabels[dayIndices.indexOf(dayIndex)]}
-                                </span>
-                            )}
+                <div className="flex flex-col justify-around h-[105px] w-8">
+                    {dayLabels.map((label, index) => (
+                        <div key={index} className="text-[9px] sm:text-[10px] text-text-secondary text-right pr-1">
+                            {label}
                         </div>
                     ))}
                 </div>
 
-                {/* Grid */}
-                <div className="flex-1 flex gap-[3px]">
+                {/* Contribution grid - No scroll, fit to width */}
+                <div className="flex-1 flex gap-[2px] justify-between">
                     {weeks.map((week, weekIndex) => (
-                        <div key={weekIndex} className="flex flex-col gap-[3px]">
+                        <div key={weekIndex} className="flex flex-col gap-[2px]">
                             {week.map((day, dayIndex) => (
                                 <div
                                     key={dayIndex}
-                                    className={`h-[10px] w-[10px] rounded-sm ${getColor(day.count)}
-                                        hover:ring-1 hover:ring-blue-400 transition-all cursor-pointer`}
+                                    className={`w-[11px] h-[11px] sm:w-3 sm:h-3 rounded-sm ${getColor(day.count)} 
+                                        hover:ring-1 hover:ring-emerald-400 transition-all cursor-pointer`}
                                     title={`${day.date}: ${day.count} commit${day.count !== 1 ? 's' : ''}`}
                                 />
                             ))}
@@ -472,14 +469,14 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
             </div>
 
             {/* Legend */}
-            <div className="flex items-center justify-end gap-2 text-[10px] text-text-secondary pt-2">
+            <div className="flex items-center justify-end gap-2 text-[10px] sm:text-xs text-text-secondary pt-2">
                 <span>Less</span>
                 <div className="flex gap-1">
-                    <span className="h-[10px] w-[10px] rounded-sm bg-slate-100 dark:bg-slate-800" />
-                    <span className="h-[10px] w-[10px] rounded-sm bg-blue-200 dark:bg-blue-900" />
-                    <span className="h-[10px] w-[10px] rounded-sm bg-blue-400 dark:bg-blue-700" />
-                    <span className="h-[10px] w-[10px] rounded-sm bg-blue-600 dark:bg-blue-500" />
-                    <span className="h-[10px] w-[10px] rounded-sm bg-blue-800 dark:bg-blue-300" />
+                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-slate-100 dark:bg-slate-800" />
+                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-200 dark:bg-emerald-900" />
+                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-400 dark:bg-emerald-700" />
+                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-600 dark:bg-emerald-500" />
+                    <span className="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-sm bg-emerald-800 dark:bg-emerald-300" />
                 </div>
                 <span>More</span>
             </div>
