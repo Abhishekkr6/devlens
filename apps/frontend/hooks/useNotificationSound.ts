@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 type SoundType = 'notification' | 'invite' | 'alert' | 'success';
 
@@ -40,15 +40,16 @@ const SOUNDS: Record<SoundType, () => void> = {
 };
 
 export function useNotificationSound() {
-    const [isMuted, setIsMuted] = useState(false);
-    const [isEnabled, setIsEnabled] = useState(false);
-
-    // Load mute state from localStorage
-    useEffect(() => {
+    // Load mute state synchronously from localStorage to avoid first notification being silent
+    const getInitialMuteState = () => {
+        if (typeof window === 'undefined') return false;
         const stored = localStorage.getItem('notificationSoundMuted');
-        setIsMuted(stored === 'true');
-        setIsEnabled(true);
-    }, []);
+        return stored === 'true';
+    };
+
+    const [isMuted, setIsMuted] = useState(getInitialMuteState);
+    const [isEnabled] = useState(true); // Always enabled, removed useEffect delay
+
 
     const playSound = useCallback(
         (type: SoundType = 'notification') => {
