@@ -208,7 +208,7 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
 
     // Get user info
     const user = await UserModel.findOne({ githubId: developerId })
-      .select("githubId name login avatarUrl role email")
+      .select("githubId name login avatarUrl role email createdAt")
       .lean();
 
     // Calculate metrics
@@ -329,12 +329,14 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
       orgId: orgObjectId,
       reviewers: { $exists: true, $ne: [] }
     })
-      .select("reviewers createdAt")
+      .select("reviewers createdAt mergedAt lastReviewAt")
       .lean();
 
     let codeReviews = 0;
     let lastWeekReviews = 0;
     let prevWeekReviews = 0;
+    let totalReviewTimeHours = 0;
+    let reviewedPRsCount = 0;
 
     reviewedPRs.forEach((pr: any) => {
       const reviewers = Array.isArray(pr?.reviewers) ? pr.reviewers : [];
@@ -362,12 +364,45 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
             prevWeekReviews++;
           }
         }
+
+        // Calculate review time (createdAt to mergedAt or lastReviewAt)
+        if (pr.createdAt) {
+          const createdTime = new Date(pr.createdAt).getTime();
+          let completionTime: number | null = null;
+
+          if (pr.mergedAt) {
+            completionTime = new Date(pr.mergedAt).getTime();
+          } else if (pr.lastReviewAt) {
+            completionTime = new Date(pr.lastReviewAt).getTime();
+          }
+
+          if (completionTime && completionTime > createdTime) {
+            const reviewTimeMs = completionTime - createdTime;
+            const reviewTimeHours = reviewTimeMs / (1000 * 60 * 60);
+            totalReviewTimeHours += reviewTimeHours;
+            reviewedPRsCount++;
+          }
+        }
       }
     });
 
     const reviewsChange = prevWeekReviews > 0
       ? `${((lastWeekReviews - prevWeekReviews) / prevWeekReviews * 100).toFixed(0)}%`
       : lastWeekReviews > 0 ? "+100%" : "+0%";
+
+    // Calculate average review time
+    let avgReviewTime = "N/A";
+    if (reviewedPRsCount > 0) {
+      const avgHours = totalReviewTimeHours / reviewedPRsCount;
+      if (avgHours < 1) {
+        avgReviewTime = `${Math.round(avgHours * 60)}m`;
+      } else if (avgHours < 24) {
+        avgReviewTime = `${avgHours.toFixed(1)}h`;
+      } else {
+        const days = avgHours / 24;
+        avgReviewTime = `${days.toFixed(1)}d`;
+      }
+    }
 
     // Calculate weekly activity percentage (based on commits in last 7 days)
     const weeklyActivity = Math.min(100, Math.round((lastWeekCommits / 20) * 100));
@@ -378,10 +413,10 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
         profile: {
           githubId: developerId,
           name: user?.name || user?.login || developerId,
-          email: user?.email || `${developerId}@example.com`,
+          email: user?.email || "Not available",
           avatarUrl: user?.avatarUrl || `https://github.com/${developerId}.png`,
-          joinedAt: commits.length > 0 && commits[commits.length - 1].timestamp
-            ? new Date(commits[commits.length - 1].timestamp!).toISOString().split('T')[0]
+          joinedAt: user?.createdAt
+            ? new Date(user.createdAt).toISOString().split('T')[0]
             : new Date().toISOString().split('T')[0],
           weeklyActivity
         },
@@ -392,7 +427,7 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
           prsChange,
           codeReviews,
           reviewsChange,
-          avgReviewTime: "N/A",
+          avgReviewTime,
           reviewTimeChange: "+0%"
         },
         contributionActivity,
