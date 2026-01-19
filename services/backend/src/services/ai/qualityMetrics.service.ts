@@ -11,6 +11,7 @@ interface CodeQualityMetrics {
         difficulty: number;
         effort: number;
     };
+    grade: string;
 }
 
 interface FileAnalysis {
@@ -38,7 +39,8 @@ export class QualityMetricsService {
                 linesOfCode: totalLines,
                 codeSmells,
                 technicalDebtMinutes: technicalDebt,
-                halsteadMetrics: halstead
+                halsteadMetrics: halstead,
+                grade: this.getQualityGrade(maintainability)
             };
         } catch (error) {
             logger.error({ error }, 'Quality metrics calculation error');

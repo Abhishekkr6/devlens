@@ -97,7 +97,7 @@ export class CodeAnalysisService {
                     aiReview = {
                         score: 70,
                         issues: [],
-                        summary: 'AI review unavailable',
+                        summary: `AI review unavailable: ${error.message}`,
                         recommendations: []
                     };
                 }

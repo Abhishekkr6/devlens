@@ -11,8 +11,8 @@ const CONFIG = {
     TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWYzYTkyMjMxM2JmZWI1ZDQ4ZWYyMyIsImlhdCI6MTc2ODgwODEzMCwiZXhwIjoxNzY5NDEyOTMwfQ.G5zPidplchD-zGY_w6Etwl6j3U6XU1iVUJa_7QJfnMU',
 
     ORG_ID: '6967657fdb5155429fc77f8e',
-    REPO_ID: '696780f8118ef2394aca369c',
-    PR_ID: '69688f55b98f1dab327c8eb8'
+    REPO_ID: '696e20645108b9d2ce1898b6',
+    PR_ID: '696e23e9a07a83219ea3d6cb'
 };
 
 console.log('🧪 TeamPulse AI - Production Test\n');
