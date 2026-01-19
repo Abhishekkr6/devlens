@@ -81,6 +81,7 @@ import prRoutes from "./routes/pr.routes";
 import developerRoutes from "./routes/developer.routes";
 import notificationRoutes from "./routes/notification.routes";
 import migrationRoutes from "./routes/migration.routes";
+import aiRoutes from "./routes/ai.routes";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", healthRoutes);
@@ -91,6 +92,7 @@ app.use("/api/v1/pr", prRoutes);
 app.use("/api/v1/developers", developerRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/migration", migrationRoutes); // 🔧 Migration endpoint
+app.use("/api/v1/ai", aiRoutes); // 🤖 AI-powered code analysis
 
 app.use(errorHandler);
 
