@@ -1,13 +1,15 @@
 // ========================================
-// TeamPulse AI - Quick Production Test
+// TeamPulse AI - Production Test (FIXED)
 // ========================================
 // Copy-paste this in browser console (F12)
 
 const CONFIG = {
-    // Replace with your actual backend URL
     API: 'https://teampulse-w2s8.onrender.com',
 
-    // Get these from your app URLs or database
+    // Get JWT token from cookies:
+    // DevTools → Application → Cookies → teampulse_token
+    TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWYzYTkyMjMxM2JmZWI1ZDQ4ZWYyMyIsImlhdCI6MTc2ODgwODEzMCwiZXhwIjoxNzY5NDEyOTMwfQ.G5zPidplchD-zGY_w6Etwl6j3U6XU1iVUJa_7QJfnMU',
+
     ORG_ID: '6967657fdb5155429fc77f8e',
     REPO_ID: '696780f8118ef2394aca369c',
     PR_ID: '69688f55b98f1dab327c8eb8'
@@ -31,16 +33,16 @@ fetch(`${CONFIG.API}/api/v1/ai/status`)
             throw new Error('AI not available');
         }
 
-        // Test 2: Analyze PR (only if AI available)
+        // Test 2: Analyze PR (FIXED - using Authorization header)
         console.log('\n📍 Test 2: Analyzing PR...');
         console.log('   This may take 5-10 seconds...');
 
         return fetch(`${CONFIG.API}/api/v1/ai/analyze-pr`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${CONFIG.TOKEN}` // ✅ FIXED: Use Authorization header
             },
-            credentials: 'include',
             body: JSON.stringify({
                 orgId: CONFIG.ORG_ID,
                 repoId: CONFIG.REPO_ID,
@@ -61,6 +63,11 @@ fetch(`${CONFIG.API}/api/v1/ai/status`)
             console.log('   Processing Time:', data.data.processingTimeMs + 'ms');
 
             console.log('\n🎉 All tests PASSED! AI features are working correctly.');
+            console.log('\n📝 Recommendations:');
+            data.data.recommendations?.forEach((rec, i) => {
+                console.log(`   ${i + 1}. ${rec}`);
+            });
+
             console.log('\n📝 Full Response:');
             console.log(data.data);
         } else {
@@ -69,8 +76,8 @@ fetch(`${CONFIG.API}/api/v1/ai/status`)
 
             if (data.error?.message?.includes('not found')) {
                 console.log('\n⚠️  Fix: Check that orgId, repoId, and prId are correct');
-            } else if (data.error?.message?.includes('Unauthorized')) {
-                console.log('\n⚠️  Fix: Login to your app first, then try again');
+            } else if (data.error?.message?.includes('Unauthorized') || data.error?.message?.includes('token')) {
+                console.log('\n⚠️  Fix: Token expired or invalid. Get fresh token from cookies');
             }
         }
     })
@@ -78,7 +85,7 @@ fetch(`${CONFIG.API}/api/v1/ai/status`)
         console.log('❌ Test failed with error:', error.message);
         console.log('\n🔧 Troubleshooting:');
         console.log('   1. Check that backend URL is correct');
-        console.log('   2. Make sure you are logged in');
+        console.log('   2. Make sure TOKEN is fresh (not expired)');
         console.log('   3. Verify orgId, repoId, prId are valid');
         console.log('   4. Check GEMINI_API_KEY is set in Render');
     });

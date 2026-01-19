@@ -6,6 +6,7 @@ import { CodeQualityMetric } from '../models/codeQualityMetric.model';
 import { SecurityAlert } from '../models/securityAlert.model';
 import { PRModel } from '../models/pr.model';
 import { RepoModel } from '../models/repo.model';
+import { UserModel } from '../models/user.model';
 import logger from '../utils/logger';
 
 /**
@@ -43,8 +44,7 @@ export const analyzePR = async (req: Request, res: Response) => {
         }
 
         // Get user's GitHub token
-        const User = require('../models/user.model').User;
-        const user = await User.findById(userId);
+        const user = await UserModel.findById(userId);
         if (!user?.githubAccessToken) {
             return res.status(401).json({
                 success: false,
