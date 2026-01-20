@@ -27,10 +27,10 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-1.5-pro-latest for better JSON support and v1beta API compatibility
+    // Using gemini-2.5-flash - available in v1beta API, supports JSON output
     // gemini-1.5-flash doesn't support response_mime_type: "application/json"
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-pro-latest',
+      model: 'gemini-2.5-flash',
       generationConfig: {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
