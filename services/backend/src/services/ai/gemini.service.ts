@@ -27,10 +27,9 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-1.5-flash-latest - more stable, less overloaded than 2.5-flash
-    // Falls back to text parsing instead of strict JSON schema
+    // Using gemini-1.5-flash - stable base model, available in v1beta API
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash-latest',
+      model: 'gemini-1.5-flash',
       generationConfig: {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
