@@ -76,33 +76,55 @@ export class GeminiService {
     prDescription: string,
     fileExtensions: string[]
   ): Promise<CodeAnalysisResult> {
-    try {
-      const prompt = this.buildCodeReviewPrompt(diff, prTitle, prDescription, fileExtensions);
+    const maxRetries = 3;
+    let lastError: any;
 
-      logger.info('Sending code analysis request to Gemini API');
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const prompt = this.buildCodeReviewPrompt(diff, prTitle, prDescription, fileExtensions);
 
-      // Parse JSON response
-      const analysisResult = this.parseGeminiResponse(text);
+        logger.info({ attempt }, 'Sending code analysis request to Gemini API');
+        const result = await this.model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
-      logger.info({
-        score: analysisResult.score,
-        issuesFound: analysisResult.issues.length
-      }, 'Code analysis completed successfully');
+        // Parse JSON response
+        const analysisResult = this.parseGeminiResponse(text);
 
-      return analysisResult;
-    } catch (error: any) {
-      logger.error({ error }, 'Gemini API error');
+        logger.info({
+          score: analysisResult.score,
+          issuesFound: analysisResult.issues.length,
+          attempts: attempt
+        }, 'Code analysis completed successfully');
 
-      // Check for quota exceeded
-      if (error.message?.includes('quota') || error.message?.includes('rate limit')) {
-        throw new Error('AI analysis quota exceeded. Please try again later.');
+        return analysisResult;
+      } catch (error: any) {
+        lastError = error;
+        logger.warn({ error, attempt }, 'Gemini API error');
+
+        // Check for quota exceeded
+        if (error.message?.includes('quota') || error.message?.includes('rate limit')) {
+          throw new Error('AI analysis quota exceeded. Please try again later.');
+        }
+
+        // Check for overload (503) - retry with exponential backoff
+        if (error.message?.includes('overloaded') || error.message?.includes('503')) {
+          if (attempt < maxRetries) {
+            const waitTime = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+            logger.info({ waitTime, attempt }, 'Model overloaded, retrying after delay...');
+            await new Promise(resolve => setTimeout(resolve, waitTime));
+            continue;
+          }
+        }
+
+        // For other errors, throw immediately
+        if (attempt === maxRetries) {
+          throw new Error(`AI analysis failed after ${maxRetries} attempts: ${error.message}`);
+        }
       }
-
-      throw new Error(`AI analysis failed: ${error.message}`);
     }
+
+    throw new Error(`AI analysis failed: ${lastError?.message || 'Unknown error'}`);
   }
 
   /**
