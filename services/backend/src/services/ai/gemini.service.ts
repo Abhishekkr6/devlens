@@ -28,7 +28,6 @@ export class GeminiService {
 
     this.genAI = new GoogleGenerativeAI(apiKey);
     // Using gemini-2.5-flash - available in v1beta API, supports JSON output
-    // gemini-1.5-flash doesn't support response_mime_type: "application/json"
     this.model = this.genAI.getGenerativeModel({
       model: 'gemini-2.5-flash',
       generationConfig: {
@@ -36,7 +35,7 @@ export class GeminiService {
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 2048,
-        responseMimeType: 'text/plain', // Explicitly set to text/plain to avoid MIME type errors
+        responseMimeType: 'application/json', // gemini-2.5-flash supports JSON mode
       }
     });
   }
@@ -237,12 +236,33 @@ ${diff.slice(0, 8000)} ${diff.length > 8000 ? '... (truncated)' : ''}
    */
   private parseGeminiResponse(text: string): CodeAnalysisResult {
     try {
+      // Log raw response for debugging
+      logger.debug({ rawResponse: text.substring(0, 500) }, 'Raw Gemini response');
+
       // Remove markdown code blocks if present
       let jsonText = text.trim();
-      if (jsonText.startsWith('```json')) {
-        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-      } else if (jsonText.startsWith('```')) {
-        jsonText = jsonText.replace(/```\n?/g, '');
+
+      // Handle ```json ... ``` format
+      if (jsonText.includes('```json')) {
+        const match = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
+        if (match) {
+          jsonText = match[1].trim();
+        }
+      }
+      // Handle ``` ... ``` format (without json specifier)
+      else if (jsonText.includes('```')) {
+        const match = jsonText.match(/```\s*([\s\S]*?)\s*```/);
+        if (match) {
+          jsonText = match[1].trim();
+        }
+      }
+
+      // Try to find JSON object in the text if it's not pure JSON
+      if (!jsonText.startsWith('{')) {
+        const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          jsonText = jsonMatch[0];
+        }
       }
 
       const parsed = JSON.parse(jsonText);
@@ -255,8 +275,8 @@ ${diff.slice(0, 8000)} ${diff.length > 8000 ? '... (truncated)' : ''}
         recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : []
       };
     } catch (error) {
-      logger.error({ error }, 'Failed to parse Gemini response');
-      logger.debug({ text }, 'Raw response');
+      logger.error({ error, textLength: text.length }, 'Failed to parse Gemini response');
+      logger.debug({ rawText: text.substring(0, 1000) }, 'Raw response that failed to parse');
 
       // Return default response if parsing fails
       return {
