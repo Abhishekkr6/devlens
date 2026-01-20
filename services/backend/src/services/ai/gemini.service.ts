@@ -27,13 +27,16 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
+    // Using gemini-1.5-pro instead of flash for better JSON support
+    // gemini-1.5-flash doesn't support response_mime_type: "application/json"
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-1.5-pro',
       generationConfig: {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 2048,
+        responseMimeType: 'text/plain', // Explicitly set to text/plain to avoid MIME type errors
       }
     });
   }
@@ -224,7 +227,8 @@ ${diff.slice(0, 8000)} ${diff.length > 8000 ? '... (truncated)' : ''}
 - Only include real issues, not nitpicks
 - Be specific with file names and line numbers
 - Provide actionable suggestions
-- Return ONLY valid JSON, no markdown formatting
+- Return ONLY valid JSON, no markdown code blocks (no \`\`\`json or \`\`\`)
+- Your entire response should be parseable by JSON.parse()
 `;
   }
 
