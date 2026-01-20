@@ -36,6 +36,33 @@ export class GeminiService {
         topP: 0.95,
         maxOutputTokens: 2048,
         responseMimeType: 'application/json', // gemini-2.5-flash supports JSON mode
+        responseSchema: {
+          type: 'OBJECT',
+          properties: {
+            score: { type: 'NUMBER' },
+            issues: {
+              type: 'ARRAY',
+              items: {
+                type: 'OBJECT',
+                properties: {
+                  file: { type: 'STRING' },
+                  line: { type: 'NUMBER' },
+                  severity: { type: 'STRING', enum: ['low', 'medium', 'high', 'critical'] },
+                  category: { type: 'STRING', enum: ['bug', 'security', 'style', 'performance', 'best-practice'] },
+                  message: { type: 'STRING' },
+                  suggestion: { type: 'STRING' }
+                },
+                required: ['file', 'line', 'severity', 'category', 'message', 'suggestion']
+              }
+            },
+            summary: { type: 'STRING' },
+            recommendations: {
+              type: 'ARRAY',
+              items: { type: 'STRING' }
+            }
+          },
+          required: ['score', 'issues', 'summary', 'recommendations']
+        } as any
       }
     });
   }
