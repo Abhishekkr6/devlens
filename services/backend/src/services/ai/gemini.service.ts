@@ -27,42 +27,15 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-2.5-flash - available in v1beta API, supports JSON output
+    // Using gemini-1.5-flash-latest - more stable, less overloaded than 2.5-flash
+    // Falls back to text parsing instead of strict JSON schema
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-1.5-flash-latest',
       generationConfig: {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
         topP: 0.95,
         maxOutputTokens: 2048,
-        responseMimeType: 'application/json', // gemini-2.5-flash supports JSON mode
-        responseSchema: {
-          type: 'OBJECT',
-          properties: {
-            score: { type: 'NUMBER' },
-            issues: {
-              type: 'ARRAY',
-              items: {
-                type: 'OBJECT',
-                properties: {
-                  file: { type: 'STRING' },
-                  line: { type: 'NUMBER' },
-                  severity: { type: 'STRING', enum: ['low', 'medium', 'high', 'critical'] },
-                  category: { type: 'STRING', enum: ['bug', 'security', 'style', 'performance', 'best-practice'] },
-                  message: { type: 'STRING' },
-                  suggestion: { type: 'STRING' }
-                },
-                required: ['file', 'line', 'severity', 'category', 'message', 'suggestion']
-              }
-            },
-            summary: { type: 'STRING' },
-            recommendations: {
-              type: 'ARRAY',
-              items: { type: 'STRING' }
-            }
-          },
-          required: ['score', 'issues', 'summary', 'recommendations']
-        } as any
       }
     });
   }
