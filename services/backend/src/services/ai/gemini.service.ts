@@ -27,9 +27,10 @@ export class GeminiService {
     }
 
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-1.5-flash - stable base model, available in v1beta API
+    // Using gemini-2.0-flash-exp - Gemini 1.5 models are deprecated in 2026
+    // This is a stable, cost-effective model available in v1beta
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.0-flash-exp',
       generationConfig: {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
