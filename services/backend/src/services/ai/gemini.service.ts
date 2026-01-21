@@ -16,16 +16,34 @@ interface CodeAnalysisResult {
 }
 
 export class GeminiService {
-  private genAI: GoogleGenerativeAI;
+  private genAI!: GoogleGenerativeAI;
   private model: any;
+  private apiKeys: string[];
+  private currentKeyIndex: number = 0;
 
   constructor() {
-    const apiKey = process.env.GEMINI_API_KEY;
-    if (!apiKey) {
-      logger.warn('GEMINI_API_KEY not found. AI code review will be disabled.');
+    // Support multiple API keys for quota management
+    this.apiKeys = [
+      process.env.GEMINI_API_KEY,
+      process.env.GEMINI_API_KEY_1,
+      process.env.GEMINI_API_KEY_2,
+      process.env.GEMINI_API_KEY_3,
+      process.env.GEMINI_API_KEY_4,
+      process.env.GEMINI_API_KEY_5,
+    ].filter(Boolean) as string[];
+
+    if (this.apiKeys.length === 0) {
+      logger.warn('No GEMINI_API_KEY found. AI code review will be disabled.');
       throw new Error('Gemini API key not configured');
     }
 
+    logger.info({ totalKeys: this.apiKeys.length }, 'Gemini service initialized with API keys');
+
+    // Initialize with first key
+    this.initializeModel(this.apiKeys[0]);
+  }
+
+  private initializeModel(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
     // Using gemini-2.0-flash-exp - Gemini 1.5 models are deprecated in 2026
     // This is a stable, cost-effective model available in v1beta
@@ -40,6 +58,23 @@ export class GeminiService {
     });
   }
 
+  private rotateApiKey(): boolean {
+    if (this.apiKeys.length <= 1) {
+      return false; // No other keys to rotate to
+    }
+
+    this.currentKeyIndex = (this.currentKeyIndex + 1) % this.apiKeys.length;
+    const newKey = this.apiKeys[this.currentKeyIndex];
+
+    logger.info({
+      keyIndex: this.currentKeyIndex + 1,
+      totalKeys: this.apiKeys.length
+    }, 'Rotating to next API key');
+
+    this.initializeModel(newKey);
+    return true;
+  }
+
   /**
    * Analyze code diff and provide AI-powered review suggestions
    */
@@ -50,13 +85,20 @@ export class GeminiService {
     fileExtensions: string[]
   ): Promise<CodeAnalysisResult> {
     const maxRetries = 3;
+    const maxKeyRotations = this.apiKeys.length;
     let lastError: any;
+    let keyRotations = 0;
 
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
         const prompt = this.buildCodeReviewPrompt(diff, prTitle, prDescription, fileExtensions);
 
-        logger.info({ attempt }, 'Sending code analysis request to Gemini API');
+        logger.info({
+          attempt,
+          keyIndex: this.currentKeyIndex + 1,
+          totalKeys: this.apiKeys.length
+        }, 'Sending code analysis request to Gemini API');
+
         const result = await this.model.generateContent(prompt);
         const response = await result.response;
         const text = response.text();
@@ -67,17 +109,40 @@ export class GeminiService {
         logger.info({
           score: analysisResult.score,
           issuesFound: analysisResult.issues.length,
-          attempts: attempt
+          attempts: attempt,
+          keyUsed: this.currentKeyIndex + 1
         }, 'Code analysis completed successfully');
 
         return analysisResult;
       } catch (error: any) {
         lastError = error;
-        logger.warn({ error, attempt }, 'Gemini API error');
+        logger.warn({
+          error: error.message,
+          attempt,
+          keyIndex: this.currentKeyIndex + 1
+        }, 'Gemini API error');
 
-        // Check for quota exceeded
+        // Check for quota exceeded - try rotating to next key
+        if ((error.message?.includes('quota') || error.message?.includes('rate limit'))
+          && keyRotations < maxKeyRotations - 1) {
+
+          const rotated = this.rotateApiKey();
+          if (rotated) {
+            keyRotations++;
+            logger.info({
+              newKeyIndex: this.currentKeyIndex + 1,
+              rotationCount: keyRotations
+            }, 'Quota exceeded, rotated to next API key');
+
+            // Retry immediately with new key (don't count as attempt)
+            attempt--;
+            continue;
+          }
+        }
+
+        // If quota error and no more keys to rotate
         if (error.message?.includes('quota') || error.message?.includes('rate limit')) {
-          throw new Error('AI analysis quota exceeded. Please try again later.');
+          throw new Error('AI analysis quota exceeded on all API keys. Please try again later.');
         }
 
         // Check for overload (503) - retry with exponential backoff
@@ -92,7 +157,7 @@ export class GeminiService {
 
         // For other errors, throw immediately
         if (attempt === maxRetries) {
-          throw new Error(`AI analysis failed after ${maxRetries} attempts: ${error.message}`);
+          throw new Error(`AI analysis failed after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
         }
       }
     }
