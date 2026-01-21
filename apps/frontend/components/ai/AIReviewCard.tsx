@@ -3,6 +3,7 @@
 import { AIReview } from '@/lib/aiAPI';
 import { AlertCircle, CheckCircle2, AlertTriangle, XCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { useState } from 'react';
+import { Card } from '@/components/Ui/Card';
 
 interface AIReviewCardProps {
     review: AIReview;
@@ -51,7 +52,7 @@ function ScoreGauge({ score }: { score: number }) {
                         stroke="currentColor"
                         strokeWidth="8"
                         fill="none"
-                        className="text-gray-200 dark:text-gray-700"
+                        className="text-border"
                     />
                     <circle
                         cx="48"
@@ -76,7 +77,7 @@ function ScoreGauge({ score }: { score: number }) {
                 <div className={`text-lg font-semibold ${getScoreColor(score)}`}>
                     {getScoreLabel(score)}
                 </div>
-                <div className="text-sm text-gray-500 dark:text-gray-400">
+                <div className="text-sm text-text-secondary">
                     Code Quality Score
                 </div>
             </div>
@@ -98,24 +99,24 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6">
+        <Card className="p-6 space-y-6">
             {/* Header */}
             <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-xl font-semibold text-text-primary">
                     AI Code Review
                 </h3>
                 <ScoreGauge score={review.score} />
             </div>
 
             {/* Summary */}
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-                <p className="text-gray-700 dark:text-gray-300">{review.summary}</p>
+            <div className="bg-surface rounded-lg p-4">
+                <p className="text-text-secondary">{review.summary}</p>
             </div>
 
             {/* Issues */}
             {review.issues && review.issues.length > 0 && (
                 <div className="space-y-3">
-                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">
+                    <h4 className="text-lg font-medium text-text-primary">
                         Issues Found ({review.issues.length})
                     </h4>
                     <div className="space-y-2">
@@ -134,12 +135,12 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
                                 >
                                     <button
                                         onClick={() => toggleIssue(index)}
-                                        className="w-full p-4 flex items-start gap-3 hover:bg-black/5 dark:hover:bg-white/5 transition-colors"
+                                        className="w-full p-4 flex items-start gap-3 hover:bg-surface/50 transition-colors"
                                     >
                                         <SeverityIcon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${severityConfig[issue.severity].color}`} />
                                         <div className="flex-1 text-left">
                                             <div className="flex items-center gap-2 flex-wrap">
-                                                <span className="font-medium text-gray-900 dark:text-white">
+                                                <span className="font-medium text-text-primary">
                                                     {issue.file}:{issue.line}
                                                 </span>
                                                 <span className={`text-xs px-2 py-1 rounded-full ${categoryColors[issue.category]}`}>
@@ -149,24 +150,24 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
                                                     {issue.severity}
                                                 </span>
                                             </div>
-                                            <p className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                                            <p className="text-sm text-text-secondary mt-1">
                                                 {issue.message}
                                             </p>
                                         </div>
                                         {isExpanded ? (
-                                            <ChevronUp className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                            <ChevronUp className="w-5 h-5 text-text-secondary flex-shrink-0" />
                                         ) : (
-                                            <ChevronDown className="w-5 h-5 text-gray-400 flex-shrink-0" />
+                                            <ChevronDown className="w-5 h-5 text-text-secondary flex-shrink-0" />
                                         )}
                                     </button>
 
                                     {isExpanded && (
-                                        <div className="px-4 pb-4 pl-12 border-t border-gray-200 dark:border-gray-700 pt-3">
-                                            <div className="bg-white dark:bg-gray-800 rounded p-3">
-                                                <p className="text-sm font-medium text-gray-900 dark:text-white mb-2">
+                                        <div className="px-4 pb-4 pl-12 border-t border-border pt-3">
+                                            <div className="bg-surface rounded p-3">
+                                                <p className="text-sm font-medium text-text-primary mb-2">
                                                     💡 Suggestion:
                                                 </p>
-                                                <p className="text-sm text-gray-700 dark:text-gray-300">
+                                                <p className="text-sm text-text-secondary">
                                                     {issue.suggestion}
                                                 </p>
                                             </div>
@@ -182,22 +183,22 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
             {/* Recommendations */}
             {review.recommendations && review.recommendations.length > 0 && (
                 <div className="space-y-3">
-                    <h4 className="text-lg font-medium text-gray-900 dark:text-white">
+                    <h4 className="text-lg font-medium text-text-primary">
                         Recommendations
                     </h4>
                     <ul className="space-y-2">
                         {review.recommendations.map((rec, index) => (
                             <li
                                 key={index}
-                                className="flex items-start gap-2 text-gray-700 dark:text-gray-300"
+                                className="flex items-start gap-2 text-text-secondary"
                             >
-                                <span className="text-purple-500 mt-1">•</span>
+                                <span className="text-brand mt-1">•</span>
                                 <span>{rec}</span>
                             </li>
                         ))}
                     </ul>
                 </div>
             )}
-        </div>
+        </Card>
     );
 }

@@ -2,6 +2,7 @@
 
 import { BugProbability } from '@/lib/aiAPI';
 import { Bug, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Card } from '@/components/Ui/Card';
 
 interface BugProbabilityGaugeProps {
     bugProbability: BugProbability | null;
@@ -10,17 +11,17 @@ interface BugProbabilityGaugeProps {
 export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps) {
     if (!bugProbability) {
         return (
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <Card className="p-6">
                 <div className="flex items-center gap-3 mb-4">
-                    <Bug className="w-6 h-6 text-purple-500" />
-                    <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                    <Bug className="w-6 h-6 text-brand" />
+                    <h3 className="text-xl font-semibold text-text-primary">
                         Bug Probability
                     </h3>
                 </div>
-                <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+                <div className="text-center py-8 text-text-secondary">
                     No bug probability data available
                 </div>
-            </div>
+            </Card>
         );
     }
 
@@ -32,7 +33,7 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
             case 'medium': return 'text-yellow-500';
             case 'high': return 'text-orange-500';
             case 'critical': return 'text-red-500';
-            default: return 'text-gray-500';
+            default: return 'text-text-secondary';
         }
     };
 
@@ -42,16 +43,16 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
             case 'medium': return 'bg-yellow-500';
             case 'high': return 'bg-orange-500';
             case 'critical': return 'bg-red-500';
-            default: return 'bg-gray-500';
+            default: return 'bg-border';
         }
     };
 
     return (
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 space-y-6">
+        <Card className="p-6 space-y-6">
             {/* Header */}
             <div className="flex items-center gap-3">
-                <Bug className="w-6 h-6 text-purple-500" />
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <Bug className="w-6 h-6 text-brand" />
+                <h3 className="text-xl font-semibold text-text-primary">
                     Bug Probability
                 </h3>
             </div>
@@ -59,7 +60,7 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
             {/* Probability Meter */}
             <div className="relative">
                 <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <span className="text-sm font-medium text-text-secondary">
                         Risk Level
                     </span>
                     <span className={`text-sm font-bold uppercase ${getRiskColor(riskLevel)}`}>
@@ -67,7 +68,7 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
                     </span>
                 </div>
 
-                <div className="relative h-8 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                <div className="relative h-8 bg-border rounded-full overflow-hidden">
                     <div
                         className={`h-full ${getRiskBg(riskLevel)} transition-all duration-1000 flex items-center justify-end pr-3`}
                         style={{ width: `${probability}%` }}
@@ -79,7 +80,7 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
                 </div>
 
                 {/* Scale markers */}
-                <div className="flex justify-between mt-1 text-xs text-gray-500 dark:text-gray-400">
+                <div className="flex justify-between mt-1 text-xs text-text-secondary">
                     <span>0%</span>
                     <span>25%</span>
                     <span>50%</span>
@@ -91,7 +92,7 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
             {/* Risk Factors */}
             {factors && factors.length > 0 && (
                 <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-2">
+                    <h4 className="text-sm font-medium text-text-secondary flex items-center gap-2">
                         <TrendingUp className="w-4 h-4" />
                         Risk Factors
                     </h4>
@@ -99,7 +100,7 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
                         {factors.map((factor, index) => (
                             <li
                                 key={index}
-                                className="flex items-start gap-2 text-sm text-gray-700 dark:text-gray-300"
+                                className="flex items-start gap-2 text-sm text-text-secondary"
                             >
                                 <span className="text-orange-500 mt-1">•</span>
                                 <span>{factor}</span>
@@ -111,20 +112,20 @@ export function BugProbabilityGauge({ bugProbability }: BugProbabilityGaugeProps
 
             {/* Recommendation */}
             {recommendation && (
-                <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+                <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-4">
                     <div className="flex items-start gap-2">
-                        <AlertTriangle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-5 h-5 text-blue-500 flex-shrink-0 mt-0.5" />
                         <div>
-                            <h4 className="text-sm font-medium text-blue-900 dark:text-blue-100 mb-1">
+                            <h4 className="text-sm font-medium text-text-primary mb-1">
                                 Recommendation
                             </h4>
-                            <p className="text-sm text-blue-800 dark:text-blue-200">
+                            <p className="text-sm text-text-secondary">
                                 {recommendation}
                             </p>
                         </div>
                     </div>
                 </div>
             )}
-        </div>
+        </Card>
     );
 }
