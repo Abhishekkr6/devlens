@@ -308,8 +308,12 @@ export default function PRsClient({ orgId }: { orgId: string }) {
             const isSelected = row.id === selectedPrId;
             // Find repo info from prs array
             const pr = prs.find(p => p._id === row.id);
-            const prDetailUrl = pr?.repoId
-                ? `/organization/${orgId}/repos/${pr.repoId}/pr/${row.id}`
+            // Convert repoId to string (it might be an object)
+            const repoIdString = typeof pr?.repoId === 'string'
+                ? pr.repoId
+                : (pr?.repoId as any)?._id || String(pr?.repoId || '');
+            const prDetailUrl = repoIdString
+                ? `/organization/${orgId}/repos/${repoIdString}/pr/${row.id}`
                 : '#';
 
             return (

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { api } from "../../../../../lib/api";
 import { Card } from "../../../../../components/Ui/Card";
 import { ArrowLeft, ExternalLink, Settings, TrendingUp, TrendingDown } from "lucide-react";
@@ -405,9 +406,11 @@ export default function RepoDetailClient({
                                                     {pr.reviewers}
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right">
-                                                    <button className="text-text-secondary hover:text-text-primary cursor-pointer">
-                                                        <span className="text-lg">›</span>
-                                                    </button>
+                                                    <Link href={`/organization/${orgId}/repos/${repoId}/pr/${pr.id}`}>
+                                                        <button className="text-text-secondary hover:text-text-primary cursor-pointer">
+                                                            <span className="text-lg">›</span>
+                                                        </button>
+                                                    </Link>
                                                 </td>
                                             </tr>
                                         );
