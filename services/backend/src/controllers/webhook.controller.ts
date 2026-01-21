@@ -6,6 +6,7 @@ import { RepoModel } from "../models/repo.model";
 import { AlertModel } from "../models/alert.model";
 import { analyzeCommitModules } from "../services/moduleAnalyzer";
 import logger from "../utils/logger";
+import { getCodeAnalysisService } from "../services/ai/codeAnalysis.service";
 
 /* -------------------------------------------
    WEBHOOK IDEMPOTENCY TRACKING
@@ -359,6 +360,57 @@ export const githubWebhookHandler = async (req: Request, res: Response) => {
           },
           "PR processed and saved to database (org-scoped)"
         );
+
+        // 🔥 NEW: Create notification for new PRs to prompt AI analysis
+        const action = payload.action;
+        if (action === 'opened' || action === 'synchronize') {
+          try {
+            logger.info(
+              {
+                orgId: repo.orgId,
+                repoId: repo._id,
+                prId: savedPR._id,
+                action
+              },
+              "Creating notification for PR AI analysis"
+            );
+
+            // Create notification to prompt user to run AI analysis
+            // This avoids the complexity of fetching user tokens in webhook context
+            await AlertModel.create({
+              orgId: repo.orgId,
+              repoId: repo._id,
+              type: 'ai_analysis_available',
+              severity: 'info',
+              metadata: {
+                prNumber: pr.number,
+                prTitle: pr.title,
+                prId: savedPR._id.toString(),
+                repoId: repo._id.toString(),
+                repoName: repo.repoFullName,
+                action,
+                message: `AI analysis available for PR #${pr.number}: ${pr.title}`
+              },
+            });
+
+            logger.info(
+              {
+                orgId: repo.orgId,
+                prNumber: pr.number
+              },
+              "AI analysis notification created"
+            );
+          } catch (error) {
+            logger.error(
+              {
+                error,
+                orgId: repo.orgId,
+                prId: savedPR._id
+              },
+              "Failed to create AI analysis notification"
+            );
+          }
+        }
       }
     }
 

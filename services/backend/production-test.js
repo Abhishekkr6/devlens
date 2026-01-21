@@ -8,7 +8,7 @@ const CONFIG = {
 
     // Get JWT token from cookies:
     // DevTools → Application → Cookies → teampulse_token
-    TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWYzYTkyMjMxM2JmZWI1ZDQ4ZWYyMyIsImlhdCI6MTc2ODgwODEzMCwiZXhwIjoxNzY5NDEyOTMwfQ.G5zPidplchD-zGY_w6Etwl6j3U6XU1iVUJa_7QJfnMU',
+    TOKEN: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NWYzYTkyMjMxM2JmZWI1ZDQ4ZWYyMyIsImlhdCI6MTc2ODk3MzU3NSwiZXhwIjoxNzY5NTc4Mzc1fQ.LHq190bLzW2U5F4Dy4vjLG6k-gnpLIONt6onNrykoqY',
 
     ORG_ID: '6967657fdb5155429fc77f8e',
     REPO_ID: '696e20645108b9d2ce1898b6',
