@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Search } from "lucide-react";
+import Link from "next/link";
 import { api } from "../../../../lib/api";
 import { useLiveStore } from "../../../../store/liveStore";
 import { useUserStore } from "../../../../store/userStore";
@@ -305,6 +306,11 @@ export default function PRsClient({ orgId }: { orgId: string }) {
 
         return filteredRows.map((row) => {
             const isSelected = row.id === selectedPrId;
+            // Find repo info from prs array
+            const pr = prs.find(p => p._id === row.id);
+            const prDetailUrl = pr?.repoId
+                ? `/organization/${orgId}/repos/${pr.repoId}/pr/${row.id}`
+                : '#';
 
             return (
                 <tr
@@ -331,17 +337,18 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
-                        <Button
-                            aria-label="View pull request"
-                            className="h-6 w-6 sm:h-8 sm:w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary cursor-pointer"
-                            onClick={(event) => {
-                                event.stopPropagation();
-                                setSelectedPrId(row.id);
-                            }}
-                            variant="ghost"
-                        >
-                            <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
+                        <Link href={prDetailUrl}>
+                            <Button
+                                aria-label="View pull request"
+                                className="h-6 w-6 sm:h-8 sm:w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary cursor-pointer"
+                                onClick={(event) => {
+                                    event.stopPropagation();
+                                }}
+                                variant="ghost"
+                            >
+                                <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                            </Button>
+                        </Link>
                     </td>
                 </tr>
             );
