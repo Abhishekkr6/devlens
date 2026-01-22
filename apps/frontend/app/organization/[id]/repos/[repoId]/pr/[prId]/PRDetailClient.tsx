@@ -7,9 +7,10 @@ import {
     AIReviewCard,
     QualityMetricsCard,
     BugProbabilityGauge,
-    SecurityAlertsPanel
+    SecurityAlertsPanel,
+    StatCard
 } from '@/components/ai';
-import { ArrowLeft, GitPullRequest, Loader2 } from 'lucide-react';
+import { ArrowLeft, GitPullRequest, Loader2, TrendingUp, Code2, AlertCircle, Clock } from 'lucide-react';
 import Link from 'next/link';
 import { Card } from '@/components/Ui/Card';
 
@@ -100,6 +101,36 @@ export default function PRDetailClient({
             {/* AI Analysis Results */}
             {!loading && (analysis || showAISection) && (
                 <div className="space-y-6">
+                    {/* Stats Overview */}
+                    {analysis && (
+                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <StatCard
+                                title="Overall Score"
+                                value={`${analysis.overallScore}/100`}
+                                icon={<TrendingUp className="w-6 h-6" />}
+                                color={analysis.overallScore >= 70 ? 'text-green-500' : analysis.overallScore >= 50 ? 'text-yellow-500' : 'text-red-500'}
+                            />
+                            <StatCard
+                                title="Code Quality"
+                                value={analysis.qualityMetrics?.grade || 'N/A'}
+                                icon={<Code2 className="w-6 h-6" />}
+                                color="text-blue-500"
+                            />
+                            <StatCard
+                                title="Issues Found"
+                                value={analysis.aiReview?.issues?.length || 0}
+                                icon={<AlertCircle className="w-6 h-6" />}
+                                color="text-orange-500"
+                            />
+                            <StatCard
+                                title="Processing Time"
+                                value={`${(analysis.processingTimeMs / 1000).toFixed(1)}s`}
+                                icon={<Clock className="w-6 h-6" />}
+                                color="text-purple-500"
+                            />
+                        </div>
+                    )}
+
                     {/* AI Review Card */}
                     {analysis?.aiReview && (
                         <AIReviewCard review={analysis.aiReview} />

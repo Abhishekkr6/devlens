@@ -327,53 +327,101 @@ ${diff.slice(0, 8000)} ${diff.length > 8000 ? '... (truncated)' : ''}
   private parseGeminiResponse(text: string): CodeAnalysisResult {
     try {
       // Log raw response for debugging
-      logger.debug({ rawResponse: text.substring(0, 500) }, 'Raw Gemini response');
+      logger.info({ responseLength: text.length }, 'Parsing Gemini response');
+      logger.debug({ rawResponse: text.substring(0, 500) }, 'Raw Gemini response preview');
 
       // Remove markdown code blocks if present
       let jsonText = text.trim();
 
-      // Handle ```json ... ``` format
+      // Strategy 1: Handle ```json ... ``` format
       if (jsonText.includes('```json')) {
         const match = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
         if (match) {
           jsonText = match[1].trim();
+          logger.debug('Extracted JSON from ```json``` block');
         }
       }
-      // Handle ``` ... ``` format (without json specifier)
+      // Strategy 2: Handle ``` ... ``` format (without json specifier)
       else if (jsonText.includes('```')) {
         const match = jsonText.match(/```\s*([\s\S]*?)\s*```/);
         if (match) {
           jsonText = match[1].trim();
+          logger.debug('Extracted JSON from ``` block');
         }
       }
 
-      // Try to find JSON object in the text if it's not pure JSON
+      // Strategy 3: Try to find JSON object in the text if it's not pure JSON
       if (!jsonText.startsWith('{')) {
         const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
           jsonText = jsonMatch[0];
+          logger.debug('Extracted JSON object from text');
+        } else {
+          throw new Error('No JSON object found in response');
         }
       }
 
+      // Strategy 4: Clean up common JSON formatting issues
+      jsonText = jsonText
+        .replace(/,\s*}/g, '}')  // Remove trailing commas
+        .replace(/,\s*]/g, ']')  // Remove trailing commas in arrays
+        .trim();
+
+      // Parse JSON
       const parsed = JSON.parse(jsonText);
 
-      // Validate and normalize response
-      return {
-        score: Math.max(0, Math.min(100, parsed.score || 70)),
-        issues: Array.isArray(parsed.issues) ? parsed.issues : [],
-        summary: parsed.summary || 'Code analysis completed',
-        recommendations: Array.isArray(parsed.recommendations) ? parsed.recommendations : []
-      };
-    } catch (error) {
-      logger.error({ error, textLength: text.length }, 'Failed to parse Gemini response');
-      logger.debug({ rawText: text.substring(0, 1000) }, 'Raw response that failed to parse');
+      // Validate required fields
+      if (typeof parsed !== 'object' || parsed === null) {
+        throw new Error('Parsed result is not an object');
+      }
 
-      // Return default response if parsing fails
+      // Normalize and validate response
+      const result: CodeAnalysisResult = {
+        score: Math.max(0, Math.min(100, Number(parsed.score) || 70)),
+        issues: Array.isArray(parsed.issues) ? parsed.issues.map((issue: any) => ({
+          file: String(issue.file || 'unknown'),
+          line: Number(issue.line) || 0,
+          severity: issue.severity || 'medium',
+          category: issue.category || 'best-practice',
+          message: String(issue.message || 'No message'),
+          suggestion: String(issue.suggestion || 'No suggestion')
+        })) : [],
+        summary: String(parsed.summary || 'Code analysis completed successfully'),
+        recommendations: Array.isArray(parsed.recommendations)
+          ? parsed.recommendations.map(String).filter(Boolean)
+          : []
+      };
+
+      logger.info({
+        score: result.score,
+        issuesCount: result.issues.length,
+        recommendationsCount: result.recommendations.length
+      }, 'Successfully parsed Gemini response');
+
+      return result;
+    } catch (error: any) {
+      logger.error({
+        error: error.message,
+        textLength: text.length,
+        textPreview: text.substring(0, 200)
+      }, 'Failed to parse Gemini response');
+
+      // Log more details for debugging
+      logger.debug({
+        fullText: text.substring(0, 2000),
+        errorStack: error.stack
+      }, 'Detailed parsing error');
+
+      // Return fallback response with helpful message
       return {
         score: 70,
         issues: [],
-        summary: 'AI analysis completed but response parsing failed',
-        recommendations: ['Manual code review recommended']
+        summary: `AI analysis completed but response parsing failed. Error: ${error.message}. This is usually temporary - try again.`,
+        recommendations: [
+          'Manual code review recommended',
+          'Check logs for parsing details',
+          'Try analyzing again - Gemini responses can vary'
+        ]
       };
     }
   }

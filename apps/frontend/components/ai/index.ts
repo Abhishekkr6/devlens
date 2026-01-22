@@ -3,3 +3,4 @@ export { AIReviewCard } from './AIReviewCard';
 export { QualityMetricsCard } from './QualityMetricsCard';
 export { BugProbabilityGauge } from './BugProbabilityGauge';
 export { SecurityAlertsPanel } from './SecurityAlertsPanel';
+export { ScoreTrend, ProgressRing, StatCard, ProgressBar } from './Visualizations';
