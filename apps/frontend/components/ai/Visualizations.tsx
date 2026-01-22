@@ -122,23 +122,23 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, trend, color = 'text-brand' }: StatCardProps) {
     return (
-        <Card className="p-4">
-            <div className="flex items-start justify-between">
-                <div className="flex-1">
-                    <p className="text-sm text-text-secondary mb-1">{title}</p>
-                    <p className="text-2xl font-bold text-text-primary">{value}</p>
+        <Card className="p-2.5 sm:p-3 md:p-4">
+            <div className="flex items-start justify-between gap-2">
+                <div className="flex-1 min-w-0">
+                    <p className="text-[10px] sm:text-xs md:text-sm text-text-secondary mb-0.5 sm:mb-1 truncate">{title}</p>
+                    <p className="text-base sm:text-xl md:text-2xl font-bold text-text-primary truncate">{value}</p>
                     {trend && (
-                        <div className={`flex items-center gap-1 mt-2 ${trend.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                        <div className={`flex items-center gap-1 mt-1 sm:mt-2 ${trend.isPositive ? 'text-green-500' : 'text-red-500'}`}>
                             {trend.isPositive ? (
-                                <TrendingUp className="w-4 h-4" />
+                                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
                             ) : (
-                                <TrendingDown className="w-4 h-4" />
+                                <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />
                             )}
-                            <span className="text-sm font-medium">{Math.abs(trend.value)}%</span>
+                            <span className="text-xs sm:text-sm font-medium">{Math.abs(trend.value)}%</span>
                         </div>
                     )}
                 </div>
-                <div className={`p-3 rounded-lg bg-surface ${color}`}>
+                <div className={`p-1.5 sm:p-2 md:p-3 rounded-lg bg-surface ${color} flex-shrink-0`}>
                     {icon}
                 </div>
             </div>

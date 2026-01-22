@@ -53,22 +53,23 @@ export default function PRDetailClient({
             <header className="space-y-2">
                 <Link
                     href={`/organization/${orgId}/repos/${repoId}`}
-                    className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors mb-2"
+                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors mb-2"
                 >
-                    <ArrowLeft className="w-4 h-4" />
-                    Back to Repository
+                    <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
+                    <span className="hidden sm:inline">Back to Repository</span>
+                    <span className="sm:hidden">Back</span>
                 </Link>
 
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="p-2 rounded-lg bg-brand/10">
-                            <GitPullRequest className="w-6 h-6 text-brand" />
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                    <div className="flex items-center gap-2 sm:gap-3">
+                        <div className="p-1.5 sm:p-2 rounded-lg bg-brand/10 flex-shrink-0">
+                            <GitPullRequest className="w-4 h-4 sm:w-6 sm:h-6 text-brand" />
                         </div>
                         <div>
-                            <h1 className="text-3xl font-semibold text-text-primary">
+                            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-text-primary">
                                 AI Code Analysis
                             </h1>
-                            <p className="text-sm text-text-secondary mt-1">
+                            <p className="text-xs sm:text-sm text-text-secondary mt-0.5 sm:mt-1">
                                 Intelligent code review, quality metrics, and security insights
                             </p>
                         </div>
@@ -85,13 +86,13 @@ export default function PRDetailClient({
 
             {/* Loading State */}
             {loading && (
-                <Card className="p-12">
+                <Card className="p-8 sm:p-12">
                     <div className="text-center">
-                        <Loader2 className="w-12 h-12 animate-spin text-brand mx-auto mb-4" />
-                        <p className="text-text-secondary">
+                        <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 animate-spin text-brand mx-auto mb-3 sm:mb-4" />
+                        <p className="text-sm sm:text-base text-text-secondary">
                             Analyzing pull request with AI...
                         </p>
-                        <p className="text-sm text-text-secondary/70 mt-2">
+                        <p className="text-xs sm:text-sm text-text-secondary/70 mt-1 sm:mt-2">
                             This may take 5-10 seconds
                         </p>
                     </div>
@@ -103,29 +104,29 @@ export default function PRDetailClient({
                 <div className="space-y-6">
                     {/* Stats Overview - Only show if analysis exists */}
                     {analysis && (
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                             <StatCard
                                 title="Overall Score"
                                 value={`${analysis.overallScore}/100`}
-                                icon={<TrendingUp className="w-6 h-6" />}
+                                icon={<TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />}
                                 color={analysis.overallScore >= 70 ? 'text-green-500' : analysis.overallScore >= 50 ? 'text-yellow-500' : 'text-red-500'}
                             />
                             <StatCard
                                 title="Code Quality"
                                 value={analysis.qualityMetrics?.grade || 'N/A'}
-                                icon={<Code2 className="w-6 h-6" />}
+                                icon={<Code2 className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />}
                                 color="text-blue-500"
                             />
                             <StatCard
                                 title="Issues Found"
                                 value={analysis.aiReview?.issues?.length || 0}
-                                icon={<AlertCircle className="w-6 h-6" />}
+                                icon={<AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />}
                                 color="text-orange-500"
                             />
                             <StatCard
                                 title="Processing Time"
                                 value={`${(analysis.processingTimeMs / 1000).toFixed(1)}s`}
-                                icon={<Clock className="w-6 h-6" />}
+                                icon={<Clock className="w-4 h-4 sm:w-5 sm:h-5 md:w-6 md:h-6" />}
                                 color="text-purple-500"
                             />
                         </div>
@@ -170,20 +171,20 @@ export default function PRDetailClient({
 
                     {/* Recommendations Summary */}
                     {analysis?.recommendations && analysis.recommendations.length > 0 && (
-                        <Card className="p-6">
-                            <h3 className="text-xl font-semibold text-text-primary mb-4">
+                        <Card className="p-4 sm:p-6">
+                            <h3 className="text-lg sm:text-xl font-semibold text-text-primary mb-3 sm:mb-4">
                                 📋 Action Items
                             </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
                                 {analysis.recommendations.map((rec, index) => (
                                     <div
                                         key={index}
-                                        className="flex items-start gap-2 p-3 bg-brand/5 rounded-lg border border-brand/20 hover:bg-brand/10 transition-colors"
+                                        className="flex items-start gap-2 p-2.5 sm:p-3 bg-brand/5 rounded-lg border border-brand/20 hover:bg-brand/10 transition-colors"
                                     >
-                                        <span className="text-brand font-bold flex-shrink-0">
+                                        <span className="text-brand font-bold flex-shrink-0 text-sm sm:text-base">
                                             {index + 1}.
                                         </span>
-                                        <span className="text-text-secondary text-sm">
+                                        <span className="text-text-secondary text-xs sm:text-sm">
                                             {rec}
                                         </span>
                                     </div>

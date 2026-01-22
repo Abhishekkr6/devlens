@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Search } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { api } from "../../../../lib/api";
 import { useLiveStore } from "../../../../store/liveStore";
@@ -343,14 +343,14 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
                         <Link href={prDetailUrl}>
                             <Button
-                                aria-label="View pull request"
-                                className="h-6 w-6 sm:h-8 sm:w-8 rounded-full px-0 py-0 text-text-secondary transition group-hover:text-text-primary cursor-pointer"
+                                aria-label="AI Analysis"
+                                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer group/ai"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                 }}
                                 variant="ghost"
                             >
-                                <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+                                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 group-hover/ai:scale-110 transition-transform" />
                             </Button>
                         </Link>
                     </td>
