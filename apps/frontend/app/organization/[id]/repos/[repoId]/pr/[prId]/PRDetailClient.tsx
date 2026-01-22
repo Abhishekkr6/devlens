@@ -101,9 +101,9 @@ export default function PRDetailClient({
             {/* AI Analysis Results */}
             {!loading && (analysis || showAISection) && (
                 <div className="space-y-6">
-                    {/* Stats Overview */}
+                    {/* Stats Overview - Only show if analysis exists */}
                     {analysis && (
-                        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                             <StatCard
                                 title="Overall Score"
                                 value={`${analysis.overallScore}/100`}
@@ -137,15 +137,31 @@ export default function PRDetailClient({
                     )}
 
                     {/* Quality Metrics & Bug Probability Grid */}
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {analysis?.qualityMetrics && (
-                            <QualityMetricsCard metrics={analysis.qualityMetrics} />
-                        )}
+                    {(analysis?.qualityMetrics || analysis?.bugProbability) && (
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Quality Metrics - Always show if available */}
+                            {analysis?.qualityMetrics && (
+                                <QualityMetricsCard metrics={analysis.qualityMetrics} />
+                            )}
 
-                        {analysis?.bugProbability && (
-                            <BugProbabilityGauge bugProbability={analysis.bugProbability} />
-                        )}
-                    </div>
+                            {/* Bug Probability - Only show if available */}
+                            {analysis?.bugProbability ? (
+                                <BugProbabilityGauge bugProbability={analysis.bugProbability} />
+                            ) : analysis?.qualityMetrics ? (
+                                <Card className="p-6">
+                                    <div className="text-center py-8">
+                                        <AlertCircle className="w-12 h-12 text-text-secondary/50 mx-auto mb-3" />
+                                        <p className="text-text-secondary">
+                                            Bug probability analysis not available
+                                        </p>
+                                        <p className="text-sm text-text-secondary/70 mt-2">
+                                            This feature requires additional PR metadata
+                                        </p>
+                                    </div>
+                                </Card>
+                            ) : null}
+                        </div>
+                    )}
 
                     {/* Security Alerts */}
                     {securityAlerts && securityAlerts.length > 0 && (
@@ -162,9 +178,9 @@ export default function PRDetailClient({
                                 {analysis.recommendations.map((rec, index) => (
                                     <div
                                         key={index}
-                                        className="flex items-start gap-2 p-3 bg-brand/5 rounded-lg border border-brand/20"
+                                        className="flex items-start gap-2 p-3 bg-brand/5 rounded-lg border border-brand/20 hover:bg-brand/10 transition-colors"
                                     >
-                                        <span className="text-brand font-bold">
+                                        <span className="text-brand font-bold flex-shrink-0">
                                             {index + 1}.
                                         </span>
                                         <span className="text-text-secondary text-sm">
@@ -176,37 +192,40 @@ export default function PRDetailClient({
                         </Card>
                     )}
 
-                    {/* Processing Time */}
+                    {/* Processing Time Footer */}
                     {analysis?.processingTimeMs && (
-                        <div className="text-center text-sm text-text-secondary">
+                        <div className="text-center text-sm text-text-secondary/70 py-2">
                             Analysis completed in {(analysis.processingTimeMs / 1000).toFixed(2)}s
                         </div>
                     )}
                 </div>
-            )}
+            )
+            }
 
             {/* Empty State */}
-            {!loading && !analysis && !showAISection && (
-                <Card className="p-12">
-                    <div className="max-w-md mx-auto text-center">
-                        <div className="p-4 rounded-full bg-surface inline-flex mb-4">
-                            <GitPullRequest className="w-12 h-12 text-text-secondary" />
+            {
+                !loading && !analysis && !showAISection && (
+                    <Card className="p-12">
+                        <div className="max-w-md mx-auto text-center">
+                            <div className="p-4 rounded-full bg-surface inline-flex mb-4">
+                                <GitPullRequest className="w-12 h-12 text-text-secondary" />
+                            </div>
+                            <h3 className="text-xl font-semibold text-text-primary mb-2">
+                                No Analysis Yet
+                            </h3>
+                            <p className="text-text-secondary mb-6">
+                                Click "Analyze with AI" to get intelligent code review suggestions, quality metrics, and security insights for this pull request.
+                            </p>
+                            <AIAnalysisButton
+                                orgId={orgId}
+                                repoId={repoId}
+                                prId={prId}
+                                onAnalysisComplete={handleAnalysisComplete}
+                            />
                         </div>
-                        <h3 className="text-xl font-semibold text-text-primary mb-2">
-                            No Analysis Yet
-                        </h3>
-                        <p className="text-text-secondary mb-6">
-                            Click "Analyze with AI" to get intelligent code review suggestions, quality metrics, and security insights for this pull request.
-                        </p>
-                        <AIAnalysisButton
-                            orgId={orgId}
-                            repoId={repoId}
-                            prId={prId}
-                            onAnalysisComplete={handleAnalysisComplete}
-                        />
-                    </div>
-                </Card>
-            )}
-        </div>
+                    </Card>
+                )
+            }
+        </div >
     );
 }

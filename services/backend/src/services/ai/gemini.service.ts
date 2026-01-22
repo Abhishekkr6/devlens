@@ -56,7 +56,7 @@ export class GeminiService {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
         topP: 0.95,
-        maxOutputTokens: 2048,
+        maxOutputTokens: 4096, // Increased to prevent truncation
       }
     });
   }
@@ -271,53 +271,49 @@ Provide response in JSON format:
     const languages = fileExtensions.join(', ');
 
     return `
-You are an expert code reviewer with deep knowledge of software engineering best practices, security, and performance optimization.
-
-Analyze this Pull Request and provide a comprehensive code review.
+You are an expert code reviewer. Analyze this Pull Request and provide a focused code review.
 
 **PR Title:** ${prTitle}
 **PR Description:** ${prDescription || 'No description provided'}
-**Languages/Files:** ${languages}
+**Languages:** ${languages}
 
 **Code Diff:**
 \`\`\`diff
-${diff.slice(0, 8000)} ${diff.length > 8000 ? '... (truncated)' : ''}
+${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
 \`\`\`
 
 **Review Guidelines:**
-1. Identify bugs, logic errors, and edge cases
-2. Flag security vulnerabilities (SQL injection, XSS, auth issues, etc.)
-3. Check for performance issues (N+1 queries, inefficient algorithms, memory leaks)
-4. Verify best practices (naming conventions, code structure, error handling)
-5. Suggest improvements and optimizations
-6. Rate overall code quality (0-100)
+1. Focus on critical issues only (bugs, security, performance)
+2. Limit to top 5 most important issues
+3. Be concise and specific
+4. Rate overall code quality (0-100)
 
-**Response Format (MUST be valid JSON):**
+**Response Format (MUST be valid, complete JSON):**
 {
   "score": 0-100,
   "issues": [
     {
-      "file": "filename with extension",
-      "line": line_number,
+      "file": "filename",
+      "line": number,
       "severity": "low|medium|high|critical",
       "category": "bug|security|style|performance|best-practice",
-      "message": "clear description of the issue",
-      "suggestion": "specific fix or improvement"
+      "message": "brief issue description",
+      "suggestion": "brief fix suggestion"
     }
   ],
-  "summary": "2-3 sentence overall assessment",
+  "summary": "1-2 sentence assessment",
   "recommendations": [
-    "actionable recommendation 1",
-    "actionable recommendation 2"
+    "brief recommendation 1",
+    "brief recommendation 2"
   ]
 }
 
-**Important:** 
-- Only include real issues, not nitpicks
-- Be specific with file names and line numbers
-- Provide actionable suggestions
-- Return ONLY valid JSON, no markdown code blocks (no \`\`\`json or \`\`\`)
-- Your entire response should be parseable by JSON.parse()
+**CRITICAL REQUIREMENTS:**
+- Return ONLY valid JSON (no markdown, no code blocks)
+- Limit issues array to maximum 5 items
+- Keep all strings concise (under 100 characters)
+- Ensure JSON is complete with all closing braces
+- Your entire response must be parseable by JSON.parse()
 `;
   }
 
