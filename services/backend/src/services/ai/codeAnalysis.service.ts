@@ -2,6 +2,8 @@ import { getGeminiService } from './gemini.service';
 import { getQualityMetricsService } from './qualityMetrics.service';
 import logger from '../../utils/logger';
 import axios from 'axios';
+import { AnalysisCacheModel } from '../../models/analysisCache.model';
+import mongoose from 'mongoose';
 
 interface CodeAnalysisResult {
     score: number;
@@ -39,6 +41,7 @@ interface PRAnalysisResult {
 export class CodeAnalysisService {
     private geminiService: any;
     private qualityService: any;
+    private readonly CACHE_DURATION_DAYS = 7; // Cache for 7 days
 
     constructor() {
         try {
@@ -51,19 +54,133 @@ export class CodeAnalysisService {
     }
 
     /**
-     * Analyze a Pull Request comprehensively
+     * Get cached analysis if available and valid
+     */
+    private async getCachedAnalysis(
+        prId: string,
+        commitSHA: string
+    ): Promise<PRAnalysisResult | null> {
+        try {
+            const cached = await AnalysisCacheModel.findOne({
+                prId: new mongoose.Types.ObjectId(prId),
+                commitSHA,
+                expiresAt: { $gt: new Date() }
+            });
+
+            if (cached) {
+                logger.info({ prId, commitSHA }, 'Returning cached analysis');
+                return cached.analysis as PRAnalysisResult;
+            }
+
+            return null;
+        } catch (error) {
+            logger.error({ error, prId }, 'Error fetching cached analysis');
+            return null;
+        }
+    }
+
+    /**
+     * Save analysis to cache
+     */
+    private async saveToCache(
+        prId: string,
+        commitSHA: string,
+        analysis: PRAnalysisResult,
+        processingTimeMs: number
+    ): Promise<void> {
+        try {
+            const expiresAt = new Date();
+            expiresAt.setDate(expiresAt.getDate() + this.CACHE_DURATION_DAYS);
+
+            await AnalysisCacheModel.findOneAndUpdate(
+                {
+                    prId: new mongoose.Types.ObjectId(prId),
+                    commitSHA
+                },
+                {
+                    prId: new mongoose.Types.ObjectId(prId),
+                    commitSHA,
+                    analysis: {
+                        ...analysis,
+                        processingTimeMs
+                    },
+                    createdAt: new Date(),
+                    expiresAt
+                },
+                { upsert: true, new: true }
+            );
+
+            logger.info({ prId, commitSHA, expiresAt }, 'Analysis cached successfully');
+        } catch (error) {
+            logger.error({ error, prId }, 'Error saving analysis to cache');
+        }
+    }
+
+    /**
+     * Get latest commit SHA from GitHub
+     */
+    private async getLatestCommitSHA(
+        repoFullName: string,
+        prNumber: number,
+        githubToken: string
+    ): Promise<string> {
+        try {
+            const response = await axios.get(
+                `https://api.github.com/repos/${repoFullName}/pulls/${prNumber}`,
+                {
+                    headers: {
+                        Authorization: `Bearer ${githubToken}`,
+                        Accept: 'application/vnd.github.v3+json'
+                    }
+                }
+            );
+
+            return response.data.head.sha;
+        } catch (error) {
+            logger.error({ error, repoFullName, prNumber }, 'Error fetching commit SHA');
+            throw error;
+        }
+    }
+
+    /**
+     * Analyze a Pull Request comprehensively with smart caching
      */
     async analyzePR(
         request: PRAnalysisRequest,
-        githubToken: string
+        githubToken: string,
+        prId?: string
     ): Promise<PRAnalysisResult> {
+        const startTime = Date.now();
+
         try {
             logger.info({
                 repo: request.repoFullName,
-                pr: request.prNumber
+                pr: request.prNumber,
+                prId
             }, 'Starting PR analysis');
 
-            // 1. Fetch PR diff from GitHub
+            // 1. Get latest commit SHA
+            const commitSHA = await this.getLatestCommitSHA(
+                request.repoFullName,
+                request.prNumber,
+                githubToken
+            );
+
+            // 2. Check cache if prId is provided
+            if (prId) {
+                const cached = await this.getCachedAnalysis(prId, commitSHA);
+                if (cached) {
+                    logger.info({ prId, commitSHA }, 'Cache hit - returning cached analysis');
+                    return {
+                        ...cached,
+                        processingTimeMs: Date.now() - startTime,
+                        fromCache: true
+                    } as any;
+                }
+                logger.info({ prId, commitSHA }, 'Cache miss - performing fresh analysis');
+            }
+
+            // 3. Fetch PR diff from GitHub
             const diff = await this.fetchPRDiff(
                 request.repoFullName,
                 request.prNumber,
@@ -142,18 +259,32 @@ export class CodeAnalysisService {
                 bugProbability
             );
 
+            const processingTimeMs = Date.now() - startTime;
+
             logger.info({
                 overallScore,
-                issuesFound: aiReview?.issues?.length || 0
+                issuesFound: aiReview?.issues?.length || 0,
+                processingTimeMs,
+                commitSHA
             }, 'PR analysis completed');
 
-            return {
+            const result: PRAnalysisResult = {
                 aiReview,
                 qualityMetrics,
                 bugProbability,
                 overallScore,
                 recommendations
             };
+
+            // 8. Save to cache if prId is provided
+            if (prId) {
+                await this.saveToCache(prId, commitSHA, result, processingTimeMs);
+            }
+
+            return {
+                ...result,
+                processingTimeMs
+            } as any;
         } catch (error: any) {
             logger.error({ error }, 'PR analysis failed');
             throw new Error(`PR analysis failed: ${error.message}`);

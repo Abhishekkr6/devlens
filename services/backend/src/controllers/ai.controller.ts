@@ -56,7 +56,7 @@ export const analyzePR = async (req: Request, res: Response) => {
 
         const startTime = Date.now();
 
-        // Run AI analysis
+        // Run AI analysis with caching
         const codeAnalysisService = getCodeAnalysisService();
         const analysisResult = await codeAnalysisService.analyzePR(
             {
@@ -69,7 +69,8 @@ export const analyzePR = async (req: Request, res: Response) => {
                 filesChanged: pr.filesChanged || 0,
                 authorCommits: 0 // TODO: Calculate from commit history
             },
-            user.githubAccessToken
+            user.githubAccessToken,
+            prId // Pass prId for caching
         );
 
         const processingTime = Date.now() - startTime;
