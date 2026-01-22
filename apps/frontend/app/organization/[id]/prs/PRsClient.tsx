@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Search, Sparkles } from "lucide-react";
+import { ChevronDown, ChevronRight, Search, Sparkles, Info } from "lucide-react";
 import Link from "next/link";
 import { api } from "../../../../lib/api";
 import { useLiveStore } from "../../../../store/liveStore";
@@ -10,6 +10,9 @@ import { Button } from "../../../../components/Ui/Button";
 import { Card } from "../../../../components/Ui/Card";
 import { Select } from "../../../../components/Ui/Select";
 import { Tooltip } from "../../../../components/Ui/Tooltip";
+import { Popover } from "../../../../components/Ui/Popover";
+import { AIWelcomeBanner } from "../../../../components/Ui/AIWelcomeBanner";
+import { AIStatusBadge } from "../../../../components/Ui/AIStatusBadge";
 import { useFirstTimeAIUser } from "../../../../hooks/useFirstTimeAIUser";
 
 interface Reviewer {
@@ -330,8 +333,12 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex-1 min-w-0">
                                 <div className="text-xs sm:text-sm font-semibold text-text-primary">{row.title}</div>
-                                <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-text-secondary">
-                                    #{row.number} - {row.createdAtLabel}
+                                <div className="mt-0.5 sm:mt-1 flex items-center gap-2 flex-wrap">
+                                    <span className="text-[10px] sm:text-xs text-text-secondary">
+                                        #{row.number} - {row.createdAtLabel}
+                                    </span>
+                                    {/* AI Status Badge */}
+                                    <AIStatusBadge hasAnalysis={false} size="sm" />
                                 </div>
                             </div>
                             {/* AI Icon - Mobile Only (inside title cell) */}
@@ -409,11 +416,57 @@ export default function PRsClient({ orgId }: { orgId: string }) {
     return (
         <div className="flex h-full flex-col gap-6">
             <header className="space-y-2">
-                <h1 className="text-3xl font-semibold text-text-primary">Pull Requests</h1>
+                <div className="flex items-center gap-2">
+                    <h1 className="text-3xl font-semibold text-text-primary">Pull Requests</h1>
+                    <Popover
+                        content={
+                            <div className="space-y-3">
+                                <div className="flex items-center gap-2 mb-2">
+                                    <Sparkles className="w-5 h-5 text-brand" />
+                                    <h4 className="font-bold text-base">AI Code Analysis</h4>
+                                </div>
+                                <p className="text-sm text-slate-300 leading-relaxed">
+                                    Click the <Sparkles className="w-3 h-3 inline text-brand" /> icon on any PR to get:
+                                </p>
+                                <ul className="space-y-2 text-xs text-slate-300">
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span><strong>Code Quality Scoring:</strong> Overall quality metrics (0-100)</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span><strong>Bug Prediction:</strong> AI-powered probability analysis</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span><strong>Security Alerts:</strong> Vulnerability detection</span>
+                                    </li>
+                                    <li className="flex items-start gap-2">
+                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span><strong>Recommendations:</strong> Actionable improvements</span>
+                                    </li>
+                                </ul>
+                                <div className="pt-2 border-t border-slate-700">
+                                    <p className="text-[10px] text-slate-400">Powered by Gemini AI</p>
+                                </div>
+                            </div>
+                        }
+                        side="bottom"
+                        align="start"
+                    >
+                        <button className="p-1 hover:bg-surface rounded-lg transition-colors" aria-label="AI Analysis Info">
+                            <Info className="w-5 h-5 text-text-secondary hover:text-brand transition-colors" />
+                        </button>
+                    </Popover>
+                </div>
                 <p className="text-sm text-text-secondary">
                     Team pull requests with risk scoring and review metrics for this organization
                 </p>
             </header>
+
+            {/* Welcome Banner */}
+            <AIWelcomeBanner />
+
 
             <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div className="relative w-full lg:max-w-md">
