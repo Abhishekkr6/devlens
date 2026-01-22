@@ -324,9 +324,28 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                     onClick={() => setSelectedPrId(row.id)}
                 >
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle">
-                        <div className="text-xs sm:text-sm font-semibold text-text-primary">{row.title}</div>
-                        <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-text-secondary">
-                            #{row.number} - {row.createdAtLabel}
+                        <div className="flex items-center justify-between gap-2">
+                            <div className="flex-1 min-w-0">
+                                <div className="text-xs sm:text-sm font-semibold text-text-primary">{row.title}</div>
+                                <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-text-secondary">
+                                    #{row.number} - {row.createdAtLabel}
+                                </div>
+                            </div>
+                            {/* AI Icon - Mobile Only (inside title cell) */}
+                            <div className="sm:hidden flex-shrink-0">
+                                <Link href={prDetailUrl}>
+                                    <Button
+                                        aria-label="AI Analysis"
+                                        className="h-8 w-8 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
+                                        onClick={(event) => {
+                                            event.stopPropagation();
+                                        }}
+                                        variant="ghost"
+                                    >
+                                        <Sparkles className="h-4 w-4 group-hover/ai:scale-110 transition-transform" />
+                                    </Button>
+                                </Link>
+                            </div>
                         </div>
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.repo}</td>
@@ -340,7 +359,8 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         </span>
                     </td>
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
+                    {/* AI Icon - Desktop Only (separate column) */}
+                    <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
                         <Link href={prDetailUrl}>
                             <Button
                                 aria-label="AI Analysis"

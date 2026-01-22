@@ -384,7 +384,22 @@ export default function RepoDetailClient({
                                         return (
                                             <tr key={pr.id} className="hover:bg-surface/50">
                                                 <td className="px-6 py-4 text-sm text-text-primary">
-                                                    <div className="max-w-xs truncate">{pr.title}</div>
+                                                    <div className="flex items-center justify-between gap-2">
+                                                        <div className="flex-1 min-w-0">
+                                                            <div className="max-w-xs truncate">{pr.title}</div>
+                                                        </div>
+                                                        {/* AI Icon - Mobile Only */}
+                                                        <div className="sm:hidden flex-shrink-0">
+                                                            <Link href={`/organization/${orgId}/repos/${repoId}/pr/${pr.id}`}>
+                                                                <button
+                                                                    className="h-8 w-8 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand inline-flex items-center justify-center group"
+                                                                    aria-label="AI Analysis"
+                                                                >
+                                                                    <Sparkles className="h-4 w-4 group-hover:scale-110 transition-transform" />
+                                                                </button>
+                                                            </Link>
+                                                        </div>
+                                                    </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                                                     {data.repo.name.split('/').pop()}
@@ -405,7 +420,8 @@ export default function RepoDetailClient({
                                                 <td className="px-6 py-4 whitespace-nowrap text-sm text-text-secondary">
                                                     {pr.reviewers}
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-right">
+                                                {/* AI Icon - Desktop Only */}
+                                                <td className="hidden sm:table-cell px-6 py-4 whitespace-nowrap text-right">
                                                     <Link href={`/organization/${orgId}/repos/${repoId}/pr/${pr.id}`}>
                                                         <button
                                                             className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand inline-flex items-center justify-center group"
