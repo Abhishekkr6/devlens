@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "../../../../../lib/api";
 import { Card } from "../../../../../components/Ui/Card";
-import { ArrowLeft, ExternalLink, Settings, TrendingUp, TrendingDown } from "lucide-react";
+import { ArrowLeft, ExternalLink, Settings, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 
 type RepoDetail = {
     repo: {
@@ -407,8 +407,11 @@ export default function RepoDetailClient({
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap text-right">
                                                     <Link href={`/organization/${orgId}/repos/${repoId}/pr/${pr.id}`}>
-                                                        <button className="text-text-secondary hover:text-text-primary cursor-pointer">
-                                                            <span className="text-lg">›</span>
+                                                        <button
+                                                            className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand inline-flex items-center justify-center group"
+                                                            aria-label="AI Analysis"
+                                                        >
+                                                            <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 group-hover:scale-110 transition-transform" />
                                                         </button>
                                                     </Link>
                                                 </td>

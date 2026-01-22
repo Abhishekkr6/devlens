@@ -344,7 +344,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         <Link href={prDetailUrl}>
                             <Button
                                 aria-label="AI Analysis"
-                                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer group/ai"
+                                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                 }}
