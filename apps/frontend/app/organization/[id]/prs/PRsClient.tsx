@@ -336,13 +336,13 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                                 <Link href={prDetailUrl}>
                                     <Button
                                         aria-label="AI Analysis"
-                                        className="h-8 w-8 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
+                                        className="h-9 w-9 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
                                         onClick={(event) => {
                                             event.stopPropagation();
                                         }}
                                         variant="ghost"
                                     >
-                                        <Sparkles className="h-4 w-4 group-hover/ai:scale-110 transition-transform" />
+                                        <Sparkles className="h-5 w-5 group-hover/ai:scale-110 transition-transform" />
                                     </Button>
                                 </Link>
                             </div>
@@ -364,13 +364,13 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         <Link href={prDetailUrl}>
                             <Button
                                 aria-label="AI Analysis"
-                                className="h-8 w-8 sm:h-10 sm:w-10 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
+                                className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
                                 onClick={(event) => {
                                     event.stopPropagation();
                                 }}
                                 variant="ghost"
                             >
-                                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 group-hover/ai:scale-110 transition-transform" />
+                                <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 group-hover/ai:scale-110 transition-transform" />
                             </Button>
                         </Link>
                     </td>
