@@ -99,24 +99,24 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
     };
 
     return (
-        <Card className="p-6 space-y-6">
+        <Card className="p-4 sm:p-6 space-y-4 sm:space-y-6">
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-text-primary">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
+                <h3 className="text-lg sm:text-xl font-semibold text-text-primary">
                     AI Code Review
                 </h3>
                 <ScoreGauge score={review.score} />
             </div>
 
             {/* Summary */}
-            <div className="bg-surface rounded-lg p-4">
-                <p className="text-text-secondary">{review.summary}</p>
+            <div className="bg-surface rounded-lg p-3 sm:p-4">
+                <p className="text-sm sm:text-base text-text-secondary">{review.summary}</p>
             </div>
 
             {/* Issues */}
             {review.issues && review.issues.length > 0 && (
                 <div className="space-y-3">
-                    <h4 className="text-lg font-medium text-text-primary">
+                    <h4 className="text-base sm:text-lg font-medium text-text-primary">
                         Issues Found ({review.issues.length})
                     </h4>
                     <div className="space-y-2">
