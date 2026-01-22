@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAIStore } from '@/store/aiStore';
 import {
     AIAnalysisButton,
@@ -23,6 +24,7 @@ export default function PRDetailClient({
     repoId: string;
     prId: string;
 }) {
+    const router = useRouter();
     const { analysis, insights, securityAlerts, loading, fetchInsights, fetchSecurityAlerts, checkAIStatus } = useAIStore();
     const [showAISection, setShowAISection] = useState(false);
 
@@ -51,14 +53,14 @@ export default function PRDetailClient({
         <div className="flex h-full flex-col gap-6">
             {/* Header */}
             <header className="space-y-2">
-                <Link
-                    href={`/organization/${orgId}/repos/${repoId}`}
-                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors mb-2"
+                <button
+                    onClick={() => router.back()}
+                    className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors mb-2 cursor-pointer"
                 >
                     <ArrowLeft className="w-3 h-3 sm:w-4 sm:h-4" />
-                    <span className="hidden sm:inline">Back to Repository</span>
+                    <span className="hidden sm:inline">Back</span>
                     <span className="sm:hidden">Back</span>
-                </Link>
+                </button>
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex items-center gap-2 sm:gap-3">
