@@ -14,6 +14,7 @@ import {
 import { ArrowLeft, GitPullRequest, Loader2, TrendingUp, Code2, AlertCircle, Clock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { Card } from '@/components/Ui/Card';
+import { showAIAnalysisToast } from '@/lib/aiToast';
 
 export default function PRDetailClient({
     orgId,
@@ -46,6 +47,13 @@ export default function PRDetailClient({
         // Refresh insights after analysis
         if (prId) {
             fetchInsights(prId);
+
+            // Show toast notification
+            if (analysis) {
+                const score = analysis.overallScore || 0;
+                const issuesCount = (analysis as any).issues?.length || 0;
+                showAIAnalysisToast(prId, score, issuesCount);
+            }
         }
     };
 

@@ -333,12 +333,8 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         <div className="flex items-center justify-between gap-2">
                             <div className="flex-1 min-w-0">
                                 <div className="text-xs sm:text-sm font-semibold text-text-primary">{row.title}</div>
-                                <div className="mt-0.5 sm:mt-1 flex items-center gap-2 flex-wrap">
-                                    <span className="text-[10px] sm:text-xs text-text-secondary">
-                                        #{row.number} - {row.createdAtLabel}
-                                    </span>
-                                    {/* AI Status Badge */}
-                                    <AIStatusBadge hasAnalysis={false} size="sm" />
+                                <div className="mt-0.5 sm:mt-1 text-[10px] sm:text-xs text-text-secondary">
+                                    #{row.number} - {row.createdAtLabel}
                                 </div>
                             </div>
                             {/* AI Icon - Mobile Only (inside title cell) */}

@@ -12,6 +12,7 @@ import {
 import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
 import { Card } from "../../../components/Ui/Card";
+import { AIStatsWidget } from "../../../components/Ui/AIStatsWidget";
 import CommitLineChart from "../../../components/Charts/CommitLineChart";
 import PRRiskBarChart from "../../../components/Charts/PRRiskBarChart";
 
@@ -301,6 +302,18 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                     </Card>
                 ))
                 }
+            </section>
+
+            {/* AI Stats Widget */}
+            <section>
+                <AIStatsWidget
+                    stats={{
+                        totalAnalyzed: 0, // TODO: Fetch from API
+                        averageScore: 0,
+                        issuesFound: 0,
+                        highRiskPRs: riskBuckets[2]?.count ?? 0,
+                    }}
+                />
             </section>
 
             <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
