@@ -11,7 +11,7 @@ import {
     SecurityAlertsPanel,
     StatCard
 } from '@/components/ai';
-import { ArrowLeft, GitPullRequest, Loader2, TrendingUp, Code2, AlertCircle, Clock } from 'lucide-react';
+import { ArrowLeft, GitPullRequest, Loader2, TrendingUp, Code2, AlertCircle, Clock, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 import { Card } from '@/components/Ui/Card';
 
@@ -85,6 +85,44 @@ export default function PRDetailClient({
                     />
                 </div>
             </header>
+
+            {/* Empty State - No Analysis Yet */}
+            {!loading && !analysis && !showAISection && (
+                <Card className="p-8 sm:p-12 border-2 border-dashed border-border/50">
+                    <div className="text-center max-w-md mx-auto">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                            <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-brand animate-pulse" />
+                        </div>
+                        <h3 className="text-lg sm:text-xl font-semibold text-text-primary mb-2 sm:mb-3">
+                            AI Analysis Available
+                        </h3>
+                        <p className="text-sm sm:text-base text-text-secondary mb-4 sm:mb-6">
+                            Click <strong>"Analyze with AI"</strong> to get intelligent insights including:
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3 text-left mb-6">
+                            <div className="flex items-start gap-2 text-xs sm:text-sm text-text-secondary">
+                                <div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 flex-shrink-0" />
+                                <span>Code quality scoring</span>
+                            </div>
+                            <div className="flex items-start gap-2 text-xs sm:text-sm text-text-secondary">
+                                <div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 flex-shrink-0" />
+                                <span>Bug probability prediction</span>
+                            </div>
+                            <div className="flex items-start gap-2 text-xs sm:text-sm text-text-secondary">
+                                <div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 flex-shrink-0" />
+                                <span>Security vulnerability detection</span>
+                            </div>
+                            <div className="flex items-start gap-2 text-xs sm:text-sm text-text-secondary">
+                                <div className="w-1.5 h-1.5 rounded-full bg-brand mt-1.5 flex-shrink-0" />
+                                <span>Actionable recommendations</span>
+                            </div>
+                        </div>
+                        <p className="text-xs sm:text-sm text-text-secondary/70">
+                            Powered by Gemini AI
+                        </p>
+                    </div>
+                </Card>
+            )}
 
             {/* Loading State */}
             {loading && (

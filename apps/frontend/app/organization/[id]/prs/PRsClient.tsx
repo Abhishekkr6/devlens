@@ -9,6 +9,8 @@ import { useUserStore } from "../../../../store/userStore";
 import { Button } from "../../../../components/Ui/Button";
 import { Card } from "../../../../components/Ui/Card";
 import { Select } from "../../../../components/Ui/Select";
+import { Tooltip } from "../../../../components/Ui/Tooltip";
+import { useFirstTimeAIUser } from "../../../../hooks/useFirstTimeAIUser";
 
 interface Reviewer {
     login?: string;
@@ -146,6 +148,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
     const { user } = useUserStore();
+    const { shouldPulse, markAsSeen } = useFirstTimeAIUser();
 
     useEffect(() => {
         if (!orgId) return;
@@ -333,18 +336,30 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                             </div>
                             {/* AI Icon - Mobile Only (inside title cell) */}
                             <div className="sm:hidden flex-shrink-0">
-                                <Link href={prDetailUrl}>
-                                    <Button
-                                        aria-label="AI Analysis"
-                                        className="h-9 w-9 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
-                                        onClick={(event) => {
-                                            event.stopPropagation();
-                                        }}
-                                        variant="ghost"
-                                    >
-                                        <Sparkles className="h-5 w-5 group-hover/ai:scale-110 transition-transform" />
-                                    </Button>
-                                </Link>
+                                <Tooltip
+                                    content={
+                                        <div className="text-center">
+                                            <div className="font-semibold">✨ AI Code Analysis</div>
+                                            <div className="text-[10px] mt-0.5">Get intelligent code review</div>
+                                        </div>
+                                    }
+                                    side="left"
+                                >
+                                    <Link href={prDetailUrl}>
+                                        <Button
+                                            aria-label="AI Analysis"
+                                            className={`h-9 w-9 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai ${shouldPulse ? 'animate-pulse' : ''
+                                                }`}
+                                            onClick={(event) => {
+                                                event.stopPropagation();
+                                                markAsSeen();
+                                            }}
+                                            variant="ghost"
+                                        >
+                                            <Sparkles className="h-5 w-5 group-hover/ai:scale-110 transition-transform" />
+                                        </Button>
+                                    </Link>
+                                </Tooltip>
                             </div>
                         </div>
                     </td>
@@ -361,18 +376,30 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                     <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
                     {/* AI Icon - Desktop Only (separate column) */}
                     <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
-                        <Link href={prDetailUrl}>
-                            <Button
-                                aria-label="AI Analysis"
-                                className="h-10 w-10 sm:h-11 sm:w-11 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai"
-                                onClick={(event) => {
-                                    event.stopPropagation();
-                                }}
-                                variant="ghost"
-                            >
-                                <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 group-hover/ai:scale-110 transition-transform" />
-                            </Button>
-                        </Link>
+                        <Tooltip
+                            content={
+                                <div className="text-center">
+                                    <div className="font-semibold">✨ AI Code Analysis</div>
+                                    <div className="text-[10px] mt-0.5">Get intelligent code review</div>
+                                </div>
+                            }
+                            side="left"
+                        >
+                            <Link href={prDetailUrl}>
+                                <Button
+                                    aria-label="AI Analysis"
+                                    className={`h-10 w-10 sm:h-11 sm:w-11 rounded-lg px-0 py-0 bg-brand/10 text-brand hover:bg-brand hover:text-white transition-all duration-200 cursor-pointer border border-brand/30 hover:border-brand group/ai ${shouldPulse ? 'animate-pulse' : ''
+                                        }`}
+                                    onClick={(event) => {
+                                        event.stopPropagation();
+                                        markAsSeen();
+                                    }}
+                                    variant="ghost"
+                                >
+                                    <Sparkles className="h-5 w-5 sm:h-6 sm:w-6 group-hover/ai:scale-110 transition-transform" />
+                                </Button>
+                            </Link>
+                        </Tooltip>
                     </td>
                 </tr>
             );
