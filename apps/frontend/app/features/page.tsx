@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Navbar } from "../../components/Landing/Navbar";
-import { Activity, ShieldAlert, Zap, Cpu, GitCommit, GitPullRequest, LayoutDashboard, ArrowRight, CheckCircle2 } from "lucide-react";
+import { Activity, ShieldAlert, Zap, Cpu, GitCommit, GitPullRequest, LayoutDashboard, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { Button } from "../../components/Ui/Button";
 
 
@@ -39,6 +39,12 @@ export default function FeaturesPage() {
             {/* Main Grid */}
             <section className="py-16 px-4">
                 <div className="max-w-7xl mx-auto grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <FeatureCard
+                        icon={Sparkles}
+                        title="AI-Powered Analysis"
+                        desc="Leverage Gemini AI for intelligent code reviews, quality metrics, bug prediction, and security vulnerability detection."
+                        color="purple"
+                    />
                     <FeatureCard
                         icon={ShieldAlert}
                         title="Risk Detection"

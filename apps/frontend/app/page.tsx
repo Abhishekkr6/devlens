@@ -16,7 +16,8 @@ import {
   X,
   Code2,
   Cpu,
-  GitCommit
+  GitCommit,
+  Sparkles
 } from "lucide-react";
 import { HeroVisual } from "../components/Landing/HeroVisual";
 import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/CommitTrackingVisual";
@@ -244,6 +245,11 @@ function FeatureCard({
 function FeatureSection() {
   const genericFeatures = [
     {
+      title: "AI-Powered Code Analysis",
+      desc: "Get intelligent code reviews, quality metrics, and security insights powered by Gemini AI.",
+      icon: Sparkles,
+    },
+    {
       title: "PR Risk Scoring",
       desc: "Automatically analyze PR size, complexity, and file changes to identify risks.",
       icon: ShieldAlert,
@@ -273,7 +279,7 @@ function FeatureSection() {
         </div>
 
         {/* Generic Grid */}
-        <div className="grid md:grid-cols-3 gap-8 mb-24 mx-auto">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24 mx-auto">
           {genericFeatures.map((f, i) => (
             <FeatureCard
               key={i}
@@ -287,10 +293,53 @@ function FeatureSection() {
         {/* Detailed Visual Sections */}
         <div className="space-y-0">
           <DetailedFeature
+            title="AI-Powered Code Analysis"
+            desc="Leverage Gemini AI to automatically review code quality, predict bugs, detect security vulnerabilities, and provide actionable recommendations for every pull request."
+            icon={Sparkles}
+            align="left"
+            visual={
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="relative w-full max-w-md">
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-3xl" />
+                  <div className="relative bg-slate-900/90 backdrop-blur-xl rounded-2xl p-6 border border-purple-500/20 shadow-2xl">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Sparkles className="w-6 h-6 text-purple-400" />
+                      <h4 className="text-white font-semibold">AI Code Review</h4>
+                    </div>
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-slate-300 text-sm">Code Quality</span>
+                        <span className="text-green-400 font-bold">85/100</span>
+                      </div>
+                      <div className="w-full bg-slate-700 rounded-full h-2">
+                        <div className="bg-gradient-to-r from-green-500 to-emerald-400 h-2 rounded-full" style={{ width: '85%' }} />
+                      </div>
+                      <div className="flex items-center justify-between mt-4">
+                        <span className="text-slate-300 text-sm">Bug Probability</span>
+                        <span className="text-yellow-400 font-bold">Medium</span>
+                      </div>
+                      <div className="flex gap-2 mt-3">
+                        <div className="px-2 py-1 bg-red-500/20 text-red-300 rounded text-xs">2 Security</div>
+                        <div className="px-2 py-1 bg-orange-500/20 text-orange-300 rounded text-xs">3 Performance</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            listItems={[
+              "Intelligent code review with Gemini AI",
+              "Bug probability prediction",
+              "Security vulnerability detection",
+              "Quality metrics & recommendations"
+            ]}
+          />
+
+          <DetailedFeature
             title="Real-time Commit Tracking"
             desc="Gain full visibility into every commit as it happens. Track velocity, code churn, and impact across your entire organization."
             icon={GitCommit}
-            align="left"
+            align="right"
             visual={<CommitTrackingVisual />}
             listItems={["Live WebSockets updates", "Role-based access control", "Instant notifications"]}
           />
@@ -299,7 +348,7 @@ function FeatureSection() {
             title="Asynchronous Processing"
             desc="Our distributed worker architecture handles massive scale. Webhooks are processed asynchronously to ensure 100% reliability."
             icon={Cpu}
-            align="right"
+            align="left"
             visual={<WorkerArchitectureVisual />}
             listItems={["Live WebSockets updates", "Role-based access control", "Instant notifications"]}
           />
