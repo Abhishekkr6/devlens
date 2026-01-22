@@ -45,10 +45,13 @@ export class GeminiService {
 
   private initializeModel(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
-    // Using gemini-2.0-flash-exp - Gemini 1.5 models are deprecated in 2026
-    // This is a stable, cost-effective model available in v1beta
+
+    // Using gemini-2.5-flash - Latest stable free tier model (Jan 2026)
+    // Free tier limits: 250 requests/day, 10 requests/min per key
+    // With 5 keys: 1,250 requests/day total
+    // Context window: 1 million tokens
     this.model = this.genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash',
       generationConfig: {
         temperature: 0.3, // Lower temperature for more consistent code analysis
         topK: 40,
