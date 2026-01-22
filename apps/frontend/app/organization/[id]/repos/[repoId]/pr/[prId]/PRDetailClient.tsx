@@ -125,7 +125,7 @@ export default function PRDetailClient({
                                 <span>Actionable recommendations</span>
                             </div>
                         </div>
-                        <p className="text-xs sm:text-sm text-text-secondary/70">
+                        <p className="text-[10px] text-text-secondary/50 mt-2">
                             Powered by Gemini AI
                         </p>
                     </div>

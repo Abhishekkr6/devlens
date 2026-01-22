@@ -1,10 +1,9 @@
-"use client";
-
 import { use, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "@/components/Ui/Card";
 import { Button } from "@/components/Ui/Button";
+import { AISettingsPanel } from "@/components/Settings/AISettingsPanel";
 import { api } from "@/lib/api";
 import { useUserStore } from "@/store/userStore";
 import { toast } from "sonner";
@@ -92,14 +91,9 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                 </header>
 
                 <div className="space-y-6">
-                    {/* General Settings Placeholder */}
+                    {/* AI Settings */}
                     <Card className="p-6">
-                        <h2 className="text-lg font-medium text-text-primary mb-4">General</h2>
-                        <div className="p-8 border-2 border-dashed border-border rounded-xl text-center">
-                            <p className="text-sm text-text-secondary">
-                                General settings (name, slug, logo) coming soon.
-                            </p>
-                        </div>
+                        <AISettingsPanel />
                     </Card>
 
                     {/* Danger Zone - OWNER ONLY */}

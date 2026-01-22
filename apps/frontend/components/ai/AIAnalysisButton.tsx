@@ -34,28 +34,23 @@ export function AIAnalysisButton({ orgId, repoId, prId, onAnalysisComplete }: AI
     return (
         <button
             onClick={handleAnalyze}
-            disabled={analyzing || loading}
+            disabled={loading}
             className={`
-        inline-flex items-center gap-2 px-4 py-2 rounded-lg font-medium
-        transition-all duration-200
-        ${analyzing || loading
-                    ? 'bg-purple-500/50 cursor-not-allowed'
-                    : 'bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700'
-                }
-        text-white shadow-lg hover:shadow-xl
-        disabled:opacity-50
-      `}
+                    group relative inline-flex items-center justify-center gap-2 
+                    px-6 py-3 rounded-xl font-semibold text-sm
+                    bg-gradient-to-r from-brand to-purple-600 
+                    text-white shadow-lg shadow-brand/25
+                    hover:shadow-xl hover:shadow-brand/40 hover:scale-105
+                    active:scale-95
+                    disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100
+                    transition-all duration-200 cursor-pointer
+                `}
         >
-            {analyzing || loading ? (
-                <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Analyzing...</span>
-                </>
+            <Sparkles className={`w-5 h-5 ${loading ? 'animate-spin' : 'group-hover:rotate-12'} transition-transform`} />
+            {loading ? (
+                <span>Analyzing...</span>
             ) : (
-                <>
-                    <Sparkles className="w-4 h-4" />
-                    <span>Analyze with AI</span>
-                </>
+                <span>Analyze with AI</span>
             )}
         </button>
     );

@@ -8,6 +8,7 @@ import {
     GitCommit,
     GitPullRequest,
     Users,
+    Sparkles,
 } from "lucide-react";
 import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
@@ -304,18 +305,6 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                 }
             </section>
 
-            {/* AI Stats Widget */}
-            <section>
-                <AIStatsWidget
-                    stats={{
-                        totalAnalyzed: 0, // TODO: Fetch from API
-                        averageScore: 0,
-                        issuesFound: 0,
-                        highRiskPRs: riskBuckets[2]?.count ?? 0,
-                    }}
-                />
-            </section>
-
             <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-3">
                 <Card className="lg:col-span-2 rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
                     <div className="flex items-center justify-between mb-4 sm:mb-6">
@@ -336,7 +325,16 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                 </Card>
 
                 <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">PR Status</h2>
+                    <div className="flex items-center justify-between mb-4 sm:mb-6">
+                        <h2 className="text-base sm:text-lg font-semibold text-text-primary">PR Status</h2>
+                        <a
+                            href={`/organization/${orgId}/prs`}
+                            className="p-2 hover:bg-surface rounded-lg transition-colors group cursor-pointer"
+                            title="View PRs with AI Analysis"
+                        >
+                            <Sparkles className="w-5 h-5 text-brand group-hover:scale-110 transition-transform" />
+                        </a>
+                    </div>
                     <ul className="space-y-3 sm:space-y-4">
                         {[{ label: "Open", value: prStatusCounts.open }, { label: "Review", value: prStatusCounts.review }, { label: "Merged", value: prStatusCounts.merged }].map((item) => (
                             <li key={item.label} className="flex items-center justify-between rounded-lg sm:rounded-xl border border-border bg-surface px-3 sm:px-4 py-2 sm:py-3">

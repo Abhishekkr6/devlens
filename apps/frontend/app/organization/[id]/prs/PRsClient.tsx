@@ -443,7 +443,10 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                                     </li>
                                 </ul>
                                 <div className="pt-2 border-t border-slate-700">
-                                    <p className="text-[10px] text-slate-400">Powered by Gemini AI</p>
+                                    <p className="text-[9px] text-slate-500">Powered by Gemini AI</p>
+                                    <Link href="/help/ai-analysis" className="text-[10px] text-brand hover:underline mt-1 inline-block">
+                                        Learn more →
+                                    </Link>
                                 </div>
                             </div>
                         }
