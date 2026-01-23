@@ -115,7 +115,7 @@ export function AIGuideChatPanel({ onClose }: AIGuideChatPanelProps) {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface/30">
+            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface/30 overscroll-behavior-y-contain">
                 {messages.map(message => (
                     <div
                         key={message.id}
