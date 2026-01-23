@@ -30,10 +30,8 @@ export default function PRDetailClient({
     const [showAISection, setShowAISection] = useState(false);
 
     useEffect(() => {
-        // Check AI status on mount
         checkAIStatus();
 
-        // Fetch existing insights if available
         if (prId) {
             fetchInsights(prId);
             if (repoId) {
@@ -44,11 +42,9 @@ export default function PRDetailClient({
 
     const handleAnalysisComplete = () => {
         setShowAISection(true);
-        // Refresh insights after analysis
         if (prId) {
             fetchInsights(prId);
 
-            // Show toast notification
             if (analysis) {
                 const score = analysis.overallScore || 0;
                 const issuesCount = (analysis as any).issues?.length || 0;
@@ -59,7 +55,6 @@ export default function PRDetailClient({
 
     return (
         <div className="flex h-full flex-col gap-6">
-            {/* Header */}
             <header className="space-y-2">
                 <button
                     onClick={() => router.back()}
@@ -94,7 +89,6 @@ export default function PRDetailClient({
                 </div>
             </header>
 
-            {/* Empty State - No Analysis Yet */}
             {!loading && !analysis && !showAISection && (
                 <Card className="p-8 sm:p-12 border-2 border-dashed border-border/50">
                     <div className="text-center max-w-md mx-auto">
@@ -132,7 +126,6 @@ export default function PRDetailClient({
                 </Card>
             )}
 
-            {/* Loading State */}
             {loading && (
                 <Card className="p-8 sm:p-12">
                     <div className="text-center">
@@ -147,10 +140,8 @@ export default function PRDetailClient({
                 </Card>
             )}
 
-            {/* AI Analysis Results */}
             {!loading && (analysis || showAISection) && (
                 <div className="space-y-6">
-                    {/* Stats Overview - Only show if analysis exists */}
                     {analysis && (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                             <StatCard
@@ -180,20 +171,16 @@ export default function PRDetailClient({
                         </div>
                     )}
 
-                    {/* AI Review Card */}
                     {analysis?.aiReview && (
                         <AIReviewCard review={analysis.aiReview} />
                     )}
 
-                    {/* Quality Metrics & Bug Probability Grid */}
                     {(analysis?.qualityMetrics || analysis?.bugProbability) && (
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                            {/* Quality Metrics - Always show if available */}
                             {analysis?.qualityMetrics && (
                                 <QualityMetricsCard metrics={analysis.qualityMetrics} />
                             )}
 
-                            {/* Bug Probability - Only show if available */}
                             {analysis?.bugProbability ? (
                                 <BugProbabilityGauge bugProbability={analysis.bugProbability} />
                             ) : analysis?.qualityMetrics ? (
@@ -212,12 +199,10 @@ export default function PRDetailClient({
                         </div>
                     )}
 
-                    {/* Security Alerts */}
                     {securityAlerts && securityAlerts.length > 0 && (
                         <SecurityAlertsPanel alerts={securityAlerts} />
                     )}
 
-                    {/* Recommendations Summary */}
                     {analysis?.recommendations && analysis.recommendations.length > 0 && (
                         <Card className="p-4 sm:p-6">
                             <h3 className="text-lg sm:text-xl font-semibold text-text-primary mb-3 sm:mb-4">
@@ -241,7 +226,6 @@ export default function PRDetailClient({
                         </Card>
                     )}
 
-                    {/* Processing Time Footer */}
                     {analysis?.processingTimeMs && (
                         <div className="text-center text-sm text-text-secondary/70 py-2">
                             Analysis completed in {(analysis.processingTimeMs / 1000).toFixed(2)}s
@@ -251,7 +235,6 @@ export default function PRDetailClient({
             )
             }
 
-            {/* Empty State */}
             {
                 !loading && !analysis && !showAISection && (
                     <Card className="p-12">

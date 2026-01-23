@@ -53,9 +53,6 @@ export class CodeAnalysisService {
         this.qualityService = getQualityMetricsService();
     }
 
-    /**
-     * Get cached analysis if available and valid
-     */
     private async getCachedAnalysis(
         prId: string,
         commitSHA: string
@@ -79,9 +76,6 @@ export class CodeAnalysisService {
         }
     }
 
-    /**
-     * Save analysis to cache
-     */
     private async saveToCache(
         prId: string,
         commitSHA: string,
@@ -116,9 +110,6 @@ export class CodeAnalysisService {
         }
     }
 
-    /**
-     * Get latest commit SHA from GitHub
-     */
     private async getLatestCommitSHA(
         repoFullName: string,
         prNumber: number,
@@ -142,9 +133,6 @@ export class CodeAnalysisService {
         }
     }
 
-    /**
-     * Analyze a Pull Request comprehensively with smart caching
-     */
     async analyzePR(
         request: PRAnalysisRequest,
         githubToken: string,
@@ -159,14 +147,12 @@ export class CodeAnalysisService {
                 prId
             }, 'Starting PR analysis');
 
-            // 1. Get latest commit SHA
             const commitSHA = await this.getLatestCommitSHA(
                 request.repoFullName,
                 request.prNumber,
                 githubToken
             );
 
-            // 2. Check cache if prId is provided
             if (prId) {
                 const cached = await this.getCachedAnalysis(prId, commitSHA);
                 if (cached) {
@@ -180,21 +166,18 @@ export class CodeAnalysisService {
                 logger.info({ prId, commitSHA }, 'Cache miss - performing fresh analysis');
             }
 
-            // 3. Fetch PR diff from GitHub
             const diff = await this.fetchPRDiff(
                 request.repoFullName,
                 request.prNumber,
                 githubToken
             );
 
-            // 2. Fetch PR files for quality analysis
             const files = await this.fetchPRFiles(
                 request.repoFullName,
                 request.prNumber,
                 githubToken
             );
 
-            // 3. AI Code Review (if available)
             let aiReview: any = null;
             if (this.geminiService) {
                 try {
@@ -220,7 +203,6 @@ export class CodeAnalysisService {
                 }
             }
 
-            // 4. Code Quality Metrics
             const qualityMetrics = await this.qualityService.analyzeCodeQuality(
                 files.map(f => ({
                     path: f.path,
@@ -229,7 +211,6 @@ export class CodeAnalysisService {
                 }))
             );
 
-            // 5. Bug Probability Prediction
             let bugProbability: { probability: number } | null = null;
             if (this.geminiService) {
                 try {
@@ -245,14 +226,12 @@ export class CodeAnalysisService {
                 }
             }
 
-            // 6. Calculate overall score
             const overallScore = this.calculateOverallScore(
                 aiReview?.score || 70,
                 qualityMetrics.maintainabilityIndex,
                 bugProbability?.probability || 30
             );
 
-            // 7. Generate recommendations
             const recommendations = this.generateRecommendations(
                 aiReview,
                 qualityMetrics,
@@ -276,7 +255,6 @@ export class CodeAnalysisService {
                 recommendations
             };
 
-            // 8. Save to cache if prId is provided
             if (prId) {
                 await this.saveToCache(prId, commitSHA, result, processingTimeMs);
             }
@@ -291,9 +269,6 @@ export class CodeAnalysisService {
         }
     }
 
-    /**
-     * Fetch PR diff from GitHub
-     */
     private async fetchPRDiff(
         repoFullName: string,
         prNumber: number,
@@ -317,16 +292,12 @@ export class CodeAnalysisService {
         }
     }
 
-    /**
-     * Fetch PR files content from GitHub
-     */
     private async fetchPRFiles(
         repoFullName: string,
         prNumber: number,
         githubToken: string
     ): Promise<Array<{ path: string; content: string }>> {
         try {
-            // Get list of files in PR
             const filesResponse = await axios.get(
                 `https://api.github.com/repos/${repoFullName}/pulls/${prNumber}/files`,
                 {
@@ -340,24 +311,20 @@ export class CodeAnalysisService {
             const files = filesResponse.data;
             const fileContents: Array<{ path: string; content: string }> = [];
 
-            // Fetch content for each file (limit to first 10 files to avoid rate limits)
             const filesToAnalyze = files.slice(0, 10);
 
             for (const file of filesToAnalyze) {
-                // Skip deleted files and binary files
                 if (file.status === 'removed' || this.isBinaryFile(file.filename)) {
                     continue;
                 }
 
                 try {
-                    // Use the patch content if available (shows only changes)
                     if (file.patch) {
                         fileContents.push({
                             path: file.filename,
                             content: file.patch
                         });
                     } else {
-                        // Fetch full file content
                         const contentResponse = await axios.get(
                             `https://api.github.com/repos/${repoFullName}/contents/${file.filename}?ref=HEAD`,
                             {
@@ -375,7 +342,6 @@ export class CodeAnalysisService {
                     }
                 } catch (error) {
                     logger.warn({ error, filename: file.filename }, `Failed to fetch content for ${file.filename}`);
-                    // Continue with other files
                 }
             }
 
@@ -386,9 +352,6 @@ export class CodeAnalysisService {
         }
     }
 
-    /**
-     * Detect programming language from file extension
-     */
     private detectLanguage(filename: string): string {
         const ext = filename.split('.').pop()?.toLowerCase();
 
@@ -413,9 +376,6 @@ export class CodeAnalysisService {
         return languageMap[ext || ''] || 'unknown';
     }
 
-    /**
-     * Check if file is binary
-     */
     private isBinaryFile(filename: string): boolean {
         const binaryExtensions = [
             'png', 'jpg', 'jpeg', 'gif', 'ico', 'svg',
@@ -427,16 +387,11 @@ export class CodeAnalysisService {
         return binaryExtensions.includes(ext || '');
     }
 
-    /**
-     * Calculate overall quality score
-     */
     private calculateOverallScore(
         aiScore: number,
         maintainabilityIndex: number,
         bugProbability: number
     ): number {
-        // Weighted average
-        // AI Score: 40%, Maintainability: 40%, Bug Risk: 20%
         const score = (
             aiScore * 0.4 +
             maintainabilityIndex * 0.4 +
@@ -446,9 +401,6 @@ export class CodeAnalysisService {
         return Math.round(score);
     }
 
-    /**
-     * Generate actionable recommendations
-     */
     private generateRecommendations(
         aiReview: any,
         qualityMetrics: any,
@@ -456,12 +408,10 @@ export class CodeAnalysisService {
     ): string[] {
         const recommendations: string[] = [];
 
-        // AI Review recommendations
         if (aiReview?.recommendations) {
             recommendations.push(...aiReview.recommendations);
         }
 
-        // Quality-based recommendations
         if (qualityMetrics.maintainabilityIndex < 50) {
             recommendations.push('Consider refactoring to improve maintainability');
         }
@@ -479,12 +429,10 @@ export class CodeAnalysisService {
             recommendations.push(`Estimated ${hours}h of technical debt - consider cleanup`);
         }
 
-        // Bug probability recommendations
         if (bugProbability?.probability > 60) {
             recommendations.push('High bug risk - thorough testing recommended');
         }
 
-        // If no recommendations, add a positive note
         if (recommendations.length === 0) {
             recommendations.push('Code quality looks good! Ready for review.');
         }
@@ -492,15 +440,11 @@ export class CodeAnalysisService {
         return recommendations;
     }
 
-    /**
-     * Check if AI analysis is available
-     */
     isAIAvailable(): boolean {
         return this.geminiService !== null;
     }
 }
 
-// Singleton instance
 let codeAnalysisServiceInstance: CodeAnalysisService | null = null;
 
 export const getCodeAnalysisService = (): CodeAnalysisService => {

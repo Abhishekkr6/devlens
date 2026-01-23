@@ -18,13 +18,12 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
 
     const [loading, setLoading] = useState(true);
     const [orgData, setOrgData] = useState<{ createdBy: string; orgName: string } | null>(null);
-    const [deleteConfirm, setDeleteConfirm] = useState("");
+    const [confirmText, setConfirmText] = useState("");
     const [isDeleting, setIsDeleting] = useState(false);
 
     useEffect(() => {
         const fetchOrgDetails = async () => {
             try {
-                // leveraging getOrgMembers to get org details including createdBy
                 const res = await api.get(`/orgs/${orgId}/members`);
                 if (res.data?.success) {
                     setOrgData(res.data.data);
@@ -42,12 +41,11 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
         }
     }, [orgId, user]);
 
-    // Robust check for owner
     const userId = user?.id || user?._id;
     const isOwner = userId && orgData?.createdBy && String(userId) === String(orgData.createdBy);
 
     const handleDeleteOrg = async () => {
-        if (deleteConfirm !== orgData?.orgName) {
+        if (confirmText !== orgData?.orgName) {
             toast.error("Organization name does not match");
             return;
         }
@@ -57,9 +55,8 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
             await api.delete(`/orgs/${orgId}`);
             toast.success("Organization deleted successfully");
 
-            // Refresh user to clear deleted org from state
             await fetchUser();
-            setActiveOrganization(""); // Clear active org
+            setActiveOrganization("");
             router.push("/organization");
         } catch (err: any) {
             toast.error(err.response?.data?.error?.message || "Failed to delete organization");
@@ -86,19 +83,13 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                     <p className="mt-1 text-sm text-text-secondary">
                         Manage settings for <span className="font-medium text-text-primary">{orgData?.orgName}</span>
                     </p>
-                    {/* Debug info (hidden in production) */}
-                    {/* <div className="text-xs text-text-secondary hidden">
-                        User: {String(userId)} | Creator: {String(orgData?.createdBy)} | IsOwner: {String(isOwner)}
-                    </div> */}
                 </header>
 
                 <div className="space-y-6">
-                    {/* AI Settings */}
                     <Card className="p-6">
                         <AISettingsPanel />
                     </Card>
 
-                    {/* Danger Zone - OWNER ONLY */}
                     {isOwner && (
                         <div className="rounded-xl border border-red-500/30 bg-black/40 backdrop-blur-xl overflow-hidden shadow-2xl">
                             <div className="px-6 py-4 border-b border-red-500/30 bg-red-500/10">
@@ -123,15 +114,15 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
                                             </p>
                                             <input
                                                 type="text"
-                                                value={deleteConfirm}
-                                                onChange={(e) => setDeleteConfirm(e.target.value)}
+                                                value={confirmText}
+                                                onChange={(e) => setConfirmText(e.target.value)}
                                                 className="w-full px-3 py-2 text-sm border border-red-500/30 rounded-lg bg-black/20 text-white placeholder:text-zinc-500 focus:ring-red-500 focus:border-red-500 transition-all outline-none"
                                                 placeholder="Organization Name"
                                             />
                                             <Button
                                                 variant="destructive"
                                                 className="w-full sm:w-auto"
-                                                disabled={deleteConfirm !== orgData?.orgName || isDeleting}
+                                                disabled={confirmText !== orgData?.orgName || isDeleting}
                                                 onClick={handleDeleteOrg}
                                             >
                                                 {isDeleting ? "Deleting..." : (

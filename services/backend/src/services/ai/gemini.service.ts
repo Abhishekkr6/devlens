@@ -39,31 +39,26 @@ export class GeminiService {
 
     logger.info({ totalKeys: this.apiKeys.length }, 'Gemini service initialized with API keys');
 
-    // Initialize with first key
     this.initializeModel(this.apiKeys[0]);
   }
 
   private initializeModel(apiKey: string) {
     this.genAI = new GoogleGenerativeAI(apiKey);
 
-    // Using gemini-2.5-flash - Latest stable free tier model (Jan 2026)
-    // Free tier limits: 250 requests/day, 10 requests/min per key
-    // With 5 keys: 1,250 requests/day total
-    // Context window: 1 million tokens
     this.model = this.genAI.getGenerativeModel({
       model: 'gemini-2.5-flash',
       generationConfig: {
-        temperature: 0.3, // Lower temperature for more consistent code analysis
+        temperature: 0.3,
         topK: 40,
         topP: 0.95,
-        maxOutputTokens: 4096, // Increased to prevent truncation
+        maxOutputTokens: 4096,
       }
     });
   }
 
   private rotateApiKey(): boolean {
     if (this.apiKeys.length <= 1) {
-      return false; // No other keys to rotate to
+      return false;
     }
 
     this.currentKeyIndex = (this.currentKeyIndex + 1) % this.apiKeys.length;
@@ -78,9 +73,6 @@ export class GeminiService {
     return true;
   }
 
-  /**
-   * Analyze code diff and provide AI-powered review suggestions
-   */
   async analyzeCodeDiff(
     diff: string,
     prTitle: string,
@@ -106,7 +98,6 @@ export class GeminiService {
         const response = await result.response;
         const text = response.text();
 
-        // Parse JSON response
         const analysisResult = this.parseGeminiResponse(text);
 
         logger.info({
@@ -125,7 +116,6 @@ export class GeminiService {
           keyIndex: this.currentKeyIndex + 1
         }, 'Gemini API error');
 
-        // Check for quota exceeded - try rotating to next key
         if ((error.message?.includes('quota') || error.message?.includes('rate limit'))
           && keyRotations < maxKeyRotations - 1) {
 
@@ -137,28 +127,24 @@ export class GeminiService {
               rotationCount: keyRotations
             }, 'Quota exceeded, rotated to next API key');
 
-            // Retry immediately with new key (don't count as attempt)
             attempt--;
             continue;
           }
         }
 
-        // If quota error and no more keys to rotate
         if (error.message?.includes('quota') || error.message?.includes('rate limit')) {
           throw new Error('AI analysis quota exceeded on all API keys. Please try again later.');
         }
 
-        // Check for overload (503) - retry with exponential backoff
         if (error.message?.includes('overloaded') || error.message?.includes('503')) {
           if (attempt < maxRetries) {
-            const waitTime = Math.pow(2, attempt) * 1000; // 2s, 4s, 8s
+            const waitTime = Math.pow(2, attempt) * 1000;
             logger.info({ waitTime, attempt }, 'Model overloaded, retrying after delay...');
             await new Promise(resolve => setTimeout(resolve, waitTime));
             continue;
           }
         }
 
-        // For other errors, throw immediately
         if (attempt === maxRetries) {
           throw new Error(`AI analysis failed after ${maxRetries} attempts: ${lastError?.message || 'Unknown error'}`);
         }
@@ -168,9 +154,6 @@ export class GeminiService {
     throw new Error(`AI analysis failed: ${lastError?.message || 'Unknown error'}`);
   }
 
-  /**
-   * Analyze code for security vulnerabilities
-   */
   async analyzeSecurityIssues(code: string, language: string): Promise<any> {
     try {
       const prompt = `
@@ -219,9 +202,6 @@ Provide response in JSON format:
     }
   }
 
-  /**
-   * Predict bug probability based on code changes
-   */
   async predictBugProbability(
     additions: number,
     deletions: number,
@@ -259,9 +239,6 @@ Provide response in JSON format:
     }
   }
 
-  /**
-   * Build comprehensive code review prompt
-   */
   private buildCodeReviewPrompt(
     diff: string,
     prTitle: string,
@@ -317,19 +294,13 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
 `;
   }
 
-  /**
-   * Parse Gemini response and extract JSON
-   */
   private parseGeminiResponse(text: string): CodeAnalysisResult {
     try {
-      // Log raw response for debugging
       logger.info({ responseLength: text.length }, 'Parsing Gemini response');
       logger.debug({ rawResponse: text.substring(0, 500) }, 'Raw Gemini response preview');
 
-      // Remove markdown code blocks if present
       let jsonText = text.trim();
 
-      // Strategy 1: Handle ```json ... ``` format
       if (jsonText.includes('```json')) {
         const match = jsonText.match(/```json\s*([\s\S]*?)\s*```/);
         if (match) {
@@ -337,7 +308,6 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
           logger.debug('Extracted JSON from ```json``` block');
         }
       }
-      // Strategy 2: Handle ``` ... ``` format (without json specifier)
       else if (jsonText.includes('```')) {
         const match = jsonText.match(/```\s*([\s\S]*?)\s*```/);
         if (match) {
@@ -346,7 +316,6 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
         }
       }
 
-      // Strategy 3: Try to find JSON object in the text if it's not pure JSON
       if (!jsonText.startsWith('{')) {
         const jsonMatch = jsonText.match(/\{[\s\S]*\}/);
         if (jsonMatch) {
@@ -357,13 +326,11 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
         }
       }
 
-      // Strategy 4: Clean up common JSON formatting issues
       jsonText = jsonText
-        .replace(/,\s*}/g, '}')  // Remove trailing commas
-        .replace(/,\s*]/g, ']')  // Remove trailing commas in arrays
+        .replace(/,\s*}/g, '}')
+        .replace(/,\s*]/g, ']')
         .trim();
 
-      // Parse JSON
       const parsed = JSON.parse(jsonText);
 
       // Validate required fields
@@ -371,7 +338,6 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
         throw new Error('Parsed result is not an object');
       }
 
-      // Normalize and validate response
       const result: CodeAnalysisResult = {
         score: Math.max(0, Math.min(100, Number(parsed.score) || 70)),
         issues: Array.isArray(parsed.issues) ? parsed.issues.map((issue: any) => ({
@@ -402,13 +368,11 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
         textPreview: text.substring(0, 200)
       }, 'Failed to parse Gemini response');
 
-      // Log more details for debugging
       logger.debug({
         fullText: text.substring(0, 2000),
         errorStack: error.stack
       }, 'Detailed parsing error');
 
-      // Return fallback response with helpful message
       return {
         score: 70,
         issues: [],
@@ -422,9 +386,6 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
     }
   }
 
-  /**
-   * Parse JSON from text (handles markdown code blocks)
-   */
   private parseJSONFromText(text: string): any {
     let jsonText = text.trim();
     if (jsonText.startsWith('```json')) {
@@ -436,7 +397,6 @@ ${diff.slice(0, 6000)} ${diff.length > 6000 ? '... (truncated)' : ''}
   }
 }
 
-// Singleton instance
 let geminiServiceInstance: GeminiService | null = null;
 
 export const getGeminiService = (): GeminiService => {

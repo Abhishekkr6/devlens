@@ -23,8 +23,6 @@ import { HeroVisual } from "../components/Landing/HeroVisual";
 import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/CommitTrackingVisual";
 import { WorkerArchitectureVisual } from "../components/Landing/FeatureVisuals/WorkerArchitectureVisual";
 
-// --- Components ---
-
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -83,17 +81,13 @@ function Navbar() {
         </button>
       </div>
 
-      {/* Mobile Menu */}
       {mobileMenuOpen && (
         <>
-          {/* Backdrop overlay with blur - covers entire screen behind menu */}
           <div
             className="md:hidden fixed inset-0 bg-background/95 dark:bg-background/98 backdrop-blur-2xl z-[45]"
             onClick={() => setMobileMenuOpen(false)}
           />
-          {/* Menu container - completely solid background with no transparency */}
           <div className="md:hidden absolute top-full left-0 right-0 border-b border-border/50 dark:border-border/30 shadow-2xl z-[50] animate-in slide-in-from-top-5 overflow-hidden backdrop-blur-xl bg-slate-950/80">
-            {/* Content */}
             <div className="relative p-4 flex flex-col gap-4">
               <Link href="/features" className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
                 Features
@@ -127,13 +121,11 @@ function Hero() {
 
   return (
     <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-      {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[1000px] h-[600px] bg-indigo-50/50 dark:bg-indigo-900/30 rounded-full blur-3xl opacity-60 dark:opacity-40 mix-blend-multiply dark:mix-blend-normal" />
         <div className="absolute top-20 right-0 w-[500px] h-[500px] bg-blue-50/50 dark:bg-blue-900/30 rounded-full blur-3xl opacity-60 dark:opacity-40 mix-blend-multiply dark:mix-blend-normal" />
       </div>
 
-      {/* Backdrop overlay to prevent transparency issues - professional blur effect */}
       <div className="absolute inset-0 bg-background/70 dark:bg-background/80 backdrop-blur-xl z-0 pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-12 lg:gap-8 items-center relative z-10">
@@ -207,7 +199,6 @@ function Hero() {
           </motion.div>
         </div>
 
-        {/* Right Content - Abstract Dashboard */}
         <motion.div
           style={{ y: y1 }}
           initial={{ opacity: 0, scale: 0.9 }}
@@ -278,7 +269,6 @@ function FeatureSection() {
           </p>
         </div>
 
-        {/* Generic Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-24 mx-auto">
           {genericFeatures.map((f, i) => (
             <FeatureCard
@@ -290,7 +280,6 @@ function FeatureSection() {
           ))}
         </div>
 
-        {/* Detailed Visual Sections */}
         <div className="space-y-0">
           <DetailedFeature
             title="AI-Powered Code Analysis"
@@ -437,7 +426,6 @@ function HowItWorks() {
         </div>
 
         <div className="grid md:grid-cols-4 gap-8 relative">
-          {/* Connector Line (Desktop) */}
           <div className="hidden md:block absolute top-8 left-0 w-full h-0.5 bg-border -z-10" />
 
           {steps.map((s, i) => (
@@ -508,8 +496,6 @@ function Footer() {
     </footer>
   );
 }
-
-// --- Main Page Component ---
 
 export default function LandingPage() {
   return (

@@ -8,7 +8,6 @@ import { Button } from "@/components/Ui/Button";
 export default function AIHelpPage() {
     return (
         <div className="min-h-screen bg-background">
-            {/* Header */}
             <div className="border-b border-border bg-surface/50">
                 <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12">
                     <Link href="/" className="inline-flex items-center gap-2 text-sm text-text-secondary hover:text-brand mb-4 transition-colors">
@@ -26,9 +25,7 @@ export default function AIHelpPage() {
                 </div>
             </div>
 
-            {/* Content */}
             <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-12 space-y-8">
-                {/* Quick Start */}
                 <Card className="p-6 sm:p-8 border-2 border-brand/20">
                     <div className="flex items-center gap-3 mb-6">
                         <Zap className="w-6 h-6 text-brand" />
@@ -59,7 +56,6 @@ export default function AIHelpPage() {
                     </div>
                 </Card>
 
-                {/* Features */}
                 <div>
                     <h2 className="text-2xl font-bold text-text-primary mb-6">What You Get</h2>
                     <div className="grid sm:grid-cols-2 gap-4">
@@ -117,7 +113,6 @@ export default function AIHelpPage() {
                     </div>
                 </div>
 
-                {/* FAQ */}
                 <div>
                     <h2 className="text-2xl font-bold text-text-primary mb-6">Frequently Asked Questions</h2>
                     <div className="space-y-4">
@@ -175,7 +170,6 @@ export default function AIHelpPage() {
                     </div>
                 </div>
 
-                {/* Best Practices */}
                 <Card className="p-6 sm:p-8 bg-gradient-to-br from-brand/5 to-purple-500/5">
                     <div className="flex items-center gap-3 mb-6">
                         <Book className="w-6 h-6 text-brand" />
@@ -198,7 +192,6 @@ export default function AIHelpPage() {
                     </ul>
                 </Card>
 
-                {/* CTA */}
                 <Card className="p-8 text-center bg-gradient-to-r from-brand/10 to-purple-500/10 border-2 border-brand/20">
                     <h2 className="text-2xl font-bold text-text-primary mb-3">Ready to try it?</h2>
                     <p className="text-text-secondary mb-6">

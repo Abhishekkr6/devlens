@@ -158,7 +158,6 @@ export default function PRsClient({ orgId }: { orgId: string }) {
         let isMounted = true;
 
         const loadPRs = (isBackgroundPoll = false) => {
-            // Only show loading on initial load
             if (!isBackgroundPoll && isMounted) {
                 setLoading(true);
             }
@@ -180,10 +179,8 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                 });
         };
 
-        // Initial load
         loadPRs(false);
 
-        // 🔥 Automatic polling every 60 seconds (background mode)
         const interval = setInterval(() => loadPRs(true), 60000);
 
         return () => {
@@ -312,9 +309,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
 
         return filteredRows.map((row) => {
             const isSelected = row.id === selectedPrId;
-            // Find repo info from prs array
             const pr = prs.find(p => p._id === row.id);
-            // Convert repoId to string (it might be an object)
             const repoIdString = typeof pr?.repoId === 'string'
                 ? pr.repoId
                 : (pr?.repoId as any)?._id || String(pr?.repoId || '');
@@ -337,7 +332,6 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                                     #{row.number} - {row.createdAtLabel}
                                 </div>
                             </div>
-                            {/* AI Icon - Mobile Only (inside title cell) */}
                             <div className="sm:hidden flex-shrink-0">
                                 <Tooltip
                                     content={
@@ -463,7 +457,6 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                 </p>
             </header>
 
-            {/* Welcome Banner */}
             <AIWelcomeBanner />
 
 

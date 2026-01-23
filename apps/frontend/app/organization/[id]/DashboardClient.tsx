@@ -59,15 +59,12 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
 
     const retryRef = useRef(0);
     const [errorMessage, setErrorMessage] = useState("");
-
-    // Ref to hold the loadData function to allow safe recursion/timeout call
     const loadDataRef = useRef<() => void>(() => { });
 
     const loadData = useCallback(async (isBackgroundPoll = false) => {
         if (!orgId) return;
 
         try {
-            // Only show loading on initial load, not on background polls
             if (!isBackgroundPoll) {
                 setLoading(true);
             }
@@ -106,26 +103,23 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                 if (state === "open") statusSummary.open += 1;
                 else if (state === "merged") statusSummary.merged += 1;
                 else if (state === "review") statusSummary.review += 1;
-                // Note: closed and draft PRs are not counted in any category
             });
 
             setRiskBuckets(buckets);
             setPrStatusCounts(statusSummary);
-            setErrorType(null); // Clear errors on success
-            setLoading(false); // Success - stop loading
+            setErrorType(null);
+            setLoading(false);
         } catch (err: unknown) {
             console.error("Dashboard load error:", err);
             const e = err as { response?: { data?: { error?: { message?: string } }, status?: number }, message?: string };
             const msg = e.response?.data?.error?.message || e.message || "Unknown error";
 
-            // Auto-Retry Logic (Race condition fix)
             if (retryRef.current < 1) {
                 console.log("Auto-retrying dashboard load...");
                 retryRef.current += 1;
                 setTimeout(() => {
-                    loadDataRef.current(); // Call via Ref
-                }, 1000); // Wait 1s and retry
-                // Keep loading true!
+                    loadDataRef.current();
+                }, 1000);
                 return;
             }
 
@@ -135,34 +129,28 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
             } else {
                 setErrorType("generic");
             }
-            setLoading(false); // Failure - stop loading
+            setLoading(false);
         }
     }, [orgId]);
 
-    // Update the ref whenever loadData changes
     useEffect(() => {
         loadDataRef.current = loadData;
     }, [loadData]);
 
-    // Initial load
     useEffect(() => {
         loadData();
     }, [loadData]);
 
-    // 🔥 NEW: Automatic polling for real-time updates (replaces Redis pub/sub)
-    // Polls every 30 seconds to keep dashboard data fresh
-    // Uses background flag to prevent visible loading state
     useEffect(() => {
         if (!orgId) return;
 
         const pollInterval = setInterval(() => {
-            loadData(true); // true = background poll, no loading spinner
-        }, 30000); // Poll every 30 seconds
+            loadData(true);
+        }, 30000);
 
         return () => clearInterval(pollInterval);
     }, [orgId, loadData]);
 
-    // Event-based refresh (keeps existing behavior for immediate updates)
     useEffect(() => {
         if (!orgId || !lastEvent) return;
         if (lastEvent.type !== "PR_UPDATED" && lastEvent.type !== "NEW_ALERT" && lastEvent.type !== "COMMIT_PROCESSED" && lastEvent.type !== "org:joined") return;
