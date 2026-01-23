@@ -3,6 +3,8 @@
 import Topbar from "./Topbar";
 import { useEffect } from "react";
 import { useLiveStore } from "../../store/liveStore";
+import { AIGuideButton } from "../AIGuide/AIGuideButton";
+
 let hasBootstrapped = false;
 
 export default function DashboardLayout({
@@ -24,6 +26,9 @@ export default function DashboardLayout({
       <main className="mx-auto w-full max-w-7xl px-4 pb-12 pt-8 sm:px-6 lg:px-8">
         {children}
       </main>
+
+      {/* AI Guide Assistant */}
+      <AIGuideButton />
     </div>
   );
 }
