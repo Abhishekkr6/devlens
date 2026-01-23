@@ -21,6 +21,7 @@ export function AIGuideChatPanel({ onClose }: AIGuideChatPanelProps) {
     const [loading, setLoading] = useState(false);
     const pathname = usePathname();
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         // Send welcome message based on current page
@@ -37,6 +38,29 @@ export function AIGuideChatPanel({ onClose }: AIGuideChatPanelProps) {
         // Auto-scroll to bottom
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
+
+    useEffect(() => {
+        // Prevent scroll propagation to background
+        const container = messagesContainerRef.current;
+        if (!container) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            const { scrollTop, scrollHeight, clientHeight } = container;
+            const isScrollingDown = e.deltaY > 0;
+            const isScrollingUp = e.deltaY < 0;
+
+            // Prevent propagation if we're scrolling within bounds
+            if (
+                (isScrollingDown && scrollTop + clientHeight < scrollHeight) ||
+                (isScrollingUp && scrollTop > 0)
+            ) {
+                e.stopPropagation();
+            }
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, []);
 
     const sendMessage = async (text?: string) => {
         const messageText = text || input;
@@ -115,7 +139,7 @@ export function AIGuideChatPanel({ onClose }: AIGuideChatPanelProps) {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface/30 overscroll-behavior-y-contain">
+            <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-surface/30 overscroll-behavior-y-contain">
                 {messages.map(message => (
                     <div
                         key={message.id}
