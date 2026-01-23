@@ -25,7 +25,7 @@ export function AIGuideButton() {
             <button
                 onClick={handleOpen}
                 className={`
-          fixed bottom-6 right-6 z-50
+          fixed bottom-6 right-6 z-[9998]
           w-14 h-14 sm:w-16 sm:h-16
           rounded-full
           bg-gradient-to-r from-brand to-purple-600
