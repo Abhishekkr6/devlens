@@ -54,7 +54,7 @@ export function AIGuideChatPanel({ onClose }: AIGuideChatPanelProps) {
         setLoading(true);
 
         try {
-            const response = await fetch('/api/ai/guide', {
+            const response = await fetch('/api/v1/ai/guide', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
