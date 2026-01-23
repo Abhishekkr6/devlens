@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
-import { GoogleGenerativeAI } from '@google/generative-ai';
-
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
+import { getGeminiService } from '../services/ai/gemini.service';
+import logger from '../utils/logger';
 
 export async function handleGuideQuery(req: Request, res: Response) {
     try {
@@ -14,23 +13,41 @@ export async function handleGuideQuery(req: Request, res: Response) {
             });
         }
 
-        const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
+        // Get Gemini service instance (handles multiple API keys)
+        let geminiService;
+        try {
+            geminiService = getGeminiService();
+        } catch (error: any) {
+            logger.error('AI Guide error: Gemini service not available', error);
+            return res.status(503).json({
+                success: false,
+                error: 'AI service not configured',
+                response: "I'm currently unavailable. The AI service hasn't been configured yet. Please contact your administrator."
+            });
+        }
 
         const prompt = buildGuidePrompt(message, context, history);
 
+        logger.info({ messageLength: message.length, context }, 'Processing AI Guide query');
+
+        // Use the Gemini model directly for chat-style responses
+        const model = (geminiService as any).model;
         const result = await model.generateContent(prompt);
         const response = result.response.text();
+
+        logger.info({ responseLength: response.length }, 'AI Guide response generated');
 
         res.json({
             success: true,
             response: response
         });
     } catch (error: any) {
-        console.error('AI Guide error:', error);
+        logger.error({ error: error.message }, 'AI Guide error');
         res.status(500).json({
             success: false,
             error: 'Failed to get AI response',
-            message: error.message
+            message: error.message,
+            response: "I'm having trouble processing your request right now. Please try again in a moment."
         });
     }
 }
