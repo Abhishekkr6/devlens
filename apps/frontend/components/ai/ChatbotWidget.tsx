@@ -146,7 +146,7 @@ export function ChatbotWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="fixed bottom-6 right-6 z-50 w-[400px] h-[600px] bg-surface border border-border rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[100dvh] sm:h-[600px] bg-[#0a0a0a] sm:bg-background border-t sm:border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Header */}
                         <div className="bg-gradient-to-r from-brand to-purple-600 text-white p-4 flex items-center justify-between">
@@ -254,7 +254,7 @@ export function ChatbotWidget() {
                         )}
 
                         {/* Input */}
-                        <div className="p-4 border-t border-border bg-surface">
+                        <div className="p-4 border-t border-border bg-background sm:bg-surface">
                             <div className="flex items-center gap-2">
                                 <input
                                     type="text"
