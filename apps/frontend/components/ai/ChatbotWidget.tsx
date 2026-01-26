@@ -16,6 +16,7 @@ export function ChatbotWidget() {
     const [input, setInput] = useState('');
     const [isInitialized, setIsInitialized] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const messagesContainerRef = useRef<HTMLDivElement>(null);
     const pathname = usePathname();
 
     // Context-aware welcome message
@@ -203,7 +204,7 @@ export function ChatbotWidget() {
 
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background overscroll-contain">
+                        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-background overscroll-contain">
                             {messages.length === 0 && (
                                 <div className="text-center py-8">
                                     <div className="inline-flex p-4 bg-brand/10 rounded-full mb-4">
