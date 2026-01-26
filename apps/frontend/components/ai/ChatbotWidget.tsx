@@ -45,6 +45,7 @@ export function ChatbotWidget() {
             if (p.includes('/alerts')) return 'alerts';
             if (p.includes('/developers')) return 'developers';
             if (p.includes('/activity')) return 'activity';
+            if (p.includes('/team')) return 'team';
             if (p.includes('/dashboard') || p.includes('/organization')) return 'dashboard';
             return 'general';
         };
@@ -369,6 +370,9 @@ function getWelcomeMessage(pathname: string): string {
     }
     if (pathname.includes('/activity')) {
         return "👋 Welcome to Activity!\n\nI can help you:\n• Review recent events\n• Track team progress\n• Filter activity logs\n• Understand timeline\n\nWhat timeframe are you interested in?";
+    }
+    if (pathname.includes('/team')) {
+        return "👋 Welcome to Team Management!\n\nI can help you:\n• Manage team members\n• Assign roles\n• View access levels\n• Track team performance\n\nWhat would you like to do?";
     }
     if (pathname.includes('/dashboard') || pathname.includes('/organization')) {
         return "👋 Welcome to your Dashboard!\n\nHere you can:\n• View team activity\n• Monitor PR status\n• Check critical alerts\n• Track metrics\n\nNeed help with anything?";
