@@ -16,6 +16,7 @@ import { Card } from "../../../components/Ui/Card";
 import { AIStatsWidget } from "../../../components/Ui/AIStatsWidget";
 import CommitLineChart from "../../../components/Charts/CommitLineChart";
 import PRRiskBarChart from "../../../components/Charts/PRRiskBarChart";
+import { ChatbotWidget } from "../../../components/ai/ChatbotWidget";
 
 interface DashboardData {
     kpis: {
@@ -358,6 +359,9 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
                     </div>
                 </Card>
             </section>
+
+            {/* AI Chatbot Widget */}
+            <ChatbotWidget />
         </div>
     );
 }
