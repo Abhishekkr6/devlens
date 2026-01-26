@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Send, Trash2, Sparkles, Loader2 } from 'lucide-react';
 import { useChatbotStore } from '@/store/chatbotStore';
