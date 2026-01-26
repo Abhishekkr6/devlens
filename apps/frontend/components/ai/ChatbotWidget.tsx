@@ -43,6 +43,8 @@ export function ChatbotWidget() {
             if (p.includes('/repos')) return 'repos';
             if (p.includes('/settings')) return 'settings';
             if (p.includes('/alerts')) return 'alerts';
+            if (p.includes('/developers')) return 'developers';
+            if (p.includes('/activity')) return 'activity';
             if (p.includes('/dashboard') || p.includes('/organization')) return 'dashboard';
             return 'general';
         };
@@ -52,16 +54,16 @@ export function ChatbotWidget() {
 
         // Trigger if section changed (comparing to non-null prev) or simply if it's a new mount/first load
         if (currentSection !== prevSection) {
+            // Clear previous messages to keep context fresh as per user request
+            clearMessages();
+
             const welcomeMsg = getWelcomeMessage(pathname);
 
-            // Avoid duplicate messages if the last one was the same
-            const lastMsg = messages[messages.length - 1];
-            if (!lastMsg || lastMsg.content !== welcomeMsg) {
-                addMessage({
-                    type: 'bot',
-                    content: welcomeMsg
-                });
-            }
+            // Avoid duplicate messages if the last one was the same (though clearMessages makes this less likely, good for safety)
+            addMessage({
+                type: 'bot',
+                content: welcomeMsg
+            });
         }
 
         prevPathRef.current = pathname;
@@ -361,6 +363,12 @@ function getWelcomeMessage(pathname: string): string {
     }
     if (pathname.includes('/alerts')) {
         return "👋 Welcome to Alerts!\n\nI can help you:\n• detailed analysis of alerts\n• Understand risk scores\n• Prioritize critical issues\n• resolution suggestions\n\nWhat do you need help with?";
+    }
+    if (pathname.includes('/developers')) {
+        return "👋 Welcome to Developers!\n\nI can help you:\n• Track developer activity\n• View contribution stats\n• Analyze coding patterns\n• Compare performance\n\nWho would you like to know about?";
+    }
+    if (pathname.includes('/activity')) {
+        return "👋 Welcome to Activity!\n\nI can help you:\n• Review recent events\n• Track team progress\n• Filter activity logs\n• Understand timeline\n\nWhat timeframe are you interested in?";
     }
     if (pathname.includes('/dashboard') || pathname.includes('/organization')) {
         return "👋 Welcome to your Dashboard!\n\nHere you can:\n• View team activity\n• Monitor PR status\n• Check critical alerts\n• Track metrics\n\nNeed help with anything?";
