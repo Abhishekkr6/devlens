@@ -20,7 +20,21 @@ export function ChatbotWidget() {
     const pathname = usePathname();
 
     // Context-aware welcome message
-    const prevPathRef = useRef(pathname);
+    const prevPathRef = useRef<string | null>(null);
+
+    // Load conversation history on mount
+    useEffect(() => {
+        if (activeOrgId && !isInitialized) {
+            // If we already have messages, don't reload history (preserves context on navigation)
+            if (messages.length > 0) {
+                setIsInitialized(true);
+                return;
+            }
+
+            loadConversationHistory();
+            setIsInitialized(true);
+        }
+    }, [activeOrgId, isInitialized, messages.length]);
 
     // Context-aware welcome message
     useEffect(() => {
@@ -33,10 +47,10 @@ export function ChatbotWidget() {
         };
 
         const currentSection = getSection(pathname);
-        const prevSection = getSection(prevPathRef.current);
+        const prevSection = prevPathRef.current ? getSection(prevPathRef.current) : null;
 
-        // Only trigger if section changed or first load
-        if (currentSection !== prevSection || (!messages.length && !isInitialized)) {
+        // Trigger if section changed (comparing to non-null prev) or simply if it's a new mount/first load
+        if (currentSection !== prevSection) {
             const welcomeMsg = getWelcomeMessage(pathname);
 
             // Avoid duplicate messages if the last one was the same
@@ -47,20 +61,10 @@ export function ChatbotWidget() {
                     content: welcomeMsg
                 });
             }
-
-            setIsInitialized(true);
         }
 
         prevPathRef.current = pathname;
-    }, [pathname, messages, isInitialized, addMessage]);
-
-    // Load conversation history on mount
-    useEffect(() => {
-        if (activeOrgId && !isInitialized) {
-            loadConversationHistory();
-            setIsInitialized(true);
-        }
-    }, [activeOrgId, isInitialized]);
+    }, [pathname, messages, addMessage]);
 
     // Auto-scroll to bottom when new messages arrive
     useEffect(() => {
