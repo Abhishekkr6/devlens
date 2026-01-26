@@ -78,6 +78,44 @@ export function ChatbotWidget() {
         }
     };
 
+    // Prevent scroll propagation to background
+    const widgetContainerRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const container = widgetContainerRef.current;
+        const messagesContainer = messagesContainerRef.current;
+        if (!container || !isOpen) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            // If we are over the message container, handle edge scrolling
+            if (messagesContainer && messagesContainer.contains(e.target as Node)) {
+                const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
+                const isScrollingDown = e.deltaY > 0;
+                const isScrollingUp = e.deltaY < 0;
+
+                // If content is scrollable
+                if (scrollHeight > clientHeight) {
+                    // Check edges
+                    if (
+                        (isScrollingDown && scrollTop + clientHeight >= scrollHeight - 1) ||
+                        (isScrollingUp && scrollTop <= 0)
+                    ) {
+                        e.preventDefault(); // Stop at edges
+                    }
+                    e.stopPropagation(); // Always stop propagation if it's the scroll container
+                    return;
+                }
+            }
+
+            // For any other area (header, input, or non-scrollable content), prevent default scroll
+            e.preventDefault();
+            e.stopPropagation();
+        };
+
+        container.addEventListener('wheel', handleWheel, { passive: false });
+        return () => container.removeEventListener('wheel', handleWheel);
+    }, [isOpen]);
+
     const handleSendMessage = async (messageText?: string) => {
         const queryText = messageText || input.trim();
 
@@ -166,6 +204,7 @@ export function ChatbotWidget() {
             <AnimatePresence>
                 {isOpen && (
                     <motion.div
+                        ref={widgetContainerRef}
                         initial={{ opacity: 0, y: 100, scale: 0.9 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
