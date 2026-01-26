@@ -7,6 +7,7 @@ import { chatbotAPI } from '@/lib/chatbotAPI';
 import { useUserStore } from '@/store/userStore';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
+import { usePathname } from 'next/navigation';
 
 
 export function ChatbotWidget() {
@@ -15,6 +16,19 @@ export function ChatbotWidget() {
     const [input, setInput] = useState('');
     const [isInitialized, setIsInitialized] = useState(false);
     const messagesEndRef = useRef<HTMLDivElement>(null);
+    const pathname = usePathname();
+
+    // Context-aware welcome message
+    useEffect(() => {
+        if (!messages.length && !isInitialized) {
+            const welcomeMsg = getWelcomeMessage(pathname);
+            addMessage({
+                type: 'bot',
+                content: welcomeMsg
+            });
+            setIsInitialized(true);
+        }
+    }, [pathname, messages.length, isInitialized, addMessage]);
 
     // Load conversation history on mount
     useEffect(() => {
@@ -164,6 +178,7 @@ export function ChatbotWidget() {
                             </div>
                         </div>
 
+
                         {/* Messages */}
                         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
                             {messages.length === 0 && (
@@ -172,10 +187,10 @@ export function ChatbotWidget() {
                                         <Sparkles className="w-8 h-8 text-brand" />
                                     </div>
                                     <h4 className="text-lg font-semibold text-text-primary mb-2">
-                                        Welcome to TeamPulse AI!
+                                        TeamPulse AI Guide
                                     </h4>
                                     <p className="text-sm text-text-secondary mb-4">
-                                        I can help you with pull requests, developer stats, commits, and more.
+                                        I can help you with PRs, stats, and platform navigation.
                                     </p>
                                 </div>
                             )}
@@ -264,4 +279,20 @@ export function ChatbotWidget() {
             </AnimatePresence>
         </>
     );
+}
+
+function getWelcomeMessage(pathname: string): string {
+    if (pathname.includes('/prs')) {
+        return "👋 Welcome to Pull Requests!\n\nI can help you:\n• Analyze PRs with AI\n• Understand risk scores\n• Navigate PR details\n• Filter and search PRs\n\nWhat would you like to know?";
+    }
+    if (pathname.includes('/dashboard') || pathname.includes('/organization')) {
+        return "👋 Welcome to your Dashboard!\n\nHere you can:\n• View team activity\n• Monitor PR status\n• Check critical alerts\n• Track metrics\n\nNeed help with anything?";
+    }
+    if (pathname.includes('/repos')) {
+        return "👋 Welcome to Repositories!\n\nI can help you:\n• Navigate repositories\n• View PR overview\n• Check contributors\n• Understand repo metrics\n\nWhat would you like to explore?";
+    }
+    if (pathname.includes('/settings')) {
+        return "👋 Welcome to Settings!\n\nI can help you:\n• Configure AI analysis\n• Set up preferences\n• Manage organization\n• Understand options\n\nWhat do you need help with?";
+    }
+    return "👋 Hi! I'm your TeamPulse AI Guide.\n\nI can help you:\n• Navigate the platform\n• Use AI features\n• Understand metrics\n• Get started quickly\n\nWhat would you like to learn?";
 }

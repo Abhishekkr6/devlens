@@ -3,7 +3,7 @@
 import Topbar from "./Topbar";
 import { useEffect } from "react";
 import { useLiveStore } from "../../store/liveStore";
-import { AIGuideButton } from "../AIGuide/AIGuideButton";
+import { ChatbotWidget } from "../ai/ChatbotWidget";
 
 let hasBootstrapped = false;
 
@@ -28,7 +28,7 @@ export default function DashboardLayout({
       </main>
 
       {/* AI Guide Assistant */}
-      <AIGuideButton />
+      <ChatbotWidget />
     </div>
   );
 }
