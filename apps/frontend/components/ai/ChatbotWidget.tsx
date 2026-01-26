@@ -8,7 +8,6 @@ import { useUserStore } from '@/store/userStore';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'motion/react';
 
-"use client";
 
 export function ChatbotWidget() {
     const { isOpen, messages, isLoading, suggestions, setOpen, addMessage, setLoading, setSuggestions, clearMessages, loadHistory } = useChatbotStore();
