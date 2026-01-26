@@ -244,7 +244,7 @@ export function ChatbotWidget() {
                                         <button
                                             key={index}
                                             onClick={() => handleSendMessage(suggestion)}
-                                            className="text-xs px-3 py-1.5 bg-brand/10 text-brand rounded-full hover:bg-brand/20 transition-colors cursor-pointer"
+                                            className="text-xs px-3 py-1.5 bg-brand/10 text-brand rounded-full border border-brand/20 hover:border-brand/50 hover:bg-brand/20 transition-all cursor-pointer"
                                         >
                                             {suggestion}
                                         </button>
