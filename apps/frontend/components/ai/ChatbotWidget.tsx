@@ -130,7 +130,7 @@ export function ChatbotWidget() {
                         whileHover={{ scale: 1.1 }}
                         whileTap={{ scale: 0.9 }}
                         onClick={() => setOpen(true)}
-                        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-brand to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-brand/50 transition-all duration-300"
+                        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-brand to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-brand/50 transition-all duration-300 cursor-pointer"
                     >
                         <MessageCircle className="w-6 h-6" />
                         <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
@@ -146,10 +146,10 @@ export function ChatbotWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.9 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[100dvh] sm:h-[600px] bg-[#0a0a0a] sm:bg-background border-t sm:border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[100dvh] sm:h-[600px] max-h-[100dvh] bg-[#0a0a0a] sm:bg-background border-t sm:border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
                     >
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-brand to-purple-600 text-white p-4 flex items-center justify-between">
+                        <div className="bg-gradient-to-r from-brand to-purple-600 text-white p-4 flex items-center justify-between shrink-0">
                             <div className="flex items-center gap-3">
                                 <div className="p-2 bg-white/20 rounded-lg">
                                     <Sparkles className="w-5 h-5" />
@@ -163,7 +163,7 @@ export function ChatbotWidget() {
                                 {messages.length > 0 && (
                                     <button
                                         onClick={handleClearHistory}
-                                        className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                                        className="p-2 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
                                         title="Clear history"
                                     >
                                         <Trash2 className="w-4 h-4" />
@@ -171,7 +171,7 @@ export function ChatbotWidget() {
                                 )}
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="p-2 hover:bg-white/20 rounded-lg transition-colors"
+                                    className="p-2 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -244,7 +244,7 @@ export function ChatbotWidget() {
                                         <button
                                             key={index}
                                             onClick={() => handleSendMessage(suggestion)}
-                                            className="text-xs px-3 py-1.5 bg-brand/10 text-brand rounded-full hover:bg-brand/20 transition-colors"
+                                            className="text-xs px-3 py-1.5 bg-brand/10 text-brand rounded-full hover:bg-brand/20 transition-colors cursor-pointer"
                                         >
                                             {suggestion}
                                         </button>
@@ -268,7 +268,7 @@ export function ChatbotWidget() {
                                 <button
                                     onClick={() => handleSendMessage()}
                                     disabled={!input.trim() || isLoading}
-                                    className="p-2 bg-brand text-white rounded-full hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="p-2 bg-brand text-white rounded-full hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                                 >
                                     <Send className="w-5 h-5" />
                                 </button>
