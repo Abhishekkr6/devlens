@@ -19,16 +19,39 @@ export function ChatbotWidget() {
     const pathname = usePathname();
 
     // Context-aware welcome message
+    const prevPathRef = useRef(pathname);
+
+    // Context-aware welcome message
     useEffect(() => {
-        if (!messages.length && !isInitialized) {
+        const getSection = (p: string) => {
+            if (p.includes('/prs')) return 'prs';
+            if (p.includes('/repos')) return 'repos';
+            if (p.includes('/settings')) return 'settings';
+            if (p.includes('/dashboard') || p.includes('/organization')) return 'dashboard';
+            return 'general';
+        };
+
+        const currentSection = getSection(pathname);
+        const prevSection = getSection(prevPathRef.current);
+
+        // Only trigger if section changed or first load
+        if (currentSection !== prevSection || (!messages.length && !isInitialized)) {
             const welcomeMsg = getWelcomeMessage(pathname);
-            addMessage({
-                type: 'bot',
-                content: welcomeMsg
-            });
+
+            // Avoid duplicate messages if the last one was the same
+            const lastMsg = messages[messages.length - 1];
+            if (!lastMsg || lastMsg.content !== welcomeMsg) {
+                addMessage({
+                    type: 'bot',
+                    content: welcomeMsg
+                });
+            }
+
             setIsInitialized(true);
         }
-    }, [pathname, messages.length, isInitialized, addMessage]);
+
+        prevPathRef.current = pathname;
+    }, [pathname, messages, isInitialized, addMessage]);
 
     // Load conversation history on mount
     useEffect(() => {
@@ -180,7 +203,7 @@ export function ChatbotWidget() {
 
 
                         {/* Messages */}
-                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background">
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-background overscroll-contain">
                             {messages.length === 0 && (
                                 <div className="text-center py-8">
                                     <div className="inline-flex p-4 bg-brand/10 rounded-full mb-4">
