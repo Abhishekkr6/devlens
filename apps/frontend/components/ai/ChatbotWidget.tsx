@@ -42,6 +42,7 @@ export function ChatbotWidget() {
             if (p.includes('/prs')) return 'prs';
             if (p.includes('/repos')) return 'repos';
             if (p.includes('/settings')) return 'settings';
+            if (p.includes('/alerts')) return 'alerts';
             if (p.includes('/dashboard') || p.includes('/organization')) return 'dashboard';
             return 'general';
         };
@@ -352,14 +353,17 @@ function getWelcomeMessage(pathname: string): string {
     if (pathname.includes('/prs')) {
         return "👋 Welcome to Pull Requests!\n\nI can help you:\n• Analyze PRs with AI\n• Understand risk scores\n• Navigate PR details\n• Filter and search PRs\n\nWhat would you like to know?";
     }
-    if (pathname.includes('/dashboard') || pathname.includes('/organization')) {
-        return "👋 Welcome to your Dashboard!\n\nHere you can:\n• View team activity\n• Monitor PR status\n• Check critical alerts\n• Track metrics\n\nNeed help with anything?";
-    }
     if (pathname.includes('/repos')) {
         return "👋 Welcome to Repositories!\n\nI can help you:\n• Navigate repositories\n• View PR overview\n• Check contributors\n• Understand repo metrics\n\nWhat would you like to explore?";
     }
     if (pathname.includes('/settings')) {
         return "👋 Welcome to Settings!\n\nI can help you:\n• Configure AI analysis\n• Set up preferences\n• Manage organization\n• Understand options\n\nWhat do you need help with?";
+    }
+    if (pathname.includes('/alerts')) {
+        return "👋 Welcome to Alerts!\n\nI can help you:\n• detailed analysis of alerts\n• Understand risk scores\n• Prioritize critical issues\n• resolution suggestions\n\nWhat do you need help with?";
+    }
+    if (pathname.includes('/dashboard') || pathname.includes('/organization')) {
+        return "👋 Welcome to your Dashboard!\n\nHere you can:\n• View team activity\n• Monitor PR status\n• Check critical alerts\n• Track metrics\n\nNeed help with anything?";
     }
     return "👋 Hi! I'm your TeamPulse AI Guide.\n\nI can help you:\n• Navigate the platform\n• Use AI features\n• Understand metrics\n• Get started quickly\n\nWhat would you like to learn?";
 }
