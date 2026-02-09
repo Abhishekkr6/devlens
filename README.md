@@ -1,6 +1,6 @@
 ﻿# TeamPulse
 
-A full-stack SaaS platform for engineering teams to monitor GitHub repository activity, track developer metrics, and identify code risks in real-time.
+A full-stack SaaS platform for engineering teams to monitor GitHub repository activity, track developer metrics, and identify code risks in real-time. Includes a VS Code extension for in-IDE insights.
 
 ## Project Overview
 
@@ -8,7 +8,7 @@ TeamPulse solves the visibility gap in distributed engineering teams. Instead of
 
 This is not a tutorial project. It integrates GitHub webhooks, processes events asynchronously, calculates risk scores based on code complexity, and delivers updates via WebSockets. It's built to handle multiple organizations, role-based access control, and real-time collaboration.
 
-The platform is designed for engineering managers and team leads who need actionable insights without interrupting developer workflows.
+The platform is designed for engineering managers and team leads who need actionable insights without interrupting developer workflows. The companion VS Code extension brings these insights directly into the IDE.
 
 ## Key Features
 
@@ -22,6 +22,7 @@ The platform is designed for engineering managers and team leads who need action
 - Real-time notifications with sound effects for different event types
 - Repository settings with configurable alert thresholds
 - Secure GitHub OAuth authentication with token refresh handling
+- **VS Code Extension** - Lightweight sidebar with PR overview and risk alerts directly in your IDE
 
 ## Tech Stack
 
@@ -52,12 +53,20 @@ The platform is designed for engineering managers and team leads who need action
 - **MongoDB Atlas** - Cloud database hosting
 - **Render/Vercel** - Deployment platforms
 
+### VS Code Extension
+- **TypeScript** - Type-safe extension development
+- **VS Code Extension API** - Native IDE integration
+- **Webview API** - Custom sidebar UI with HTML/CSS/JavaScript
+- **axios** - HTTP client for REST API communication
+- **VS Code SecretStorage** - Encrypted token storage at OS level
+
 ### Why These Choices?
 - Next.js for SEO-friendly landing pages and fast client-side navigation
 - MongoDB for schema flexibility as features evolve (e.g., adding new metric types)
 - WebSockets for instant dashboard updates without polling
 - Zustand over Redux for simpler state management with less boilerplate
 - TypeScript to catch errors at compile time, especially important for webhook payload parsing
+- VS Code Extension for seamless developer workflow integration without context switching
 
 ## System Architecture
 
@@ -213,6 +222,99 @@ GitHub Webhooks (push, pull_request events)
 - `GET /api/v1/notifications` - List user notifications
 - `PATCH /api/v1/notifications/:id/read` - Mark notification as read
 
+## VS Code Extension
+
+### Overview
+
+The TeamPulse VS Code extension brings real-time PR insights directly into your IDE. View open pull requests, identify high-risk PRs, and access the full dashboard without leaving your code editor.
+
+### Features
+
+- **Automatic Repository Detection** - Detects GitHub repositories in your workspace
+- **Pull Request Overview** - View all open PRs with risk scores and metadata
+- **High-Risk Alerts** - Separate section for PRs with risk score ≥ 70
+- **One-Click Access** - Open PRs in browser or jump to full dashboard
+- **Secure Authentication** - Tokens stored in OS-level encrypted storage (Windows Credential Manager, macOS Keychain, Linux Secret Service)
+- **Theme Compatible** - Seamlessly integrates with VS Code dark/light themes
+- **Real-Time Refresh** - Manual refresh to fetch latest PR data
+
+### Installation
+
+**From Source** (for development):
+
+1. Navigate to extension directory:
+```bash
+cd extensions/teampulse-vscode
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Compile TypeScript:
+```bash
+npm run compile
+```
+
+4. Open in VS Code and press **F5** to launch Extension Development Host
+
+**From VSIX** (for distribution):
+
+1. Package the extension:
+```bash
+npm run package
+```
+
+2. Install the generated `.vsix` file:
+```bash
+code --install-extension teampulse-vscode-0.1.0.vsix
+```
+
+### Usage
+
+1. **Login**: Click TeamPulse icon in Activity Bar → Enter your auth token
+2. **Open Repository**: Open a workspace with a GitHub repository
+3. **View PRs**: PRs automatically appear in the sidebar
+4. **Click PR**: Opens PR in browser
+5. **Refresh**: Click refresh button to update data
+
+### Architecture
+
+```
+VS Code Extension
+    ↓
+Extension Host (Node.js)
+    ↓ (HTTP REST API)
+TeamPulse Backend
+    ↓
+MongoDB
+```
+
+**Key Components**:
+- `extension.ts` - Activation, command registration, event listeners
+- `TeamPulseViewProvider.ts` - Webview state management and rendering
+- `authManager.ts` - Secure token storage using VS Code SecretStorage
+- `apiClient.ts` - REST API client with error handling
+- `repoDetector.ts` - Git repository detection using VS Code Git API
+- `webview/main.js` - Webview UI logic with JSDoc type annotations
+
+### Security
+
+- Auth tokens stored in **VS Code SecretStorage** (encrypted at OS level)
+- No plaintext token storage
+- HTTPS-only API communication
+- Content Security Policy in webview
+- JWT validation on every API request
+
+### Development
+
+See [`extensions/teampulse-vscode/DEVELOPMENT.md`](extensions/teampulse-vscode/DEVELOPMENT.md) for:
+- Project structure
+- Development workflow
+- Testing procedures
+- Publishing to VS Code Marketplace
+
 ## Setup & Installation
 
 ### Prerequisites
@@ -300,6 +402,14 @@ This starts both frontend (port 3000) and backend (port 4000) concurrently.
 9. **Access the application**
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:4000
+
+10. **(Optional) Set up VS Code Extension**
+```bash
+cd extensions/teampulse-vscode
+npm install
+npm run compile
+# Press F5 in VS Code to launch Extension Development Host
+```
 
 ### Common Setup Mistakes
 

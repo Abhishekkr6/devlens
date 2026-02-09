@@ -1,0 +1,104 @@
+{
+    "name": "teampulse-vscode",
+    "displayName": "TeamPulse",
+    "description": "Real-time engineering insights for your GitHub repositories",
+    "version": "0.1.0",
+    "publisher": "teampulse",
+    "icon": "media/icon.png",
+    "engines": {
+        "vscode": "^1.85.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "keywords": [
+        "github",
+        "pull request",
+        "code review",
+        "engineering metrics",
+        "team collaboration"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./dist/extension.js",
+    "contributes": {
+        "viewsContainers": {
+            "activitybar": [
+                {
+                    "id": "teampulse",
+                    "title": "TeamPulse",
+                    "icon": "media/icon.svg"
+                }
+            ]
+        },
+        "views": {
+            "teampulse": [
+                {
+                    "type": "webview",
+                    "id": "teampulse.sidebar",
+                    "name": "Repository Insights"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "teampulse.login",
+                "title": "TeamPulse: Login with GitHub"
+            },
+            {
+                "command": "teampulse.logout",
+                "title": "TeamPulse: Logout"
+            },
+            {
+                "command": "teampulse.refresh",
+                "title": "TeamPulse: Refresh",
+                "icon": "$(refresh)"
+            },
+            {
+                "command": "teampulse.openDashboard",
+                "title": "TeamPulse: Open Dashboard"
+            }
+        ],
+        "configuration": {
+            "title": "TeamPulse",
+            "properties": {
+                "teampulse.apiUrl": {
+                    "type": "string",
+                    "default": "https://teampulse-production.up.railway.app",
+                    "description": "TeamPulse API base URL"
+                },
+                "teampulse.dashboardUrl": {
+                    "type": "string",
+                    "default": "https://teampulse18.vercel.app",
+                    "description": "TeamPulse dashboard URL"
+                }
+            }
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile",
+        "lint": "eslint src --ext ts",
+        "package": "vsce package"
+    },
+    "devDependencies": {
+        "@types/node": "^20.0.0",
+        "@types/vscode": "^1.85.0",
+        "@typescript-eslint/eslint-plugin": "^6.0.0",
+        "@typescript-eslint/parser": "^6.0.0",
+        "eslint": "^8.0.0",
+        "typescript": "^5.3.0",
+        "@vscode/vsce": "^2.22.0"
+    },
+    "dependencies": {
+        "axios": "^1.6.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Abhishekkr6/teampulse"
+    },
+    "license": "MIT"
+}
