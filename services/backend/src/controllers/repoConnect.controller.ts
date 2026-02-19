@@ -5,6 +5,7 @@ import logger from "../utils/logger";
 import { UserModel } from "../models/user.model";
 import { Types } from "mongoose";
 import { verifyRepositoryExists, createRepositoryWebhook } from "../services/github.service";
+import { decrypt } from "../services/encryption.service";
 
 export const connectRepo = async (req: any, res: Response) => {
   try {
@@ -59,7 +60,7 @@ export const connectRepo = async (req: any, res: Response) => {
     // ✅ GitHub API verification (must return repo data)
     const verifyResult = await verifyRepositoryExists(
       repoFullName,
-      user.githubAccessToken
+      decrypt(user.githubAccessToken)
     );
 
     if (!verifyResult.exists || !verifyResult.repo) {
@@ -108,7 +109,7 @@ export const connectRepo = async (req: any, res: Response) => {
 
     const webhookResult = await createRepositoryWebhook(
       repoFullName,
-      user.githubAccessToken,
+      decrypt(user.githubAccessToken),
       webhookUrl,
       secret
     );

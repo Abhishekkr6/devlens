@@ -115,7 +115,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
             const msg = e.response?.data?.error?.message || e.message || "Unknown error";
 
             if (retryRef.current < 1) {
-                console.log("Auto-retrying dashboard load...");
+
                 retryRef.current += 1;
                 setTimeout(() => {
                     loadDataRef.current();

@@ -51,7 +51,7 @@ export default function OrganizationPage() {
 
     // Fetch notifications when page loads
     if (user?.id || user?._id) {
-      console.log("[OrganizationPage] Fetching notifications...");
+
       fetchNotifications();
     }
   }, [user?.id, user?._id, fetchNotifications]);

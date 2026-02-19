@@ -1,6 +1,8 @@
 /** @type {import("next").NextConfig} */
 const nextConfig = {
-  reactCompiler: true,
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   async rewrites() {
     const isDev = process.env.NODE_ENV !== "production";

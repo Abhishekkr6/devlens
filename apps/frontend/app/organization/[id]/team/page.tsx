@@ -121,7 +121,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
 
       const unsubscribe = subscribeWS((e: unknown) => {
         const event = e as { type: string; org?: { _id: string }; member?: Member };
-        console.log("WS Event received:", event); // Log the event for debugging
+
         if (event.type === "org:joined") {
           // Robust ID comparison (handle string vs objectid)
           const isSameOrg = String(event.org?._id) === String(orgId);

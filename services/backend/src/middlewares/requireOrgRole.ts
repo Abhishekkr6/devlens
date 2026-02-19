@@ -1,4 +1,5 @@
 import { OrgModel } from "../models/org.model";
+import { OrgMemberModel } from "../models/orgMember.model";
 import { UserModel } from "../models/user.model";
 import { Types } from "mongoose";
 import logger from "../utils/logger";
@@ -29,43 +30,50 @@ export const requireOrgRole =
           return res.status(404).json({ error: "Org not found" });
         }
 
-        // Safely handle members array
-        const members = Array.isArray(org.members) ? org.members : [];
+        // Find member in OrgMember collection
+        let member = await OrgMemberModel.findOne({
+          orgId: org._id,
+          userId: userId,
+        });
 
-        let member = members.find(
-          (m: any) => m && m.userId && String(m.userId) === String(userId)
-        );
-
-        // 🔥 FIX: If user is not a member but created the org or has orgId reference, auto-add them
+        // 🔥 FIX: If user is not a member but created the org, auto-add them as ADMIN
         if (!member) {
           const isCreator = String(org.createdBy) === String(userId);
 
           if (isCreator) {
             // User created the org but is not in members - add them as ADMIN
-            org.members.push({ userId: new Types.ObjectId(String(userId)), role: "ADMIN", status: "active" });
-            await org.save();
-            member = org.members[org.members.length - 1];
-            logger.info({ orgId, userId }, "Auto-added org creator as ADMIN member");
+            member = await OrgMemberModel.create({
+              orgId: org._id,
+              userId: userId,
+              role: "ADMIN",
+              status: "active",
+              joinedAt: new Date(),
+            });
+            logger.info({ orgId: org._id, userId }, "Auto-added org creator as ADMIN member");
           } else {
-            // Check if user has orgId reference
+            // Check if user has orgId reference in their User model (legacy sync check)
             const userDoc = await UserModel.findById(userId, { orgIds: 1 }).lean();
             const orgIds = Array.isArray(userDoc?.orgIds)
               ? userDoc.orgIds.map(String)
               : [];
 
-            if (orgIds.includes(String(orgId))) {
+            if (orgIds.includes(String(org._id))) {
               // User has orgId reference but not in members - add as MEMBER
-              org.members.push({ userId: new Types.ObjectId(String(userId)), role: "MEMBER", status: "active" });
-              await org.save();
-              member = org.members[org.members.length - 1];
-              logger.info({ orgId, userId }, "Auto-added user with orgId reference as MEMBER");
+              member = await OrgMemberModel.create({
+                orgId: org._id,
+                userId: userId,
+                role: "MEMBER",
+                status: "active",
+                joinedAt: new Date(),
+              });
+              logger.info({ orgId: org._id, userId }, "Auto-added user with orgId reference as MEMBER");
             }
           }
         }
 
         if (!member) {
           logger.warn(
-            { orgId, userId, memberCount: members.length },
+            { orgId: org._id, userId },
             "User not member of org"
           );
           return res.status(403).json({ error: "Not part of this org" });
@@ -73,7 +81,7 @@ export const requireOrgRole =
 
         if (!allowedRoles.includes(member.role)) {
           logger.warn(
-            { orgId, userId, role: member.role, allowed: allowedRoles },
+            { orgId: org._id, userId, role: member.role, allowed: allowedRoles },
             "User role not allowed"
           );
           return res.status(403).json({ error: "Insufficient permission" });
@@ -81,7 +89,7 @@ export const requireOrgRole =
 
         // 🔒 BLOCK PENDING MEMBERS
         if (member.status !== "active") {
-          logger.warn({ orgId, userId, status: member.status }, "User status mismatch (pending)");
+          logger.warn({ orgId: org._id, userId, status: member.status }, "User status mismatch (pending)");
           return res.status(403).json({ error: "Membership not active. Please accept the invite first." });
         }
 

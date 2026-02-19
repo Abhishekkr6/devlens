@@ -2,9 +2,11 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { OrgModel } from "../models/org.model";
 import { UserModel } from "../models/user.model";
+import { OrgMemberModel } from "../models/orgMember.model";
 import { createNotification } from "../services/notification.service";
 import { publishEvent } from "../realtime/publisher";
 import { getUserRepositories } from "../services/github.service";
+import { decrypt } from "../services/encryption.service";
 
 /**
  * CREATE ORGANIZATION
@@ -45,17 +47,20 @@ export const createOrg = async (req: any, res: Response) => {
     const creatorId = new Types.ObjectId(String(userId));
 
     // 4️⃣ Create org with ADMIN member
+    // 4️⃣ Create org
     const org = await OrgModel.create({
       name,
       slug,
       createdBy: creatorId,
-      members: [
-        {
-          userId: creatorId,
-          role: "ADMIN",
-          status: "active",
-        },
-      ],
+    });
+
+    // 4.1️⃣ Create ADMIN member
+    await OrgMemberModel.create({
+      orgId: org._id,
+      userId: creatorId,
+      role: "ADMIN",
+      status: "active",
+      joinedAt: new Date(),
     });
 
     // 5️⃣ Attach org to user
@@ -144,34 +149,34 @@ export const inviteUser = async (req: any, res: Response) => {
       });
     }
 
-    // 4️⃣ Check for active membership only
-    const existingMember = org.members.find(
-      (m: any) => String(m.userId) === String(user._id)
-    );
-
-    if (existingMember && existingMember.status === "active") {
-      return res.status(409).json({
-        success: false,
-        error: { message: "User already a member of this organization" },
-      });
-    }
-
-    // 5️⃣ If pending invite exists, remove it (allow re-invite)
-    if (existingMember && existingMember.status === "pending") {
-      org.members = org.members.filter(
-        (m: any) => String(m.userId) !== String(user._id)
-      );
-    }
-
-    // 6️⃣ Add member to org
-    org.members.push({
+    // 4️⃣ Check for active membership or pending invite
+    const existingMember = await OrgMemberModel.findOne({
+      orgId: org._id,
       userId: user._id,
-      role,
-      status: "pending",
-      invitedBy: inviterId, // Store inviter
     });
 
-    await org.save();
+    if (existingMember) {
+      if (existingMember.status === "active") {
+        return res.status(409).json({
+          success: false,
+          error: { message: "User already a member of this organization" },
+        });
+      }
+
+      // If pending, updating role and invitedBy
+      existingMember.role = role as any;
+      existingMember.invitedBy = inviterId;
+      await existingMember.save();
+    } else {
+      // 5️⃣ Create new member entry
+      await OrgMemberModel.create({
+        orgId: org._id,
+        userId: user._id,
+        role,
+        status: "pending",
+        invitedBy: inviterId,
+      });
+    }
 
     // 6️⃣ DO NOT Attach org to user yet (Wait for accept)
     // Removed the part where we push to user.orgIds immediately
@@ -225,19 +230,22 @@ export const getUserOrgs = async (req: any, res: Response) => {
       });
     }
 
+    // Find all active memberships for the user
+    const memberships = await OrgMemberModel.find({
+      userId,
+      status: "active",
+    });
+
+    const orgIds = memberships.map((m) => m.orgId);
+
     const orgs = await OrgModel.find({
-      members: {
-        $elemMatch: {
-          userId: userId,
-          status: "active",
-        },
-      },
-    }).select("_id name slug createdBy members");
+      _id: { $in: orgIds },
+    }).select("_id name slug createdBy");
 
     // Map organizations to include user's role
     const orgsWithRole = orgs.map((org) => {
-      const member = org.members.find(
-        (m: any) => String(m.userId) === String(userId) && m.status === "active"
+      const membership = memberships.find(
+        (m) => String(m.orgId) === String(org._id)
       );
 
       return {
@@ -245,7 +253,7 @@ export const getUserOrgs = async (req: any, res: Response) => {
         name: org.name,
         slug: org.slug,
         createdBy: org.createdBy,
-        role: member?.role || "VIEWER", // Include user's role in this org
+        role: membership?.role || "VIEWER",
       };
     });
 
@@ -286,10 +294,11 @@ export const getOrgMembers = async (req: any, res: Response) => {
       });
     }
 
-    // Get member user IDs
-    const memberIds = Array.isArray(org.members)
-      ? org.members.map((m: any) => m.userId).filter(Boolean)
-      : [];
+    // Fetch members from OrgMember collection
+    const members = await OrgMemberModel.find({ orgId });
+
+    // Get user IDs
+    const memberIds = members.map((m) => m.userId);
 
     // Fetch user details
     const users = await UserModel.find({
@@ -297,14 +306,14 @@ export const getOrgMembers = async (req: any, res: Response) => {
     }).select("_id name email avatarUrl githubId login").lean();
 
     // Map members with their roles and user details
-    const membersWithDetails = org.members.map((member: any) => {
+    const membersWithDetails = members.map((member) => {
       const user = users.find(
         (u: any) => String(u._id) === String(member.userId)
       );
       return {
         userId: String(member.userId),
         role: member.role,
-        status: member.status, // Return status so frontend can filter
+        status: member.status,
         user: user
           ? {
             id: String(user._id),
@@ -347,22 +356,25 @@ export const removeMember = async (req: any, res: Response) => {
       return res.status(400).json({ error: "Cannot remove the organization owner" });
     }
 
-    const memberToRemove = org.members.find(m => String(m.userId) === String(userId));
+    const memberToRemove = await OrgMemberModel.findOne({ orgId, userId });
     if (!memberToRemove) {
       return res.status(404).json({ error: "User not found in organization" });
     }
 
     // Check if removing the last admin
     if (memberToRemove.role === "ADMIN") {
-      const adminCount = org.members.filter(m => m.role === "ADMIN").length;
+      const adminCount = await OrgMemberModel.countDocuments({
+        orgId,
+        role: "ADMIN",
+        status: "active",
+      });
       if (adminCount <= 1) {
         return res.status(400).json({ error: "Cannot remove the last administrator" });
       }
     }
 
-    // Remove from members array
-    org.members = org.members.filter(m => String(m.userId) !== String(userId));
-    await org.save();
+    // Remove from members collection
+    await OrgMemberModel.findByIdAndDelete(memberToRemove._id);
 
     // Remove from user's orgIds
     await UserModel.findByIdAndUpdate(userId, {
@@ -395,13 +407,13 @@ export const updateMemberRole = async (req: any, res: Response) => {
     const org = await OrgModel.findById(orgId);
     if (!org) return res.status(404).json({ error: "Org not found" });
 
-    const memberIndex = org.members.findIndex(m => String(m.userId) === String(userId));
-    if (memberIndex === -1) {
+    const member = await OrgMemberModel.findOne({ orgId, userId });
+    if (!member) {
       return res.status(404).json({ error: "User not in org" });
     }
 
-    org.members[memberIndex].role = role;
-    await org.save();
+    member.role = role;
+    await member.save();
 
     return res.json({ success: true, message: "Role updated" });
   } catch (error) {
@@ -427,8 +439,9 @@ export const acceptInvite = async (req: any, res: Response) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    // Find custom member
-    const member = org.members.find((m) => String(m.userId) === String(userId));
+    // Find pending member
+    const member = await OrgMemberModel.findOne({ orgId, userId });
+
     if (!member) {
       return res.status(404).json({ error: "No invite found for this organization" });
     }
@@ -439,7 +452,7 @@ export const acceptInvite = async (req: any, res: Response) => {
 
     // Set to active
     member.status = "active";
-    await org.save();
+    await member.save();
 
     // Link user
     if (!Array.isArray(user.orgIds)) user.orgIds = [];
@@ -450,7 +463,6 @@ export const acceptInvite = async (req: any, res: Response) => {
       await user.save();
     }
 
-    // Publish Real-time Event (Org Joined)
     // Publish Real-time Event (Org Joined)
     await publishEvent({
       type: "org:joined",
@@ -503,10 +515,12 @@ export const rejectInvite = async (req: any, res: Response) => {
     const org = await OrgModel.findById(orgId);
     if (!org) return res.status(404).json({ error: "Org not found" });
 
+    const member = await OrgMemberModel.findOne({ orgId, userId });
+
     // Remove member entry
-    const member = org.members.find((m) => String(m.userId) === String(userId));
-    org.members = org.members.filter((m) => String(m.userId) !== String(userId));
-    await org.save();
+    if (member) {
+      await OrgMemberModel.findByIdAndDelete(member._id);
+    }
 
     // Notify Inviter
     if (member?.invitedBy) {
@@ -541,11 +555,12 @@ export const leaveOrg = async (req: any, res: Response) => {
     }
 
     // Find member to check inviter
-    const member = org.members.find((m) => String(m.userId) === String(userId));
+    const member = await OrgMemberModel.findOne({ orgId, userId });
 
     // Remove from org
-    org.members = org.members.filter((m) => String(m.userId) !== String(userId));
-    await org.save();
+    if (member) {
+      await OrgMemberModel.findByIdAndDelete(member._id);
+    }
 
     // Remove from user
     await UserModel.findByIdAndUpdate(userId, {
@@ -609,8 +624,20 @@ export const deleteOrg = async (req: any, res: Response) => {
       // But verify strictly here:
     }
 
+    // 🔍 Safety Check: Prevent deletion if there are other members
+    const memberCount = await OrgMemberModel.countDocuments({ orgId: org._id });
+    if (memberCount > 1) {
+      return res.status(400).json({
+        success: false,
+        error: { message: "Cannot delete organization with active members. Please remove them first." }
+      });
+    }
+
     // Delete the organization
     await OrgModel.findByIdAndDelete(orgId);
+
+    // Delete all members
+    await OrgMemberModel.deleteMany({ orgId });
 
     // Remove org from all users
     await UserModel.updateMany(
@@ -662,7 +689,7 @@ export const getUserGithubRepos = async (req: any, res: Response) => {
       });
     }
 
-    const repos = await getUserRepositories(user.githubAccessToken);
+    const repos = await getUserRepositories(decrypt(user.githubAccessToken));
 
     // Format the response to include only necessary fields
     const formattedRepos = repos.map((repo: any) => ({

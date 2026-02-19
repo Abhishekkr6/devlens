@@ -5,12 +5,7 @@ export interface IOrg extends Document {
   slug: string;
   createdBy: Types.ObjectId;
 
-  members: {
-    userId: Types.ObjectId;
-    role: "ADMIN" | "MEMBER" | "VIEWER";
-    status: "active" | "pending";
-    invitedBy?: Types.ObjectId;
-  }[];
+
 
   createdAt: Date;
   updatedAt: Date;
@@ -27,29 +22,7 @@ const OrgSchema = new Schema<IOrg>(
       required: true,
     },
 
-    members: [
-      {
-        userId: {
-          type: Schema.Types.ObjectId,
-          ref: "User",
-          required: true,
-        },
-        role: {
-          type: String,
-          enum: ["ADMIN", "MEMBER", "VIEWER"],
-          default: "MEMBER",
-        },
-        status: {
-          type: String,
-          enum: ["active", "pending"],
-          default: "active",
-        },
-        invitedBy: {
-          type: Schema.Types.ObjectId,
-          ref: "User",
-        },
-      },
-    ],
+
   },
   { timestamps: true }
 );

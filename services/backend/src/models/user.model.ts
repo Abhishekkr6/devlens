@@ -18,6 +18,7 @@ export interface IUser extends Document {
 
   createdAt: Date;
   updatedAt: Date;
+  deletedAt?: Date | null;
 }
 
 const UserSchema = new Schema<IUser>(
@@ -41,6 +42,7 @@ const UserSchema = new Schema<IUser>(
     githubAccessToken: { type: String, required: true },
     githubRefreshToken: { type: String },
     githubScopes: [String],
+    deletedAt: { type: Date, default: null },
   },
   { timestamps: true }
 );

@@ -7,7 +7,9 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc --project tsconfig.json",
     "start": "node dist/server.js",
-    "migrate:org-members": "node scripts/migrate_org_members.js"
+    "test": "jest",
+    "migrate:org-members": "ts-node scripts/migrate_org_members.ts",
+    "migrate:encryption": "node scripts/migrate_encryption.js"
   },
   "keywords": [],
   "author": "",
@@ -34,13 +36,19 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@jest/globals": "^30.2.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/cookie-parser": "^1.4.7",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.5",
+    "@types/jest": "^29.5.12",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^24.10.1",
+    "@types/node": "^20.10.1",
+    "@types/supertest": "^6.0.2",
     "@types/ws": "^8.5.10",
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3",
+    "ts-jest": "^29.1.2",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"

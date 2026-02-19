@@ -18,7 +18,8 @@ const aiRateLimiter = rateLimit({
     keyGenerator: (req) => {
         const user = (req as any).user;
         return user?.id || req.ip || 'anonymous';
-    }
+    },
+    validate: { trustProxy: false }
 });
 
 /**

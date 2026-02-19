@@ -17,24 +17,20 @@ app.get("/", (req, res) => {
    res.status(200).send("TeamPulse Backend is running 🚀");
 });
 
-/* -----------------------------------------------------
-   1) RAW BODY FOR GITHUB → MUST BE FIRST
------------------------------------------------------- */
+/* 
+ * GitHub Webhook Handling
+ * Needs raw body for signature verification (HMAC-SHA256).
+ * Must be defined before express.json() parser.
+ */
 app.use("/api/v1/webhooks/github", express.raw({ type: "application/json" }));
-app.use("/api/v1/webhooks/test-github", express.raw({ type: "application/json" }));
 
-/* -----------------------------------------------------
-   2) REGISTER WEBHOOK ROUTES IMMEDIATELY AFTER RAW
------------------------------------------------------- */
 import webhookRoutes from "./routes/webhook.routes";
-import webhookTestRoutes from "./routes/webhook-test.routes";
 app.use("/api/v1/webhooks", webhookRoutes);
-app.use("/api/v1/webhooks", webhookTestRoutes);
 
 
-/* -----------------------------------------------------
-   3) NORMAL PARSERS AFTER WEBHOOK ONLY
------------------------------------------------------- */
+/*
+ * Standard Middleware
+ */
 app.use(express.json());
 app.use(cookieParser());
 app.use(
@@ -70,9 +66,9 @@ app.use(cors(corsOptions));
 app.use(requestLogger);
 app.use("/api", apiLimiter);
 
-/* -----------------------------------------------------
-   4) OTHER ROUTES
------------------------------------------------------- */
+/*
+ * API Routes
+ */
 import authRoutes from "./routes/auth.routes";
 import meRoutes from "./routes/me.routes";
 import orgRoutes from "./routes/org.routes";
@@ -80,7 +76,6 @@ import dashboardRoutes from "./routes/dashboard.routes";
 import prRoutes from "./routes/pr.routes";
 import developerRoutes from "./routes/developer.routes";
 import notificationRoutes from "./routes/notification.routes";
-import migrationRoutes from "./routes/migration.routes";
 import aiRoutes from "./routes/ai.routes";
 import aiGuideRoutes from "./routes/aiGuide.routes";
 import chatbotRoutes from "./routes/chatbot.routes";
@@ -93,19 +88,18 @@ app.use("/api/v1", dashboardRoutes);
 app.use("/api/v1/pr", prRoutes);
 app.use("/api/v1/developers", developerRoutes);
 app.use("/api/v1/notifications", notificationRoutes);
-app.use("/api/v1/migration", migrationRoutes); // 🔧 Migration endpoint
-app.use("/api/v1/ai", aiRoutes); // 🤖 AI-powered code analysis
-app.use("/api/v1/ai", aiGuideRoutes); // 💬 AI Guide chat assistant
-app.use("/api/v1/chatbot", chatbotRoutes); // 🤖 AI Chatbot
+app.use("/api/v1/ai", aiRoutes);
+app.use("/api/v1/ai", aiGuideRoutes);
+app.use("/api/v1/chatbot", chatbotRoutes);
 
 app.use(errorHandler);
 
-/* -----------------------------------------------------
-   5) MONGO CONNECT
------------------------------------------------------- */
+/*
+ * Database Connection
+ */
 const mongoUrl = process.env.MONGO_URL;
 if (!mongoUrl) {
-   logger.error("MONGO_URL environment variable is not set");
+   logger.error("Missing MONGO_URL in environment.");
    process.exit(1);
 }
 

@@ -7,6 +7,7 @@ import { SecurityAlert } from '../models/securityAlert.model';
 import { PRModel } from '../models/pr.model';
 import { RepoModel } from '../models/repo.model';
 import { UserModel } from '../models/user.model';
+import { decrypt } from '../services/encryption.service';
 import logger from '../utils/logger';
 
 /**
@@ -69,7 +70,7 @@ export const analyzePR = async (req: Request, res: Response) => {
                 filesChanged: pr.filesChanged || 0,
                 authorCommits: 0 // TODO: Calculate from commit history
             },
-            user.githubAccessToken,
+            decrypt(user.githubAccessToken),
             prId // Pass prId for caching
         );
 

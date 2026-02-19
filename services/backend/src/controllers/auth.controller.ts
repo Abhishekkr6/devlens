@@ -11,8 +11,10 @@ import { createToken } from "../services/jwt.service";
 import logger from "../utils/logger";
 import { RepoModel } from "../models/repo.model";
 import { CommitModel } from "../models/commit.model";
+import { OrgMemberModel } from "../models/orgMember.model";
 import { PRModel } from "../models/pr.model";
 import { AlertModel } from "../models/alert.model";
+import { encrypt } from "../services/encryption.service";
 
 /**
  * Redirect user to GitHub OAuth page
@@ -69,16 +71,20 @@ export const githubCallback = async (req: Request, res: Response) => {
         avatarUrl: ghUser.avatar_url,
         email,
         role: "dev",
-        githubAccessToken: accessToken,
+        githubAccessToken: encrypt(accessToken),
         orgIds: [],
       });
     } else {
       // Update latest profile + token
-      user.githubAccessToken = accessToken;
+      user.githubAccessToken = encrypt(accessToken);
       user.login = ghUser.login ?? user.login;
       user.name = ghUser.name ?? user.name;
       user.avatarUrl = ghUser.avatar_url ?? user.avatarUrl;
       user.email = email ?? user.email;
+      // Reactivate if soft deleted
+      if (user.deletedAt) {
+        user.deletedAt = null;
+      }
       // Normalize orgIds array to ObjectIds on-the-fly if needed
       if (!Array.isArray(user.orgIds)) user.orgIds = [];
       await user.save();
@@ -159,96 +165,51 @@ export const logout = async (req: Request, res: Response) => {
 /**
  * Delete user and cleanup all related data...
  */
+/**
+ * Delete user (Soft Delete)
+ */
 export const logoutAndDelete = async (req: any, res: Response) => {
   try {
-    const userIdRaw = req.user?.id || req.user?._id;
-    if (!userIdRaw || !Types.ObjectId.isValid(String(userIdRaw))) {
-      return res
-        .status(401)
-        .json({ success: false, error: { message: "Unauthorized" } });
+    const userId = req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ success: false, error: { message: "Unauthorized" } });
     }
 
-    const userId = new Types.ObjectId(String(userIdRaw));
-    const user = await UserModel.findById(userId).lean();
-
+    const user = await UserModel.findById(userId);
     if (!user) {
-      // ensure cookies cleared even if user not found
-      const isProdLogout =
-        String(process.env.NODE_ENV).toLowerCase() === "production";
-      const sameSite = isProdLogout ? "none" : "lax";
-      res.clearCookie("teampulse_token", {
-        path: "/",
-        secure: isProdLogout,
-        sameSite,
-      });
-      res.clearCookie("token", { path: "/", secure: isProdLogout, sameSite });
-      return res.json({ success: true });
+      return res.status(404).json({ success: false, error: { message: "User not found" } });
     }
 
-    const toObjectId = (value: unknown) => {
-      try {
-        if (!value) return null;
-        const candidate = new Types.ObjectId(String(value));
-        return candidate;
-      } catch {
-        return null;
+    // Safety check: Prevent deleting account if they own an org with other members
+    const ownedOrgs = await OrgModel.find({ createdBy: userId });
+    for (const org of ownedOrgs) {
+      const memberCount = await OrgMemberModel.countDocuments({ orgId: org._id });
+      if (memberCount > 1) {
+        return res.status(400).json({
+          success: false,
+          error: {
+            message: `Cannot delete account. Owner of ${org.name} with other members. Transfer ownership first.`
+          }
+        });
       }
-    };
-
-    const orgIds = Array.isArray(user.orgIds)
-      ? user.orgIds
-        .map(toObjectId)
-        .filter((value): value is Types.ObjectId => Boolean(value))
-      : [];
-
-    const repoIds: Types.ObjectId[] = [];
-
-    if (orgIds.length) {
-      const repos = await RepoModel.find(
-        { orgId: { $in: orgIds } },
-        { _id: 1 }
-      ).lean();
-      repos.forEach((repo) => {
-        const asObjectId = toObjectId(repo?._id);
-        if (asObjectId) {
-          repoIds.push(asObjectId);
-        }
-      });
     }
 
-    if (repoIds.length) {
-      await Promise.all([
-        CommitModel.deleteMany({ repoId: { $in: repoIds } }),
-        PRModel.deleteMany({ repoId: { $in: repoIds } }),
-      ]);
-      await RepoModel.deleteMany({ _id: { $in: repoIds } });
-    }
+    // Soft delete user
+    user.deletedAt = new Date();
+    await user.save();
 
-    if (orgIds.length) {
-      await Promise.all([
-        AlertModel.deleteMany({ orgId: { $in: orgIds } }),
-        OrgModel.deleteMany({ _id: { $in: orgIds } }),
-      ]);
-    }
+    // Cleanup: Remove from orgs and clear session
+    await OrgMemberModel.deleteMany({ userId });
 
-    await UserModel.deleteOne({ _id: userId });
+    const isProd = String(process.env.NODE_ENV).toLowerCase() === "production";
+    const sameSite = isProd ? "none" : "lax";
 
-    // Clear session cookies on logout (respect SameSite for cross-site)
-    const isProdLogout =
-      String(process.env.NODE_ENV).toLowerCase() === "production";
-    const sameSite = isProdLogout ? "none" : "lax";
-    res.clearCookie("teampulse_token", {
-      path: "/",
-      secure: isProdLogout,
-      sameSite,
-    });
-    res.clearCookie("token", { path: "/", secure: isProdLogout, sameSite });
+    res.clearCookie("teampulse_token", { path: "/" });
+    res.clearCookie("token", { path: "/" });
 
-    return res.json({ success: true });
+    return res.json({ success: true, message: "Account deleted (soft)" });
   } catch (error) {
-    logger.error({ error }, "Logout and delete failed");
-    return res
-      .status(500)
-      .json({ success: false, error: { message: "Logout failed" } });
+    logger.error({ error }, "Delete account failed");
+    return res.status(500).json({ success: false, error: { message: "Delete failed" } });
   }
 };

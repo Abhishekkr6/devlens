@@ -1,36 +1,55 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TeamPulse Frontend 🎨
 
-## Getting Started
+The user interface for TeamPulse, built with **Next.js 15 (React 18)** and **Tailwind CSS 4**.
 
-First, run the development server:
+## Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+I chose Next.js for its hybrid rendering capabilities. The marketing pages (`/`) are statically generated for SEO, while the dashboard (`/organization/[id]`) uses client-side fetching with refined loading states for a snappy application feel.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Key Technologies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **State Management**: `zustand` - Used for global stores like `useUserStore` and `useSocketStore`. It's much simpler than Redux and has less boilerplate.
+- **Styling**: Tailwind CSS + `lucide-react` for icons. I use a custom `tailwind.config.ts` to enforce the design system (colors, spacing).
+- **Real-time**: Custom WebSocket hook (`useSocket`) that connects to the backend and dispatches updates to Zustand stores.
+- **Charts**: `recharts` for the velocity and activity metric visualizations.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Directory Structure
 
-## Learn More
+- `app/` - App Router pages and layouts.
+  - `(auth)/` - Auth layout (login/callback).
+  - `organization/` - Main dashboard application routes.
+- `components/` - Reusable UI components.
+  - `ui/` - Low-level design system primitives (buttons, cards).
+  - `dashboard/` - Domain-specific widgets (Commit feed, PR lists).
+- `store/` - Zustand stores.
+- `hooks/` - Custom hooks (`useAuth`, `useSocket`).
+- `lib/` - Utilities and helpers.
 
-To learn more about Next.js, take a look at the following resources:
+## Running Locally
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. **Install dependencies**:
+   ```bash
+   npm install
+   ```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. **Setup Environment**:
+   Copy `.env.local.example` to `.env.local` and set your API URL.
+   ```bash
+   NEXT_PUBLIC_API_URL=http://localhost:4000
+   NEXT_PUBLIC_WS_URL=ws://localhost:4000
+   ```
 
-## Deploy on Vercel
+3. **Run Dev Server**:
+   ```bash
+   npm run dev
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Design Philosophy
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The UI is designed to be **dense but readable**. Engineering dashboards often suffer from checking too much info. I prioritized:
+- **Alerts first**: High-risk PRs are always at the top.
+- **Visual noise reduction**: Subtle borders and consistent spacing.
+- **Dark mode first**: Because developers. 🌙
+
+---
+*Part of the [TeamPulse](../README.md) project.*
