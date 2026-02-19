@@ -6,9 +6,13 @@ const ALGORITHM = 'aes-256-cbc';
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || 'default_key_must_be_32_bytes_long!';
 const IV_LENGTH = 16;
 
-if (process.env.NODE_ENV === 'production' && (!process.env.ENCRYPTION_KEY || process.env.ENCRYPTION_KEY.length !== 32)) {
-    logger.error('CRITICAL: ENCRYPTION_KEY is missing or invalid in production!');
-    process.exit(1);
+// Validate key length (32 raw chars or 64 hex chars)
+if (process.env.NODE_ENV === 'production') {
+    const key = process.env.ENCRYPTION_KEY;
+    if (!key || (key.length !== 32 && key.length !== 64)) {
+        logger.error(`CRITICAL: ENCRYPTION_KEY is invalid in production! Length: ${key?.length || 0}. Expected 32 (raw) or 64 (hex).`);
+        process.exit(1);
+    }
 }
 
 /**
