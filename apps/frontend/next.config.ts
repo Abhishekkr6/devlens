@@ -1,4 +1,4 @@
-/** @type {import("next").NextConfig} */
+﻿/** @type {import("next").NextConfig} */
 const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
@@ -15,7 +15,7 @@ const nextConfig = {
     // IMPORTANT: no /api/v1 here
     const prodBase = (
       process.env.NEXT_PUBLIC_BACKEND_URL ||
-      "https://teampulse-w2s8.onrender.com"
+      "https://DevLens-w2s8.onrender.com"
     ).replace(/\/$/, "");
 
     return [

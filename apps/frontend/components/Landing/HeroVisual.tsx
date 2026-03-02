@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { motion } from "motion/react";
-import { ShieldAlert, Activity, CheckCircle2 } from "lucide-react";
+import { ShieldAlert, CheckCircle2 } from "lucide-react";
 
 export function HeroVisual() {
     return (
@@ -11,10 +11,8 @@ export function HeroVisual() {
 
                 {/* Top Header - Activity Icon */}
                 <div className="flex items-center gap-4 mb-8">
-                    <div className="w-10 h-10 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center">
-                        <Activity className="w-6 h-6" />
-                    </div>
-                    <span className="text-xl font-bold text-text-primary tracking-tight">TeamPulse</span>
+                    <img src="/logo.svg" alt="DevLens" className="w-12 h-12" />
+                    <span className="text-xl font-bold text-text-primary tracking-tight">DevLens</span>
                 </div>
 
                 {/* Metrics Row */}

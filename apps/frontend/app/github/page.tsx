@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -23,11 +23,11 @@ export default function GitHubPage() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-slate-400 to-slate-100">Open for Everyone.</span>
                     </h1>
                     <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
-                        TeamPulse is proudly open source. We believe in transparency, community collaboration, and building tools that developers love to use and improve.
+                        DevLens is proudly open source. We believe in transparency, community collaboration, and building tools that developers love to use and improve.
                     </p>
 
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-                        <a href="https://github.com/Abhishekkr6/teampulse" target="_blank" rel="noopener noreferrer">
+                        <a href="https://github.com/Abhishekkr6/DevLens" target="_blank" rel="noopener noreferrer">
                             <Button className="border border-slate-800 h-12 px-8 text-base text-slate-900 cursor-pointer">
                                 <Github className="mr-2 w-5 h-5" /> Star on GitHub
                             </Button>
@@ -66,14 +66,14 @@ export default function GitHubPage() {
                         <div className="flex-1 space-y-6">
                             <h2 className="text-3xl font-bold text-white">Self-Host in Minutes</h2>
                             <p className="text-slate-400 text-lg">
-                                Prefer to keep your data on your own infrastructure? You can deploy TeamPulse via Docker or Kubernetes with a single command.
+                                Prefer to keep your data on your own infrastructure? You can deploy DevLens via Docker or Kubernetes with a single command.
                             </p>
                             <div className="bg-black/50 rounded-xl p-4 font-mono text-sm text-emerald-400 border border-slate-800 overflow-x-auto">
-                                git clone https://github.com/Abhishekkr6/teampulse.git<br />
-                                cd teampulse && docker-compose up -d
+                                git clone https://github.com/Abhishekkr6/DevLens.git<br />
+                                cd DevLens && docker-compose up -d
                             </div>
                             <div className="pt-2">
-                                <a href="https://github.com/Abhishekkr6/teampulse" target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:text-indigo-400 transition-colors inline-flex items-center">
+                                <a href="https://github.com/Abhishekkr6/DevLens" target="_blank" rel="noopener noreferrer" className="text-white font-medium hover:text-indigo-400 transition-colors inline-flex items-center">
                                     Read Deployment Docs <ArrowRight className="ml-2 w-4 h-4" />
                                 </a>
                             </div>

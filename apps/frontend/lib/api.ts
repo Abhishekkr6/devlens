@@ -1,9 +1,9 @@
-"use client";
+﻿"use client";
 
 import axios from "axios";
 
 const DEFAULT_LOCAL_BASE = "http://localhost:4000/api/v1";
-const DEFAULT_REMOTE_BASE = "https://teampulse-w2s8.onrender.com/api/v1";
+const DEFAULT_REMOTE_BASE = "https://DevLens-w2s8.onrender.com/api/v1";
 
 const pickEnvBase = (): string | undefined => {
   const candidates = [

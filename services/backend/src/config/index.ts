@@ -1,8 +1,8 @@
-import dotenv from "dotenv";
+﻿import dotenv from "dotenv";
 dotenv.config();
 export default {
   port: process.env.PORT || 4000,
-  mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/teampulse",
+  mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/DevLens",
   jwtSecret: process.env.JWT_SECRET || "change_me",
   github: {
     clientId: process.env.GITHUB_CLIENT_ID,

@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState, useEffect } from "react";
 import { Sparkles, Bell, Zap, Shield, Info } from "lucide-react";
 import { Card } from "@/components/Ui/Card";
 import { Button } from "@/components/Ui/Button";
 
-const AI_SETTINGS_KEY = "teampulse_ai_settings";
+const AI_SETTINGS_KEY = "DevLens_ai_settings";
 
 interface AISettings {
     autoAnalyze: boolean;

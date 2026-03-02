@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+﻿import { Request, Response, NextFunction } from "express";
 import { verifyToken } from "../services/jwt.service";
 import { JwtPayload } from "jsonwebtoken";
 
@@ -15,7 +15,7 @@ export const authMiddleware = (
       header?.startsWith("Bearer ") ? header.split(" ")[1] : undefined;
 
     // 🔥 Check both cookie names
-    if (!token) token = (req as any).cookies?.teampulse_token;
+    if (!token) token = (req as any).cookies?.DevLens_token;
     if (!token) token = (req as any).cookies?.token;
 
     // Token missing → unauthorized

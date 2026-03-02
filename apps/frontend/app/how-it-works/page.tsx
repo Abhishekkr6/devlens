@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -20,7 +20,7 @@ export default function HowItWorksPage() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400">in Milliseconds</span>
                     </h1>
                     <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
-                        TeamPulse processes thousands of engineering events per second to give you real-time visibility without slowing down your workflow.
+                        DevLens processes thousands of engineering events per second to give you real-time visibility without slowing down your workflow.
                     </p>
                 </div>
             </section>

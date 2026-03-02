@@ -1,11 +1,10 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "motion/react";
 import {
   Github,
-  Activity,
   GitPullRequest,
   Zap,
   ShieldAlert,
@@ -46,14 +45,12 @@ function Navbar() {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="bg-slate-900 dark:bg-white p-1.5 rounded-lg">
-            <Activity className="text-white dark:text-slate-900 w-5 h-5" />
-          </div>
-          <span className="text-xl font-bold text-text-primary tracking-tight">
-            TeamPulse
+        <Link href="/" className="flex items-center gap-1">
+          <img src="/logo.svg" alt="DevLens" className="w-16 h-16" />
+          <span className="text-2xl font-bold tracking-tight text-text-primary" style={{ fontFamily: 'var(--font-logo)' }}>
+            DevLens
           </span>
-        </div>
+        </Link>
 
         {/* Desktop Actions */}
         <div className="hidden md:flex items-center gap-6">
@@ -152,7 +149,7 @@ function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg md:text-xl text-text-secondary mb-8 leading-relaxed max-w-lg"
           >
-            TeamPulse gives engineering teams real-time insights into commits,
+            DevLens gives engineering teams real-time insights into commits,
             pull requests, risk signals, and developer activity — all in one
             dashboard.
           </motion.p>
@@ -422,7 +419,7 @@ function HowItWorks() {
     <section className="py-24 bg-background">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-16 md:text-center">
-          <h2 className="text-3xl font-bold text-text-primary">How TeamPulse Works</h2>
+          <h2 className="text-3xl font-bold text-text-primary">How DevLens Works</h2>
         </div>
 
         <div className="grid md:grid-cols-4 gap-8 relative">
@@ -458,7 +455,7 @@ function CTA() {
           Start understanding your engineering team.
         </h2>
         <p className="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
-          Join high-performing engineering teams who use TeamPulse to deliver better software, faster.
+          Join high-performing engineering teams who use DevLens to deliver better software, faster.
         </p>
         <button
           onClick={handleLogin}
@@ -477,14 +474,12 @@ function Footer() {
     <footer className="bg-background border-t border-border py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-6">
         <div className="flex items-center gap-2">
-          <div className="bg-slate-900 dark:bg-white text-white dark:text-slate-900 p-1 rounded-md">
-            <Activity className="w-4 h-4" />
-          </div>
-          <span className="font-bold text-text-primary">TeamPulse</span>
+          <img src="/logo.svg" alt="DevLens" className="w-9 h-9" />
+          <span className="font-bold text-text-primary">DevLens</span>
         </div>
 
         <p className="text-text-secondary text-sm">
-          © {new Date().getFullYear()} TeamPulse. Built for engineers by <a href="https://abhishektiwari-18.vercel.app/" className="hover:text-text-primary underline underline-offset-4">Abhishek Tiwari.</a>
+          © {new Date().getFullYear()} DevLens. Built for engineers by <a href="https://abhishektiwari-18.vercel.app/" className="hover:text-text-primary underline underline-offset-4">Abhishek Tiwari.</a>
         </p>
 
         <div className="flex gap-6 text-sm text-text-secondary">

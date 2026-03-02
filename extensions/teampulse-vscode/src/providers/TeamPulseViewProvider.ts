@@ -1,4 +1,4 @@
-import * as vscode from 'vscode';
+﻿import * as vscode from 'vscode';
 import { AuthManager } from '../auth/authManager';
 import { ApiClient } from '../api/client';
 import { RepoDetector } from '../git/repoDetector';
@@ -6,7 +6,7 @@ import { logger } from '../utils/logger';
 import { RISK_THRESHOLDS, SELECTED_ORG_KEY, DEFAULT_DASHBOARD_URL } from '../utils/constants';
 import { PullRequest, Organization, Repository } from '../api/types';
 
-export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
+export class DevLensViewProvider implements vscode.WebviewViewProvider {
     private _view?: vscode.WebviewView;
 
     constructor(
@@ -137,7 +137,7 @@ export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
     private async handleMessage(message: any): Promise<void> {
         switch (message.type) {
             case 'login':
-                await vscode.commands.executeCommand('teampulse.login');
+                await vscode.commands.executeCommand('DevLens.login');
                 break;
             case 'refresh':
                 await this.refresh();
@@ -152,7 +152,7 @@ export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
     }
 
     private async openDashboard(orgId?: string, repoId?: string): Promise<void> {
-        const config = vscode.workspace.getConfiguration('teampulse');
+        const config = vscode.workspace.getConfiguration('DevLens');
         const dashboardUrl = config.get<string>('dashboardUrl') || DEFAULT_DASHBOARD_URL;
 
         let url = dashboardUrl;
@@ -188,7 +188,7 @@ export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${webview.cspSource} 'unsafe-inline'; script-src ${webview.cspSource};">
   <link href="${styleUri}" rel="stylesheet">
-  <title>TeamPulse</title>
+  <title>DevLens</title>
 </head>
 <body>
   <div id="app">
@@ -198,7 +198,7 @@ export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
     </div>
     <div id="unauthenticated" class="hidden">
       <div class="empty-state">
-        <h2>Welcome to TeamPulse</h2>
+        <h2>Welcome to DevLens</h2>
         <p>Connect your GitHub account to view repository insights</p>
         <button id="loginBtn" class="primary-button">Login with GitHub</button>
       </div>
@@ -212,7 +212,7 @@ export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
     <div id="no-org" class="hidden">
       <div class="empty-state">
         <h3>No Organizations Found</h3>
-        <p>Create an organization in TeamPulse to get started</p>
+        <p>Create an organization in DevLens to get started</p>
         <button id="openDashboardNoOrg" class="primary-button">Open Dashboard</button>
       </div>
     </div>
@@ -220,7 +220,7 @@ export class TeamPulseViewProvider implements vscode.WebviewViewProvider {
       <div class="empty-state">
         <h3>Repository Not Connected</h3>
         <p id="repoNotConnectedName"></p>
-        <p>Connect this repository in TeamPulse to view insights</p>
+        <p>Connect this repository in DevLens to view insights</p>
         <button id="openDashboardConnect" class="primary-button">Open Dashboard</button>
       </div>
     </div>

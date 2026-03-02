@@ -1,4 +1,4 @@
-version: '3.8'
+﻿version: '3.8'
 
 services:
   backend:
@@ -9,7 +9,7 @@ services:
     environment:
       - NODE_ENV=development
       - PORT=4000
-      - MONGO_URL=mongodb://mongo:27017/teampulse
+      - MONGO_URL=mongodb://mongo:27017/DevLens
       - JWT_SECRET=dev_secret
       # Add other env vars as needed
     depends_on:

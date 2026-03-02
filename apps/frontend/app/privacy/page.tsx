@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import { Navbar } from "../../components/Landing/Navbar";
@@ -17,7 +17,7 @@ export default function PrivacyPage() {
                     <section className="space-y-4">
                         <h2 className="text-2xl font-bold text-text-primary">1. Introduction</h2>
                         <p className="text-text-secondary leading-relaxed">
-                            TeamPulse ("we," "our," or "us") respects your privacy and is committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit the website TeamPulse (our "Website") and our practices for collecting, using, maintaining, protecting, and disclosing that information.
+                            DevLens ("we," "our," or "us") respects your privacy and is committed to protecting it through our compliance with this policy. This policy describes the types of information we may collect from you or that you may provide when you visit the website DevLens (our "Website") and our practices for collecting, using, maintaining, protecting, and disclosing that information.
                         </p>
                     </section>
 
@@ -59,7 +59,7 @@ export default function PrivacyPage() {
                     <section className="space-y-4">
                         <h2 className="text-2xl font-bold text-text-primary">5. Contact Information</h2>
                         <p className="text-text-secondary leading-relaxed">
-                            To ask questions or comment about this privacy policy and our privacy practices, contact us at: <a href="mailto:support@teampulse.dev" className="text-indigo-400 hover:text-indigo-300 underline">support@teampulse.dev</a>
+                            To ask questions or comment about this privacy policy and our privacy practices, contact us at: <a href="mailto:support@DevLens.dev" className="text-indigo-400 hover:text-indigo-300 underline">support@DevLens.dev</a>
                         </p>
                     </section>
                 </div>

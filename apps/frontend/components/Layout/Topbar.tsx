@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
@@ -267,13 +267,11 @@ export default function Topbar() {
             <Link
               href="/organization"
               className="flex shrink-0 min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
-              aria-label="TeamPulse home"
+              aria-label="DevLens home"
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
-                <svg className="w-5 h-5 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
-              </div>
+              <img src="/logo.svg" alt="DevLens" className="w-12 h-12" />
               <div className="min-w-0 text-left hidden lg:block">
-                <p className="truncate text-sm font-semibold text-text-primary">TeamPulse</p>
+                <p className="truncate text-sm font-semibold text-text-primary">DevLens</p>
                 <p className="hidden text-xs text-text-secondary sm:block">Developer Activity</p>
               </div>
             </Link>
@@ -590,11 +588,9 @@ export default function Topbar() {
               <div className="flex h-full w-full flex-col gap-6 p-6" id="mobile-navigation">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900 dark:bg-white text-sm font-semibold shadow-sm">
-                      <svg className="w-5 h-5 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
-                    </div>
+                    <img src="/logo.svg" alt="DevLens" className="w-12 h-12" />
                     <div className="text-left">
-                      <p className="text-sm font-semibold text-text-primary">TeamPulse</p>
+                      <p className="text-sm font-semibold text-text-primary">DevLens</p>
                       <p className="text-xs text-text-secondary">Developer Activity</p>
                     </div>
                   </div>

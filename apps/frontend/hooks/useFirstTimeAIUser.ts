@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-const STORAGE_KEY = 'teampulse_ai_feature_seen';
+const STORAGE_KEY = 'DevLens_ai_feature_seen';
 const MAX_PULSE_COUNT = 3;
 
 export function useFirstTimeAIUser() {

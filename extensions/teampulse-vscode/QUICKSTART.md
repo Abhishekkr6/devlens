@@ -1,11 +1,11 @@
-# TeamPulse VS Code Extension - Quick Start
+﻿# DevLens VS Code Extension - Quick Start
 
 ## 🚀 Test the Extension Now
 
 ### Step 1: Open Extension in VS Code
 
 ```bash
-cd extensions/teampulse-vscode
+cd extensions/DevLens-vscode
 code .
 ```
 
@@ -15,17 +15,17 @@ Press **F5** in VS Code
 
 This opens a new window with the extension loaded.
 
-### Step 3: Open TeamPulse Sidebar
+### Step 3: Open DevLens Sidebar
 
 In the Extension Development Host window:
-1. Click the **TeamPulse icon** in the Activity Bar (left sidebar)
-2. You should see the TeamPulse sidebar panel
+1. Click the **DevLens icon** in the Activity Bar (left sidebar)
+2. You should see the DevLens sidebar panel
 
 ### Step 4: Login
 
 1. Click **"Login with GitHub"** button
-2. Enter your TeamPulse authentication token
-   - Get token from: https://teampulse18.vercel.app (Settings → API Tokens)
+2. Enter your DevLens authentication token
+   - Get token from: https://DevLens18.vercel.app (Settings → API Tokens)
 3. Click OK
 
 ### Step 5: Open a Repository
@@ -51,11 +51,11 @@ In the Extension Development Host window:
 ## 🐛 Troubleshooting
 
 **Extension doesn't activate:**
-- Check Output panel (View → Output → TeamPulse)
+- Check Output panel (View → Output → DevLens)
 - Look for error messages
 
 **No PRs showing:**
-- Verify repository is connected in TeamPulse dashboard
+- Verify repository is connected in DevLens dashboard
 - Check that you're in the correct organization
 - Click refresh button
 
@@ -72,7 +72,7 @@ Once testing is complete:
 npm run package
 ```
 
-This creates `teampulse-vscode-0.1.0.vsix`
+This creates `DevLens-vscode-0.1.0.vsix`
 
 ## 🎯 Next Steps
 

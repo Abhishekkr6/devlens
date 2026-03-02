@@ -1,9 +1,9 @@
-export const EXTENSION_ID = 'teampulse-vscode';
-export const TOKEN_SECRET_KEY = 'teampulse-auth-token';
-export const SELECTED_ORG_KEY = 'teampulse-selected-org';
+﻿export const EXTENSION_ID = 'DevLens-vscode';
+export const TOKEN_SECRET_KEY = 'DevLens-auth-token';
+export const SELECTED_ORG_KEY = 'DevLens-selected-org';
 
-export const DEFAULT_API_URL = 'https://teampulse-production.up.railway.app';
-export const DEFAULT_DASHBOARD_URL = 'https://teampulse18.vercel.app';
+export const DEFAULT_API_URL = 'https://DevLens-production.up.railway.app';
+export const DEFAULT_DASHBOARD_URL = 'https://DevLens18.vercel.app';
 
 export const RISK_THRESHOLDS = {
     LOW: 40,

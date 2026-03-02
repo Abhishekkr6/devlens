@@ -1,12 +1,12 @@
-﻿# TeamPulse 🚀
+﻿# DevLens 🚀
 
 **Real-time engineering visibility without the micromanagement.**
 
-I built TeamPulse because I was tired of daily standups that felt like interrogations. I wanted a way to see *what* was happening in my repos—who's committing, what PRs are stuck, and where the risks are—without tapping anyone on the shoulder.
+I built DevLens because I was tired of daily standups that felt like interrogations. I wanted a way to see *what* was happening in my repos—who's committing, what PRs are stuck, and where the risks are—without tapping anyone on the shoulder.
 
 It's a full-stack platform that hooks directly into GitHub to track development velocity, analyze code risk (using a custom scoring algorithm), and stream updates live to a dashboard.
 
-![TeamPulse Dashboard](./docs/dashboard-preview.png)
+![DevLens Dashboard](./docs/dashboard-preview.png)
 
 ## Why I Built This
 

@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, AxiosError } from 'axios';
+﻿import axios, { AxiosInstance, AxiosError } from 'axios';
 import * as vscode from 'vscode';
 import { logger } from '../utils/logger';
 import { DEFAULT_API_URL } from '../utils/constants';
@@ -16,7 +16,7 @@ export class ApiClient {
     private token: string | undefined;
 
     constructor() {
-        const config = vscode.workspace.getConfiguration('teampulse');
+        const config = vscode.workspace.getConfiguration('DevLens');
         const apiUrl = config.get<string>('apiUrl') || DEFAULT_API_URL;
 
         this.axiosInstance = axios.create({
@@ -128,11 +128,11 @@ export class ApiClient {
                 case 401:
                     logger.warn('Authentication failed - token may be expired');
                     vscode.window.showWarningMessage(
-                        'TeamPulse session expired. Please login again.',
+                        'DevLens session expired. Please login again.',
                         'Login'
                     ).then((selection) => {
                         if (selection === 'Login') {
-                            vscode.commands.executeCommand('teampulse.login');
+                            vscode.commands.executeCommand('DevLens.login');
                         }
                     });
                     break;
@@ -141,7 +141,7 @@ export class ApiClient {
                     break;
                 case 500:
                     logger.error('Server error', data?.message || 'Internal server error');
-                    vscode.window.showErrorMessage('TeamPulse server error. Please try again later.');
+                    vscode.window.showErrorMessage('DevLens server error. Please try again later.');
                     break;
                 default:
                     logger.error(`API error (${status})`, data?.message || error.message);
@@ -149,7 +149,7 @@ export class ApiClient {
         } else if (error.request) {
             logger.error('Network error - no response received', error.message);
             vscode.window.showErrorMessage(
-                'Unable to connect to TeamPulse. Check your internet connection.'
+                'Unable to connect to DevLens. Check your internet connection.'
             );
         } else {
             logger.error('Request setup error', error.message);

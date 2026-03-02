@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+﻿import { Request, Response } from "express";
 import { RepoModel } from "../models/repo.model";
 import crypto from "crypto";
 import logger from "../utils/logger";
@@ -102,7 +102,7 @@ export const connectRepo = async (req: any, res: Response) => {
     });
 
     // ✅ CREATE WEBHOOK AUTOMATICALLY
-    const backendUrl = process.env.BACKEND_URL || "https://teampulse-w2s8.onrender.com";
+    const backendUrl = process.env.BACKEND_URL || "https://DevLens-w2s8.onrender.com";
     const webhookUrl = `${backendUrl}/api/v1/webhooks/github`;
 
     logger.info({ repo: repoFullName, webhookUrl }, "Creating GitHub webhook");

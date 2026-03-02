@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 let socket: WebSocket | null = null;
 const listeners: ((event: unknown) => void)[] = [];
 let retryCount = 0;
 const MAX_RETRIES = 5;
 
-const DEFAULT_REMOTE_WS = "wss://teampulse-w2s8.onrender.com";
+const DEFAULT_REMOTE_WS = "wss://DevLens-w2s8.onrender.com";
 
 const resolveWsUrl = () => {
   const envUrl = process.env.NEXT_PUBLIC_WS_URL;

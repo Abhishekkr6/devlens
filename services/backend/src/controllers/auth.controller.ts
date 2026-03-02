@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+﻿import { Request, Response } from "express";
 import { Types } from "mongoose";
 import {
   exchangeCodeForToken,
@@ -23,7 +23,7 @@ export const githubLogin = async (req: Request, res: Response) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
 
   const frontend = (
-    process.env.FRONTEND_URL || "https://teampulse18.vercel.app"
+    process.env.FRONTEND_URL || "https://DevLens18.vercel.app"
   ).replace(/\/$/, "");
 
   const redirectUri = `${frontend}/auth/github/callback`;
@@ -95,7 +95,7 @@ export const githubCallback = async (req: Request, res: Response) => {
 
     // Clear any stale/old cookies first to avoid conflicts (best-effort)
     try {
-      res.clearCookie("teampulse_token", { path: "/" });
+      res.clearCookie("DevLens_token", { path: "/" });
       res.clearCookie("token", { path: "/" });
     } catch {
       /* ignore */
@@ -106,7 +106,7 @@ export const githubCallback = async (req: Request, res: Response) => {
     const sameSite = isProd ? "none" : "lax";
 
     // Primary cookie
-    res.cookie("teampulse_token", token, {
+    res.cookie("DevLens_token", token, {
       httpOnly: true,
       secure: isProd,
       sameSite: sameSite as any,
@@ -145,7 +145,7 @@ export const logout = async (req: Request, res: Response) => {
     const isProd = String(process.env.NODE_ENV).toLowerCase() === "production";
     const sameSite = isProd ? "none" : "lax";
 
-    res.clearCookie("teampulse_token", {
+    res.clearCookie("DevLens_token", {
       path: "/",
       secure: isProd,
       sameSite: sameSite as any,
@@ -204,7 +204,7 @@ export const logoutAndDelete = async (req: any, res: Response) => {
     const isProd = String(process.env.NODE_ENV).toLowerCase() === "production";
     const sameSite = isProd ? "none" : "lax";
 
-    res.clearCookie("teampulse_token", { path: "/" });
+    res.clearCookie("DevLens_token", { path: "/" });
     res.clearCookie("token", { path: "/" });
 
     return res.json({ success: true, message: "Account deleted (soft)" });

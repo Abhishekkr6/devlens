@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -87,7 +87,7 @@ export default function SettingsPage() {
               <div>
                 <h2 className="text-lg font-semibold text-slate-900">Danger Zone</h2>
                 <p className="mt-1 text-sm text-slate-600">
-                  Deleting your account will permanently remove all your data from TeamPulse. This includes:
+                  Deleting your account will permanently remove all your data from DevLens. This includes:
                 </p>
                 <ul className="mt-2 ml-4 list-disc space-y-1 text-sm text-slate-600">
                   <li>All organizations you created or belong to</li>

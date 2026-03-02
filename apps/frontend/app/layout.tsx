@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { fontHeading, fontBody } from "./fonts";
+﻿import type { Metadata } from "next";
+import { fontHeading, fontBody, fontLogo } from "./fonts";
 import "./globals.css";
 import AutoCleanup from "../components/Auth/AutoCleanupScript";
 import SmoothScroll from "../components/SmoothScroll";
@@ -9,8 +9,13 @@ import { NotificationToaster } from "../components/NotificationToaster";
 import { GlobalToastManager } from "../components/GlobalToastManager";
 
 export const metadata: Metadata = {
-  title: "TeamPulse | Developer Activity & Insights",
+  title: "DevLens | Developer Activity & Insights",
   description: "Real-time developer activity and insights",
+  icons: {
+    icon: "/favicon.svg",
+    shortcut: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
 };
 
 export default function RootLayout({
@@ -21,7 +26,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${fontHeading.variable} ${fontBody.variable} antialiased bg-background text-text-primary transition-colors duration-300`}
+        className={`${fontHeading.variable} ${fontBody.variable} ${fontLogo.variable} antialiased bg-background text-text-primary transition-colors duration-300`}
       >
         <AutoCleanup />
         <SmoothScroll />

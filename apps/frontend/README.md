@@ -1,6 +1,6 @@
-# TeamPulse Frontend 🎨
+﻿# DevLens Frontend 🎨
 
-The user interface for TeamPulse, built with **Next.js 15 (React 18)** and **Tailwind CSS 4**.
+The user interface for DevLens, built with **Next.js 15 (React 18)** and **Tailwind CSS 4**.
 
 ## Architecture
 
@@ -52,4 +52,4 @@ The UI is designed to be **dense but readable**. Engineering dashboards often su
 - **Dark mode first**: Because developers. 🌙
 
 ---
-*Part of the [TeamPulse](../README.md) project.*
+*Part of the [DevLens](../README.md) project.*

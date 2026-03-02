@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+﻿import { Request, Response } from "express";
 import { UserModel } from "../models/user.model";
 import { OrgModel } from "../models/org.model";
 import { OrgMemberModel } from "../models/orgMember.model";
@@ -22,7 +22,7 @@ export const getMe = async (req: Request, res: Response) => {
     if (!user) {
       // IMPORTANT:
       // Clear invalid cookies because token is stale / user deleted
-      res.clearCookie("teampulse_token", { path: "/" });
+      res.clearCookie("DevLens_token", { path: "/" });
       res.clearCookie("token", { path: "/" });
 
       return res.status(404).json({
@@ -119,7 +119,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
     await OrgMemberModel.deleteMany({ userId });
 
     // - Clear cookies
-    res.clearCookie("teampulse_token", { path: "/" });
+    res.clearCookie("DevLens_token", { path: "/" });
     res.clearCookie("token", { path: "/" });
 
     return res.json({

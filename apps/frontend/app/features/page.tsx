@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import React from "react";
 import Link from "next/link";
@@ -31,7 +31,7 @@ export default function FeaturesPage() {
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">High-Performance Teams</span>
                     </h1>
                     <p className="text-xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
-                        TeamPulse aggregates data from your entire engineering stack to provide actionable insights, automated risk detection, and real-time velocity metrics.
+                        DevLens aggregates data from your entire engineering stack to provide actionable insights, automated risk detection, and real-time velocity metrics.
                     </p>
                 </div>
             </section>
@@ -113,7 +113,7 @@ export default function FeaturesPage() {
             <section className="py-24 text-center">
                 <div className="max-w-2xl mx-auto px-4 space-y-8">
                     <h2 className="text-3xl md:text-4xl font-bold">Ready to optimize your workflow?</h2>
-                    <p className="text-text-secondary text-lg">Join 500+ engineering teams buildling better software with TeamPulse.</p>
+                    <p className="text-text-secondary text-lg">Join 500+ engineering teams buildling better software with DevLens.</p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
 
                         <Button

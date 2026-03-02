@@ -476,7 +476,7 @@ export default function RepoSettingsClient({
                             <div>
                                 <div className="text-sm font-medium text-red-700 dark:text-red-400">Disconnect Repository</div>
                                 <div className="mt-1 text-xs text-red-600 dark:text-red-500">
-                                    Remove this repository from TeamPulse. All data will be deleted.
+                                    Remove this repository from DevLens. All data will be deleted.
                                 </div>
                             </div>
                             <button
@@ -496,7 +496,7 @@ export default function RepoSettingsClient({
                 onClose={() => setShowDisconnectDialog(false)}
                 onConfirm={handleDisconnectRepo}
                 title="Disconnect Repository"
-                description={`Are you sure you want to disconnect "${repo.name}"? This will remove all analyzed data, including commits, PRs, and alerts from TeamPulse. The actual GitHub repository will not be affected.`}
+                description={`Are you sure you want to disconnect "${repo.name}"? This will remove all analyzed data, including commits, PRs, and alerts from DevLens. The actual GitHub repository will not be affected.`}
                 confirmText="Disconnect Repository"
                 isLoading={isDeleting}
             />

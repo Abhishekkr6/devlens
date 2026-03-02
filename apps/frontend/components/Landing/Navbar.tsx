@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
-import { Activity, Github, Menu, X } from "lucide-react";
+import { Github, Menu, X } from "lucide-react";
 
 export function Navbar() {
     const [scrolled, setScrolled] = useState(false);
@@ -21,18 +21,16 @@ export function Navbar() {
     return (
         <nav
             className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${scrolled
-                    ? "bg-background/95 backdrop-blur-xl border-b border-border/30 py-3 shadow-lg"
-                    : "bg-background/85 backdrop-blur-xl py-5"
+                ? "bg-background/95 backdrop-blur-xl border-b border-border/30 py-3 shadow-lg"
+                : "bg-background/85 backdrop-blur-xl py-5"
                 }`}
         >
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 {/* Logo */}
-                <Link href="/" className="flex items-center gap-2">
-                    <div className="bg-white p-1.5 rounded-lg">
-                        <Activity className="text-slate-900 w-5 h-5" />
-                    </div>
-                    <span className="text-xl font-bold text-text-primary tracking-tight">
-                        TeamPulse
+                <Link href="/" className="flex items-center gap-1">
+                    <img src="/logo.svg" alt="DevLens" className="w-16 h-16" />
+                    <span className="text-2xl font-bold tracking-tight text-text-primary" style={{ fontFamily: 'var(--font-logo)' }}>
+                        DevLens
                     </span>
                 </Link>
 

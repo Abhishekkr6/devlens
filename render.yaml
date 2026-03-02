@@ -1,6 +1,6 @@
-services:
+﻿services:
   - type: web
-    name: teampulse-backend
+    name: DevLens-backend
     env: node
     plan: free
     rootDir: services/backend

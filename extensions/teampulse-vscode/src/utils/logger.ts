@@ -1,10 +1,10 @@
-import * as vscode from 'vscode';
+﻿import * as vscode from 'vscode';
 
 class Logger {
     private outputChannel: vscode.OutputChannel;
 
     constructor() {
-        this.outputChannel = vscode.window.createOutputChannel('TeamPulse');
+        this.outputChannel = vscode.window.createOutputChannel('DevLens');
     }
 
     info(message: string, ...args: any[]): void {

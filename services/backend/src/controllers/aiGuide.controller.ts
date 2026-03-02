@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+﻿import { Request, Response } from 'express';
 import { getGeminiService } from '../services/ai/gemini.service';
 import logger from '../utils/logger';
 
@@ -59,10 +59,10 @@ function buildGuidePrompt(message: string, context: string, history: any[]): str
         ? history.map((m: any) => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n')
         : 'No previous conversation';
 
-    return `You are a helpful AI guide for TeamPulse, a team collaboration and code review platform.
+    return `You are a helpful AI guide for DevLens, a team collaboration and code review platform.
 
 **Your Role:**
-- Help users navigate and use TeamPulse features
+- Help users navigate and use DevLens features
 - Provide step-by-step guidance
 - Be friendly, concise, and helpful
 - Use emojis to make responses engaging
@@ -83,7 +83,7 @@ ${conversationHistory}
 3. If the user seems lost, offer a quick tour or guide them to relevant sections
 4. Keep responses under 150 words unless explaining a complex process
 5. Use bullet points and emojis for better readability
-6. If you don't know something specific about TeamPulse, be honest and suggest general guidance
+6. If you don't know something specific about DevLens, be honest and suggest general guidance
 
 **Response:**`;
 }
@@ -134,7 +134,7 @@ function getContextInfo(pathname: string): { page: string; features: string[] } 
     }
 
     return {
-        page: 'TeamPulse',
+        page: 'DevLens',
         features: ['Dashboard', 'Pull Requests', 'Repositories', 'Team', 'AI Analysis']
     };
 }

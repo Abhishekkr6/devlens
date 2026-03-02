@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -24,8 +24,13 @@ export default function Sidebar() {
   return (
     <div className="w-64 bg-slate-900/95 backdrop-blur-3xl border-r border-border flex flex-col">
       <div className="px-4 py-4 border-b border-border">
-        <h1 className="text-lg font-bold tracking-tight text-text-primary">TeamPulse</h1>
-        <p className="text-xs text-text-secondary">Engineering insights</p>
+        <div className="flex items-center gap-2">
+          <img src="/logo.svg" alt="DevLens Logo" className="w-11 h-11" />
+          <div>
+            <h1 className="text-lg font-bold tracking-tight text-text-primary leading-none">DevLens</h1>
+            <p className="text-xs text-text-secondary">Engineering insights</p>
+          </div>
+        </div>
       </div>
 
       <nav className="flex-1 px-2 py-4 space-y-1">

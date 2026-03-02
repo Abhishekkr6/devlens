@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { X, Sparkles, CheckCircle } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Card } from "./Card";
 import { Button } from "./Button";
 
-const BANNER_STORAGE_KEY = "teampulse_ai_banner_dismissed";
+const BANNER_STORAGE_KEY = "DevLens_ai_banner_dismissed";
 
 export function AIWelcomeBanner() {
     const [isVisible, setIsVisible] = useState(false);

@@ -1,18 +1,18 @@
-import * as vscode from 'vscode';
+﻿import * as vscode from 'vscode';
 import { AuthManager } from './auth/authManager';
 import { ApiClient } from './api/client';
 import { RepoDetector } from './git/repoDetector';
-import { TeamPulseViewProvider } from './providers/TeamPulseViewProvider';
+import { DevLensViewProvider } from './providers/DevLensViewProvider';
 import { logger } from './utils/logger';
 import { DEFAULT_DASHBOARD_URL } from './utils/constants';
 
 let authManager: AuthManager;
 let apiClient: ApiClient;
 let repoDetector: RepoDetector;
-let viewProvider: TeamPulseViewProvider;
+let viewProvider: DevLensViewProvider;
 
 export function activate(context: vscode.ExtensionContext) {
-    logger.info('TeamPulse extension activated');
+    logger.info('DevLens extension activated');
 
     // Initialize core services
     authManager = new AuthManager(context);
@@ -20,33 +20,33 @@ export function activate(context: vscode.ExtensionContext) {
     repoDetector = new RepoDetector();
 
     // Register webview provider
-    viewProvider = new TeamPulseViewProvider(context, authManager, apiClient, repoDetector);
+    viewProvider = new DevLensViewProvider(context, authManager, apiClient, repoDetector);
     context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider('teampulse.sidebar', viewProvider)
+        vscode.window.registerWebviewViewProvider('DevLens.sidebar', viewProvider)
     );
 
     // Register commands
     context.subscriptions.push(
-        vscode.commands.registerCommand('teampulse.login', async () => {
+        vscode.commands.registerCommand('DevLens.login', async () => {
             await handleLogin();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('teampulse.logout', async () => {
+        vscode.commands.registerCommand('DevLens.logout', async () => {
             await handleLogout();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('teampulse.refresh', async () => {
+        vscode.commands.registerCommand('DevLens.refresh', async () => {
             await viewProvider.refresh();
         })
     );
 
     context.subscriptions.push(
-        vscode.commands.registerCommand('teampulse.openDashboard', async () => {
-            const config = vscode.workspace.getConfiguration('teampulse');
+        vscode.commands.registerCommand('DevLens.openDashboard', async () => {
+            const config = vscode.workspace.getConfiguration('DevLens');
             const dashboardUrl = config.get<string>('dashboardUrl') || DEFAULT_DASHBOARD_URL;
             await vscode.env.openExternal(vscode.Uri.parse(dashboardUrl));
         })
@@ -60,7 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
         })
     );
 
-    logger.info('TeamPulse extension fully initialized');
+    logger.info('DevLens extension fully initialized');
 }
 
 async function handleLogin(): Promise<void> {
@@ -68,7 +68,7 @@ async function handleLogin(): Promise<void> {
         logger.info('Starting login flow');
 
         const token = await vscode.window.showInputBox({
-            prompt: 'Enter your TeamPulse authentication token',
+            prompt: 'Enter your DevLens authentication token',
             password: true,
             placeHolder: 'Paste your token here',
             ignoreFocusOut: true,
@@ -136,5 +136,5 @@ async function handleLogout(): Promise<void> {
 }
 
 export function deactivate() {
-    logger.info('TeamPulse extension deactivated');
+    logger.info('DevLens extension deactivated');
 }

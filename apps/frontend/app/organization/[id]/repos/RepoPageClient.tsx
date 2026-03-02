@@ -374,7 +374,7 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
         onClose={() => setRepoToDelete(null)}
         onConfirm={handleConfirmDelete}
         title="Disconnect Repository"
-        description={`Are you sure you want to disconnect "${repoToDelete?.name}"? This will remove all analyzed data, including commits, PRs, and alerts from TeamPulse. The actual GitHub repository will not be affected.`}
+        description={`Are you sure you want to disconnect "${repoToDelete?.name}"? This will remove all analyzed data, including commits, PRs, and alerts from DevLens. The actual GitHub repository will not be affected.`}
         confirmText="Disconnect Repository"
         isLoading={isDeletingRepo}
       />

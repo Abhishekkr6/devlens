@@ -1,4 +1,4 @@
-import express from "express";
+﻿import express from "express";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
@@ -14,7 +14,7 @@ const app = express();
 
 // Health check for Render (required to pass deployment health checks)
 app.get("/", (req, res) => {
-   res.status(200).send("TeamPulse Backend is running 🚀");
+   res.status(200).send("DevLens Backend is running 🚀");
 });
 
 /* 
@@ -42,8 +42,8 @@ app.use(
 const resolvedFrontend = (process.env.FRONTEND_URL || "").trim();
 const allowedOrigins = [
    "http://localhost:3000",
-   "https://teampulse18.vercel.app",
-   "https://teampulse-production.up.railway.app",
+   "https://DevLens18.vercel.app",
+   "https://DevLens-production.up.railway.app",
 ];
 if (resolvedFrontend && !allowedOrigins.includes(resolvedFrontend)) {
    allowedOrigins.push(resolvedFrontend);
@@ -103,9 +103,9 @@ if (!mongoUrl) {
    process.exit(1);
 }
 
-// Database name - use environment variable or default to 'teampulse'
+// Database name - use environment variable or default to 'DevLens'
 // If you want to use 'admin' database, set MONGO_DB_NAME=admin in your .env file
-const dbName = process.env.MONGO_DB_NAME || "teampulse";
+const dbName = process.env.MONGO_DB_NAME || "DevLens";
 
 // Ensure database name is in connection string
 // MongoDB URL format: mongodb://[username:password@]host[:port]/[database][?options]

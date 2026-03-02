@@ -1,4 +1,4 @@
-import { getGeminiService } from './gemini.service';
+﻿import { getGeminiService } from './gemini.service';
 import logger from '../../utils/logger';
 import { PRModel } from '../../models/pr.model';
 import { CommitModel } from '../../models/commit.model';
@@ -86,7 +86,7 @@ export class ChatbotService {
 
         try {
             const prompt = `
-You are an intent classifier for a GitHub repository management platform called TeamPulse.
+You are an intent classifier for a GitHub repository management platform called DevLens.
 
 User Query: "${query}"
 
@@ -427,7 +427,7 @@ Only include filters that are explicitly mentioned or strongly implied.
 
         try {
             const prompt = `
-You are TeamPulse AI Assistant, a helpful chatbot for a GitHub repository management platform.
+You are DevLens AI Assistant, a helpful chatbot for a GitHub repository management platform.
 
 User Query: "${query}"
 Intent: ${intent.type}

@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Send, Trash2, Sparkles, Loader2 } from 'lucide-react';
@@ -226,7 +226,7 @@ export function ChatbotWidget() {
                                     <Sparkles className="w-5 h-5" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold">TeamPulse AI</h3>
+                                    <h3 className="font-semibold">DevLens AI</h3>
                                     <p className="text-xs text-white/80">Ask me anything!</p>
                                 </div>
                             </div>
@@ -258,7 +258,7 @@ export function ChatbotWidget() {
                                         <Sparkles className="w-8 h-8 text-brand" />
                                     </div>
                                     <h4 className="text-lg font-semibold text-text-primary mb-2">
-                                        TeamPulse AI Guide
+                                        DevLens AI Guide
                                     </h4>
                                     <p className="text-sm text-text-secondary mb-4">
                                         I can help you with PRs, stats, and platform navigation.
@@ -377,5 +377,5 @@ function getWelcomeMessage(pathname: string): string {
     if (pathname.includes('/dashboard') || pathname.includes('/organization')) {
         return "👋 Welcome to your Dashboard!\n\nHere you can:\n• View team activity\n• Monitor PR status\n• Check critical alerts\n• Track metrics\n\nNeed help with anything?";
     }
-    return "👋 Hi! I'm your TeamPulse AI Guide.\n\nI can help you:\n• Navigate the platform\n• Use AI features\n• Understand metrics\n• Get started quickly\n\nWhat would you like to learn?";
+    return "👋 Hi! I'm your DevLens AI Guide.\n\nI can help you:\n• Navigate the platform\n• Use AI features\n• Understand metrics\n• Get started quickly\n\nWhat would you like to learn?";
 }

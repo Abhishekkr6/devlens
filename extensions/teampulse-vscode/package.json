@@ -1,9 +1,9 @@
-{
-    "name": "teampulse-vscode",
-    "displayName": "TeamPulse",
+﻿{
+    "name": "DevLens-vscode",
+    "displayName": "DevLens",
     "description": "Real-time engineering insights for your GitHub repositories",
     "version": "0.1.0",
-    "publisher": "teampulse",
+    "publisher": "DevLens",
     "icon": "media/icon.png",
     "engines": {
         "vscode": "^1.85.0"
@@ -26,52 +26,52 @@
         "viewsContainers": {
             "activitybar": [
                 {
-                    "id": "teampulse",
-                    "title": "TeamPulse",
+                    "id": "DevLens",
+                    "title": "DevLens",
                     "icon": "media/icon.svg"
                 }
             ]
         },
         "views": {
-            "teampulse": [
+            "DevLens": [
                 {
                     "type": "webview",
-                    "id": "teampulse.sidebar",
+                    "id": "DevLens.sidebar",
                     "name": "Repository Insights"
                 }
             ]
         },
         "commands": [
             {
-                "command": "teampulse.login",
-                "title": "TeamPulse: Login with GitHub"
+                "command": "DevLens.login",
+                "title": "DevLens: Login with GitHub"
             },
             {
-                "command": "teampulse.logout",
-                "title": "TeamPulse: Logout"
+                "command": "DevLens.logout",
+                "title": "DevLens: Logout"
             },
             {
-                "command": "teampulse.refresh",
-                "title": "TeamPulse: Refresh",
+                "command": "DevLens.refresh",
+                "title": "DevLens: Refresh",
                 "icon": "$(refresh)"
             },
             {
-                "command": "teampulse.openDashboard",
-                "title": "TeamPulse: Open Dashboard"
+                "command": "DevLens.openDashboard",
+                "title": "DevLens: Open Dashboard"
             }
         ],
         "configuration": {
-            "title": "TeamPulse",
+            "title": "DevLens",
             "properties": {
-                "teampulse.apiUrl": {
+                "DevLens.apiUrl": {
                     "type": "string",
-                    "default": "https://teampulse-production.up.railway.app",
-                    "description": "TeamPulse API base URL"
+                    "default": "https://DevLens-production.up.railway.app",
+                    "description": "DevLens API base URL"
                 },
-                "teampulse.dashboardUrl": {
+                "DevLens.dashboardUrl": {
                     "type": "string",
-                    "default": "https://teampulse18.vercel.app",
-                    "description": "TeamPulse dashboard URL"
+                    "default": "https://DevLens18.vercel.app",
+                    "description": "DevLens dashboard URL"
                 }
             }
         }
@@ -99,7 +99,7 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/Abhishekkr6/teampulse"
+        "url": "https://github.com/Abhishekkr6/DevLens"
     },
     "license": "MIT"
 }
