@@ -46,8 +46,8 @@ function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-1">
-          <img src="/logo.svg" alt="DevLens" className="w-16 h-16" />
-          <span className="text-2xl font-bold tracking-tight text-text-primary" style={{ fontFamily: 'var(--font-logo)' }}>
+          <img src="/logo.svg" alt="DevLens" className="w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 lg:w-16 lg:h-16" />
+          <span className="text-lg sm:text-xl md:text-2xl font-bold tracking-tight text-text-primary" style={{ fontFamily: 'var(--font-logo)' }}>
             DevLens
           </span>
         </Link>
