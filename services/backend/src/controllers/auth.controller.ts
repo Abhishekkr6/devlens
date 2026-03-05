@@ -23,7 +23,7 @@ export const githubLogin = async (req: Request, res: Response) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
 
   const frontend = (
-    process.env.FRONTEND_URL || "https://DevLens18.vercel.app"
+    process.env.FRONTEND_URL || "https://devvlens.vercel.app"
   ).replace(/\/$/, "");
 
   const redirectUri = `${frontend}/auth/github/callback`;
