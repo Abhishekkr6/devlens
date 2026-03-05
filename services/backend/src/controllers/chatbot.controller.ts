@@ -174,7 +174,9 @@ export const getChatbotStatus = async (req: Request, res: Response) => {
                     'code_quality',
                     'security_alerts',
                     'repo_metrics',
-                    'help'
+                    'app_guide',
+                    'help',
+                    'general'
                 ]
             }
         });

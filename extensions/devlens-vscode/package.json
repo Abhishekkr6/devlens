@@ -70,7 +70,7 @@
                 },
                 "DevLens.dashboardUrl": {
                     "type": "string",
-                    "default": "https://DevLens18.vercel.app",
+                    "default": "https://devvlens.vercel.app",
                     "description": "DevLens dashboard URL"
                 }
             }

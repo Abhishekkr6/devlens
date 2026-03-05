@@ -42,8 +42,8 @@ app.use(
 const resolvedFrontend = (process.env.FRONTEND_URL || "").trim();
 const allowedOrigins = [
    "http://localhost:3000",
-   "https://DevLens18.vercel.app",
-   "https://DevLens-production.up.railway.app",
+   "https://devvlens.vercel.app",
+   "https://teampulse-w2s8.onrender.com",
 ];
 if (resolvedFrontend && !allowedOrigins.includes(resolvedFrontend)) {
    allowedOrigins.push(resolvedFrontend);

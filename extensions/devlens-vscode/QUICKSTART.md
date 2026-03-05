@@ -25,7 +25,7 @@ In the Extension Development Host window:
 
 1. Click **"Login with GitHub"** button
 2. Enter your DevLens authentication token
-   - Get token from: https://DevLens18.vercel.app (Settings → API Tokens)
+   - Get token from: https://devvlens.vercel.app (Settings → API Tokens)
 3. Click OK
 
 ### Step 5: Open a Repository

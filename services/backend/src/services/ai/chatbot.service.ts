@@ -21,7 +21,7 @@ interface ChatResponse {
 }
 
 interface QueryIntent {
-    type: 'pr_list' | 'developer_stats' | 'commit_history' | 'code_quality' | 'security_alerts' | 'repo_metrics' | 'general' | 'help';
+    type: 'pr_list' | 'developer_stats' | 'commit_history' | 'code_quality' | 'security_alerts' | 'repo_metrics' | 'app_guide' | 'general' | 'help';
     filters?: {
         timeRange?: string;
         riskLevel?: string;
@@ -31,6 +31,60 @@ interface QueryIntent {
     };
     confidence: number;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Comprehensive DevLens knowledge — injected into every Gemini prompt so the
+// AI can answer ANY question about the app, not just data queries.
+// ─────────────────────────────────────────────────────────────────────────────
+const DEVLENS_KNOWLEDGE = `
+## About DevLens
+DevLens is an AI-powered GitHub repository monitoring and analytics dashboard. It helps engineering teams track pull requests, monitor developer activity, detect security vulnerabilities, and get AI-driven code quality insights — all in one place.
+
+## Core Features
+1. **Repository Monitoring** – Connect GitHub repositories and get real-time analytics.
+2. **Pull Request (PR) Risk Scoring** – Every PR is automatically analyzed by AI and given a risk score (0–100). Score ≥70 = High Risk.
+3. **Code Quality Analysis** – AI reviews code diffs for bugs, security issues, style problems, and performance concerns.
+4. **Security Alerts** – Automatically detects vulnerabilities (SQL injection, XSS, auth issues, etc.) in new PRs.
+5. **Developer Statistics** – Track who is most active, commit counts, lines added/deleted, last active time.
+6. **Commit History** – Browse all commits across connected repositories with author and timestamp info.
+7. **Activity Feed** – Real-time feed of all events (PR opened/merged, commits pushed, alerts triggered).
+8. **AI Chatbot (this!)** – Ask natural language questions about your repositories and team.
+
+## How to Connect a Repository
+1. Go to **Settings** in the left sidebar (or top navigation).
+2. Click **"Connect Repository"** or **"Add Repository"**.
+3. Authenticate with **GitHub OAuth** (you'll be redirected to GitHub to grant access).
+4. Select the repositories you want to monitor and confirm.
+5. DevLens will start syncing PRs, commits, and alerts automatically via GitHub Webhooks.
+6. Connected repos appear in the **Repositories** section of the dashboard.
+
+## Navigation Guide
+- **Dashboard** – Overview of key metrics: total repos, open PRs, active alerts, team activity.
+- **Repositories** – List of all connected repos with their metrics.
+- **Pull Requests** – All PRs across repos; filterable by status (open/closed/merged) and risk level.
+- **Developers** – Developer leaderboard with commit counts, PR activity, and performance metrics.
+- **Alerts** – All security and quality alerts, filterable by severity (critical/high/medium/low).
+- **Settings** – Connect new repos, manage GitHub OAuth tokens, configure notifications.
+
+## How PR Risk Score Works
+The risk score (0–100) is calculated using:
+- Number of files changed (more files = higher risk)
+- Lines added and deleted (large diffs = higher risk)
+- Cyclomatic complexity of changed code
+- Author's experience (fewer commits = higher risk)
+- Security vulnerabilities detected in the diff
+
+## How to Use the AI Chatbot
+You can ask me anything! Examples:
+- "Show me all high-risk PRs"
+- "Which developer is most active this week?"
+- "What are the current security alerts?"
+- "How many repos are connected?"
+- "Show commits from today"
+- "What is the average code quality score?"
+- "How do I connect a new repository?"
+- "What features does DevLens have?"
+`;
 
 export class ChatbotService {
     private geminiService: any;
@@ -53,7 +107,7 @@ export class ChatbotService {
 
             logger.info({ intent }, 'Query intent classified');
 
-            // Step 2: Fetch relevant data based on intent
+            // Step 2: Fetch relevant data based on intent (only for data intents)
             const data = await this.fetchDataForIntent(intent, query.orgId);
 
             // Step 3: Generate natural language response
@@ -99,8 +153,9 @@ Intent Types:
 - code_quality: User wants code quality metrics
 - security_alerts: User wants security alerts
 - repo_metrics: User wants repository metrics
-- help: User needs help/guidance
-- general: General conversation
+- app_guide: User is asking how to use the app, about app features, how to connect repos, navigation, what DevLens does, general how-to questions
+- help: User needs help/guidance on what the chatbot can do
+- general: General conversation not fitting any above category
 
 Filters to extract (if applicable):
 - timeRange: "today", "this week", "last week", "this month", "last month"
@@ -190,11 +245,37 @@ Only include filters that are explicitly mentioned or strongly implied.
             return { type: 'security_alerts', confidence: 0.8 };
         }
 
+        // App guide — how-to, navigation, features, connecting repos
+        if (
+            lowerQuery.includes('connect') ||
+            lowerQuery.includes('add repo') ||
+            lowerQuery.includes('navigate') ||
+            lowerQuery.includes('dashboard') ||
+            lowerQuery.includes('feature') ||
+            lowerQuery.includes('settings') ||
+            lowerQuery.includes('what is devlens') ||
+            lowerQuery.includes('what does') ||
+            lowerQuery.includes('how to') ||
+            lowerQuery.includes('how do i') ||
+            lowerQuery.includes('how does') ||
+            lowerQuery.includes('risk score') ||
+            lowerQuery.includes('webhook') ||
+            lowerQuery.includes('oauth') ||
+            lowerQuery.includes('github') ||
+            lowerQuery.includes('menu') ||
+            lowerQuery.includes('sidebar') ||
+            lowerQuery.includes('page') ||
+            lowerQuery.includes('section')
+        ) {
+            return { type: 'app_guide', confidence: 0.85 };
+        }
+
         // Help
-        if (lowerQuery.includes('help') || lowerQuery.includes('how') || lowerQuery.includes('what can you')) {
+        if (lowerQuery.includes('help') || lowerQuery.includes('what can you')) {
             return { type: 'help', confidence: 0.9 };
         }
 
+        // Default: try app_guide for short questions that look like they're asking about the app
         return { type: 'general', confidence: 0.5 };
     }
 
@@ -233,6 +314,9 @@ Only include filters that are explicitly mentioned or strongly implied.
                 case 'help':
                     return this.getHelpContent();
 
+                // app_guide and general intents don't need DB data — Gemini answers from its knowledge
+                case 'app_guide':
+                case 'general':
                 default:
                     return null;
             }
@@ -408,39 +492,49 @@ Only include filters that are explicitly mentioned or strongly implied.
                 'Commit history (e.g., "Show commits from today")',
                 'Code quality metrics (e.g., "What\'s the average code quality?")',
                 'Security alerts (e.g., "List all security alerts")',
-                'Repository metrics (e.g., "How many repos are connected?")'
+                'Repository metrics (e.g., "How many repos are connected?")',
+                'App guidance (e.g., "How do I connect a repository?", "What features does DevLens have?")'
             ],
             examples: [
                 'Show me all open PRs',
                 'Which developer committed the most this week?',
                 'What are the high-risk PRs?',
-                'Show commits from today',
+                'How do I connect a repository?',
                 'List all security alerts'
             ]
         };
     }
 
     private async generateResponse(query: string, intent: QueryIntent, data: any): Promise<string> {
-        if (!this.geminiService || !data) {
+        // Only skip Gemini if the service itself is unavailable — NOT because data is null.
+        // For app_guide and general intents, data will be null but Gemini still answers from its knowledge.
+        if (!this.geminiService) {
             return this.generateFallbackResponse(intent, data);
         }
 
         try {
+            const dataSection = data
+                ? `\n\nLive Data from the user's DevLens account:\n${JSON.stringify(data, null, 2)}`
+                : '\n\n(No live data needed for this query — answer from DevLens knowledge below.)';
+
             const prompt = `
-You are DevLens AI Assistant, a helpful chatbot for a GitHub repository management platform.
+You are DevLens AI Assistant, a helpful and knowledgeable chatbot built into the DevLens platform.
+You have FULL knowledge of the DevLens application and can answer ANY question about it.
+
+${DEVLENS_KNOWLEDGE}
 
 User Query: "${query}"
 Intent: ${intent.type}
-Data: ${JSON.stringify(data, null, 2)}
+${dataSection}
 
-Generate a natural, conversational response that:
-1. Directly answers the user's question
-2. Highlights key insights from the data
-3. Is concise (2-3 sentences max)
-4. Uses a friendly, professional tone
-5. Includes specific numbers/names from the data
-
-Do NOT include any JSON or markdown formatting. Just plain text response.
+Instructions:
+1. Answer the user's question DIRECTLY and COMPLETELY.
+2. If this is a "how-to" or feature question, explain it clearly using the DevLens knowledge above.
+3. If live data is provided, highlight key numbers and names from it.
+4. Be concise but complete (2-4 sentences). For step-by-step guides, use brief numbered steps.
+5. Use a friendly, professional tone.
+6. NEVER say "I can't help with that" or "I'm not able to assist with connecting repositories" — you CAN help with everything DevLens-related.
+7. Do NOT include JSON or markdown code blocks. Plain text only.
 `;
 
             const result = await this.geminiService.model.generateContent(prompt);
@@ -453,15 +547,13 @@ Do NOT include any JSON or markdown formatting. Just plain text response.
     }
 
     private generateFallbackResponse(intent: QueryIntent, data: any): string {
-        if (!data) {
-            return 'I couldn\'t find any data for your query. Please try rephrasing or ask something else.';
-        }
-
         switch (intent.type) {
             case 'pr_list':
+                if (!data) return 'I couldn\'t fetch pull request data right now. Please try again.';
                 return `I found ${data.count} pull request${data.count !== 1 ? 's' : ''} matching your criteria. ${data.prs.length > 0 ? `The most recent one is "${data.prs[0].title}" by ${data.prs[0].author}.` : ''}`;
 
             case 'developer_stats':
+                if (!data) return 'I couldn\'t fetch developer stats right now. Please try again.';
                 if (data.topDevelopers && data.topDevelopers.length > 0) {
                     const top = data.topDevelopers[0];
                     return `${top.developer} is the most active developer with ${top.commits} commits. They've added ${top.additions} lines and removed ${top.deletions} lines.`;
@@ -469,22 +561,29 @@ Do NOT include any JSON or markdown formatting. Just plain text response.
                 return 'No developer activity found for the specified time range.';
 
             case 'commit_history':
+                if (!data) return 'I couldn\'t fetch commit history right now. Please try again.';
                 return `I found ${data.count} commit${data.count !== 1 ? 's' : ''}. ${data.commits.length > 0 ? `The latest commit is "${data.commits[0].message}" by ${data.commits[0].author}.` : ''}`;
 
             case 'code_quality':
+                if (!data) return 'I couldn\'t fetch code quality metrics right now. Please try again.';
                 return `The average risk score across recent PRs is ${data.averageRiskScore}/100. ${data.highRiskCount} out of ${data.totalPRsAnalyzed} PRs are considered high-risk.`;
 
             case 'security_alerts':
+                if (!data) return 'I couldn\'t fetch security alerts right now. Please try again.';
                 return `There are ${data.count} active security alert${data.count !== 1 ? 's' : ''}. ${data.alerts.length > 0 ? `The most recent one is a ${data.alerts[0].severity} severity ${data.alerts[0].type} alert.` : ''}`;
 
             case 'repo_metrics':
+                if (!data) return 'I couldn\'t fetch repository metrics right now. Please try again.';
                 return `You have ${data.totalRepositories} connected repositories with ${data.totalCommits} total commits and ${data.totalPRs} pull requests.`;
 
             case 'help':
-                return 'I can help you with pull requests, developer stats, commits, code quality, security alerts, and repository metrics. Try asking "Show me all high-risk PRs" or "Which developer is most active?"';
+                return 'I can help you with pull requests, developer stats, commits, code quality, security alerts, repository metrics, and anything about how to use DevLens! Try asking "Show me all high-risk PRs" or "How do I connect a repository?" or "Which developer is most active?"';
+
+            case 'app_guide':
+                return 'DevLens is a GitHub repository monitoring platform. To connect a repository, go to Settings and click "Connect Repository", then authenticate with GitHub OAuth. You can also ask me about features, navigation, PR risk scoring, and more!';
 
             default:
-                return 'I\'m here to help! You can ask me about pull requests, developers, commits, code quality, security alerts, or repository metrics.';
+                return 'I\'m DevLens AI — I can help you with pull requests, developer activity, security alerts, code quality, and anything about using the DevLens platform. What would you like to know?';
         }
     }
 
@@ -546,10 +645,20 @@ Do NOT include any JSON or markdown formatting. Just plain text response.
                 'Show critical alerts',
                 'What are the active alerts?'
             ],
+            app_guide: [
+                'How do I connect a repository?',
+                'What features does DevLens have?',
+                'How does PR risk scoring work?'
+            ],
             help: [
                 'Show me all PRs',
                 'Which developer is most active?',
-                'What are the security alerts?'
+                'How do I connect a repository?'
+            ],
+            general: [
+                'How do I connect a repository?',
+                'Show me all PRs',
+                'What features does DevLens have?'
             ]
         };
 
