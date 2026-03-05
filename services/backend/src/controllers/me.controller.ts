@@ -34,21 +34,30 @@ export const getMe = async (req: Request, res: Response) => {
     const defaultOrgId =
       user.defaultOrgId ? String(user.defaultOrgId) : null;
 
-    const orgs = Array.isArray(user.orgIds)
-      ? user.orgIds.map((o: any) => {
-        // Find user's role in this org
-        const member = Array.isArray(o.members)
-          ? o.members.find(
-            (m: any) => String(m.userId) === String(user._id)
-          )
-          : null;
+    // Get all org IDs this user belongs to
+    const orgIds = Array.isArray(user.orgIds)
+      ? user.orgIds.map((o: any) => o._id)
+      : [];
 
-        return {
-          id: String(o._id),
-          name: o.name,
-          role: member?.role || "VIEWER", // Fallback
-        };
-      })
+    // Fetch all memberships for this user in a single query (OrgMember is a separate collection)
+    const memberships = await OrgMemberModel.find({
+      userId: user._id,
+      orgId: { $in: orgIds },
+    }).lean();
+
+    // Build a map: orgId → role so we can look up quickly
+    const roleMap = new Map<string, string>();
+    for (const m of memberships) {
+      roleMap.set(String(m.orgId), m.role);
+    }
+
+    const orgs = Array.isArray(user.orgIds)
+      ? user.orgIds.map((o: any) => ({
+        id: String(o._id),
+        name: o.name,
+        slug: o.slug,
+        role: (roleMap.get(String(o._id)) as "ADMIN" | "MEMBER" | "VIEWER") || "VIEWER",
+      }))
       : [];
 
     return res.json({
