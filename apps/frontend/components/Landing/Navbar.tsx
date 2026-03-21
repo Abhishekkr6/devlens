@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -43,6 +43,12 @@ export function Navbar() {
                         Features
                     </Link>
                     <Link
+                        href="/pricing"
+                        className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
+                    >
+                        Pricing
+                    </Link>
+                    <Link
                         href="/how-it-works"
                         className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors"
                     >
@@ -84,6 +90,13 @@ export function Navbar() {
                                 onClick={() => setMobileMenuOpen(false)}
                             >
                                 Features
+                            </Link>
+                            <Link
+                                href="/pricing"
+                                className="text-left text-sm font-medium text-slate-300 hover:text-white transition-colors py-2"
+                                onClick={() => setMobileMenuOpen(false)}
+                            >
+                                Pricing
                             </Link>
                             <Link
                                 href="/how-it-works"

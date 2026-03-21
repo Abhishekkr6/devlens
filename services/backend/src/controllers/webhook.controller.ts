@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { verifyGithubSignature } from "../utils/verifySignature";
+import { UserModel } from "../models/user.model";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
 import { RepoModel } from "../models/repo.model";

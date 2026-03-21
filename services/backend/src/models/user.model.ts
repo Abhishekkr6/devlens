@@ -7,6 +7,9 @@ export interface IUser extends Document {
   email?: string;
   avatarUrl?: string;
   role: "admin" | "lead" | "dev" | "viewer";
+  plan: "free" | "pro";
+  subscriptionStatus: "active" | "expired" | "past_due" | "none";
+  subscriptionExpiry?: Date;
 
   orgIds: Types.ObjectId[];
 
@@ -30,6 +33,9 @@ const UserSchema = new Schema<IUser>(
     avatarUrl: String,
 
     role: { type: String, default: "dev" },
+    plan: { type: String, enum: ["free", "pro"], default: "free" },
+    subscriptionStatus: { type: String, enum: ["active", "expired", "past_due", "none"], default: "none" },
+    subscriptionExpiry: { type: Date },
 
     orgIds: [{ type: Schema.Types.ObjectId, ref: "Org" }],
 

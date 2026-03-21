@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
@@ -57,6 +57,12 @@ function Navbar() {
           <Link href="/features" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
             Features
           </Link>
+          <Link href="#pricing" onClick={(e) => {
+            e.preventDefault();
+            document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+          }} className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors cursor-pointer">
+            Pricing
+          </Link>
           <Link href="/how-it-works" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
             How it works
           </Link>
@@ -88,6 +94,13 @@ function Navbar() {
             <div className="relative p-4 flex flex-col gap-4">
               <Link href="/features" className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
                 Features
+              </Link>
+              <Link href="#pricing" onClick={(e) => {
+                e.preventDefault();
+                setMobileMenuOpen(false);
+                document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth' });
+              }} className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2 cursor-pointer">
+                Pricing
               </Link>
               <Link href="/how-it-works" className="text-left text-sm font-medium text-text-secondary hover:text-text-primary transition-colors py-2">
                 How it works
@@ -134,12 +147,12 @@ function Hero() {
             transition={{ duration: 0.5 }}
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary leading-[1.15] tracking-tight mb-6">
-              Understand Your <br />
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-700 to-blue-600 dark:from-indigo-300 dark:to-cyan-300 pb-2">
-                Engineering Team
+              Stop Shipping <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500 pb-2">
+                High-Risk Bugs
               </span>{" "}
               <br />
-              In Real Time
+              to Production.
             </h1>
           </motion.div>
 
@@ -149,9 +162,7 @@ function Hero() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-lg md:text-xl text-text-secondary mb-8 leading-relaxed max-w-lg"
           >
-            DevLens gives engineering teams real-time insights into commits,
-            pull requests, risk signals, and developer activity — all in one
-            dashboard.
+            Instantly catch risky PRs, track developer velocity, and automate code reviews with AI before bad code merges.
           </motion.p>
 
           <motion.div
@@ -165,7 +176,7 @@ function Hero() {
               className="flex items-center justify-center gap-2 bg-slate-900 dark:bg-white hover:bg-slate-800 dark:hover:bg-slate-200 text-white dark:text-slate-900 px-8 py-4 rounded-xl text-lg font-semibold transition-all shadow-xl hover:-translate-y-1 cursor-pointer"
             >
               <Github className="w-5 h-5" />
-              Continue with GitHub
+              Start 7-Day Free Trial
             </button>
             <Link
               href="/demo"
@@ -462,7 +473,7 @@ function CTA() {
           className="bg-white text-slate-900 hover:bg-slate-50 px-10 py-4 rounded-xl text-lg font-bold transition-transform hover:-translate-y-1 shadow-2xl flex items-center gap-2 mx-auto cursor-pointer"
         >
           <Github className="w-5 h-5" />
-          Get Started with GitHub
+          Start 7-Day Free Trial (No Card Req)
         </button>
       </div>
     </section>
@@ -492,13 +503,155 @@ function Footer() {
   );
 }
 
+function VideoDemoSection() {
+  return (
+    <section className="py-20 bg-background border-t border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl font-bold text-text-primary mb-4">See DevLens in Action</h2>
+        <p className="text-text-secondary mb-12 max-w-2xl mx-auto">Watch how a single high-risk PR is caught instantly, saving hours of debugging production logs.</p>
+        <div className="w-full max-w-4xl mx-auto bg-slate-900 rounded-2xl aspect-video flex items-center justify-center shadow-2xl border border-slate-700/50 relative overflow-hidden group hover:border-indigo-500/50 transition-colors">
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20 group-hover:opacity-30 transition-opacity"></div>
+          <div className="w-16 h-16 bg-white/10 backdrop-blur rounded-full flex items-center justify-center cursor-pointer group-hover:scale-110 transition-transform">
+            <div className="w-0 h-0 border-t-8 border-t-transparent border-l-[14px] border-l-white border-b-8 border-b-transparent ml-1"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialSection() {
+  const testimonials = [
+    { name: "Sarah J.", role: "Senior Engineer", content: "DevLens caught a massive memory leak in a PR just 5 minutes before I merged it to staging. Literal life saver." },
+    { name: "Rahul T.", role: "Tech Lead", content: "Finally, I don't have to manually hunt down 'who merged what' when production breaks. The risk dashboard is insanely useful." },
+    { name: "Mike W.", role: "CTO", content: "We integrated it in 2 clicks. The AI code review is shockingly accurate and the 7-day trial made it a no-brainer to try." }
+  ];
+
+  return (
+    <section className="py-24 bg-surface border-t border-border">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl font-bold text-text-primary">Trusted by Developers</h2>
+          <p className="text-text-secondary mt-4">Don't just take our word for it.</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-8">
+          {testimonials.map((t, i) => (
+            <div key={i} className="bg-background p-8 rounded-2xl shadow-sm border border-border">
+              <div className="flex text-yellow-500 mb-4 gap-1">
+                {[...Array(5)].map((_, j) => <Sparkles key={j} className="w-4 h-4 fill-current" />)}
+              </div>
+              <p className="text-text-primary mb-6 italic">"{t.content}"</p>
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center font-bold text-indigo-700 dark:text-indigo-300">
+                  {t.name[0]}
+                </div>
+                <div>
+                  <h4 className="font-bold text-sm text-text-primary">{t.name}</h4>
+                  <p className="text-xs text-text-secondary">{t.role}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CreatorSection() {
+  return (
+    <section className="py-20 bg-background">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-10 bg-surface rounded-3xl p-8 border border-border shadow-sm">
+        <img src="/abhishek-profile.jpeg" alt="Abhishek Tiwari" className="w-32 h-32 md:w-40 md:h-40 rounded-full border-4 border-white dark:border-slate-800 shadow-lg object-cover" />
+        <div>
+          <h3 className="text-2xl font-bold text-text-primary mb-2">Built by a Developer, for Developers</h3>
+          <p className="text-text-secondary mb-4 leading-relaxed">
+            "I built DevLens because I was tired of tracking down blind production bugs caused by massive, unreviewed PRs. 
+            I wanted a tool that automatically flagged risks before they merged, not after the servers went down."
+          </p>
+          <div className="flex items-center gap-4">
+            <span className="font-semibold text-text-primary">— Abhishek Tiwari</span>
+            <a href="https://github.com/Abhishekkr6" target="_blank" className="text-text-secondary hover:text-indigo-500 transition-colors flex items-center gap-1 text-sm font-medium">
+              <Github className="w-4 h-4"/> GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function PricingSection() {
+  const checkIcon = (color: string) => (
+    <svg className={`w-5 h-5 flex-shrink-0 ${color}`} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+
+  return (
+    <section className="py-24 bg-surface border-t border-border" id="pricing">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4">Simple, transparent pricing</h2>
+        <p className="text-lg text-text-secondary mb-16 max-w-2xl mx-auto">Start for free, upgrade when you need advanced AI analysis and team scalability.</p>
+        
+        <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto items-start text-left">
+          {/* Free Tier */}
+          <div className="bg-background rounded-3xl shadow-sm border border-border p-8 flex flex-col h-full hover:border-indigo-500/30 transition-colors">
+            <h3 className="text-2xl font-bold text-text-primary mb-2">Free Tier</h3>
+            <p className="text-text-secondary mb-6 h-12">Perfect for side projects and evaluating the platform.</p>
+            <div className="mb-8 font-bold text-5xl text-text-primary">
+              ₹0 <span className="text-lg text-text-secondary font-medium tracking-normal">/ lifetime</span>
+            </div>
+            <ul className="space-y-4 mb-8 flex-1 text-text-secondary text-sm">
+              <li className="flex items-center gap-3">{checkIcon("text-green-500")} Analyze 2 repositories</li>
+              <li className="flex items-center gap-3">{checkIcon("text-green-500")} Up to 10 teammates</li>
+              <li className="flex items-center gap-3">{checkIcon("text-green-500")} Basic GitHub Sync</li>
+              <li className="flex items-center gap-3">{checkIcon("text-green-500")} 1 Month Data Retention</li>
+            </ul>
+            <a href="/api/auth/github" className="block text-center bg-surface hover:bg-slate-800 dark:hover:bg-slate-200 hover:text-white dark:hover:text-slate-900 border border-border text-text-primary font-semibold py-4 rounded-xl transition-colors">
+              Get Started for Free
+            </a>
+          </div>
+
+          {/* Pro Tier */}
+          <div className="bg-slate-900 rounded-3xl shadow-2xl border border-indigo-500 p-8 flex flex-col h-full transform md:-translate-y-4 relative">
+            <div className="absolute top-0 right-8 -translate-y-1/2">
+              <span className="bg-gradient-to-r from-indigo-500 to-purple-500 text-white text-xs font-bold px-3 py-1 uppercase tracking-widest rounded-full shadow-lg">Most Popular</span>
+            </div>
+            <h3 className="text-2xl font-bold text-white mb-2">Pro Plan</h3>
+            <p className="text-indigo-200 mb-6 h-12">Everything you need to ship high-quality code and scale.</p>
+            <div className="mb-8 font-bold text-5xl text-white">
+              ₹499 <span className="text-lg text-indigo-300 font-medium tracking-normal">/ lifetime</span>
+            </div>
+            <ul className="space-y-4 mb-8 flex-1 text-slate-300 text-sm">
+              <li className="flex items-center gap-3">{checkIcon("text-indigo-400")} Unlimited repositories</li>
+              <li className="flex items-center gap-3">{checkIcon("text-indigo-400")} Unlimited team members</li>
+              <li className="flex items-center gap-3">{checkIcon("text-indigo-400")} Deep AI Pull Request Analysis</li>
+              <li className="flex items-center gap-3">{checkIcon("text-indigo-400")} High-Risk code detection</li>
+              <li className="flex items-center gap-3">{checkIcon("text-indigo-400")} Priority Support</li>
+            </ul>
+            <a href="/pricing" className="block text-center bg-white text-slate-900 hover:bg-indigo-50 font-bold py-4 rounded-xl transition-transform hover:-translate-y-1 shadow-lg">
+              Start 7-Day Free Trial
+            </a>
+            <p className="text-xs text-indigo-300/60 text-center mt-4">🛡️ 100% full refund within 3 days. No questions asked.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage() {
   return (
     <main className="min-h-screen bg-background">
       <Navbar />
       <Hero />
+      <VideoDemoSection />
       <FeatureSection />
       <HowItWorks />
+      <TestimonialSection />
+      <CreatorSection />
+      <PricingSection />
       <CTA />
       <Footer />
     </main>

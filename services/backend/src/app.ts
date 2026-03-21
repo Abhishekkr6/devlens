@@ -1,4 +1,4 @@
-﻿import express from "express";
+import express from "express";
 import cookieParser from "cookie-parser";
 import cors, { CorsOptions } from "cors";
 import helmet from "helmet";
@@ -79,6 +79,7 @@ import notificationRoutes from "./routes/notification.routes";
 import aiRoutes from "./routes/ai.routes";
 import aiGuideRoutes from "./routes/aiGuide.routes";
 import chatbotRoutes from "./routes/chatbot.routes";
+import manualPaymentRoutes from "./routes/manualPayment.routes";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", healthRoutes);
@@ -91,6 +92,7 @@ app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/ai", aiGuideRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
+app.use("/api/v1/payments", manualPaymentRoutes);
 
 app.use(errorHandler);
 

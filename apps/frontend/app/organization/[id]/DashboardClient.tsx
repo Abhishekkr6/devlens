@@ -9,9 +9,12 @@ import {
     GitPullRequest,
     Users,
     Sparkles,
+    Lock,
+    ShieldAlert
 } from "lucide-react";
 import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
+import { useUserStore } from "../../../store/userStore";
 import { Card } from "../../../components/Ui/Card";
 import { AIStatsWidget } from "../../../components/Ui/AIStatsWidget";
 import CommitLineChart from "../../../components/Charts/CommitLineChart";
@@ -56,6 +59,7 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
     const [errorType, setErrorType] = useState<"404" | "generic" | null>(null);
 
     const lastEvent = useLiveStore((state) => state.lastEvent);
+    const { user } = useUserStore();
 
     const retryRef = useRef(0);
     const [errorMessage, setErrorMessage] = useState("");
@@ -253,10 +257,10 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
         },
         {
             label: "Critical Alerts",
-            value: riskBuckets[2]?.count ?? 0,
+            value: user?.plan === "free" ? "🔒" : (riskBuckets[2]?.count ?? 0),
             icon: AlertCircle,
             trend: null,
-            helper: "High-risk pull requests",
+            helper: user?.plan === "free" ? "Available on Pro Plan" : "High-risk pull requests",
         },
     ];
 
@@ -338,9 +342,30 @@ export default function DashboardClient({ orgId }: { orgId: string }) {
             </section>
 
             <section className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-2">
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">PR Risk Distribution</h2>
-                    <PRRiskBarChart data={riskBuckets} />
+                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm relative overflow-hidden">
+                    <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6 flex items-center gap-2">
+                        PR Risk Distribution
+                        {user?.plan === "free" && (
+                            <span className="bg-orange-100 text-orange-700 text-[10px] uppercase font-bold px-2 py-0.5 rounded flex items-center gap-1 border border-orange-200 shadow-sm">
+                                <Lock className="w-3 h-3" /> Pro
+                            </span>
+                        )}
+                    </h2>
+                    
+                    <div className={user?.plan === "free" ? "filter blur-[4px] opacity-40 select-none pointer-events-none" : ""}>
+                         <PRRiskBarChart data={user?.plan === "free" ? [{label: "0-30", count: 8}, {label: "30-70", count: 3}, {label: "70-100", count: 1}] : riskBuckets} />
+                    </div>
+
+                    {user?.plan === "free" && (
+                        <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/50 backdrop-blur-[2px] z-10 p-4 text-center">
+                            <ShieldAlert className="w-8 h-8 text-orange-500 mb-2" />
+                            <h3 className="font-bold text-text-primary text-sm mb-1">High-Risk Detection Locked</h3>
+                            <p className="text-xs text-text-secondary mb-4 max-w-[220px]">Upgrade to accurately detect and block risky code before it breaks production.</p>
+                            <a href="/pricing" className="bg-brand text-white text-xs font-semibold px-4 py-2 rounded-lg hover:bg-brand/90 transition-colors shadow-md">
+                                Upgrade to Pro
+                            </a>
+                        </div>
+                    )}
                 </Card>
 
                 <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">

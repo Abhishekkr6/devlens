@@ -19,7 +19,11 @@ export interface User {
   name?: string;
   email?: string;
   avatarUrl?: string;
+  role?: string;
   orgIds?: Org[];
+  plan?: "free" | "pro";
+  subscriptionStatus?: "active" | "expired" | "past_due" | "none";
+  subscriptionExpiry?: string | Date;
 }
 
 interface UserState {

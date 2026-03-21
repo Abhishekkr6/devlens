@@ -16,6 +16,7 @@ import { createOrgSchema } from "../validators/org.validator";
 import { updateRepoSettingsSchema } from "../validators/repoSettings.validator";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { requireOrgRole } from "../middlewares/requireOrgRole";
+import { enforceRepoLimit } from "../middlewares/requirePro";
 
 const router = Router();
 
@@ -51,6 +52,7 @@ router.post(
   "/orgs/:orgId/repos/connect",
   authMiddleware,
   requireOrgRole(["ADMIN"]),
+  enforceRepoLimit,
   connectRepo
 );
 
