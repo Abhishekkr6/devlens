@@ -21,7 +21,7 @@ import {
   Eye,
   Code,
 } from "lucide-react";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { FloatingDock } from "../Ui/floating-dock";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useUserStore } from "../../store/userStore";
@@ -579,15 +579,26 @@ export default function Topbar() {
         </div>
       </motion.div>
 
-      {
-        mobileNavOpen && (
+      {/* Mobile Navigation Drawer with Animation */}
+      <AnimatePresence>
+        {mobileNavOpen && (
           <div className="fixed inset-0 z-[200] lg:hidden" role="dialog" aria-modal="true">
-            <div
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
               className="absolute inset-0 bg-slate-900/40 backdrop-blur-sm cursor-pointer"
               onClick={closeMobileNav}
             />
-            <aside className="absolute inset-y-0 right-0 flex w-80 max-w-[80vw] translate-x-0 bg-slate-900/95 backdrop-blur-3xl shadow-2xl">
-              <div className="flex h-full w-full flex-col gap-6 p-6" id="mobile-navigation">
+            <motion.aside
+              initial={{ x: "-100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "-100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="absolute inset-y-0 left-0 flex w-80 max-w-[80vw] bg-slate-900/95 backdrop-blur-3xl shadow-2xl"
+            >
+              <div className="flex h-full w-full flex-col gap-6 p-6 overflow-y-auto" id="mobile-navigation">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <img src="/logo.svg" alt="DevLens" className="w-12 h-12" />
@@ -654,9 +665,10 @@ export default function Topbar() {
                   </div>
                 )}
               </div>
-            </aside>
+            </motion.aside>
           </div>
         )}
+      </AnimatePresence>
     </>
   );
 }

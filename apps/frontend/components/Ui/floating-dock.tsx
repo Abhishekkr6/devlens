@@ -133,14 +133,22 @@ const FloatingDockMobile = ({
         ))}
       </div>
       {showLeftHint && (
-        <div className="pointer-events-none absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-md border border-white/10 shadow-lg transition-opacity duration-300">
+        <button
+          onClick={() => scrollRef.current?.scrollBy({ left: -150, behavior: "smooth" })}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-surface/90 backdrop-blur-md border border-white/10 shadow-lg transition-all duration-300 hover:bg-surface hover:scale-105 active:scale-95 cursor-pointer text-text-primary"
+          aria-label="Scroll left"
+        >
           <ArrowIcon direction="left" />
-        </div>
+        </button>
       )}
       {showRightHint && (
-        <div className="pointer-events-none absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background/80 backdrop-blur-md border border-white/10 shadow-lg transition-opacity duration-300">
+        <button
+          onClick={() => scrollRef.current?.scrollBy({ left: 150, behavior: "smooth" })}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 flex h-8 w-8 items-center justify-center rounded-full bg-surface/90 backdrop-blur-md border border-white/10 shadow-lg transition-all duration-300 hover:bg-surface hover:scale-105 active:scale-95 cursor-pointer text-text-primary"
+          aria-label="Scroll right"
+        >
           <ArrowIcon direction="right" />
-        </div>
+        </button>
       )}
     </nav>
   );
