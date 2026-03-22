@@ -58,7 +58,7 @@ export default function AdminPaymentsPage() {
     if (userLoading) return;
     
     if (!user || user.role !== "admin") {
-      router.push("/dashboard");
+      router.push("/");
     } else {
       fetchRequests();
     }
