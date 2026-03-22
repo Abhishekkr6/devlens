@@ -1,4 +1,4 @@
-﻿import { Request, Response } from "express";
+import { Request, Response } from "express";
 import { UserModel } from "../models/user.model";
 import { OrgModel } from "../models/org.model";
 import { OrgMemberModel } from "../models/orgMember.model";
@@ -70,6 +70,8 @@ export const getMe = async (req: Request, res: Response) => {
           email: user.email || "",
           avatarUrl: user.avatarUrl || "",
           githubId: user.githubId,
+          role: user.role,
+          plan: user.plan,
         },
         defaultOrgId,
         orgs,
