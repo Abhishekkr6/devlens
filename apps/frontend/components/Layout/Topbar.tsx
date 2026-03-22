@@ -570,7 +570,7 @@ export default function Topbar() {
         transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
         className="sticky top-4 z-[110] w-full flex justify-center py-2 px-2 bg-transparent pointer-events-none"
       >
-        <div className="pointer-events-auto">
+        <div className="pointer-events-auto max-w-full">
           <FloatingDock
             items={dockItems}
             desktopClassName="bg-surface/60 backdrop-blur-2xl px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.2)] rounded-full border border-white/10"
