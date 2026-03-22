@@ -82,12 +82,8 @@ export const approveRequest = async (req: Request, res: Response) => {
     if (user) {
       user.plan = "pro";
       user.subscriptionStatus = "active";
-      const now = new Date();
-      if (user.subscriptionExpiry && user.subscriptionExpiry > now) {
-        user.subscriptionExpiry = new Date(user.subscriptionExpiry.getTime() + 30 * 24 * 60 * 60 * 1000);
-      } else {
-        user.subscriptionExpiry = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
-      }
+      // Clear expiry for lifetime access
+      user.subscriptionExpiry = undefined;
       await user.save();
       logger.info({ userId: user._id, action: "ADMIN_APPROVED_UPGRADE" }, "Admin upgraded user to Pro manually");
     }

@@ -14,6 +14,7 @@ import { Popover } from "../../../../components/Ui/Popover";
 import { AIWelcomeBanner } from "../../../../components/Ui/AIWelcomeBanner";
 import { AIStatusBadge } from "../../../../components/Ui/AIStatusBadge";
 import { useFirstTimeAIUser } from "../../../../hooks/useFirstTimeAIUser";
+import { motion } from "motion/react";
 
 interface Reviewer {
     login?: string;
@@ -404,42 +405,47 @@ export default function PRsClient({ orgId }: { orgId: string }) {
     };
 
     return (
-        <div className="flex h-full flex-col gap-6">
-            <header className="space-y-2">
-                <div className="flex items-center gap-2">
-                    <h1 className="text-3xl font-semibold text-text-primary">Pull Requests</h1>
+        <div className="flex h-full flex-col gap-6 sm:gap-8">
+            <motion.header 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="space-y-2"
+            >
+                <div className="flex items-center gap-3">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">Pull Requests</h1>
                     <Popover
                         content={
-                            <div className="space-y-3">
+                            <div className="space-y-3 min-w-[280px]">
                                 <div className="flex items-center gap-2 mb-2">
                                     <Sparkles className="w-5 h-5 text-brand" />
-                                    <h4 className="font-bold text-base">AI Code Analysis</h4>
+                                    <h4 className="font-bold text-base text-text-primary">AI Code Analysis</h4>
                                 </div>
-                                <p className="text-sm text-slate-300 leading-relaxed">
+                                <p className="text-sm text-text-secondary leading-relaxed">
                                     Click the <Sparkles className="w-3 h-3 inline text-brand" /> icon on any PR to get:
                                 </p>
-                                <ul className="space-y-2 text-xs text-slate-300">
+                                <ul className="space-y-2 text-xs text-text-secondary">
                                     <li className="flex items-start gap-2">
-                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-emerald-500 mt-0.5">✓</span>
                                         <span><strong>Code Quality Scoring:</strong> Overall quality metrics (0-100)</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-emerald-500 mt-0.5">✓</span>
                                         <span><strong>Bug Prediction:</strong> AI-powered probability analysis</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-emerald-500 mt-0.5">✓</span>
                                         <span><strong>Security Alerts:</strong> Vulnerability detection</span>
                                     </li>
                                     <li className="flex items-start gap-2">
-                                        <span className="text-green-400 mt-0.5">✓</span>
+                                        <span className="text-emerald-500 mt-0.5">✓</span>
                                         <span><strong>Recommendations:</strong> Actionable improvements</span>
                                     </li>
                                 </ul>
-                                <div className="pt-2 border-t border-slate-700">
-                                    <p className="text-[9px] text-slate-500">Powered by Gemini AI</p>
-                                    <Link href="/help/ai-analysis" className="text-[10px] text-brand hover:underline mt-1 inline-block">
-                                        Learn more →
+                                <div className="pt-3 border-t border-white/10 mt-3">
+                                    <p className="text-[10px] text-text-secondary/70">Powered by Gemini AI</p>
+                                    <Link href="/help/ai-analysis" className="text-xs text-brand hover:underline mt-1 inline-block font-medium">
+                                        Learn more &rarr;
                                     </Link>
                                 </div>
                             </div>
@@ -447,26 +453,31 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         side="bottom"
                         align="start"
                     >
-                        <button className="p-1 hover:bg-surface rounded-lg transition-colors" aria-label="AI Analysis Info">
+                        <button className="p-1.5 hover:bg-surface rounded-xl transition-colors bg-surface/50 border border-white/5" aria-label="AI Analysis Info">
                             <Info className="w-5 h-5 text-text-secondary hover:text-brand transition-colors" />
                         </button>
                     </Popover>
                 </div>
-                <p className="text-sm text-text-secondary">
+                <p className="text-sm sm:text-base text-text-secondary font-light">
                     Team pull requests with risk scoring and review metrics for this organization
                 </p>
-            </header>
+            </motion.header>
 
             <AIWelcomeBanner />
 
 
-            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                <div className="relative w-full lg:max-w-md">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between z-20 relative"
+            >
+                <div className="relative w-full lg:max-w-md group">
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary group-focus-within:text-brand transition-colors" />
                     <input
                         aria-label="Search pull requests"
-                        className="h-11 w-full rounded-full border border-border bg-background pl-10 pr-4 text-sm text-text-secondary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
-                        placeholder="Search pull requests"
+                        className="h-12 w-full rounded-2xl border border-white/10 bg-surface/50 backdrop-blur-md pl-12 pr-4 text-sm text-text-primary placeholder:text-text-secondary focus:border-brand/50 focus:bg-surface focus:outline-none focus:ring-4 focus:ring-brand/10 transition-all shadow-sm"
+                        placeholder="Search pull requests..."
                         value={searchTerm}
                         onChange={(event) => setSearchTerm(event.target.value)}
                         type="search"
@@ -493,26 +504,32 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                         value={repoFilter}
                     />
                 </div>
-            </div>
+            </motion.div>
 
-            <Card className="overflow-hidden rounded-2xl border border-border bg-background shadow-sm">
-                <ScrollableWithHints>
-                    <table className="min-w-full table-auto text-xs sm:text-sm text-text-secondary">
-                        <thead className="bg-surface text-left text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-text-secondary">
-                            <tr>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Title</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Repo</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Author</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Risk</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Status</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4 font-semibold whitespace-nowrap">Reviewers</th>
-                                <th className="px-3 sm:px-6 py-3 sm:py-4" aria-label="Open" />
-                            </tr>
-                        </thead>
-                        <tbody>{renderTableBody()}</tbody>
-                    </table>
-                </ScrollableWithHints>
-            </Card>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
+                <Card className="overflow-hidden rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl shadow-xl">
+                    <ScrollableWithHints>
+                        <table className="min-w-full table-auto text-xs sm:text-sm text-text-secondary">
+                            <thead className="bg-surface/80 text-left text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary border-b border-white/5">
+                                <tr>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Title</th>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Repo</th>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Author</th>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Risk</th>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Status</th>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap text-center">Reviewers</th>
+                                    <th className="px-4 sm:px-6 py-4 sm:py-5" aria-label="Open" />
+                                </tr>
+                            </thead>
+                            <tbody className="divide-y divide-white/5">{renderTableBody()}</tbody>
+                        </table>
+                    </ScrollableWithHints>
+                </Card>
+            </motion.div>
         </div>
     );
 }

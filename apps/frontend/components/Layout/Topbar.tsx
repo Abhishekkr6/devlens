@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
@@ -261,7 +261,7 @@ export default function Topbar() {
 
   return (
     <>
-      <header className="relative z-[120]">
+      <header className="relative z-[120] bg-background/80 backdrop-blur-xl border-b border-white/[0.05] shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
         <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-[120]">
           <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3">
             <Link
@@ -565,16 +565,18 @@ export default function Topbar() {
       </header>
 
       <motion.div
-        initial={{ opacity: 0, y: -10 }}
+        initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-        className="sticky top-0 z-[110] w-full flex justify-center py-2 px-2 bg-transparent"
+        transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
+        className="sticky top-4 z-[110] w-full flex justify-center py-2 px-2 bg-transparent pointer-events-none"
       >
-        <FloatingDock
-          items={dockItems}
-          desktopClassName="bg-[var(--background)] px-4 py-2 shadow-xl rounded-2xl border border-border"
-          mobileClassName="bg-[var(--background)] rounded-2xl border border-border max-w-full"
-        />
+        <div className="pointer-events-auto">
+          <FloatingDock
+            items={dockItems}
+            desktopClassName="bg-surface/60 backdrop-blur-2xl px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.2)] rounded-full border border-white/10"
+            mobileClassName="bg-surface/80 backdrop-blur-2xl px-2 py-2 shadow-2xl rounded-full border border-white/10 max-w-full"
+          />
+        </div>
       </motion.div>
 
       {

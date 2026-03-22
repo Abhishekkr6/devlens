@@ -5,6 +5,7 @@ import { api } from "../../../../lib/api";
 import { useUserStore } from "../../../../store/userStore";
 import { Card } from "../../../../components/Ui/Card";
 import { AlertCircle, CheckCircle, GitPullRequest, FileCode, TrendingUp } from "lucide-react";
+import { motion, AnimatePresence } from "motion/react";
 
 interface Alert {
     _id: string;
@@ -94,125 +95,160 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
     }
 
     return (
-        <div className="space-y-4 sm:space-y-6">
+        <div className="space-y-6 sm:space-y-8">
             {/* Header */}
-            <header>
-                <h1 className="text-2xl sm:text-3xl font-semibold text-text-primary">Alerts</h1>
-                <p className="mt-1 text-xs sm:text-sm text-text-secondary">
+            <motion.header 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="space-y-1 sm:space-y-2"
+            >
+                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">Alerts</h1>
+                <p className="mt-2 text-sm sm:text-base text-text-secondary font-light">
                     Monitor and manage high-risk PRs and critical issues
                 </p>
-            </header>
+            </motion.header>
 
             {/* Stats Cards */}
-            <section className="grid grid-cols-1 gap-3 sm:gap-4 md:grid-cols-3">
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-red-100 dark:bg-rose-900/20">
-                            <AlertCircle className="h-5 w-5 sm:h-6 sm:w-6 text-red-600 dark:text-rose-400" />
+            <motion.section 
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3"
+            >
+                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-5 sm:p-6 shadow-sm relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-rose-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="flex items-center gap-4 relative z-10">
+                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-rose-500/10 border border-rose-500/20 shadow-sm">
+                            <AlertCircle className="h-6 w-6 text-rose-500 dark:text-rose-400" />
                         </div>
                         <div>
-                            <p className="text-xs sm:text-sm font-medium text-text-secondary">Unresolved</p>
-                            <p className="text-xl sm:text-2xl font-semibold text-text-primary">{unresolvedCount}</p>
+                            <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-text-secondary">Unresolved</p>
+                            <p className="text-2xl sm:text-3xl font-black tracking-tight text-text-primary mt-0.5">{unresolvedCount}</p>
                         </div>
                     </div>
                 </Card>
 
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-emerald-100 dark:bg-emerald-900/20">
-                            <CheckCircle className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-600 dark:text-emerald-400" />
+                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-5 sm:p-6 shadow-sm relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="flex items-center gap-4 relative z-10">
+                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-emerald-500/10 border border-emerald-500/20 shadow-sm">
+                            <CheckCircle className="h-6 w-6 text-emerald-500 dark:text-emerald-400" />
                         </div>
                         <div>
-                            <p className="text-xs sm:text-sm font-medium text-text-secondary">Resolved</p>
-                            <p className="text-xl sm:text-2xl font-semibold text-text-primary">{resolvedCount}</p>
+                            <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-text-secondary">Resolved</p>
+                            <p className="text-2xl sm:text-3xl font-black tracking-tight text-text-primary mt-0.5">{resolvedCount}</p>
                         </div>
                     </div>
                 </Card>
 
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                    <div className="flex items-center gap-3 sm:gap-4">
-                        <div className="flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-lg bg-indigo-100 dark:bg-indigo-900/20">
-                            <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-indigo-600 dark:text-indigo-400" />
+                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-5 sm:p-6 shadow-sm relative overflow-hidden group">
+                    <div className="absolute inset-0 bg-indigo-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="flex items-center gap-4 relative z-10">
+                        <div className="flex h-12 w-12 sm:h-14 sm:w-14 shrink-0 items-center justify-center rounded-2xl bg-indigo-500/10 border border-indigo-500/20 shadow-sm">
+                            <TrendingUp className="h-6 w-6 text-indigo-500 dark:text-indigo-400" />
                         </div>
                         <div>
-                            <p className="text-xs sm:text-sm font-medium text-text-secondary">Total</p>
-                            <p className="text-xl sm:text-2xl font-semibold text-text-primary">{alerts.length}</p>
+                            <p className="text-xs sm:text-sm font-bold uppercase tracking-wider text-text-secondary">Total</p>
+                            <p className="text-2xl sm:text-3xl font-black tracking-tight text-text-primary mt-0.5">{alerts.length}</p>
                         </div>
                     </div>
                 </Card>
-            </section>
+            </motion.section>
 
             {/* Filter Tabs */}
-            <div className="flex gap-2 border-b border-border">
+            <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                className="flex gap-2 sm:gap-4 border-b border-white/5"
+            >
                 <button
                     onClick={() => setFilter("unresolved")}
-                    className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors border-b-2 ${filter === "unresolved"
+                    className={`px-3 sm:px-4 py-3 text-xs sm:text-sm font-bold transition-all border-b-2 ${filter === "unresolved"
                         ? "border-brand text-brand"
                         : "border-transparent text-text-secondary hover:text-text-primary"
                         }`}
                 >
-                    Unresolved ({unresolvedCount})
+                    Unresolved <span className="ml-1.5 inline-flex items-center justify-center bg-surface px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold">{unresolvedCount}</span>
                 </button>
                 <button
                     onClick={() => setFilter("resolved")}
-                    className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors border-b-2 ${filter === "resolved"
-                        ? "border-brand text-brand"
+                    className={`px-3 sm:px-4 py-3 text-xs sm:text-sm font-bold transition-all border-b-2 ${filter === "resolved"
+                        ? "border-emerald-500 text-emerald-500"
                         : "border-transparent text-text-secondary hover:text-text-primary"
                         }`}
                 >
-                    Resolved ({resolvedCount})
+                    Resolved <span className="ml-1.5 inline-flex items-center justify-center bg-surface px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold">{resolvedCount}</span>
                 </button>
                 <button
                     onClick={() => setFilter("all")}
-                    className={`px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium transition-colors border-b-2 ${filter === "all"
-                        ? "border-brand text-brand"
+                    className={`px-3 sm:px-4 py-3 text-xs sm:text-sm font-bold transition-all border-b-2 ${filter === "all"
+                        ? "border-text-primary text-text-primary"
                         : "border-transparent text-text-secondary hover:text-text-primary"
                         }`}
                 >
-                    All ({alerts.length})
+                    All <span className="ml-1.5 inline-flex items-center justify-center bg-surface px-1.5 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold">{alerts.length}</span>
                 </button>
-            </div>
+            </motion.div>
 
             {/* Alerts List */}
             <section>
+                <AnimatePresence mode="popLayout">
                 {filteredAlerts.length === 0 ? (
-                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-8 sm:p-12 text-center shadow-sm">
-                        <div className="flex flex-col items-center gap-3">
-                            <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-full bg-surface">
-                                <CheckCircle className="h-6 w-6 sm:h-8 sm:w-8 text-emerald-500" />
-                            </div>
-                            <div>
-                                <p className="text-sm sm:text-base font-medium text-text-primary">
-                                    {filter === "unresolved" ? "No unresolved alerts" : filter === "resolved" ? "No resolved alerts" : "No alerts"}
-                                </p>
-                                <p className="mt-1 text-xs sm:text-sm text-text-secondary">
-                                    {filter === "unresolved" ? "Great! Everything is under control." : "No alerts to show."}
-                                </p>
-                            </div>
-                        </div>
+                    <motion.div 
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        transition={{ duration: 0.3 }}
+                    >
+                    <Card className="rounded-3xl border border-dashed border-white/10 bg-surface/30 p-10 sm:p-16 text-center shadow-none flex flex-col items-center justify-center">
+                        <CheckCircle className="h-12 w-12 text-emerald-500/50 mb-4" />
+                        <p className="text-base font-medium text-text-primary">
+                            {filter === "unresolved" ? "No unresolved alerts" : filter === "resolved" ? "No resolved alerts" : "No alerts"}
+                        </p>
+                        <p className="mt-1 text-sm text-text-secondary max-w-sm">
+                            {filter === "unresolved" ? "Great job! Everything is under control." : "No alerts to show."}
+                        </p>
                     </Card>
+                    </motion.div>
                 ) : (
-                    <div className="space-y-3 sm:space-y-4">
-                        {filteredAlerts.map((alert) => {
+                    <div className="space-y-4 sm:space-y-6">
+                        {filteredAlerts.map((alert, i) => {
                             const isHighRiskPR = alert.type === "high_risk_pr";
                             const metadata = alert.metadata || {};
 
                             return (
-                                <Card
+                                <motion.div
                                     key={alert._id}
-                                    className={`rounded-xl sm:rounded-2xl border-l-4 ${alert.severity === "high"
-                                        ? "border-l-red-500"
+                                    layout
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.4, delay: i * 0.05 }}
+                                >
+                                <Card
+                                    className={`relative group overflow-hidden rounded-3xl border ${alert.severity === "high"
+                                        ? "border-rose-500/30 hover:border-rose-500/60"
                                         : alert.severity === "medium"
-                                            ? "border-l-orange-500"
-                                            : "border-l-blue-500"
-                                        } border border-border bg-background p-4 sm:p-6 shadow-sm hover:shadow-md transition-shadow ${alert.resolvedAt ? "opacity-60" : ""
+                                            ? "border-amber-500/30 hover:border-amber-500/60"
+                                            : "border-blue-500/30 hover:border-blue-500/60"
+                                        } bg-surface/50 backdrop-blur-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all ${alert.resolvedAt ? "opacity-60 saturate-50" : ""
                                         }`}
                                 >
-                                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                                    {/* Left Accent Bar */}
+                                    <div className={`absolute left-0 top-0 bottom-0 w-1 ${alert.severity === "high"
+                                        ? "bg-rose-500"
+                                        : alert.severity === "medium"
+                                            ? "bg-amber-500"
+                                            : "bg-blue-500"
+                                        }`} />
+
+                                    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6 relative z-10 pl-2">
                                         {/* Alert Content */}
-                                        <div className="flex-1 space-y-3">
+                                        <div className="flex-1 space-y-4">
                                             {/* Header */}
-                                            <div className="flex flex-wrap items-center gap-2">
+                                            <div className="flex flex-wrap items-center gap-3">
                                                 <div className="flex items-center gap-2">
                                                     {isHighRiskPR ? (
                                                         <GitPullRequest className="h-4 w-4 text-text-secondary" />
@@ -224,17 +260,17 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
                                                     </span>
                                                 </div>
                                                 <span
-                                                    className={`px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold ${alert.severity === "high"
-                                                        ? "bg-red-100 dark:bg-rose-900/30 text-red-700 dark:text-rose-400"
+                                                    className={`px-3 py-1 rounded-lg text-[10px] sm:text-xs font-bold border ${alert.severity === "high"
+                                                        ? "bg-rose-500/10 text-rose-500 border-rose-500/20 shadow-sm"
                                                         : alert.severity === "medium"
-                                                            ? "bg-orange-100 dark:bg-amber-900/30 text-orange-700 dark:text-amber-400"
-                                                            : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400"
+                                                            ? "bg-amber-500/10 text-amber-500 border-amber-500/20 shadow-sm"
+                                                            : "bg-blue-500/10 text-blue-500 border-blue-500/20 shadow-sm"
                                                         }`}
                                                 >
                                                     {alert.severity.toUpperCase()}
                                                 </span>
                                                 {alert.resolvedAt && (
-                                                    <span className="px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-semibold bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400">
+                                                    <span className="px-3 py-1 rounded-lg text-[10px] sm:text-xs font-bold bg-emerald-500/10 border border-emerald-500/20 shadow-sm text-emerald-500">
                                                         RESOLVED
                                                     </span>
                                                 )}
@@ -300,17 +336,19 @@ export default function AlertsClient({ orgId }: { orgId: string }) {
                                             <button
                                                 onClick={() => handleAcknowledge(alert._id)}
                                                 disabled={activeId === alert._id}
-                                                className="shrink-0 rounded-lg bg-emerald-600 dark:bg-emerald-500 px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-white hover:bg-emerald-700 dark:hover:bg-emerald-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                                                className="shrink-0 rounded-2xl bg-emerald-500/10 border border-emerald-500/50 px-5 sm:px-6 py-2.5 text-sm font-bold text-emerald-500 hover:bg-emerald-500 hover:text-white shadow-[0_0_15px_rgba(16,185,129,0.1)] hover:shadow-[0_0_20px_rgba(16,185,129,0.2)] disabled:opacity-50 disabled:cursor-not-allowed transition-all active:scale-95 cursor-pointer"
                                             >
                                                 {activeId === alert._id ? "Resolving..." : "Mark Resolved"}
                                             </button>
                                         )}
                                     </div>
                                 </Card>
+                                </motion.div>
                             );
                         })}
                     </div>
                 )}
+                </AnimatePresence>
             </section>
 
             {/* Confirmation Modal */}

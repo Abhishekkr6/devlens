@@ -7,8 +7,9 @@ import { Card } from "../../components/Ui/Card";
 import { ConfirmDialog } from "../../components/Ui/ConfirmDialog";
 import { useUserStore, Org } from "../../store/userStore";
 import { useNotificationStore } from "../../store/notificationStore";
-import { Trash2, LogOut } from "lucide-react";
+import { Trash2, LogOut, LayoutDashboard, Plus } from "lucide-react";
 import { toast } from "sonner";
+import { motion } from "motion/react";
 
 export default function OrganizationPage() {
   const [name, setName] = useState("");
@@ -174,60 +175,44 @@ export default function OrganizationPage() {
   const disabled = !name.trim() || !slug.trim();
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative">
-      <div className="w-full max-w-2xl space-y-8">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+      {/* Absolute Ambient Background Lights for Premium Dashboard Vibe */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-brand/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[150px] -z-10 pointer-events-none" />
+
+      <motion.div 
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+        className="w-full max-w-2xl space-y-8 z-10"
+      >
         <div className="text-center">
-          <div className="mx-auto h-12 w-12 rounded-xl bg-slate-900 dark:bg-white flex items-center justify-center mb-4 shadow-lg shadow-indigo-200/50 dark:shadow-none">
-            <svg className="w-6 h-6 text-white dark:text-slate-900" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 12h-4l-3 9L9 3l-3 9H2" /></svg>
+          <div className="mx-auto h-16 w-16 md:h-20 md:w-20 rounded-2xl md:rounded-3xl bg-surface border border-white/10 flex items-center justify-center mb-5 md:mb-6 shadow-xl relative group">
+            <div className="absolute inset-0 bg-brand/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <LayoutDashboard className="w-8 h-8 md:w-10 md:h-10 text-brand relative z-10" />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-text-primary">Choose Organization</h1>
-          <p className="mt-2 text-text-secondary">
+          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">Choose Organization</h1>
+          <p className="mt-3 text-text-secondary text-base md:text-lg font-light max-w-md mx-auto">
             Select an existing organization or create a new one to get started.
           </p>
         </div>
 
         <div className="grid gap-6">
-          {/* 🔥 Invite Notifications Section - DISABLED (now using top-right toast) */}
-          {/* {inviteNotifications.length > 0 && (
-            <div className="space-y-3">
-              {inviteNotifications.map((notification) => (
-                <Card key={notification._id} className="rounded-2xl border border-indigo-500/30 bg-indigo-500/5 p-5 shadow-sm">
-                  <div className="flex items-start gap-4">
-                    <div className="h-10 w-10 shrink-0 rounded-full bg-indigo-500/20 flex items-center justify-center">
-                      <span className="text-indigo-400 text-lg font-bold">+</span>
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h3 className="text-base font-semibold text-text-primary mb-1">
-                        {notification.title}
-                      </h3>
-                      <p className="text-sm text-text-secondary">
-                        {notification.message}
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <button
-                        onClick={() => handleRejectInvite(notification._id, notification.metadata?.orgId || "")}
-                        className="rounded-lg px-4 py-2 text-sm font-medium text-text-secondary bg-background border border-border hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 hover:border-rose-500 transition-colors cursor-pointer"
-                      >
-                        Reject
-                      </button>
-                      <button
-                        onClick={() => handleAcceptInvite(notification._id, notification.metadata?.orgId || "")}
-                        className="rounded-lg px-4 py-2 text-sm font-semibold text-white bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-400 transition-colors shadow-sm cursor-pointer"
-                      >
-                        Accept
-                      </button>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          )} */}
-
-
           {/* Create Org Card */}
-          <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm hover:shadow-md transition-shadow">
-            <h2 className="text-lg font-semibold text-text-primary mb-4">Create New Organization</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg hover:border-brand/30 transition-all duration-300 relative overflow-hidden group">
+              <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="bg-brand/10 p-2 rounded-xl border border-brand/20">
+                    <Plus className="w-5 h-5 text-brand" />
+                  </div>
+                  <h2 className="text-xl font-bold text-text-primary">Create New Organization</h2>
+                </div>
             <div className="grid gap-4 sm:grid-cols-2">
               <div>
                 <label className="block text-xs font-semibold uppercase tracking-wider text-text-secondary mb-1.5">Organization Name</label>
@@ -266,15 +251,22 @@ export default function OrganizationPage() {
             <button
               onClick={createOrg}
               disabled={disabled}
-              className="mt-6 w-full rounded-xl bg-indigo-600 dark:bg-indigo-500 hover:bg-indigo-700 dark:hover:bg-indigo-400 px-4 py-3 text-sm font-bold text-white shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-0.5 transition-all disabled:opacity-50 disabled:hover:translate-y-0 disabled:shadow-none cursor-pointer"
+              className="mt-6 w-full rounded-2xl bg-text-primary text-background hover:bg-slate-200 px-4 py-3.5 text-base md:text-lg font-bold shadow-md active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer"
             >
               Create Organization
             </button>
-          </Card>
+              </div>
+            </Card>
+          </motion.div>
 
           {/* List Orgs Card */}
-          <Card className="rounded-2xl border border-border bg-background p-6 shadow-sm">
-            <h2 className="text-lg font-semibold text-text-primary mb-4">Your Organizations</h2>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2, ease: [0.23, 1, 0.32, 1] }}
+          >
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg relative overflow-hidden">
+              <h2 className="text-xl font-bold text-text-primary mb-6">Your Organizations</h2>
 
             {loading ? (
               <div className="flex justify-center py-8">
@@ -291,28 +283,28 @@ export default function OrganizationPage() {
                   return (
                     <li
                       key={o._id}
-                      className="group flex items-center justify-between gap-3 rounded-xl border border-border bg-surface p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-sm"
+                      className="group flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-surface/40 p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-lg hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
-                        <div className="h-10 w-10 shrink-0 text-lg rounded-lg bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand">
+                        <div className="h-12 w-12 shrink-0 text-xl rounded-xl bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand transition-colors duration-300">
                           {o.name[0]?.toUpperCase()}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-semibold text-text-primary truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.name}>
-                            {o.name} <span className="text-xs font-normal text-text-secondary ml-1 whitespace-nowrap">{isOwner ? "(Owner)" : "(Member)"}</span>
+                          <div className="font-bold text-base md:text-lg text-text-primary truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.name}>
+                            {o.name} <span className="text-xs font-normal text-text-secondary ml-1 whitespace-nowrap bg-surface px-2 py-0.5 rounded-full">{isOwner ? "Owner" : "Member"}</span>
                           </div>
-                          <div className="text-xs text-text-secondary font-mono truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.slug}>
+                          <div className="text-sm text-text-secondary font-mono truncate mt-0.5 max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.slug}>
                             {o.slug}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-3 shrink-0">
                         <button
                           onClick={() => {
                             setActiveOrganization(o._id, o.slug);
                             router.push(`/organization/${o._id}/repos`);
                           }}
-                          className="rounded-lg bg-background border border-border px-3 sm:px-4 py-2 text-xs sm:text-sm font-medium text-text-secondary hover:border-brand hover:text-brand transition-colors shadow-sm cursor-pointer"
+                          className="rounded-xl bg-surface border border-border hover:border-brand/40 px-5 py-2.5 text-sm font-bold text-text-secondary hover:text-text-primary hover:shadow-md transition-all active:scale-95 cursor-pointer"
                         >
                           Launch
                         </button>
@@ -321,7 +313,7 @@ export default function OrganizationPage() {
                         {isOwner ? (
                           <button
                             onClick={() => setDeletingOrg(o)}
-                            className="p-2 rounded-lg text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-colors"
+                            className="p-2.5 rounded-xl text-text-secondary hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 border border-transparent transition-all"
                             title="Delete Organization"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -329,7 +321,7 @@ export default function OrganizationPage() {
                         ) : (
                           <button
                             onClick={() => setLeavingOrg(o)}
-                            className="p-2 rounded-lg text-text-secondary hover:bg-rose-50 dark:hover:bg-rose-900/20 hover:text-rose-600 transition-colors"
+                            className="p-2.5 rounded-xl text-text-secondary hover:bg-rose-500/10 hover:text-rose-500 hover:border-rose-500/20 border border-transparent transition-all"
                             title="Leave Organization"
                           >
                             <LogOut className="h-4 w-4" />
@@ -341,9 +333,10 @@ export default function OrganizationPage() {
                 })}
               </ul>
             )}
-          </Card>
+            </Card>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       <ConfirmDialog
         isOpen={!!deletingOrg}

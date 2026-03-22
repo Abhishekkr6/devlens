@@ -8,6 +8,7 @@ import {
     GitPullRequest,
     MessageSquare,
 } from "lucide-react";
+import { motion } from "motion/react";
 
 type Activity = {
     id: string;
@@ -159,95 +160,115 @@ export default function ActivityClient({ orgId }: { orgId: string }) {
     }
 
     return (
-        <div className="space-y-4 sm:space-y-6">
-            <header className="space-y-1 sm:space-y-2">
-                <h1 className="text-2xl sm:text-3xl font-semibold text-text-primary">Recent Activity</h1>
-            </header>
+        <div className="space-y-6 sm:space-y-8">
+            <motion.header 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="space-y-1 sm:space-y-2"
+            >
+                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">Recent Activity</h1>
+                <p className="mt-2 text-sm sm:text-base text-text-secondary font-light">Global timeline for your organization</p>
+            </motion.header>
 
             {activities.length === 0 ? (
-                <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-8 text-center shadow-sm">
-                    <p className="text-xs sm:text-sm text-text-secondary">No activity recorded yet for this organization.</p>
-                </Card>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                    <Card className="rounded-3xl border border-dashed border-white/10 bg-surface/30 p-8 sm:p-12 text-center shadow-none flex flex-col items-center justify-center">
+                        <MessageSquare className="w-10 h-10 text-text-secondary mb-3 opacity-50" />
+                        <p className="text-sm sm:text-base text-text-secondary font-medium">No activity recorded yet for this organization.</p>
+                    </Card>
+                </motion.div>
             ) : (
-                <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+                <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
                     {/* Main Activity Feed */}
-                    <div className="space-y-3 sm:space-y-4">
-                        {activities.map((activity) => {
+                    <div className="space-y-4">
+                        {activities.map((activity, i) => {
                             const { Icon, bgColor, iconColor } = getActivityIcon(activity);
 
                             return (
-                                <div
+                                <motion.div
                                     key={activity.id}
-                                    className="flex items-start gap-2 sm:gap-4 rounded-lg sm:rounded-xl border border-border bg-background p-3 sm:p-4 shadow-sm hover:shadow-md transition-shadow"
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ duration: 0.4, delay: i * 0.05 }}
+                                    className="flex items-start gap-3 sm:gap-5 rounded-3xl border border-white/5 bg-surface/40 backdrop-blur-lg p-4 sm:p-5 shadow-sm hover:shadow-lg hover:border-white/10 transition-all group"
                                 >
-                                    <div className={`flex h-8 w-8 sm:h-10 sm:w-10 shrink-0 items-center justify-center rounded-lg ${bgColor}`}>
-                                        <Icon className={`h-4 w-4 sm:h-5 sm:w-5 ${iconColor}`} />
+                                    <div className={`flex h-10 w-10 sm:h-12 sm:w-12 shrink-0 items-center justify-center rounded-2xl ${bgColor}`}>
+                                        <Icon className={`h-5 w-5 sm:h-6 sm:w-6 ${iconColor}`} />
                                     </div>
 
                                     <div className="flex-1 min-w-0">
-                                        <div className="flex items-start justify-between gap-2">
+                                        <div className="flex items-start justify-between gap-3">
                                             <div className="flex-1 min-w-0">
-                                                <h3 className="text-xs sm:text-sm font-semibold text-text-primary truncate">
+                                                <h3 className="text-sm sm:text-base font-bold text-text-primary truncate transition-colors group-hover:text-brand">
                                                     {activity.title}
                                                 </h3>
-                                                <p className="text-[10px] sm:text-xs text-text-secondary mt-0.5">
+                                                <p className="text-xs sm:text-sm text-text-secondary mt-1">
                                                     {activity.subtitle}
                                                 </p>
                                             </div>
-                                            <span className="text-[10px] sm:text-xs text-text-secondary whitespace-nowrap">
+                                            <span className="text-[10px] sm:text-xs font-semibold text-text-secondary whitespace-nowrap bg-surface px-2 py-1 rounded-lg border border-white/5">
                                                 {formatTimeAgo(activity.timestamp)}
                                             </span>
                                         </div>
 
-                                        <div className="flex items-center gap-1.5 sm:gap-2 mt-1.5 sm:mt-2">
-                                            <span className="inline-flex items-center rounded-md bg-surface px-1.5 sm:px-2 py-0.5 sm:py-1 text-[10px] sm:text-xs font-medium text-text-secondary border border-border">
+                                        <div className="flex items-center gap-2 sm:gap-3 mt-3">
+                                            <span className="inline-flex items-center rounded-lg bg-surface/80 px-2 sm:px-2.5 py-1 text-[10px] sm:text-xs font-bold text-text-secondary border border-white/5 shadow-sm">
                                                 {activity.tag}
                                             </span>
-                                            <span className="text-[10px] sm:text-xs text-text-secondary">
+                                            <span className="text-xs text-text-secondary font-medium">
                                                 by {activity.author}
                                             </span>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
                             );
                         })}
 
                         {hasMore && (
-                            <div className="flex justify-center pt-3 sm:pt-4">
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-center pt-4 sm:pt-6">
                                 <button
                                     onClick={loadMore}
                                     disabled={loadingMore}
-                                    className="rounded-lg bg-brand px-4 sm:px-6 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-white hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                    className="rounded-full border border-brand/50 bg-brand/10 px-6 sm:px-8 py-2.5 sm:py-3 text-sm font-bold text-brand hover:bg-brand hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm"
                                 >
-                                    {loadingMore ? "Loading..." : "Load More"}
+                                    {loadingMore ? "Loading..." : "Load More Activity"}
                                 </button>
-                            </div>
+                            </motion.div>
                         )}
                     </div>
 
                     {/* Weekly Summary Sidebar */}
                     <div className="space-y-4 sm:space-y-6">
-                        <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm sticky top-6">
-                            <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">Weekly Summary</h2>
-                            <p className="text-xs sm:text-sm text-text-secondary mb-4 sm:mb-6">Activity from the last 7 days</p>
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ duration: 0.5, delay: 0.2 }}
+                            className="sticky top-6"
+                        >
+                            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+                                <div className="absolute top-0 right-0 w-48 h-48 bg-brand/5 blur-[50px] rounded-full pointer-events-none" />
+                                <h2 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-2">Weekly Summary</h2>
+                                <p className="text-xs sm:text-sm text-text-secondary mb-6 font-medium">Activity from the last 7 days</p>
 
-                            <div className="space-y-4 sm:space-y-5">
-                                <div className="space-y-1">
-                                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">Commits</p>
-                                    <p className="text-2xl sm:text-3xl font-semibold text-text-primary">{weeklySummary.commits}</p>
-                                </div>
+                                <div className="space-y-5 sm:space-y-6 relative z-10">
+                                    <div className="space-y-1.5 p-4 rounded-2xl bg-surface/50 border border-white/5">
+                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2"><GitCommit className="w-3.5 h-3.5"/> Commits</p>
+                                        <p className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight">{weeklySummary.commits}</p>
+                                    </div>
 
-                                <div className="space-y-1">
-                                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Opened</p>
-                                    <p className="text-2xl sm:text-3xl font-semibold text-text-primary">{weeklySummary.prsOpened}</p>
-                                </div>
+                                    <div className="space-y-1.5 p-4 rounded-2xl bg-surface/50 border border-white/5">
+                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2"><GitPullRequest className="w-3.5 h-3.5"/> PRs Opened</p>
+                                        <p className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight">{weeklySummary.prsOpened}</p>
+                                    </div>
 
-                                <div className="space-y-1">
-                                    <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">PRs Merged</p>
-                                    <p className="text-2xl sm:text-3xl font-semibold text-text-primary">{weeklySummary.prsMerged}</p>
+                                    <div className="space-y-1.5 p-4 rounded-2xl bg-surface/50 border border-white/5">
+                                        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary flex items-center gap-2"><GitCommit className="w-3.5 h-3.5 text-purple-400"/> PRs Merged</p>
+                                        <p className="text-3xl sm:text-4xl font-black text-text-primary tracking-tight">{weeklySummary.prsMerged}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </Card>
+                            </Card>
+                        </motion.div>
                     </div>
                 </div>
             )}

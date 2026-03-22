@@ -16,8 +16,8 @@ export const checkUserSubscription = async (user: IUser | null): Promise<boolean
   const now = new Date();
   const expiry = user.subscriptionExpiry;
 
-  if (user.plan === "pro" && expiry) {
-    if (now > expiry) {
+  if (user.plan === "pro") {
+    if (expiry && now > expiry) {
       try {
         await UserModel.findByIdAndUpdate(user._id || user.id, {
           plan: "free",
@@ -31,7 +31,7 @@ export const checkUserSubscription = async (user: IUser | null): Promise<boolean
       }
     }
     
-    // Pro and active
+    // Pro and active (lifetime if expiry is null)
     return true;
   }
 

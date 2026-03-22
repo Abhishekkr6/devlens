@@ -7,6 +7,7 @@ import { createNotification } from "../services/notification.service";
 import { publishEvent } from "../realtime/publisher";
 import { getUserRepositories } from "../services/github.service";
 import { decrypt } from "../services/encryption.service";
+import { checkUserSubscription } from "../services/subscription.service";
 
 /**
  * CREATE ORGANIZATION
@@ -138,6 +139,20 @@ export const inviteUser = async (req: any, res: Response) => {
         success: false,
         error: { message: "Organization not found" },
       });
+    }
+
+    // 2.5️⃣ Check Free Plan limits (max 10 teammates)
+    const inviterUser = await UserModel.findById(inviterId);
+    const isPro = await checkUserSubscription(inviterUser);
+    
+    if (!isPro) {
+      const currentMemberCount = await OrgMemberModel.countDocuments({ orgId: org._id });
+      if (currentMemberCount >= 10) {
+        return res.status(403).json({
+          success: false,
+          error: { message: "Free plan limit reached. You can only have up to 10 teammates. Please upgrade to Pro." },
+        });
+      }
     }
 
     // 3️⃣ Find user by email

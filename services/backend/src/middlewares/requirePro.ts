@@ -21,12 +21,12 @@ export const enforceRepoLimit = async (req: Request, res: Response, next: NextFu
     const isPro = await checkUserSubscription(user);
 
     if (!isPro) {
-      // Free plan: maximum of 1 repository in this organization
+      // Free plan: maximum of 2 repositories in this organization
       const repoCount = await RepoModel.countDocuments({ orgId });
-      if (repoCount >= 1) {
+      if (repoCount >= 2) {
         return res.status(403).json({ 
           success: false, 
-          error: "Free plan limit reached. You can only add 1 repository per organization. Please upgrade to Pro." 
+          error: "Free plan limit reached. You can only add up to 2 repositories per organization. Please upgrade to Pro." 
         });
       }
     }
