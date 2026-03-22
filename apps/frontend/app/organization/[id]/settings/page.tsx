@@ -79,8 +79,8 @@ export default function SettingsPage({ params }: { params: Promise<{ id: string 
         <DashboardLayout>
             <div className="space-y-8 max-w-4xl">
                 <header>
-                    <h1 className="text-3xl font-semibold text-text-primary">Settings</h1>
-                    <p className="mt-1 text-sm text-text-secondary">
+                    <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">Settings</h1>
+                    <p className="mt-2 text-sm sm:text-base text-text-secondary font-light">
                         Manage settings for <span className="font-medium text-text-primary">{orgData?.orgName}</span>
                     </p>
                 </header>

@@ -361,8 +361,8 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                             </div>
                         </div>
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.repo}</td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.author}</td>
+                    <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.repo}</td>
+                    <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm text-text-secondary whitespace-nowrap">{row.author}</td>
                     <td className={`px-3 sm:px-6 py-3 sm:py-4 align-middle font-mono text-xs sm:text-sm ${getRiskAccent(row.riskValue)}`}>
                         {row.riskValue === undefined ? UNKNOWN_LABEL : row.riskValue}
                     </td>
@@ -371,7 +371,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                             {row.statusText}
                         </span>
                     </td>
-                    <td className="px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
+                    <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 align-middle text-xs sm:text-sm font-semibold text-text-primary">{row.reviewersCount}</td>
                     {/* AI Icon - Desktop Only (separate column) */}
                     <td className="hidden sm:table-cell px-3 sm:px-6 py-3 sm:py-4 align-middle text-right">
                         <Tooltip
@@ -517,12 +517,12 @@ export default function PRsClient({ orgId }: { orgId: string }) {
                             <thead className="bg-surface/80 text-left text-[10px] sm:text-xs font-bold uppercase tracking-wider text-text-secondary border-b border-white/5">
                                 <tr>
                                     <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Title</th>
-                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Repo</th>
-                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Author</th>
+                                    <th className="hidden sm:table-cell px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Repo</th>
+                                    <th className="hidden sm:table-cell px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Author</th>
                                     <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Risk</th>
                                     <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap">Status</th>
-                                    <th className="px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap text-center">Reviewers</th>
-                                    <th className="px-4 sm:px-6 py-4 sm:py-5" aria-label="Open" />
+                                    <th className="hidden sm:table-cell px-4 sm:px-6 py-4 sm:py-5 whitespace-nowrap text-center">Reviewers</th>
+                                    <th className="hidden sm:table-cell px-4 sm:px-6 py-4 sm:py-5" aria-label="Open" />
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-white/5">{renderTableBody()}</tbody>

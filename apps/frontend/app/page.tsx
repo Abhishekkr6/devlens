@@ -51,7 +51,7 @@ function Hero() {
           </motion.div>
 
           {/* Replaced filter: blur with simple opacity/y transform for performance */}
-          <motion.h1 
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
@@ -131,7 +131,7 @@ function Hero() {
         >
           <div className="absolute -inset-4 bg-gradient-to-tr from-brand/20 to-purple-500/20 rounded-[3rem] blur-xl -z-10" />
           <div className="relative rounded-3xl overflow-hidden border border-border shadow-xl bg-surface group hover:border-brand/40 transition-colors duration-500">
-             <HeroVisual />
+            <HeroVisual />
           </div>
         </motion.div>
       </div>
@@ -142,7 +142,7 @@ function Hero() {
 function FeatureCard({ icon: Icon, title, description, delay = 0 }: any) {
   // Mobile devices don't delay much to feel snappier.
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px" }}
@@ -171,7 +171,7 @@ function FeatureSection() {
   return (
     <section className="py-20 md:py-32 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -279,7 +279,7 @@ function DetailedFeature({
   listItems?: string[];
 }) {
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "0px" }}
@@ -329,7 +329,7 @@ function HowItWorks() {
   return (
     <section className="py-20 md:py-32 bg-surface relative border-y border-border/50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -343,8 +343,8 @@ function HowItWorks() {
           <div className="hidden md:block absolute top-8 md:top-10 left-0 w-full h-0.5 bg-border -z-10" />
 
           {steps.map((s, i) => (
-            <motion.div 
-              key={i} 
+            <motion.div
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px" }}
@@ -371,7 +371,7 @@ function CTA() {
     <section className="py-20 md:py-32 bg-background overflow-hidden relative">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(74,93,255,0.1),transparent_60%)]" />
 
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
         whileInView={{ opacity: 1, scale: 1 }}
         viewport={{ once: true }}
@@ -415,10 +415,10 @@ function Footer() {
             <a href="/terms" className="hover:text-text-primary transition-colors">Terms</a>
           </div>
         </div>
-        
+
         <div className="pt-6 md:pt-8 border-t border-border/30 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 text-xs md:text-sm text-text-secondary">
           <p>© {new Date().getFullYear()} DevLens. By <a href="https://abhishektiwari-18.vercel.app/" target="_blank" rel="noreferrer" className="text-text-primary hover:text-brand font-semibold transition-colors">Abhishek Tiwari</a>.</p>
-          <a href="/github" className="flex items-center gap-1 hover:text-text-primary transition-colors"><Github className="w-3 h-3 md:w-4 md:h-4"/> GitHub Repository</a>
+          <a href="/github" className="flex items-center gap-1 hover:text-text-primary transition-colors"><Github className="w-3 h-3 md:w-4 md:h-4" /> GitHub Repository</a>
         </div>
       </div>
     </footer>
@@ -429,7 +429,7 @@ function VideoDemoSection() {
   return (
     <section className="py-20 md:py-32 bg-surface border-t border-border/50 relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -438,7 +438,7 @@ function VideoDemoSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-text-primary mb-4 md:mb-6">See DevLens in Action</h2>
           <p className="text-base md:text-xl text-text-secondary max-w-2xl mx-auto font-light">Watch how a single high-risk PR is caught instantly, saving hours of debugging production logs.</p>
         </motion.div>
-        
+
         <div className="w-full max-w-5xl mx-auto bg-background rounded-2xl md:rounded-[2.5rem] aspect-video flex items-center justify-center shadow-lg border border-border relative overflow-hidden group hover:border-brand/40 transition-colors duration-300">
           <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20 transition-opacity duration-300 blur-[2px] group-hover:blur-0"></div>
           <div className="w-16 h-16 md:w-20 md:h-20 bg-background/80 md:bg-background/50 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer group-hover:scale-105 shadow-md border border-border transition-transform active:scale-95">
@@ -460,7 +460,7 @@ function TestimonialSection() {
   return (
     <section className="py-20 md:py-32 bg-background relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -469,11 +469,11 @@ function TestimonialSection() {
           <h2 className="text-3xl md:text-4xl font-bold text-text-primary tracking-tight">Trusted by Developers</h2>
           <p className="text-base md:text-xl text-text-secondary mt-3 md:mt-4 font-light">Teams that ship faster and break less.</p>
         </motion.div>
-        
+
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           {testimonials.map((t, i) => (
-            <motion.div 
-              key={i} 
+            <motion.div
+              key={i}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "0px" }}
@@ -504,7 +504,7 @@ function TestimonialSection() {
 function CreatorSection() {
   return (
     <section className="py-16 md:py-24 bg-surface border-y border-border/50">
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -515,13 +515,13 @@ function CreatorSection() {
         <div className="relative z-10 text-center md:text-left">
           <h3 className="text-2xl md:text-3xl font-bold text-text-primary mb-3 md:mb-4 tracking-tight">Built by a Developer, for Developers</h3>
           <p className="text-text-secondary mb-6 md:mb-8 leading-relaxed text-base md:text-lg font-light">
-            "I built DevLens because I was tired of tracking down blind production bugs caused by massive, unreviewed PRs. 
+            "I built DevLens because I was tired of tracking down blind production bugs caused by massive, unreviewed PRs.
             I wanted a tool that automatically flagged risks before they merged, not after the servers went down."
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4 md:gap-6 justify-center md:justify-start">
             <span className="font-bold text-text-primary text-base md:text-lg">— Abhishek Tiwari</span>
             <a href="https://github.com/Abhishekkr6" target="_blank" rel="noreferrer" className="bg-surface border border-border px-4 py-2 rounded-full text-text-secondary hover:text-text-primary transition-all flex items-center gap-2 text-xs md:text-sm font-semibold active:scale-95">
-              <Github className="w-3.5 h-3.5 md:w-4 md:h-4"/> GitHub
+              <Github className="w-3.5 h-3.5 md:w-4 md:h-4" /> GitHub
             </a>
           </div>
         </div>
@@ -540,7 +540,7 @@ function PricingSection() {
   return (
     <section className="py-20 md:py-32 bg-background relative overflow-hidden" id="pricing">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -548,10 +548,10 @@ function PricingSection() {
           <h2 className="text-3xl md:text-5xl font-bold text-text-primary mb-4 md:mb-6 tracking-tight">Simple, transparent pricing</h2>
           <p className="text-base md:text-xl text-text-secondary mb-12 md:mb-20 max-w-2xl mx-auto font-light">Start for free, upgrade when you need advanced AI analysis and team scalability.</p>
         </motion.div>
-        
+
         <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-5xl mx-auto items-start text-left">
           {/* Free Tier */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -568,13 +568,13 @@ function PricingSection() {
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} Basic GitHub Sync</li>
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} 1 Month Data Retention</li>
             </ul>
-            <a href="/api/auth/github" className="block text-center bg-background hover:bg-slate-800 border border-border text-text-primary font-bold py-4 md:py-5 rounded-xl md:rounded-2xl transition-colors text-base md:text-lg">
+            <a href="/auth/github/login" className="block text-center bg-background hover:bg-slate-800 border border-border text-text-primary font-bold py-4 md:py-5 rounded-xl md:rounded-2xl transition-colors text-base md:text-lg">
               Get Started for Free
             </a>
           </motion.div>
 
           {/* Pro Tier */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
@@ -586,7 +586,7 @@ function PricingSection() {
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Pro Plan</h3>
             <p className="text-slate-400 mb-6 md:mb-8 h-10 md:h-12 text-sm md:text-base">Everything you need to ship high-quality code and scale.</p>
             <div className="mb-8 md:mb-10 font-bold text-5xl md:text-6xl text-white">
-              ₹499 <span className="text-lg md:text-xl text-slate-400 font-medium tracking-normal">/ lifetime</span>
+              ₹1 <span className="text-lg md:text-xl text-slate-400 font-medium tracking-normal">/ lifetime</span>
             </div>
             <ul className="space-y-4 md:space-y-5 mb-8 md:mb-10 flex-1 text-slate-300 text-sm md:text-base">
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-brand")} Unlimited repositories</li>

@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { useEffect, useRef, useState } from 'react';
 import { MessageCircle, X, Send, Trash2, Sparkles, Loader2 } from 'lucide-react';
@@ -213,28 +213,30 @@ export function ChatbotWidget() {
                 {isOpen && (
                     <motion.div
                         ref={widgetContainerRef}
-                        initial={{ opacity: 0, y: 100, scale: 0.9 }}
+                        initial={{ opacity: 0, y: 100, scale: 0.95 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: 100, scale: 0.9 }}
+                        exit={{ opacity: 0, y: 100, scale: 0.95 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[85vh] sm:h-[500px] max-h-[100dvh] sm:max-h-[85vh] bg-[#0a0a0a] sm:bg-background border-t sm:border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl flex flex-col overflow-hidden"
+                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[85vh] sm:h-[600px] max-h-[100dvh] sm:max-h-[85vh] backdrop-blur-3xl bg-surface/80 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
                     >
+                        {/* Decorative Background Glow */}
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-brand/10 blur-[80px] rounded-full pointer-events-none" />
                         {/* Header */}
-                        <div className="bg-gradient-to-r from-brand to-purple-600 text-white p-4 flex items-center justify-between shrink-0">
+                        <div className="bg-surface/50 border-b border-white/5 p-4 flex items-center justify-between shrink-0 relative z-10 backdrop-blur-md">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 bg-white/20 rounded-lg">
-                                    <Sparkles className="w-5 h-5" />
+                                <div className="p-2 bg-brand/20 border border-brand/30 rounded-xl shadow-[0_0_15px_rgba(94,106,210,0.3)]">
+                                    <Sparkles className="w-5 h-5 text-brand" />
                                 </div>
                                 <div>
-                                    <h3 className="font-semibold">DevLens AI</h3>
-                                    <p className="text-xs text-white/80">Ask me anything!</p>
+                                    <h3 className="font-bold text-text-primary tracking-tight">DevLens AI</h3>
+                                    <p className="text-xs text-brand font-medium">Ask me anything!</p>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2">
+                            <div className="flex items-center gap-1">
                                 {messages.length > 0 && (
                                     <button
                                         onClick={handleClearHistory}
-                                        className="p-2 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
+                                        className="p-2 hover:bg-surface rounded-lg transition-colors text-text-secondary hover:text-red-400 cursor-pointer"
                                         title="Clear history"
                                     >
                                         <Trash2 className="w-4 h-4" />
@@ -242,7 +244,7 @@ export function ChatbotWidget() {
                                 )}
                                 <button
                                     onClick={() => setOpen(false)}
-                                    className="p-2 hover:bg-white/20 rounded-lg transition-colors cursor-pointer"
+                                    className="p-2 hover:bg-surface rounded-lg transition-colors text-text-secondary hover:text-text-primary cursor-pointer"
                                 >
                                     <X className="w-5 h-5" />
                                 </button>
@@ -251,17 +253,17 @@ export function ChatbotWidget() {
 
 
                         {/* Messages */}
-                        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-4 bg-background overscroll-contain">
+                        <div ref={messagesContainerRef} className="flex-1 overflow-y-auto p-4 space-y-5 bg-transparent overscroll-contain relative z-10 scrollbar-thin scrollbar-thumb-surface scrollbar-track-transparent">
                             {messages.length === 0 && (
-                                <div className="text-center py-8">
-                                    <div className="inline-flex p-4 bg-brand/10 rounded-full mb-4">
+                                <div className="text-center py-10">
+                                    <div className="inline-flex p-4 bg-surface/50 border border-white/5 shadow-xl rounded-full mb-5">
                                         <Sparkles className="w-8 h-8 text-brand" />
                                     </div>
-                                    <h4 className="text-lg font-semibold text-text-primary mb-2">
+                                    <h4 className="text-lg font-bold text-text-primary mb-2">
                                         DevLens AI Guide
                                     </h4>
-                                    <p className="text-sm text-text-secondary mb-4">
-                                        I can help you with PRs, stats, and platform navigation.
+                                    <p className="text-sm text-text-secondary max-w-[250px] mx-auto leading-relaxed">
+                                        I can help you with PRs, stats, codebase navigation, and much more.
                                     </p>
                                 </div>
                             )}
@@ -274,13 +276,21 @@ export function ChatbotWidget() {
                                     className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
                                 >
                                     <div
-                                        className={`max-w-[80%] rounded-2xl px-4 py-2 ${message.type === 'user'
-                                            ? 'bg-brand text-white'
-                                            : 'bg-surface border border-border text-text-primary'
+                                        className={`max-w-[85%] rounded-3xl px-5 py-3.5 shadow-sm ${message.type === 'user'
+                                            ? 'bg-brand/20 border border-brand/30 text-white rounded-br-sm'
+                                            : 'bg-surface/60 backdrop-blur-md border border-white/10 text-text-primary rounded-bl-sm'
                                             }`}
                                     >
-                                        <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                                        <span className="text-xs opacity-70 mt-1 block">
+                                        <p className="text-[13px] sm:text-sm whitespace-pre-wrap leading-relaxed">
+                                            {message.content.split(' ').map((word, i) => {
+                                                // Minimal markdown styling for bold / bullets natively
+                                                if (word.startsWith('•') || word.startsWith('-')) {
+                                                    return <span key={i} className="text-brand font-bold mr-1">{word}</span>;
+                                                }
+                                                return word + ' ';
+                                            })}
+                                        </p>
+                                        <span className={`text-[10px] sm:text-xs font-semibold mt-2 block ${message.type === 'user' ? 'text-brand-100/70' : 'text-text-secondary'}`}>
                                             {new Date(message.timestamp).toLocaleTimeString([], {
                                                 hour: '2-digit',
                                                 minute: '2-digit'
@@ -296,9 +306,12 @@ export function ChatbotWidget() {
                                     animate={{ opacity: 1 }}
                                     className="flex justify-start"
                                 >
-                                    <div className="bg-surface border border-border rounded-2xl px-4 py-3 flex items-center gap-2">
-                                        <Loader2 className="w-4 h-4 animate-spin text-brand" />
-                                        <span className="text-sm text-text-secondary">Thinking...</span>
+                                    <div className="bg-surface/50 backdrop-blur-md border border-white/5 rounded-2xl rounded-bl-sm px-5 py-3.5 flex items-center gap-3">
+                                        <div className="flex gap-1.5 align-middle">
+                                            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                                            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                                            <div className="w-1.5 h-1.5 bg-brand rounded-full animate-bounce"></div>
+                                        </div>
                                     </div>
                                 </motion.div>
                             )}
@@ -308,14 +321,14 @@ export function ChatbotWidget() {
 
                         {/* Quick Suggestions */}
                         {messages.length === 0 && suggestions.length > 0 && (
-                            <div className="px-4 py-2 border-t border-border bg-surface/50">
-                                <p className="text-xs text-text-secondary mb-2">Try asking:</p>
+                            <div className="px-5 py-3 border-t border-white/5 bg-surface/30 backdrop-blur-md relative z-10">
+                                <p className="text-[11px] font-bold uppercase tracking-wider text-text-secondary mb-3">Try asking:</p>
                                 <div className="flex flex-wrap gap-2">
                                     {suggestions.map((suggestion, index) => (
                                         <button
                                             key={index}
                                             onClick={() => handleSendMessage(suggestion)}
-                                            className="text-xs px-3 py-1.5 bg-brand/10 text-brand rounded-full border border-brand/20 hover:border-brand/50 hover:bg-brand/20 transition-all cursor-pointer"
+                                            className="text-xs px-3.5 py-1.5 bg-brand/5 text-brand rounded-xl border border-brand/20 hover:border-brand/50 hover:bg-brand/10 transition-all font-medium cursor-pointer shadow-sm"
                                         >
                                             {suggestion}
                                         </button>
@@ -325,8 +338,8 @@ export function ChatbotWidget() {
                         )}
 
                         {/* Input */}
-                        <div className="p-4 border-t border-border bg-background sm:bg-surface">
-                            <div className="flex items-center gap-2">
+                        <div className="p-4 border-t border-white/5 bg-surface/50 backdrop-blur-xl relative z-10">
+                            <div className="flex items-center gap-3 relative group">
                                 <input
                                     type="text"
                                     value={input}
@@ -334,14 +347,14 @@ export function ChatbotWidget() {
                                     onKeyPress={handleKeyPress}
                                     placeholder="Ask me anything..."
                                     disabled={isLoading}
-                                    className="flex-1 px-4 py-2 bg-background border border-border rounded-full text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-2 focus:ring-brand/50 disabled:opacity-50"
+                                    className="flex-1 px-5 py-3 bg-surface/80 border border-white/10 rounded-2xl text-sm text-text-primary placeholder:text-text-secondary focus:outline-none focus:ring-4 focus:ring-brand/20 transition-all disabled:opacity-50 shadow-inner"
                                 />
                                 <button
                                     onClick={() => handleSendMessage()}
                                     disabled={!input.trim() || isLoading}
-                                    className="p-2 bg-brand text-white rounded-full hover:bg-brand/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+                                    className="p-3 bg-brand text-white rounded-2xl hover:bg-brand/90 hover:scale-105 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 cursor-pointer shadow-lg shadow-brand/20"
                                 >
-                                    <Send className="w-5 h-5" />
+                                    <Send className="w-4 h-4" />
                                 </button>
                             </div>
                         </div>

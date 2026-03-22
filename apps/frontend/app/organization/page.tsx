@@ -175,7 +175,7 @@ export default function OrganizationPage() {
   const disabled = !name.trim() || !slug.trim();
 
   return (
-    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center px-4 py-8 sm:py-12 relative overflow-hidden">
       {/* Absolute Ambient Background Lights for Premium Dashboard Vibe */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-brand/5 rounded-full blur-[120px] -z-10 pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-[600px] h-[600px] bg-purple-500/5 rounded-full blur-[150px] -z-10 pointer-events-none" />
@@ -184,15 +184,15 @@ export default function OrganizationPage() {
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
-        className="w-full max-w-2xl space-y-8 z-10"
+        className="w-full max-w-2xl space-y-6 sm:space-y-8 z-10"
       >
         <div className="text-center">
-          <div className="mx-auto h-16 w-16 md:h-20 md:w-20 rounded-2xl md:rounded-3xl bg-surface border border-white/10 flex items-center justify-center mb-5 md:mb-6 shadow-xl relative group">
+          <div className="mx-auto h-14 w-14 sm:h-16 sm:w-16 md:h-20 md:w-20 rounded-2xl md:rounded-3xl bg-surface border border-white/10 flex items-center justify-center mb-4 sm:mb-5 md:mb-6 shadow-xl relative group">
             <div className="absolute inset-0 bg-brand/20 blur-xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <LayoutDashboard className="w-8 h-8 md:w-10 md:h-10 text-brand relative z-10" />
+            <LayoutDashboard className="w-7 h-7 sm:w-8 sm:h-8 md:w-10 md:h-10 text-brand relative z-10" />
           </div>
-          <h1 className="text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">Choose Organization</h1>
-          <p className="mt-3 text-text-secondary text-base md:text-lg font-light max-w-md mx-auto">
+          <h1 className="text-2xl xs:text-3xl md:text-5xl font-extrabold tracking-tight text-text-primary">Choose Organization</h1>
+          <p className="mt-2 sm:mt-3 text-text-secondary text-sm sm:text-base md:text-lg font-light max-w-md mx-auto">
             Select an existing organization or create a new one to get started.
           </p>
         </div>
@@ -251,7 +251,7 @@ export default function OrganizationPage() {
             <button
               onClick={createOrg}
               disabled={disabled}
-              className="mt-6 w-full rounded-2xl bg-text-primary text-background hover:bg-slate-200 px-4 py-3.5 text-base md:text-lg font-bold shadow-md active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer"
+              className="mt-5 w-full rounded-2xl bg-text-primary text-background hover:bg-slate-200 px-4 py-3 sm:py-3.5 text-sm sm:text-base font-bold shadow-md active:scale-[0.98] transition-all disabled:opacity-50 disabled:scale-100 disabled:shadow-none cursor-pointer"
             >
               Create Organization
             </button>
@@ -283,28 +283,28 @@ export default function OrganizationPage() {
                   return (
                     <li
                       key={o._id}
-                      className="group flex items-center justify-between gap-3 rounded-2xl border border-white/10 bg-surface/40 p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-lg hover:-translate-y-0.5"
+                      className="group flex flex-col xs:flex-row xs:items-center justify-between gap-3 rounded-2xl border border-white/10 bg-surface/40 p-4 transition-all hover:border-brand/40 hover:bg-brand/5 hover:shadow-lg hover:-translate-y-0.5"
                     >
                       <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
                         <div className="h-12 w-12 shrink-0 text-xl rounded-xl bg-background border border-border flex items-center justify-center font-bold text-text-secondary shadow-sm group-hover:border-brand/40 group-hover:text-brand transition-colors duration-300">
                           {o.name[0]?.toUpperCase()}
                         </div>
                         <div className="min-w-0 flex-1">
-                          <div className="font-bold text-base md:text-lg text-text-primary truncate max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.name}>
+                          <div className="font-bold text-base text-text-primary truncate" title={o.name}>
                             {o.name} <span className="text-xs font-normal text-text-secondary ml-1 whitespace-nowrap bg-surface px-2 py-0.5 rounded-full">{isOwner ? "Owner" : "Member"}</span>
                           </div>
-                          <div className="text-sm text-text-secondary font-mono truncate mt-0.5 max-w-[200px] sm:max-w-[300px] md:max-w-[400px]" title={o.slug}>
+                          <div className="text-sm text-text-secondary font-mono truncate mt-0.5" title={o.slug}>
                             {o.slug}
                           </div>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0 ml-15 xs:ml-0">
                         <button
                           onClick={() => {
                             setActiveOrganization(o._id, o.slug);
                             router.push(`/organization/${o._id}/repos`);
                           }}
-                          className="rounded-xl bg-surface border border-border hover:border-brand/40 px-5 py-2.5 text-sm font-bold text-text-secondary hover:text-text-primary hover:shadow-md transition-all active:scale-95 cursor-pointer"
+                          className="flex-1 xs:flex-none rounded-xl bg-surface border border-border hover:border-brand/40 px-4 py-2 text-sm font-bold text-text-secondary hover:text-text-primary hover:shadow-md transition-all active:scale-95 cursor-pointer"
                         >
                           Launch
                         </button>

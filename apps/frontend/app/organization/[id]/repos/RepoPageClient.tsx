@@ -199,10 +199,9 @@ export default function RepoPageClient({ orgId }: { orgId: string }) {
       <AnimatePresence>
       {showForm && (
         <motion.div
-            initial={{ opacity: 0, height: 0, marginBottom: 0 }}
-            animate={{ opacity: 1, height: 'auto', marginBottom: 24 }}
-            exit={{ opacity: 0, height: 0, marginBottom: 0 }}
-            className="overflow-hidden"
+            initial={{ opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" }}
+            animate={{ opacity: 1, height: 'auto', marginBottom: 24, transitionEnd: { overflow: "visible" } }}
+            exit={{ opacity: 0, height: 0, marginBottom: 0, overflow: "hidden" }}
         >
         <Card className="rounded-3xl border border-white/10 bg-surface/80 backdrop-blur-2xl p-6 sm:p-8 shadow-xl relative z-10">
           <div className="absolute top-0 right-0 w-64 h-64 bg-brand/10 blur-[80px] rounded-full pointer-events-none" />

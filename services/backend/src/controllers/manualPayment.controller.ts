@@ -24,7 +24,7 @@ export const submitRequest = async (req: Request, res: Response) => {
 
     const payload = await PaymentRequestModel.create({
       userId,
-      amount: 499, // Updated default Pro amount
+      amount: 1, // Updated default Pro amount
       transactionId,
       screenshotUrl,
       status: "pending",

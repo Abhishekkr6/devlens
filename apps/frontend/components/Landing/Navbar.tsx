@@ -26,7 +26,7 @@ export function Navbar() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = "/auth/github/login";
+    window.location.href = "/pricing";
   };
 
   const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -56,8 +56,7 @@ export function Navbar() {
             />
           </div>
           <span
-            className="text-xl sm:text-2xl font-bold tracking-tight text-text-primary group-hover:text-brand transition-colors duration-300"
-            style={{ fontFamily: "var(--font-logo)" }}
+            className="text-xl sm:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-text-primary to-text-primary group-hover:from-brand group-hover:to-purple-400 transition-all duration-300 font-heading"
           >
             DevLens
           </span>

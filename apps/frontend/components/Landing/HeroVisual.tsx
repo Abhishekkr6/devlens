@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { motion } from "motion/react";
 import { ShieldAlert, CheckCircle2 } from "lucide-react";

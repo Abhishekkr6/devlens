@@ -8,6 +8,9 @@ module.exports = {
     ],
     theme: {
         extend: {
+            screens: {
+                xs: '480px',
+            },
             fontFamily: {
                 heading: ['var(--font-heading)'],
                 body: ['var(--font-body)'],

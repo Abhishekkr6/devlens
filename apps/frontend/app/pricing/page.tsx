@@ -5,6 +5,7 @@ import { motion } from "motion/react";
 import { useUserStore } from "../../store/userStore";
 import { api } from "../../lib/api";
 import { Sparkles, CheckCircle2, Github, Zap } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 export default function PricingPage() {
   const { user } = useUserStore();
@@ -128,7 +129,7 @@ export default function PricingPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-white">Pro Plan</h2>
           <p className="mt-3 text-slate-400 text-sm md:text-base mb-6">Everything you need to ship high-quality code at scale.</p>
           <div className="mb-8 font-bold text-5xl md:text-6xl text-white">
-            ₹499 <span className="text-lg text-slate-400 font-medium">/ lifetime</span>
+            ₹1 <span className="text-lg text-slate-400 font-medium">/ lifetime</span>
           </div>
           <ul className="space-y-4 mb-8 flex-1 text-slate-300 text-sm md:text-base">
             <li className="flex items-center gap-3">{checkIcon("text-brand")} Unlimited Repositories</li>
@@ -177,7 +178,7 @@ export default function PricingPage() {
                   <ul className="text-sm text-text-secondary space-y-3">
                     <li className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-5 h-5 bg-brand rounded-full flex items-center justify-center text-xs text-white font-bold">1</span>
-                      Scan QR or copy UPI ID and pay <strong className="text-text-primary">Exactly ₹499</strong>.
+                      Scan QR or copy UPI ID and pay <strong className="text-text-primary">Exactly ₹1</strong>.
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-5 h-5 bg-brand rounded-full flex items-center justify-center text-xs text-white font-bold">2</span>
@@ -192,12 +193,17 @@ export default function PricingPage() {
 
                 {/* QR + UPI */}
                 <div className="text-center bg-background/50 rounded-xl p-5 border border-border/50">
-                  <div className="bg-white p-2 rounded-lg inline-block mb-3 w-28 h-28 flex items-center justify-center">
-                    <div className="w-full h-full border-2 border-dashed border-slate-300 flex items-center justify-center text-xs text-slate-400 text-center rounded">QR Image</div>
+                  <div className="bg-white p-2 rounded-lg inline-block mb-3 w-32 h-32 flex items-center justify-center">
+                    <QRCodeSVG
+                      value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
+                      size={112}
+                      level={"H"}
+                      includeMargin={false}
+                    />
                   </div>
                   <div className="flex items-center justify-center gap-2 bg-background rounded-lg px-3 py-2 border border-border">
-                    <p className="text-sm font-mono text-text-secondary">pay@devlens</p>
-                    <button type="button" onClick={() => { navigator.clipboard.writeText("pay@devlens"); alert("Copied!"); }} className="text-brand hover:text-brand/80 text-xs font-semibold ml-1">Copy</button>
+                    <p className="text-sm font-mono text-text-secondary">8092710774@airtel</p>
+                    <button type="button" onClick={() => { navigator.clipboard.writeText("8092710774@airtel"); alert("Copied!"); }} className="text-brand hover:text-brand/80 text-xs font-semibold ml-1">Copy</button>
                   </div>
                   <div className="mt-4 text-left text-xs text-text-secondary bg-background/50 p-3 rounded-lg border border-border/30 space-y-1">
                     <p className="flex items-center gap-2"><span className="text-success">🛡️</span> Secure manual verification.</p>
