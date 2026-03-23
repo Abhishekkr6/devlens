@@ -194,16 +194,6 @@ export function ChatbotWidget() {
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
-                        initial={{ scale: 0, opacity: 0, y: 50 }}
-                        animate={{ 
-                            scale: 1, 
-                            opacity: 1, 
-                            y: [0, -8, 0] 
-                        }}
-                        transition={{
-                            y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
-                            scale: { type: 'spring', stiffness: 260, damping: 20 }
-                        }}
                         exit={{ scale: 0, opacity: 0, y: 50 }}
                         whileHover={{ scale: 1.1, rotate: -5 }}
                         whileTap={{ scale: 0.95, rotate: 0 }}
