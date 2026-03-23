@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "motion/react";
 import { useUserStore } from "../../store/userStore";
 import { api } from "../../lib/api";
-import { Sparkles, CheckCircle2, Github, Zap } from "lucide-react";
+import { Sparkles, CheckCircle2, Github, Zap, ShieldCheck, Clock } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function PricingPage() {
@@ -179,65 +179,95 @@ export default function PricingPage() {
                 </p>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col space-y-5">
-                {/* Instructions */}
-                <div className="bg-background/50 rounded-xl p-4 border border-border/50">
-                  <h4 className="text-text-primary text-sm font-bold mb-3 pb-2 border-b border-border/50">Complete upgrade in 3 steps:</h4>
-                  <ul className="text-sm text-text-secondary space-y-3">
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-brand rounded-full flex items-center justify-center text-xs text-white font-bold">1</span>
-                      Scan QR or copy UPI ID and pay <strong className="text-text-primary">Exactly ₹1</strong>.
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-brand rounded-full flex items-center justify-center text-xs text-white font-bold">2</span>
-                      Add <strong className="text-text-primary">{user?.email || "your email"}</strong> in the payment note.
-                    </li>
-                    <li className="flex items-start gap-3">
-                      <span className="flex-shrink-0 w-5 h-5 bg-brand rounded-full flex items-center justify-center text-xs text-white font-bold">3</span>
-                      Enter the UTR/Transaction ID below and submit.
-                    </li>
-                  </ul>
+              <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-2">
+                {/* Modern 2-column layout on desktop, stacked on mobile */}
+                <div className="flex flex-col md:flex-row gap-6">
+                  
+                  {/* Left: QR Code & UPI Details */}
+                  <div className="md:w-5/12 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-brand/10 to-transparent rounded-3xl border border-brand/20 relative overflow-hidden group shadow-inner">
+                    <div className="absolute inset-0 bg-brand/5 group-hover:bg-brand/10 transition-colors duration-500" />
+                    
+                    <div className="bg-white p-3 rounded-2xl mb-5 shadow-xl shadow-brand/20 relative z-10 transition-transform duration-500 group-hover:scale-105">
+                      <QRCodeSVG
+                        value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
+                        size={140}
+                        level={"H"}
+                        includeMargin={false}
+                      />
+                    </div>
+                    
+                    <div className="relative z-10 flex items-center justify-between w-full bg-surface/80 backdrop-blur-md rounded-xl px-4 py-3 border border-border/50 hover:border-brand/40 transition-colors shadow-sm">
+                      <p className="text-sm font-mono text-slate-300 truncate mr-2">8092710774@airtel</p>
+                      <button 
+                        type="button" 
+                        onClick={() => { navigator.clipboard.writeText("8092710774@airtel"); alert("Copied!"); }} 
+                        className="text-brand text-xs font-bold uppercase tracking-wider hover:text-brand/80 transition-colors flex-shrink-0"
+                      >
+                        Copy
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Right: Instructions & Steps */}
+                  <div className="md:w-7/12 flex flex-col justify-center space-y-6">
+                    <h4 className="text-white text-lg font-bold flex items-center gap-2 pb-3 border-b border-border/50">
+                      <Sparkles className="w-5 h-5 text-brand" /> Complete Upgrade
+                    </h4>
+                    
+                    <div className="space-y-5">
+                      <div className="flex gap-4 items-start">
+                        <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">1</div>
+                        <p className="text-slate-300 text-sm md:text-base leading-relaxed mt-1">
+                          Scan the QR code or copy the UPI ID and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹1</strong>
+                        </p>
+                      </div>
+                      
+                      <div className="flex gap-4 items-start">
+                        <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">2</div>
+                        <p className="text-slate-300 text-sm md:text-base leading-relaxed mt-1 break-words">
+                          Add the email <strong className="text-white bg-surface px-1.5 py-0.5 rounded text-sm">{user?.email || "your email"}</strong> in the payment note.
+                        </p>
+                      </div>
+                      
+                      <div className="flex gap-4 items-start">
+                        <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">3</div>
+                        <div className="flex-1 mt-1">
+                          <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-3">
+                            Enter the 12-Digit UTR / Transaction ID below.
+                          </p>
+                          <input
+                            type="text"
+                            required
+                            value={transactionId}
+                            onChange={(e) => setTransactionId(e.target.value)}
+                            placeholder="e.g. 301234567890"
+                            className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand/70 focus:ring-1 focus:ring-brand/70 transition-all text-sm font-mono shadow-inner block"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* QR + UPI */}
-                <div className="text-center bg-background/50 rounded-xl p-5 border border-border/50">
-                  <div className="bg-white p-2 rounded-lg inline-block mb-3 w-32 h-32 flex items-center justify-center">
-                    <QRCodeSVG
-                      value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
-                      size={112}
-                      level={"H"}
-                      includeMargin={false}
-                    />
-                  </div>
-                  <div className="flex items-center justify-center gap-2 bg-background rounded-lg px-3 py-2 border border-border">
-                    <p className="text-sm font-mono text-text-secondary">8092710774@airtel</p>
-                    <button type="button" onClick={() => { navigator.clipboard.writeText("8092710774@airtel"); alert("Copied!"); }} className="text-brand hover:text-brand/80 text-xs font-semibold ml-1">Copy</button>
-                  </div>
-                  <div className="mt-4 text-left text-xs text-text-secondary bg-background/50 p-3 rounded-lg border border-border/30 space-y-1">
-                    <p className="flex items-center gap-2"><span className="text-success">🛡️</span> Secure manual verification.</p>
-                    <p className="flex items-center gap-2"><span className="text-brand">⏱️</span> Approvals take 5–30 minutes.</p>
-                    <p className="flex items-center gap-2"><span className="text-warning">💬</span> <a href="mailto:support@devlens.com" className="hover:text-text-primary transition-colors">Support within 24 hours.</a></p>
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-text-secondary mb-1.5">12-Digit UPI Transaction ID / UTR</label>
-                  <input
-                    type="text"
-                    required
-                    value={transactionId}
-                    onChange={(e) => setTransactionId(e.target.value)}
-                    placeholder="e.g. 301234567890"
-                    className="w-full bg-background border border-border rounded-xl px-4 py-3 text-text-primary placeholder-text-secondary/50 focus:outline-none focus:ring-2 focus:ring-brand/50 text-sm md:text-base"
-                  />
+                {/* Security Badges */}
+                <div className="flex flex-wrap items-center justify-center gap-6 text-xs text-slate-400 py-3 mt-2 bg-surface/30 rounded-xl border border-border/30">
+                  <span className="flex items-center gap-2"><ShieldCheck className="w-4 h-4 text-success" /> Secure Manual Verification</span>
+                  <span className="flex items-center gap-2"><Clock className="w-4 h-4 text-brand" /> 5-10 Min Avg. Approval</span>
                 </div>
 
                 <button
                   type="submit"
                   disabled={loading || !transactionId}
-                  className="w-full py-3.5 px-4 rounded-xl bg-brand text-white font-bold hover:bg-brand/90 active:scale-95 transition-all shadow-md disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
+                  className="w-full mt-2 py-4 px-4 rounded-xl bg-gradient-to-r from-brand to-brand/80 text-white font-bold text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-xl shadow-brand/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                 >
-                  {loading ? "Submitting..." : "Submit Transaction"}
+                  {loading ? (
+                    <span className="flex items-center gap-2">
+                      <svg className="animate-spin h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                      Submitting...
+                    </span>
+                  ) : (
+                    <>Securely Submit Payment <CheckCircle2 className="w-5 h-5 ml-1" /></>
+                  )}
                 </button>
               </form>
             )}
