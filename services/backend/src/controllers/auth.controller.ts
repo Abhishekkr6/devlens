@@ -73,9 +73,8 @@ export const githubCallback = async (req: Request, res: Response) => {
         role: "dev",
         githubAccessToken: encrypt(accessToken),
         orgIds: [],
-        plan: "pro",
-        subscriptionStatus: "active",
-        subscriptionExpiry: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+        plan: "free",
+        subscriptionStatus: "inactive",
       });
     } else {
       // Update latest profile + token

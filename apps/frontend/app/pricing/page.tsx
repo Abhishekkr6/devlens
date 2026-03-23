@@ -10,6 +10,7 @@ import { QRCodeSVG } from "qrcode.react";
 export default function PricingPage() {
   const { user } = useUserStore();
   const [loading, setLoading] = useState(false);
+  const [transactionId, setTransactionId] = useState("");
   const [hasPaid, setHasPaid] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"none" | "pending" | "approved" | "rejected">("none");
   const [paymentRecord, setPaymentRecord] = useState<any>(null);
@@ -31,14 +32,15 @@ export default function PricingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!hasPaid) { alert("Please confirm that you have paid."); return; }
+    if (!transactionId.trim()) { alert("Please enter your UTR / Transaction ID."); return; }
+    if (transactionId.trim().length < 10) { alert("Please enter a valid UTR (minimum 10 characters)."); return; }
+    if (!hasPaid) { alert("Please confirm that you have made the payment."); return; }
     try {
       setLoading(true);
-      const generatedId = "PAID_" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
-      await api.post("/payments/request", { transactionId: generatedId });
+      await api.post("/payments/request", { transactionId: transactionId.trim() });
       setPaymentStatus("pending");
+      setTransactionId("");
       setHasPaid(false);
-      alert("Payment request submitted successfully. We will verify it shortly.");
     } catch (err: any) {
       alert(err.response?.data?.error || "Failed to submit request.");
     } finally { setLoading(false); }
@@ -216,8 +218,25 @@ export default function PricingPage() {
                       </p>
                     </div>
 
-                    <div className="pt-2 border-t border-border/50">
-                      <label className="flex items-start gap-3 cursor-pointer group mt-3">
+                    <div className="pt-3 border-t border-border/50 space-y-4">
+                      {/* UTR / Transaction ID Input */}
+                      <div>
+                        <label className="block text-sm font-semibold text-slate-300 mb-2">
+                          UTR / Transaction ID <span className="text-danger">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          required
+                          value={transactionId}
+                          onChange={(e) => setTransactionId(e.target.value)}
+                          placeholder="Enter 12-digit UTR (e.g. 401234567890)"
+                          className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand/70 focus:ring-1 focus:ring-brand/70 transition-all text-sm font-mono shadow-inner block"
+                        />
+                        <p className="text-xs text-slate-500 mt-1.5">Find this in your UPI app under payment history after paying.</p>
+                      </div>
+
+                      {/* I Have Paid Checkbox */}
+                      <label className="flex items-start gap-3 cursor-pointer group">
                         <div className="relative flex items-center justify-center mt-0.5">
                           <input 
                             type="checkbox" 
@@ -229,8 +248,8 @@ export default function PricingPage() {
                             {hasPaid && <CheckCircle2 className="w-4 h-4 text-white" />}
                           </div>
                         </div>
-                        <span className="text-sm font-medium text-slate-200">
-                          I confirm that I have scanned the QR code and successfully paid ₹1.
+                        <span className="text-sm font-medium text-slate-200 leading-snug">
+                          I confirm I have successfully paid <strong className="text-white">₹1</strong> and the UTR above is correct.
                         </span>
                       </label>
                     </div>
@@ -245,8 +264,8 @@ export default function PricingPage() {
 
                 <button
                   type="submit"
-                  disabled={loading || !hasPaid}
-                  className="w-full mt-2 py-4 px-4 rounded-xl bg-gradient-to-r from-brand to-brand/80 text-white font-bold text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-xl shadow-brand/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
+                  disabled={loading || !hasPaid || !transactionId.trim()}
+                  className="w-full mt-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-brand to-violet-600 text-white font-bold text-base tracking-wide hover:opacity-90 active:scale-[0.98] transition-all shadow-2xl shadow-brand/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-3 border border-brand/20"
                 >
                   {loading ? (
                     <span className="flex items-center gap-2">
@@ -254,7 +273,10 @@ export default function PricingPage() {
                       Submitting...
                     </span>
                   ) : (
-                    <>I Have Paid <CheckCircle2 className="w-5 h-5 ml-1" /></>
+                    <span className="flex items-center gap-2">
+                      <CheckCircle2 className="w-5 h-5" />
+                      Submit Payment Request
+                    </span>
                   )}
                 </button>
               </form>
