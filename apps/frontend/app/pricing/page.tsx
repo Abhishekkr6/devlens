@@ -10,7 +10,7 @@ import { QRCodeSVG } from "qrcode.react";
 export default function PricingPage() {
   const { user } = useUserStore();
   const [loading, setLoading] = useState(false);
-  const [transactionId, setTransactionId] = useState("");
+  const [hasPaid, setHasPaid] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"none" | "pending" | "approved" | "rejected">("none");
   const [paymentRecord, setPaymentRecord] = useState<any>(null);
 
@@ -31,12 +31,13 @@ export default function PricingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!transactionId.trim()) { alert("Please enter a valid Transaction ID"); return; }
+    if (!hasPaid) { alert("Please confirm that you have paid."); return; }
     try {
       setLoading(true);
-      await api.post("/payments/request", { transactionId });
+      const generatedId = "PAID_" + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substring(2, 6).toUpperCase();
+      await api.post("/payments/request", { transactionId: generatedId });
       setPaymentStatus("pending");
-      setTransactionId("");
+      setHasPaid(false);
       alert("Payment request submitted successfully. We will verify it shortly.");
     } catch (err: any) {
       alert(err.response?.data?.error || "Failed to submit request.");
@@ -182,26 +183,15 @@ export default function PricingPage() {
               <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-2">
                 {/* Vertically Stacked Premium Layout */}
                 
-                {/* QR Code & UPI Details (Top) */}
+                {/* QR Code (Top) */}
                 <div className="flex flex-col items-center justify-center p-6 bg-gradient-to-b from-brand/10 to-transparent rounded-3xl border border-brand/20 shadow-inner group">
-                  <div className="bg-white p-3 rounded-2xl mb-5 shadow-xl shadow-brand/20 relative z-10 transition-transform duration-500 group-hover:scale-105">
+                  <div className="bg-white p-3 rounded-2xl shadow-xl shadow-brand/20 relative z-10 transition-transform duration-500 group-hover:scale-105">
                     <QRCodeSVG
                       value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
-                      size={140}
+                      size={160}
                       level={"H"}
                       includeMargin={false}
                     />
-                  </div>
-                  
-                  <div className="flex items-center justify-between w-full max-w-xs bg-surface/80 backdrop-blur-md rounded-xl px-4 py-3 border border-border/50 hover:border-brand/40 transition-colors shadow-sm relative z-10">
-                    <p className="text-sm font-mono text-slate-300 truncate mr-2">8092710774@airtel</p>
-                    <button 
-                      type="button" 
-                      onClick={() => { navigator.clipboard.writeText("8092710774@airtel"); alert("Copied!"); }} 
-                      className="text-brand text-xs font-bold uppercase tracking-wider hover:text-brand/80 transition-colors flex-shrink-0"
-                    >
-                      Copy
-                    </button>
                   </div>
                 </div>
 
@@ -215,32 +205,34 @@ export default function PricingPage() {
                     <div className="flex gap-4 items-start">
                       <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">1</div>
                       <p className="text-slate-300 text-sm leading-relaxed mt-1">
-                        Scan the QR code or copy the UPI ID and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹1</strong>
+                        Scan the QR code with any UPI app and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹1</strong>
                       </p>
                     </div>
                     
                     <div className="flex gap-4 items-start">
                       <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">2</div>
                       <p className="text-slate-300 text-sm leading-relaxed mt-1 break-words">
-                        Add email <strong className="text-white bg-surface px-1.5 py-0.5 rounded text-sm">{user?.email || "your email"}</strong> in the payment note.
+                        (Optional) Add email <strong className="text-white bg-surface px-1.5 py-0.5 rounded text-sm">{user?.email || "your email"}</strong> in the payment note.
                       </p>
                     </div>
-                    
-                    <div className="flex gap-4 items-start">
-                      <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">3</div>
-                      <div className="flex-1 mt-1">
-                        <p className="text-slate-300 text-sm leading-relaxed mb-3">
-                          Enter the 12-Digit UTR / Transaction ID below.
-                        </p>
-                        <input
-                          type="text"
-                          required
-                          value={transactionId}
-                          onChange={(e) => setTransactionId(e.target.value)}
-                          placeholder="e.g. 301234567890"
-                          className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand/70 focus:ring-1 focus:ring-brand/70 transition-all text-sm font-mono shadow-inner block"
-                        />
-                      </div>
+
+                    <div className="pt-2 border-t border-border/50">
+                      <label className="flex items-start gap-3 cursor-pointer group mt-3">
+                        <div className="relative flex items-center justify-center mt-0.5">
+                          <input 
+                            type="checkbox" 
+                            className="sr-only" 
+                            checked={hasPaid}
+                            onChange={(e) => setHasPaid(e.target.checked)}
+                          />
+                          <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${hasPaid ? 'bg-brand border-brand' : 'bg-surface border-border/60 group-hover:border-brand/50'}`}>
+                            {hasPaid && <CheckCircle2 className="w-4 h-4 text-white" />}
+                          </div>
+                        </div>
+                        <span className="text-sm font-medium text-slate-200">
+                          I confirm that I have scanned the QR code and successfully paid ₹1.
+                        </span>
+                      </label>
                     </div>
                   </div>
                 </div>
@@ -253,7 +245,7 @@ export default function PricingPage() {
 
                 <button
                   type="submit"
-                  disabled={loading || !transactionId}
+                  disabled={loading || !hasPaid}
                   className="w-full mt-2 py-4 px-4 rounded-xl bg-gradient-to-r from-brand to-brand/80 text-white font-bold text-base hover:opacity-90 active:scale-[0.98] transition-all shadow-xl shadow-brand/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center gap-2"
                 >
                   {loading ? (
@@ -262,7 +254,7 @@ export default function PricingPage() {
                       Submitting...
                     </span>
                   ) : (
-                    <>Securely Submit Payment <CheckCircle2 className="w-5 h-5 ml-1" /></>
+                    <>I Have Paid <CheckCircle2 className="w-5 h-5 ml-1" /></>
                   )}
                 </button>
               </form>
