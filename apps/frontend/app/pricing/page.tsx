@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "motion/react";
 import { useUserStore } from "../../store/userStore";
 import { api } from "../../lib/api";
@@ -8,27 +8,62 @@ import { Sparkles, CheckCircle2, Github, Zap, ShieldCheck, Clock } from "lucide-
 import { QRCodeSVG } from "qrcode.react";
 
 export default function PricingPage() {
-  const { user } = useUserStore();
+  const { user, fetchUser } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [transactionId, setTransactionId] = useState("");
   const [hasPaid, setHasPaid] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState<"none" | "pending" | "approved" | "rejected">("none");
   const [paymentRecord, setPaymentRecord] = useState<any>(null);
+  const pollingRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const checkStatus = useCallback(async () => {
+    if (!user) return;
+    try {
+      const res = await api.get("/payments/status");
+      if (res.data?.data?.length > 0) {
+        const latest = res.data.data[0];
+        const newStatus = latest.status;
+        setPaymentStatus(newStatus);
+        setPaymentRecord(latest);
+
+        // If approved, refresh user so the whole app updates plan to Pro
+        if (newStatus === "approved") {
+          fetchUser?.();
+          // Stop polling once resolved
+          if (pollingRef.current) {
+            clearInterval(pollingRef.current);
+            pollingRef.current = null;
+          }
+        }
+        // Also stop if rejected
+        if (newStatus === "rejected") {
+          if (pollingRef.current) {
+            clearInterval(pollingRef.current);
+            pollingRef.current = null;
+          }
+        }
+      }
+    } catch (e) { console.error("Failed to fetch payment status", e); }
+  }, [user, fetchUser]);
 
   useEffect(() => {
-    const checkStatus = async () => {
-      if (!user) return;
-      try {
-        const res = await api.get("/payments/status");
-        if (res.data?.data?.length > 0) {
-          const latest = res.data.data[0];
-          setPaymentStatus(latest.status);
-          setPaymentRecord(latest);
-        }
-      } catch (e) { console.error("Failed to fetch payment status", e); }
-    };
     checkStatus();
-  }, [user]);
+  }, [checkStatus]);
+
+  // Start polling every 5s when pending
+  useEffect(() => {
+    if (paymentStatus === "pending") {
+      pollingRef.current = setInterval(checkStatus, 5000);
+    } else {
+      if (pollingRef.current) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+      }
+    }
+    return () => {
+      if (pollingRef.current) clearInterval(pollingRef.current);
+    };
+  }, [paymentStatus, checkStatus]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +125,7 @@ export default function PricingPage() {
         <p className="mt-2 text-sm text-text-secondary/70">🛡️ 100% full refund within 3 days. No questions asked.</p>
       </div>
 
-      <div className="max-w-5xl mx-auto grid md:grid-cols-2 gap-6 md:gap-8 items-start px-4">
+      <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-6 md:gap-10 items-start px-4 sm:px-6 lg:px-8">
         {/* Free Tier */}
         <motion.div
           initial={{ opacity: 0, x: -20 }}
