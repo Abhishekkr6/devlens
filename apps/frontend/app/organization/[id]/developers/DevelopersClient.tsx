@@ -149,20 +149,24 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
     );
 
     return (
-        <div className="space-y-6">
-            <header className="flex flex-col gap-2">
-                <h1 className="text-4xl font-semibold text-text-primary">Developers</h1>
-                <p className="text-base text-text-secondary">Team member activity and performance metrics for this organization</p>
+        <div className="space-y-8 relative z-10">
+            {/* Background Glows */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-brand/10 to-transparent -z-10 rounded-[100%] blur-[120px] pointer-events-none" />
+
+            <header className="flex flex-col gap-3 border-b border-white/10 pb-6">
+                <h1 className="text-4xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-white/60">Developers</h1>
+                <p className="text-base text-text-secondary font-medium">Team member activity and performance metrics for this organization</p>
             </header>
 
-            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div className="relative w-full max-w-xl">
-                    <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-text-secondary" />
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between p-4 rounded-2xl bg-surface/40 backdrop-blur-xl border border-white/10 shadow-lg">
+                <div className="relative w-full lg:max-w-md xl:max-w-xl group">
+                    <div className="absolute inset-0 bg-brand/20 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity rounded-full pointer-events-none" />
+                    <Search className="pointer-events-none absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-text-secondary group-focus-within:text-brand transition-colors" />
                     <input
                         aria-label="Search developers"
-                        className="h-12 w-full rounded-2xl border border-border bg-background pl-11 pr-4 text-sm text-text-secondary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                        className="relative h-12 w-full rounded-xl border border-white/10 bg-black/40 pl-12 pr-4 text-sm text-white placeholder:text-zinc-500 focus:border-brand/50 focus:outline-none focus:ring-2 focus:ring-brand/30 transition-all shadow-inner"
                         onChange={(event) => setSearchTerm(event.target.value)}
-                        placeholder="Search developers..."
+                        placeholder="Search developers by name or ID..."
                         type="search"
                         value={searchTerm}
                     />
@@ -198,31 +202,44 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
             </div>
 
             {loading ? (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-                    {Array.from({ length: 4 }).map((_, index) => (
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
+                    {Array.from({ length: 6 }).map((_, index) => (
                         <Card
                             key={index}
-                            className="rounded-2xl border border-border bg-background p-5 shadow-sm"
+                            className="rounded-2xl border border-white/10 bg-surface/40 backdrop-blur-xl p-6 shadow-xl"
                         >
-                            <div className="flex animate-pulse flex-col gap-4">
-                                <div className="flex items-center gap-3">
-                                    <div className="h-12 w-12 rounded-full bg-slate-200 dark:bg-slate-700" />
-                                    <div className="flex-1 space-y-2">
-                                        <div className="h-3 w-2/3 rounded bg-slate-200 dark:bg-slate-700" />
-                                        <div className="h-3 w-1/3 rounded bg-slate-100 dark:bg-slate-800" />
+                            <div className="flex animate-pulse flex-col gap-5">
+                                <div className="flex items-center gap-4">
+                                    <div className="h-14 w-14 rounded-2xl bg-white/5 shadow-inner" />
+                                    <div className="flex-1 space-y-3">
+                                        <div className="h-4 w-2/3 rounded-lg bg-white/10" />
+                                        <div className="h-3 w-1/3 rounded-lg bg-white/5" />
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <div className="h-3 w-full rounded bg-slate-100 dark:bg-slate-800" />
+                                <div className="space-y-3 mt-2">
+                                    <div className="h-2 w-full rounded-full bg-white/5" />
+                                    <div className="grid grid-cols-3 gap-3">
+                                        <div className="h-16 rounded-xl bg-white/5" />
+                                        <div className="h-16 rounded-xl bg-white/5" />
+                                        <div className="h-16 rounded-xl bg-white/5" />
+                                    </div>
                                 </div>
                             </div>
                         </Card>
                     ))}
                 </div>
             ) : filteredDevelopers.length === 0 ? (
-                emptyState
+                <div className="py-20 flex flex-col items-center justify-center text-center">
+                    <div className="w-20 h-20 bg-white/5 rounded-full flex items-center justify-center mb-6 border border-white/10">
+                        <Search className="w-8 h-8 text-text-secondary opacity-50" />
+                    </div>
+                    <h3 className="text-xl font-bold text-white mb-2">No developers found</h3>
+                    <p className="text-text-secondary max-w-sm">
+                        Adjust your filters or try a different search term to find team members.
+                    </p>
+                </div>
             ) : (
-                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3">
                     {filteredDevelopers.map((developer) => (
                         <DeveloperCard key={developer.githubId} developer={developer} orgId={orgId} />
                     ))}
@@ -238,49 +255,58 @@ function DeveloperCard({ developer, orgId }: { developer: Developer; orgId?: str
     const levelLabel = ACTIVITY_FILTER_LABELS[getActivityLevel(developer.weeklyActivity)];
 
     const cardContent = (
-        <Card className="group h-full rounded-2xl border border-border bg-background p-5 shadow-sm transition hover:-translate-y-1 hover:shadow-lg cursor-pointer">
-            <div className="flex items-start justify-between">
-                <div className="flex flex-1 items-center gap-3">
-                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-full bg-linear-to-br from-indigo-500 to-indigo-400 text-white">
+        <Card className="relative group h-full rounded-3xl border border-white/10 bg-surface/40 backdrop-blur-xl p-6 shadow-2xl transition-all duration-500 hover:-translate-y-2 hover:shadow-[0_20px_40px_rgba(0,0,0,0.4)] hover:border-white/20 cursor-pointer overflow-hidden">
+            {/* Hover Gradient Overlay */}
+            <div className={`absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 bg-gradient-to-br from-brand via-indigo-500 to-purple-600 pointer-events-none`} />
+            
+            <div className="relative z-10 flex items-start justify-between">
+                <div className="flex flex-1 items-center gap-4">
+                    <div className="relative h-14 w-14 shrink-0 rounded-2xl bg-gradient-to-br from-indigo-500 to-brand text-white shadow-lg border border-white/20 group-hover:scale-105 transition-transform duration-300">
                         {developer.avatarUrl ? (
                             <Image
                                 alt={developer.name}
-                                className="h-full w-full object-cover"
-                                height={48}
+                                className="h-full w-full object-cover rounded-2xl"
+                                height={56}
                                 src={developer.avatarUrl}
-                                width={48}
+                                width={56}
                             />
                         ) : (
-                            <span className="flex h-full w-full items-center justify-center text-sm font-semibold">
+                            <span className="flex h-full w-full items-center justify-center text-lg font-bold">
                                 {getInitials(developer.name)}
                             </span>
                         )}
+                        <div className={`absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2 border-background shadow-sm ${developer.weeklyActivity > 25 ? 'bg-emerald-500' : 'bg-slate-500'}`} />
                     </div>
                     <div className="min-w-0">
-                        <p className="truncate text-sm font-semibold text-text-primary">{developer.name}</p>
-                        <p className="truncate text-xs text-text-secondary">{formatRole(developer.role)}</p>
+                        <p className="truncate text-lg font-bold text-white group-hover:text-brand transition-colors">{developer.name}</p>
+                        <p className="truncate text-xs font-semibold text-text-secondary uppercase tracking-wider mt-0.5">{formatRole(developer.role)}</p>
                     </div>
                 </div>
-                <TrendingUp className="h-4 w-4 text-text-secondary transition group-hover:text-brand" />
+                <div className="h-8 w-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-brand/20 group-hover:border-brand/30 transition-all">
+                    <TrendingUp className="h-4 w-4 text-text-secondary group-hover:text-brand transition-colors" />
+                </div>
             </div>
 
-            <div className="mt-4 rounded-xl bg-surface p-3">
-                <div className="flex items-center justify-between text-xs font-medium text-text-secondary">
+            <div className="relative z-10 mt-6 rounded-2xl bg-black/20 p-4 border border-white/5 shadow-inner">
+                <div className="flex items-center justify-between text-xs font-bold text-text-secondary uppercase tracking-widest">
                     <span>Weekly Activity</span>
-                    <span className={`${activityColor} text-sm font-semibold`}>
+                    <span className={`${activityColor} text-sm font-extrabold`}>
                         {developer.weeklyActivity}%
                     </span>
                 </div>
-                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                    <div className={`${progressColor} h-full transition-all`} style={{ width: `${developer.weeklyActivity}%` }} />
+                <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-white/10 shadow-inner relative">
+                    <div className={`absolute top-0 bottom-0 left-0 ${progressColor} transition-all duration-1000 shadow-[0_0_10px_currentColor]`} style={{ width: `${developer.weeklyActivity}%` }} />
                 </div>
-                <p className="mt-2 text-xs font-medium text-text-secondary">{levelLabel}</p>
+                <p className="mt-2 text-xs font-medium text-text-secondary flex items-center gap-1.5">
+                    <span className={`h-1.5 w-1.5 rounded-full ${progressColor}`} />
+                    {levelLabel}
+                </p>
             </div>
 
-            <div className="mt-4 grid grid-cols-3 gap-2">
-                <StatBlock icon={GitCommit} label="Commits" value={developer.commits} />
-                <StatBlock icon={GitPullRequest} label="PRs" value={developer.prs} />
-                <StatBlock icon={MessageSquare} label="Reviews" value={developer.reviews} />
+            <div className="relative z-10 mt-4 grid grid-cols-3 gap-3">
+                <StatBlock icon={GitCommit} label="Commits" value={developer.commits} highlight className="hover:border-emerald-500/30 hover:bg-emerald-500/10" />
+                <StatBlock icon={GitPullRequest} label="PRs" value={developer.prs} className="hover:border-blue-500/30 hover:bg-blue-500/10" />
+                <StatBlock icon={MessageSquare} label="Reviews" value={developer.reviews} className="hover:border-purple-500/30 hover:bg-purple-500/10" />
             </div>
         </Card>
     );
@@ -300,20 +326,24 @@ function StatBlock({
     icon: Icon,
     label,
     value,
+    highlight,
+    className,
 }: {
     icon: any;
     label: string;
     value?: number | null;
+    highlight?: boolean;
+    className?: string;
 }) {
     const displayValue = Number.isFinite(value as number) ? (value as number) : 0;
 
     return (
-        <div className="rounded-xl bg-surface p-3 text-center transition group-hover:bg-surface-200">
-            <div className="flex items-center justify-center">
-                <Icon className="h-4 w-4 text-text-secondary" />
+        <div className={`rounded-2xl bg-black/20 p-3 text-center border border-white/5 shadow-inner transition-all duration-300 group-hover:scale-[1.02] cursor-default ${className || ""}`}>
+            <div className={`flex h-8 w-8 mx-auto items-center justify-center rounded-xl bg-white/5 border border-white/10 shadow-sm transition-colors ${highlight ? 'group-hover:bg-brand/20 group-hover:border-brand/30' : ''}`}>
+                <Icon className={`h-4 w-4 ${highlight ? 'text-brand' : 'text-text-secondary'} transition-colors`} />
             </div>
-            <p className="mt-2 text-lg font-semibold text-text-primary">{displayValue.toLocaleString()}</p>
-            <p className="text-xs text-text-secondary">{label}</p>
+            <p className="mt-3 text-lg font-extrabold text-white tracking-tight">{displayValue.toLocaleString()}</p>
+            <p className="text-[10px] font-bold text-text-secondary uppercase tracking-widest mt-0.5">{label}</p>
         </div>
     );
 }

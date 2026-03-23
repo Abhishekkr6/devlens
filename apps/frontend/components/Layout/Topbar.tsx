@@ -27,6 +27,7 @@ import { NotificationDropdown } from "./NotificationDropdown";
 import { useUserStore } from "../../store/userStore";
 import { useNotificationStore } from "../../store/notificationStore";
 import { api } from "../../lib/api";
+import { cn } from "../../lib/utils";
 
 type User = {
   name: string;
@@ -269,8 +270,14 @@ export default function Topbar() {
 
   return (
     <>
-      <header className="relative z-[120] bg-background/80 backdrop-blur-xl border-b border-white/[0.05] shadow-[0_4px_30px_rgba(0,0,0,0.1)]">
-        <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative z-[120]">
+      <header className={cn(
+        "relative bg-background/80 backdrop-blur-xl border-b border-white/[0.05] shadow-[0_4px_30px_rgba(0,0,0,0.1)] transition-all",
+        (teamDropdownOpen || orgDropdownOpen || notificationOpen || mobileNavOpen) ? "z-[160]" : "z-[120]"
+      )}>
+        <div className={cn(
+          "mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8 relative",
+          (teamDropdownOpen || orgDropdownOpen || notificationOpen || mobileNavOpen) ? "z-[160]" : "z-[120]"
+        )}>
           <div className="flex w-full flex-nowrap items-center gap-2 md:gap-3 py-3">
             <Link
               href="/organization"
