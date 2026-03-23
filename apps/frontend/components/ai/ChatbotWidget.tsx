@@ -225,7 +225,7 @@ export function ChatbotWidget() {
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         exit={{ opacity: 0, y: 100, scale: 0.95 }}
                         transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[85vh] sm:h-[600px] max-h-[100dvh] sm:max-h-[85vh] backdrop-blur-3xl bg-surface/80 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden relative"
+                        className="fixed bottom-0 right-0 sm:bottom-6 sm:right-6 z-[9999] w-full sm:w-[400px] h-[85vh] sm:h-[600px] max-h-[100dvh] sm:max-h-[85vh] backdrop-blur-3xl bg-surface/80 border border-white/10 rounded-t-3xl sm:rounded-3xl shadow-[0_0_40px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden"
                     >
                         {/* Decorative Background Glow */}
                         <div className="absolute top-0 right-0 w-64 h-64 bg-brand/10 blur-[80px] rounded-full pointer-events-none" />
