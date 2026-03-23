@@ -4,12 +4,23 @@ import { authMiddleware } from "../middlewares/auth.middleware";
 
 const router = Router();
 
-const requireAdmin = (req: any, res: any, next: any) => {
-  // Simple check for global admin role set in the user model
-  if (req.user && req.user.role === "admin") {
-    next();
-  } else {
-    res.status(403).json({ error: "Admin access required" });
+import { UserModel } from "../models/user.model";
+
+const requireAdmin = async (req: any, res: any, next: any) => {
+  try {
+    const userId = req.userId || req.user?.id || req.user?._id;
+    if (!userId) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+
+    const user = await UserModel.findById(userId).lean();
+    if (user && user.role === "admin") {
+      next();
+    } else {
+      res.status(403).json({ error: "Admin access required" });
+    }
+  } catch (err) {
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
