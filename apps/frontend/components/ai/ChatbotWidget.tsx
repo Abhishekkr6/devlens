@@ -194,16 +194,24 @@ export function ChatbotWidget() {
             <AnimatePresence>
                 {!isOpen && (
                     <motion.button
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
+                        initial={{ scale: 0, opacity: 0, y: 50 }}
+                        animate={{ 
+                            scale: 1, 
+                            opacity: 1, 
+                            y: [0, -8, 0] 
+                        }}
+                        transition={{
+                            y: { duration: 3, repeat: Infinity, ease: "easeInOut" },
+                            scale: { type: 'spring', stiffness: 260, damping: 20 }
+                        }}
+                        exit={{ scale: 0, opacity: 0, y: 50 }}
+                        whileHover={{ scale: 1.1, rotate: -5 }}
+                        whileTap={{ scale: 0.95, rotate: 0 }}
                         onClick={() => setOpen(true)}
-                        className="fixed bottom-6 right-6 z-50 bg-gradient-to-r from-brand to-purple-600 text-white p-4 rounded-full shadow-2xl hover:shadow-brand/50 transition-all duration-300 cursor-pointer"
+                        className="fixed bottom-6 right-6 sm:bottom-8 sm:right-8 z-[150] bg-gradient-to-tr from-brand to-indigo-500 text-white p-4 rounded-full shadow-[0_10px_40px_rgba(67,84,227,0.4)] hover:shadow-[0_15px_50px_rgba(67,84,227,0.6)] transition-all duration-300 cursor-pointer flex items-center justify-center group"
                     >
-                        <MessageCircle className="w-6 h-6" />
-                        <span className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></span>
+                        <MessageCircle className="w-6 h-6 group-hover:scale-110 transition-transform duration-300" />
+                        <span className="absolute -top-1 -right-1 w-3.5 h-3.5 bg-emerald-500 rounded-full border-2 border-background shadow-sm animate-pulse"></span>
                     </motion.button>
                 )}
             </AnimatePresence>
