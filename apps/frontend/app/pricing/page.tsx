@@ -180,70 +180,66 @@ export default function PricingPage() {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-2">
-                {/* Modern 2-column layout on desktop, stacked on mobile */}
-                <div className="flex flex-col md:flex-row gap-6">
-                  
-                  {/* Left: QR Code & UPI Details */}
-                  <div className="md:w-5/12 flex flex-col items-center justify-center p-6 bg-gradient-to-b from-brand/10 to-transparent rounded-3xl border border-brand/20 relative overflow-hidden group shadow-inner">
-                    <div className="absolute inset-0 bg-brand/5 group-hover:bg-brand/10 transition-colors duration-500" />
-                    
-                    <div className="bg-white p-3 rounded-2xl mb-5 shadow-xl shadow-brand/20 relative z-10 transition-transform duration-500 group-hover:scale-105">
-                      <QRCodeSVG
-                        value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
-                        size={140}
-                        level={"H"}
-                        includeMargin={false}
-                      />
-                    </div>
-                    
-                    <div className="relative z-10 flex items-center justify-between w-full bg-surface/80 backdrop-blur-md rounded-xl px-4 py-3 border border-border/50 hover:border-brand/40 transition-colors shadow-sm">
-                      <p className="text-sm font-mono text-slate-300 truncate mr-2">8092710774@airtel</p>
-                      <button 
-                        type="button" 
-                        onClick={() => { navigator.clipboard.writeText("8092710774@airtel"); alert("Copied!"); }} 
-                        className="text-brand text-xs font-bold uppercase tracking-wider hover:text-brand/80 transition-colors flex-shrink-0"
-                      >
-                        Copy
-                      </button>
-                    </div>
+                {/* Vertically Stacked Premium Layout */}
+                
+                {/* QR Code & UPI Details (Top) */}
+                <div className="flex flex-col items-center justify-center p-6 bg-gradient-to-b from-brand/10 to-transparent rounded-3xl border border-brand/20 shadow-inner group">
+                  <div className="bg-white p-3 rounded-2xl mb-5 shadow-xl shadow-brand/20 relative z-10 transition-transform duration-500 group-hover:scale-105">
+                    <QRCodeSVG
+                      value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
+                      size={140}
+                      level={"H"}
+                      includeMargin={false}
+                    />
                   </div>
+                  
+                  <div className="flex items-center justify-between w-full max-w-xs bg-surface/80 backdrop-blur-md rounded-xl px-4 py-3 border border-border/50 hover:border-brand/40 transition-colors shadow-sm relative z-10">
+                    <p className="text-sm font-mono text-slate-300 truncate mr-2">8092710774@airtel</p>
+                    <button 
+                      type="button" 
+                      onClick={() => { navigator.clipboard.writeText("8092710774@airtel"); alert("Copied!"); }} 
+                      className="text-brand text-xs font-bold uppercase tracking-wider hover:text-brand/80 transition-colors flex-shrink-0"
+                    >
+                      Copy
+                    </button>
+                  </div>
+                </div>
 
-                  {/* Right: Instructions & Steps */}
-                  <div className="md:w-7/12 flex flex-col justify-center space-y-6">
-                    <h4 className="text-white text-lg font-bold flex items-center gap-2 pb-3 border-b border-border/50">
-                      <Sparkles className="w-5 h-5 text-brand" /> Complete Upgrade
-                    </h4>
+                {/* Instructions & Steps (Bottom) */}
+                <div className="flex flex-col justify-center space-y-5 bg-surface/30 p-5 md:p-6 rounded-3xl border border-border/30">
+                  <h4 className="text-white text-lg font-bold flex items-center gap-2 pb-3 border-b border-border/50">
+                    <Sparkles className="w-5 h-5 text-brand" /> Complete Upgrade
+                  </h4>
+                  
+                  <div className="space-y-5">
+                    <div className="flex gap-4 items-start">
+                      <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">1</div>
+                      <p className="text-slate-300 text-sm leading-relaxed mt-1">
+                        Scan the QR code or copy the UPI ID and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹1</strong>
+                      </p>
+                    </div>
                     
-                    <div className="space-y-5">
-                      <div className="flex gap-4 items-start">
-                        <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">1</div>
-                        <p className="text-slate-300 text-sm md:text-base leading-relaxed mt-1">
-                          Scan the QR code or copy the UPI ID and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹1</strong>
+                    <div className="flex gap-4 items-start">
+                      <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">2</div>
+                      <p className="text-slate-300 text-sm leading-relaxed mt-1 break-words">
+                        Add email <strong className="text-white bg-surface px-1.5 py-0.5 rounded text-sm">{user?.email || "your email"}</strong> in the payment note.
+                      </p>
+                    </div>
+                    
+                    <div className="flex gap-4 items-start">
+                      <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">3</div>
+                      <div className="flex-1 mt-1">
+                        <p className="text-slate-300 text-sm leading-relaxed mb-3">
+                          Enter the 12-Digit UTR / Transaction ID below.
                         </p>
-                      </div>
-                      
-                      <div className="flex gap-4 items-start">
-                        <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">2</div>
-                        <p className="text-slate-300 text-sm md:text-base leading-relaxed mt-1 break-words">
-                          Add the email <strong className="text-white bg-surface px-1.5 py-0.5 rounded text-sm">{user?.email || "your email"}</strong> in the payment note.
-                        </p>
-                      </div>
-                      
-                      <div className="flex gap-4 items-start">
-                        <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">3</div>
-                        <div className="flex-1 mt-1">
-                          <p className="text-slate-300 text-sm md:text-base leading-relaxed mb-3">
-                            Enter the 12-Digit UTR / Transaction ID below.
-                          </p>
-                          <input
-                            type="text"
-                            required
-                            value={transactionId}
-                            onChange={(e) => setTransactionId(e.target.value)}
-                            placeholder="e.g. 301234567890"
-                            className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand/70 focus:ring-1 focus:ring-brand/70 transition-all text-sm font-mono shadow-inner block"
-                          />
-                        </div>
+                        <input
+                          type="text"
+                          required
+                          value={transactionId}
+                          onChange={(e) => setTransactionId(e.target.value)}
+                          placeholder="e.g. 301234567890"
+                          className="w-full bg-surface border border-border/60 rounded-xl px-4 py-3.5 text-white placeholder-slate-500 focus:outline-none focus:border-brand/70 focus:ring-1 focus:ring-brand/70 transition-all text-sm font-mono shadow-inner block"
+                        />
                       </div>
                     </div>
                   </div>
