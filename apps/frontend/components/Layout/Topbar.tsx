@@ -21,7 +21,7 @@ import {
   Eye,
   Code,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
+import { motion, AnimatePresence, useScroll, useMotionValueEvent } from "motion/react";
 import { FloatingDock } from "../Ui/floating-dock";
 import { NotificationDropdown } from "./NotificationDropdown";
 import { useUserStore } from "../../store/userStore";
@@ -92,6 +92,14 @@ export default function Topbar() {
 
   const toggleMobileNav = () => setMobileNavOpen((prev) => !prev);
   const closeMobileNav = () => setMobileNavOpen(false);
+
+  // Scroll detection for animated sticky dock
+  const { scrollY } = useScroll();
+  const [isScrolled, setIsScrolled] = useState(false);
+  
+  useMotionValueEvent(scrollY, "change", (latest) => {
+    setIsScrolled(latest > 20);
+  });
 
   useEffect(() => {
     if (!mobileNavOpen) {
@@ -566,15 +574,26 @@ export default function Topbar() {
 
       <motion.div
         initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
+        animate={{ 
+          opacity: 1, 
+          y: isScrolled ? -16 : 0, 
+        }}
         transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }}
-        className="sticky top-4 z-[110] w-full flex justify-center py-2 px-2 bg-transparent pointer-events-none"
+        className="sticky top-4 z-[140] w-full flex justify-center px-2 bg-transparent pointer-events-none"
       >
         <div className="pointer-events-auto max-w-full">
           <FloatingDock
             items={dockItems}
-            desktopClassName="bg-surface/60 backdrop-blur-2xl px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.2)] rounded-full border border-white/10"
-            mobileClassName="bg-surface/80 backdrop-blur-2xl px-2 py-2 shadow-2xl rounded-full border border-white/10 max-w-full"
+            desktopClassName={`transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] ${
+              isScrolled 
+                ? "bg-slate-950/95 backdrop-blur-3xl px-8 py-2.5 shadow-[0_20px_40px_rgba(0,0,0,0.4)] rounded-b-3xl rounded-t-none border border-white/10 border-t-0" 
+                : "bg-surface/60 backdrop-blur-2xl px-4 py-2.5 shadow-[0_8px_30px_rgba(0,0,0,0.2)] rounded-full border border-white/10 mt-2"
+            }`}
+            mobileClassName={`transition-all duration-500 ease-[cubic-bezier(0.23,1,0.32,1)] max-w-full ${
+              isScrolled 
+                ? "bg-slate-950/95 backdrop-blur-3xl px-4 py-2 shadow-[0_20px_40px_rgba(0,0,0,0.4)] rounded-b-2xl rounded-t-none border border-white/10 border-t-0" 
+                : "bg-surface/80 backdrop-blur-2xl px-2 py-2 shadow-2xl rounded-full border border-white/10 mt-2"
+            }`}
           />
         </div>
       </motion.div>
