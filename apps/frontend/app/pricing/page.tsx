@@ -151,7 +151,15 @@ export default function PricingPage() {
                 </button>
               </div>
             ) : user?.plan === "pro" && paymentStatus !== "pending" ? (
-              <div className="text-center text-success font-semibold py-4">🎉 You are on the Pro Plan!</div>
+              <div className="text-center py-4">
+                <div className="text-success font-bold text-lg mb-4">🎉 You are on the Pro Plan!</div>
+                <button
+                  onClick={() => window.location.href = "/"}
+                  className="w-full py-3.5 px-4 rounded-xl bg-brand text-white font-bold hover:bg-brand/90 active:scale-95 transition-all shadow-lg text-sm md:text-base"
+                >
+                  Go to Dashboard
+                </button>
+              </div>
             ) : paymentStatus === "pending" ? (
               <div className="text-center bg-warning/10 rounded-xl p-6 border border-warning/20">
                 <div className="w-12 h-12 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-warning/30">
