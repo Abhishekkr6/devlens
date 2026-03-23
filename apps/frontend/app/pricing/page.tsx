@@ -154,10 +154,10 @@ export default function PricingPage() {
               <div className="text-center py-4">
                 <div className="text-success font-bold text-lg mb-4">🎉 You are on the Pro Plan!</div>
                 <button
-                  onClick={() => window.location.href = "/"}
-                  className="w-full py-3.5 px-4 rounded-xl bg-brand text-white font-bold hover:bg-brand/90 active:scale-95 transition-all shadow-lg text-sm md:text-base"
+                  onClick={() => window.location.href = "/api/v1/auth/github/login"}
+                  className="w-full py-3.5 px-4 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-200 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 text-sm md:text-base"
                 >
-                  Go to Dashboard
+                  <Github className="w-5 h-5" /> Login with GitHub
                 </button>
               </div>
             ) : paymentStatus === "pending" ? (
