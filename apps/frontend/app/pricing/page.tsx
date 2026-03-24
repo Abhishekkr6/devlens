@@ -172,7 +172,7 @@ export default function PricingPage() {
           <h2 className="text-2xl md:text-3xl font-bold text-white">Pro Plan</h2>
           <p className="mt-3 text-slate-400 text-sm md:text-base mb-6">Everything you need to ship high-quality code at scale.</p>
           <div className="mb-8 font-bold text-5xl md:text-6xl text-white">
-            ₹1 <span className="text-lg text-slate-400 font-medium">/ lifetime</span>
+            ₹499 <span className="text-lg text-slate-400 font-medium">/ lifetime</span>
           </div>
           <ul className="space-y-4 mb-8 flex-1 text-slate-300 text-sm md:text-base">
             <li className="flex items-center gap-3">{checkIcon("text-brand")} Unlimited Repositories</li>
