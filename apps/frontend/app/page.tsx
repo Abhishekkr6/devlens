@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { motion, useScroll, useTransform } from "motion/react";
+import { motion, AnimatePresence, useScroll, useTransform } from "motion/react";
 import {
   Github,
   Zap,
@@ -11,7 +11,10 @@ import {
   CheckCircle2,
   Cpu,
   GitCommit,
-  Sparkles
+  Sparkles,
+  TrendingUp,
+  Activity,
+  BellRing
 } from "lucide-react";
 import { HeroVisual } from "../components/Landing/HeroVisual";
 import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/CommitTrackingVisual";
@@ -426,9 +429,17 @@ function Footer() {
 }
 
 function VideoDemoSection() {
+  const [step, setStep] = React.useState(0);
+  
+  React.useEffect(() => {
+     const timer = setInterval(() => setStep(s => (s+1)%7), 4000); // 4 Seconds per step, total 7 steps
+     return () => clearInterval(timer);
+  }, []);
+
   return (
-    <section className="py-20 md:py-32 bg-surface border-t border-border/50 relative">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+    <section className="py-20 md:py-32 bg-surface border-y border-border/50 relative overflow-hidden">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-brand/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -439,11 +450,158 @@ function VideoDemoSection() {
           <p className="text-base md:text-xl text-text-secondary max-w-2xl mx-auto font-light">Watch how a single high-risk PR is caught instantly, saving hours of debugging production logs.</p>
         </motion.div>
 
-        <div className="w-full max-w-5xl mx-auto bg-background rounded-2xl md:rounded-[2.5rem] aspect-video flex items-center justify-center shadow-lg border border-border relative overflow-hidden group hover:border-brand/40 transition-colors duration-300">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-20 transition-opacity duration-300 blur-[2px] group-hover:blur-0"></div>
-          <div className="w-16 h-16 md:w-20 md:h-20 bg-background/80 md:bg-background/50 backdrop-blur-md rounded-full flex items-center justify-center cursor-pointer group-hover:scale-105 shadow-md border border-border transition-transform active:scale-95">
-            <div className="w-0 h-0 border-t-[10px] md:border-t-[12px] border-t-transparent border-l-[16px] md:border-l-[20px] border-l-text-primary border-b-[10px] md:border-b-[12px] border-b-transparent ml-2 md:ml-2"></div>
-          </div>
+        {/* The Animated Dashboard */}
+        <div className="w-full max-w-5xl mx-auto bg-background rounded-2xl md:rounded-[2rem] aspect-[4/3] md:aspect-[21/9] flex shadow-2xl shadow-brand/10 border border-border relative overflow-hidden text-left ring-1 ring-white/10 pointer-events-none">
+           {/* Fake Sidebar */}
+           <div className="w-16 md:w-64 bg-surface/50 border-r border-border hidden sm:flex flex-col p-5 gap-6">
+              <div className="w-8 h-8 md:w-32 md:h-8 bg-border/40 rounded-lg animate-pulse" />
+              <div className="space-y-4 mt-8">
+                 <div className="flex items-center gap-3"><div className="w-4 h-4 rounded bg-border text-center" /><div className="h-4 w-3/4 bg-border/40 rounded hidden md:block" /></div>
+                 <div className="flex items-center gap-3"><div className="w-4 h-4 rounded bg-border text-center" /><div className="h-4 w-1/2 bg-border/40 rounded hidden md:block" /></div>
+                 <div className="flex items-center gap-3"><div className="w-4 h-4 rounded bg-brand/40 text-center" /><div className="h-4 w-5/6 bg-brand/20 rounded hidden md:block" /></div>
+              </div>
+           </div>
+           
+           {/* Main Content Area */}
+           <div className="flex-1 p-6 md:p-10 flex flex-col relative bg-[radial-gradient(ellipse_at_top_right,rgba(74,93,255,0.05),transparent)]">
+               <div className="flex items-center justify-between border-b border-border/50 pb-5 mb-6 md:mb-8">
+                   <div>
+                       <h3 className="text-lg md:text-xl font-bold text-white mb-1">Pull Request #412</h3>
+                       <p className="text-xs text-slate-400">auth: refactor session handling</p>
+                   </div>
+                   <div className="flex gap-2">
+                      <span className="px-3 py-1.5 bg-brand/10 text-brand text-xs font-bold rounded-lg border border-brand/20 shadow-inner">Analyzing Diff...</span>
+                   </div>
+               </div>
+
+               <AnimatePresence mode="wait">
+                  {step === 0 && (
+                     <motion.div key="1" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0,y:-10}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col justify-center max-w-2xl mx-auto w-full">
+                        <div className="flex items-center gap-4 mb-6">
+                           <div className="w-12 h-12 rounded-full bg-slate-800 animate-pulse border border-border" />
+                           <div className="space-y-2 flex-1">
+                              <div className="h-4 w-full bg-slate-800 rounded" />
+                              <div className="h-4 w-2/3 bg-slate-800 rounded" />
+                           </div>
+                        </div>
+                        <div className="p-5 bg-surface/80 rounded-2xl border border-border shadow-inner font-mono text-xs md:text-sm text-slate-400 space-y-3">
+                           <p><span className="text-rose-400">- const session = db.find(id)</span></p>
+                           <p><span className="text-emerald-400">+ const session = await db.find(id)</span></p>
+                           <p className="text-emerald-400">+ session.lastLogin = new Date()</p>
+                           <p className="text-emerald-400">+ await session.save()</p>
+                        </div>
+                     </motion.div>
+                  )}
+                  {step === 1 && (
+                     <motion.div key="2" initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+                        <div className="w-24 h-24 relative flex items-center justify-center mb-6">
+                           <div className="absolute inset-0 border-4 border-brand/30 border-t-brand rounded-full animate-spin shadow-[0_0_20px_rgba(74,93,255,0.4)]" />
+                           <img src="/logo.svg" className="w-12 h-12 animate-pulse" alt="DevLens AI" />
+                        </div>
+                        <h4 className="text-xl md:text-2xl font-bold text-white mb-2 tracking-tight">DevLens AI Engine Running</h4>
+                        <p className="text-slate-400 text-sm">Validating logic, security boundaries, and code quality...</p>
+                        <div className="w-48 h-1.5 bg-surface rounded-full mt-6 overflow-hidden">
+                           <motion.div className="h-full bg-brand" initial={{ width: "0%" }} animate={{ width: "100%" }} transition={{ duration: 3.5, ease: "linear" }} />
+                        </div>
+                     </motion.div>
+                  )}
+                  {step === 2 && (
+                     <motion.div key="3" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+                        <div className="bg-rose-500/10 border border-rose-500/30 p-6 md:p-8 rounded-3xl max-w-lg w-full text-center relative overflow-hidden shadow-[0_0_40px_rgba(244,63,94,0.15)]">
+                           <div className="absolute top-0 inset-x-0 h-1 bg-rose-500" />
+                           <ShieldAlert className="w-12 h-12 text-rose-500 mx-auto mb-5 drop-shadow-[0_0_15px_rgba(244,63,94,0.5)]" />
+                           <h4 className="text-xl md:text-2xl font-bold text-white mb-3 tracking-tight">High-Risk Mutation Detected!</h4>
+                           <p className="text-slate-300 text-sm md:text-base mb-8 leading-relaxed">
+                              DevLens found a critical flaw: The modified <code className="text-rose-300 bg-rose-950/50 border border-rose-900 px-1.5 py-0.5 rounded mx-1">session.save()</code> call triggers a background hook without awaiting properly, creating a race condition on authentication.
+                           </p>
+                           <button className="bg-rose-500 hover:bg-rose-600 text-white font-bold py-3 text-sm px-8 rounded-xl transition-colors shadow-lg">
+                              Block Merge
+                           </button>
+                        </div>
+                     </motion.div>
+                  )}
+                  {step === 3 && (
+                     <motion.div key="4" initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+                        <div className="w-20 h-20 md:w-24 md:h-24 bg-emerald-500/20 rounded-full flex items-center justify-center mb-6 md:mb-8 border border-emerald-500/30 shadow-[0_0_30px_rgba(16,185,129,0.2)]">
+                           <CheckCircle2 className="w-10 h-10 md:w-12 md:h-12 text-emerald-500 drop-shadow-md" />
+                        </div>
+                        <h4 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Issue Automatically Resolved</h4>
+                        <p className="text-slate-400 text-sm md:text-base max-w-md mx-auto text-center leading-relaxed">
+                           DevLens suggested exactly how to fix the promise chain. The developer applied the fix in 1-click and merged safely.
+                        </p>
+                     </motion.div>
+                  )}
+                  {step === 4 && (
+                     <motion.div key="5" initial={{opacity:0, y:10}} animate={{opacity:1, y:0}} exit={{opacity:0}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto">
+                        <div className="w-full bg-surface border border-border p-6 md:p-8 rounded-3xl shadow-xl relative overflow-hidden">
+                           <div className="flex items-center justify-between mb-8">
+                              <div>
+                                 <p className="text-xs md:text-sm font-bold text-slate-400 uppercase tracking-widest">Team Velocity Score</p>
+                                 <h3 className="text-4xl md:text-5xl font-black text-white mt-1">92 <span className="text-emerald-400 text-xs md:text-sm font-bold tracking-widest uppercase align-top">+14%</span></h3>
+                              </div>
+                              <div className="bg-emerald-500/10 p-4 rounded-2xl border border-emerald-500/20 text-emerald-400">
+                                 <TrendingUp className="w-8 h-8 md:w-10 md:h-10" />
+                              </div>
+                           </div>
+                           <div className="flex items-end gap-2 h-24 md:h-32 w-full pt-4">
+                              {[30, 45, 20, 60, 50, 80, 100].map((h, i) => (
+                                 <motion.div key={i} 
+                                    initial={{ height: 0 }} animate={{ height: `${h}%` }} transition={{ delay: i * 0.1, duration: 0.5, type: 'spring' }}
+                                    className={`flex-1 rounded-t-lg ${i === 6 ? 'bg-brand shadow-[0_0_15px_rgba(74,93,255,0.5)]' : 'bg-brand/20'}`} 
+                                 />
+                              ))}
+                           </div>
+                        </div>
+                        <p className="text-slate-400 text-sm md:text-base mt-6 text-center max-w-sm">
+                           DevLens eliminates debugging time. Your team merges <strong className="text-white">14% faster</strong>.
+                        </p>
+                     </motion.div>
+                  )}
+                  {step === 5 && (
+                     <motion.div key="6" initial={{opacity:0, scale:0.95}} animate={{opacity:1, scale:1}} exit={{opacity:0}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+                        <div className="w-40 h-40 md:w-48 md:h-48 relative flex items-center justify-center mb-8 bg-surface rounded-full border border-border shadow-[0_0_40px_rgba(74,93,255,0.05)]">
+                           <svg viewBox="0 0 100 100" className="w-32 h-32 md:w-40 md:h-40 transform -rotate-90">
+                              <circle cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" fill="none" className="text-border" />
+                              <motion.circle 
+                                 cx="50" cy="50" r="40" stroke="currentColor" strokeWidth="8" strokeLinecap="round" fill="none" className="text-brand drop-shadow-[0_0_10px_rgba(74,93,255,0.8)]"
+                                 initial={{ strokeDasharray: "251.2", strokeDashoffset: "251.2" }}
+                                 animate={{ strokeDashoffset: "37" }} // approx 85% of 251.2
+                                 transition={{ duration: 1.5, ease: "easeOut" }}
+                              />
+                           </svg>
+                           <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <Activity className="w-6 h-6 text-brand mb-1" />
+                              <span className="text-4xl font-black text-white">85</span>
+                           </div>
+                        </div>
+                        <h4 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tight">Code Health Improved</h4>
+                        <p className="text-slate-400 text-sm md:text-base max-w-sm mx-auto text-center">
+                           Technical debt reduced by <strong className="text-white">13 points</strong> automatically.
+                        </p>
+                     </motion.div>
+                  )}
+                  {step === 6 && (
+                     <motion.div key="7" initial={{opacity:0, y:20}} animate={{opacity:1, y:0}} exit={{opacity:0}} transition={{ duration: 0.4 }} className="flex-1 flex flex-col items-center justify-center">
+                        <div className="bg-background/90 backdrop-blur-3xl border border-border p-6 rounded-2xl flex items-center gap-5 shadow-[0_30px_60px_rgba(0,0,0,0.4)] relative overflow-hidden group max-w-md w-full">
+                           <div className="absolute inset-0 w-[200%] h-full bg-gradient-to-r from-transparent via-white/5 to-transparent skew-x-12 translate-x-[-150%] animate-[shimmer_2.5s_infinite]" />
+                           <div className="w-14 h-14 bg-emerald-500/10 rounded-xl flex items-center justify-center border border-emerald-500/20 shrink-0">
+                              <BellRing className="w-7 h-7 text-emerald-400" />
+                           </div>
+                           <div className="flex-1">
+                              <div className="flex justify-between items-center mb-1.5">
+                                 <h4 className="font-bold text-white text-sm md:text-base">DevLens Bot</h4>
+                                 <span className="text-[10px] bg-brand/20 text-brand px-2 py-0.5 rounded-full uppercase tracking-widest font-bold border border-brand/30">Just Now</span>
+                              </div>
+                              <p className="text-sm md:text-base text-slate-300">
+                                 ✅ <strong className="text-white font-medium">Release Ready</strong>
+                                 <br/> <span className="text-xs md:text-sm text-slate-400 mt-1 block">No critical bugs found in production build.</span>
+                              </p>
+                           </div>
+                        </div>
+                     </motion.div>
+                  )}
+               </AnimatePresence>
+           </div>
         </div>
       </div>
     </section>
