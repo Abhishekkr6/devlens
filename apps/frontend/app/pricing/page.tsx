@@ -103,7 +103,7 @@ export default function PricingPage() {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-brand"></span>
           </span>
-          Includes 7-Day Free Trial
+          Start for Free Today
         </motion.div>
 
         <motion.h1
@@ -142,13 +142,13 @@ export default function PricingPage() {
             <li className="flex items-center gap-3">{checkIcon("text-success")} 2 Repository Limit</li>
             <li className="flex items-center gap-3">{checkIcon("text-success")} Basic PR Analysis</li>
             <li className="flex items-center gap-3">{checkIcon("text-success")} Up to 10 teammates</li>
-            <li className="flex items-center gap-3 opacity-40">{checkIcon("text-border")} No High-Risk Alerts</li>
+            <li className="flex items-center gap-3">{checkIcon("text-success")} 1 Month Data Retention</li>
           </ul>
           <button
             className="w-full py-4 px-4 rounded-2xl border border-border text-text-secondary font-semibold bg-background transition-colors text-sm md:text-base"
             disabled
           >
-            {user?.plan === "free" ? "Your Current Plan" : "Included in Trial"}
+            {user?.plan === "free" ? "Your Current Plan" : "Your Default Plan"}
           </button>
         </motion.div>
 
@@ -180,7 +180,7 @@ export default function PricingPage() {
           <div className="bg-surface/30 rounded-2xl p-5 md:p-6 border border-border/50">
             {!user ? (
               <div className="text-center py-4">
-                <p className="text-slate-300 font-medium mb-5 text-sm">Create an account to start your free trial.</p>
+                <p className="text-slate-300 font-medium mb-5 text-sm">Create an account to get started.</p>
                 <button
                   onClick={() => window.location.href = "/api/v1/auth/github/login"}
                   className="w-full py-3.5 px-4 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-200 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 text-sm md:text-base"

@@ -85,7 +85,7 @@ function Hero() {
               className="group relative flex items-center justify-center gap-2 bg-text-primary text-background px-6 md:px-8 py-3.5 md:py-4 rounded-xl md:rounded-2xl text-base md:text-lg font-bold transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg cursor-pointer overflow-hidden"
             >
               <Github className="w-5 h-5" />
-              Start 7-Day Free Trial
+              Get Started for Free
             </button>
             <Link
               href="/demo"
@@ -390,7 +390,7 @@ function CTA() {
           className="bg-text-primary text-background hover:bg-slate-200 px-6 md:px-10 py-4 md:py-5 rounded-xl md:rounded-2xl text-base md:text-xl font-bold transition-transform active:scale-95 shadow-md flex items-center gap-2 md:gap-3 mx-auto cursor-pointer"
         >
           <Github className="w-5 h-5 md:w-6 md:h-6" />
-          Start 7-Day Free Trial
+          Get Started for Free
         </button>
         <p className="mt-4 md:mt-6 text-xs md:text-sm text-text-secondary">No credit card required to start.</p>
       </motion.div>
@@ -454,7 +454,7 @@ function TestimonialSection() {
   const testimonials = [
     { name: "Sarah J.", role: "Senior Engineer", content: "DevLens caught a massive memory leak in a PR just 5 minutes before I merged it to staging. Literal life saver." },
     { name: "Rahul T.", role: "Tech Lead", content: "Finally, I don't have to manually hunt down 'who merged what' when production breaks. The risk dashboard is insanely useful." },
-    { name: "Mike W.", role: "CTO", content: "We integrated it in 2 clicks. The AI code review is shockingly accurate and the 7-day trial made it a no-brainer to try." }
+    { name: "Mike W.", role: "CTO", content: "We integrated it in 2 clicks. The AI code review is shockingly accurate and the free tier made it a no-brainer to try." }
   ];
 
   return (
@@ -563,9 +563,9 @@ function PricingSection() {
               ₹0 <span className="text-lg md:text-xl text-text-secondary font-medium tracking-normal">/ lifetime</span>
             </div>
             <ul className="space-y-4 md:space-y-5 mb-8 md:mb-10 flex-1 text-text-secondary text-sm md:text-base">
-              <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} Analyze 2 repositories</li>
+              <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} 2 Repository Limit</li>
+              <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} Basic PR Analysis</li>
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} Up to 10 teammates</li>
-              <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} Basic GitHub Sync</li>
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-success")} 1 Month Data Retention</li>
             </ul>
             <a href="/auth/github/login" className="block text-center bg-background hover:bg-slate-800 border border-border text-text-primary font-bold py-4 md:py-5 rounded-xl md:rounded-2xl transition-colors text-base md:text-lg">
@@ -596,7 +596,7 @@ function PricingSection() {
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-brand")} Priority Support</li>
             </ul>
             <a href="/pricing" className="block text-center bg-text-primary text-background hover:bg-slate-200 font-bold py-4 md:py-5 rounded-xl md:rounded-2xl transition-transform active:scale-95 text-base md:text-lg">
-              Start 7-Day Free Trial
+              Upgrade to Pro
             </a>
             <p className="text-xs md:text-sm text-slate-400 text-center mt-4 md:mt-5">🛡️ full refund within 3 days. No questions asked.</p>
           </motion.div>

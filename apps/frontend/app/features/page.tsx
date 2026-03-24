@@ -172,7 +172,7 @@ export default function FeaturesPage() {
               onClick={handleLogin}
               className="flex items-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-8 py-3.5 rounded-2xl font-bold text-base md:text-lg transition-all active:scale-95 shadow-md cursor-pointer"
             >
-              <Github className="w-5 h-5" /> Start Free Trial
+              <Github className="w-5 h-5" /> Get Started for Free
             </button>
             <button
               onClick={() => router.push('/demo')}
