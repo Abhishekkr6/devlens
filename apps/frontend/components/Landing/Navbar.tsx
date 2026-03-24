@@ -10,6 +10,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [hoveredPath, setHoveredPath] = useState<string | null>(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -26,7 +27,8 @@ export function Navbar() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = "/pricing";
+    setIsLoginModalOpen(true);
+    setMobileMenuOpen(false);
   };
 
   const handlePricingClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
@@ -155,6 +157,54 @@ export function Navbar() {
                 Login with GitHub
               </button>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Login Modal Overlay */}
+      <AnimatePresence>
+        {isLoginModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
+            onClick={() => setIsLoginModalOpen(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-surface/80 backdrop-blur-xl border border-white/10 rounded-3xl p-6 sm:p-8 max-w-sm w-full shadow-2xl relative overflow-hidden"
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-purple-500/10 opacity-50 pointer-events-none" />
+              <div className="relative z-10">
+                <div className="flex justify-between items-center mb-6">
+                  <h3 className="text-2xl font-extrabold tracking-tight text-text-primary">Authentication</h3>
+                  <button onClick={() => setIsLoginModalOpen(false)} className="text-text-secondary hover:text-text-primary transition-colors p-1.5 rounded-full hover:bg-white/5">
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+                <p className="text-sm font-light text-text-secondary mb-8">
+                  Choose how you want to proceed. You can always upgrade your workspace later.
+                </p>
+                <div className="flex flex-col gap-4">
+                  <button
+                    onClick={() => window.location.href = "/auth/github/login"}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl border border-border text-text-primary font-bold hover:bg-surface hover:scale-105 active:scale-95 transition-all shadow-sm cursor-pointer"
+                  >
+                    <Github className="w-5 h-5" /> Continue with Free
+                  </button>
+                  <button
+                    onClick={() => { setIsLoginModalOpen(false); window.location.href = "/pricing"; }}
+                    className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-brand to-violet-600 text-white font-bold hover:opacity-90 active:scale-95 hover:scale-105 transition-all shadow-lg shadow-brand/25 border border-brand/20 cursor-pointer"
+                  >
+                    Upgrade to Pro
+                  </button>
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
