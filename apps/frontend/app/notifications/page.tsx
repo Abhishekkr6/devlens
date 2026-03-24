@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { toast } from "sonner";
 import { useUserStore } from "@/store/userStore";
+import { motion } from "motion/react";
 
 // Define locally for now until we have a shared type file or backend
 import { useNotificationStore, NotificationType } from "../../store/notificationStore";
@@ -91,10 +92,15 @@ export default function NotificationsPage() {
     return (
         <DashboardLayout>
             <div className="space-y-6 max-w-4xl mx-auto">
-                <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <motion.header 
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between"
+                >
                     <div>
-                        <h1 className="text-3xl font-semibold text-text-primary">Notifications</h1>
-                        <p className="mt-1 text-sm text-text-secondary">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">Notifications</h1>
+                        <p className="mt-2 text-sm sm:text-base text-text-secondary font-light">
                             Stay updated with alerts, invites, and system messages.
                         </p>
                     </div>
@@ -106,10 +112,15 @@ export default function NotificationsPage() {
                             Mark all read
                         </button>
                     </div>
-                </header>
+                </motion.header>
 
                 {/* Filters */}
-                <div className="flex items-center gap-2 overflow-x-auto pb-2">
+                <motion.div 
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1 }}
+                    className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none"
+                >
                     <button
                         onClick={() => setFilter("all")}
                         className={cn(
@@ -135,11 +146,16 @@ export default function NotificationsPage() {
                             {f}
                         </button>
                     ))}
-                </div>
+                </motion.div>
 
                 {/* Content */}
                 {filteredNotifications.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center py-24 text-center">
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.5, delay: 0.2 }}
+                        className="flex flex-col items-center justify-center py-24 text-center"
+                    >
                         <div className="h-20 w-20 rounded-full bg-surface border border-border flex items-center justify-center mb-6 shadow-sm">
                             <Bell className="h-10 w-10 text-text-secondary/30" />
                         </div>
@@ -147,19 +163,29 @@ export default function NotificationsPage() {
                         <p className="text-text-secondary max-w-sm">
                             When you have alerts, team invites, or system updates, they will appear here.
                         </p>
-                    </div>
+                    </motion.div>
                 ) : (
-                    <div className="space-y-4">
-                        {filteredNotifications.map((notification) => (
-                            <Card
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="space-y-4"
+                    >
+                        {filteredNotifications.map((notification, i) => (
+                            <motion.div
                                 key={notification._id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ duration: 0.5, delay: i * 0.05, ease: [0.23, 1, 0.32, 1] }}
+                            >
+                            <Card
                                 onClick={() => markAsRead(notification._id)}
                                 className={cn(
-                                    "p-5 transition-all hover:shadow-md border",
-                                    !notification.read ? "border-l-4 border-l-brand" : "border-border"
+                                    "p-5 transition-all duration-300 relative group cursor-pointer overflow-hidden rounded-3xl bg-surface/50 backdrop-blur-xl shadow-lg border",
+                                    !notification.read ? "border-brand/40 shadow-[0_0_15px_rgba(74,93,255,0.15)]" : "border-white/10 hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)]"
                                 )}
                             >
-                                <div className="flex gap-4">
+                                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                                <div className="relative z-10 flex gap-4">
                                     <div className={cn(
                                         "h-12 w-12 rounded-xl flex items-center justify-center shrink-0 border",
                                         getBgColor(notification.type)
@@ -209,8 +235,9 @@ export default function NotificationsPage() {
                                     </div>
                                 </div>
                             </Card>
+                            </motion.div>
                         ))}
-                    </div>
+                    </motion.div>
                 )
                 }
             </div >

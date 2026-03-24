@@ -7,6 +7,7 @@ import { Card } from "../../../../../../components/Ui/Card";
 import { ArrowLeft, AlertTriangle, Bell, Webhook, Trash2 } from "lucide-react";
 import { ConfirmDialog } from "../../../../../../components/Ui/ConfirmDialog";
 import { useUserStore } from "../../../../../../store/userStore";
+import { motion } from "motion/react";
 
 type RepoData = {
     id: string;
@@ -199,28 +200,36 @@ export default function RepoSettingsClient({
     return (
         <div className="flex flex-col gap-6">
             {/* Header */}
-            <div className="flex flex-col gap-4">
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+            >
                 <button
                     onClick={() => router.push(`/organization/${orgId}/repos/${repoId}`)}
-                    className="flex items-center gap-2 text-sm cursor-pointer text-text-secondary hover:text-text-primary w-fit"
+                    className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary hover:-translate-x-1 transition-transform cursor-pointer w-fit"
                 >
                     <ArrowLeft className="w-4 h-4" />
                     Back to Repository
                 </button>
 
                 <div>
-                    <h1 className="mb-1 text-2xl font-semibold sm:text-3xl text-text-primary">
+                    <h1 className="mb-2 text-3xl font-extrabold tracking-tight sm:text-4xl text-text-primary">
                         Repository Settings
                     </h1>
-                    <p className="text-sm text-text-secondary">
+                    <p className="text-sm sm:text-base font-light text-text-secondary">
                         Configure alerts, notifications, and manage {repo.name}
                     </p>
                 </div>
-            </div>
+            </motion.div>
 
             {/* General Settings */}
-            <Card className="p-6 border shadow-sm rounded-2xl border-border bg-background">
-                <h2 className="mb-4 text-lg font-semibold text-text-primary">General Settings</h2>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none" />
+                <div className="relative z-10">
+                <h2 className="mb-5 text-xl font-bold tracking-tight text-text-primary">General Settings</h2>
                 <div className="space-y-4">
                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                         <div>
@@ -254,15 +263,20 @@ export default function RepoSettingsClient({
                         </div>
                     </div>
                 </div>
+                </div>
             </Card>
+            </motion.div>
 
             {/* Alert Configuration */}
-            <Card className="p-6 border shadow-sm rounded-2xl border-border bg-background">
-                <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 border rounded-lg border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950/20">
-                        <AlertTriangle className="w-5 h-5 text-amber-600" />
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none" />
+                <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 border rounded-xl border-amber-500/20 bg-amber-500/10 dark:bg-amber-500/10">
+                        <AlertTriangle className="w-5 h-5 text-amber-500 dark:text-amber-400" />
                     </div>
-                    <h2 className="text-lg font-semibold text-text-primary">Alert Configuration</h2>
+                    <h2 className="text-xl font-bold tracking-tight text-text-primary">Alert Configuration</h2>
                 </div>
                 <div className="space-y-6">
                     <div>
@@ -334,15 +348,20 @@ export default function RepoSettingsClient({
                         </div>
                     </div>
                 </div>
+                </div>
             </Card>
+            </motion.div>
 
             {/* Notification Preferences */}
-            <Card className="p-6 border shadow-sm rounded-2xl border-border bg-background">
-                <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 border border-blue-200 rounded-lg dark:border-blue-800 bg-blue-50 dark:bg-blue-950/20">
-                        <Bell className="w-5 h-5 text-blue-600" />
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none" />
+                <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 border border-blue-500/20 rounded-xl bg-blue-500/10 dark:bg-blue-500/10">
+                        <Bell className="w-5 h-5 text-blue-500 dark:text-blue-400" />
                     </div>
-                    <h2 className="text-lg font-semibold text-text-primary">Notification Preferences</h2>
+                    <h2 className="text-xl font-bold tracking-tight text-text-primary">Notification Preferences</h2>
                 </div>
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -417,15 +436,20 @@ export default function RepoSettingsClient({
                         </label>
                     </div>
                 </div>
+                </div>
             </Card>
+            </motion.div>
 
             {/* Webhook Status */}
-            <Card className="p-6 border shadow-sm rounded-2xl border-border bg-background">
-                <div className="flex items-center gap-2 mb-4">
-                    <div className="p-2 border border-purple-200 rounded-lg dark:border-purple-800 bg-purple-50 dark:bg-purple-950/20">
-                        <Webhook className="w-5 h-5 text-purple-600" />
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none" />
+                <div className="relative z-10">
+                <div className="flex items-center gap-3 mb-6">
+                    <div className="p-2 border border-purple-500/20 rounded-xl bg-purple-500/10 dark:bg-purple-500/10">
+                        <Webhook className="w-5 h-5 text-purple-500 dark:text-purple-400" />
                     </div>
-                    <h2 className="text-lg font-semibold text-text-primary">Webhook Status</h2>
+                    <h2 className="text-xl font-bold tracking-tight text-text-primary">Webhook Status</h2>
                 </div>
                 <div className="space-y-4">
                     <div className="flex items-center justify-between">
@@ -449,27 +473,30 @@ export default function RepoSettingsClient({
                         </div>
                     </div>
                 </div>
+                </div>
             </Card>
+            </motion.div>
 
             {/* Save Button */}
             {isAdmin && (
-                <div className="flex justify-end">
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: 0.5 }} className="flex justify-end">
                     <button
                         onClick={handleSaveSettings}
                         disabled={isSaving}
-                        className="px-6 py-2 text-sm font-semibold text-white border cursor-pointer rounded-xl border-brand bg-brand hover:bg-brand/90 disabled:opacity-50"
+                        className="px-6 py-3 text-sm font-bold text-white border hover:scale-105 transition-all shadow-lg shadow-brand/25 active:scale-95 cursor-pointer rounded-2xl border-brand bg-brand hover:bg-brand/90 disabled:opacity-50"
                     >
                         {isSaving ? "Saving..." : "Save Settings"}
                     </button>
-                </div>
+                </motion.div>
             )}
 
             {/* Danger Zone */}
             {isAdmin && (
-                <Card className="p-6 border border-red-200 shadow-sm rounded-2xl dark:border-red-900 bg-red-50 dark:bg-red-950/20">
-                    <div className="flex items-center gap-2 mb-4">
-                        <Trash2 className="w-5 h-5 text-red-600" />
-                        <h2 className="text-lg font-semibold text-red-700 dark:text-red-400">Danger Zone</h2>
+                <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
+                <Card className="rounded-3xl p-6 sm:p-8 border border-red-500/20 shadow-xl bg-red-500/5 dark:bg-red-950/20 relative overflow-hidden">
+                    <div className="flex items-center gap-3 mb-5">
+                        <Trash2 className="w-6 h-6 text-red-600 dark:text-red-500" />
+                        <h2 className="text-xl font-bold tracking-tight text-red-700 dark:text-red-500">Danger Zone</h2>
                     </div>
                     <div className="space-y-4">
                         <div className="flex items-center justify-between">
@@ -488,6 +515,7 @@ export default function RepoSettingsClient({
                         </div>
                     </div>
                 </Card>
+                </motion.div>
             )}
 
             {/* Disconnect Confirmation Dialog */}

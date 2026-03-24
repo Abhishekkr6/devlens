@@ -6,6 +6,7 @@ import { ArrowLeft, GitCommit, GitPullRequest, MessageSquare, Clock } from "luci
 import { api } from "../../../../../lib/api";
 import { Card } from "../../../../../components/Ui/Card";
 import Image from "next/image";
+import { motion } from "motion/react";
 
 interface DeveloperProfile {
     profile: {
@@ -111,20 +112,27 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
     };
 
     return (
-        <div className="space-y-4 sm:space-y-6">
+        <motion.div 
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4 }}
+            className="space-y-4 sm:space-y-6"
+        >
             {/* Back Button */}
             <button
                 onClick={() => router.back()}
-                className="flex items-center gap-2 text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors"
+                className="flex items-center gap-2 text-xs sm:text-sm text-text-secondary hover:-translate-x-1 hover:text-text-primary transition-all cursor-pointer"
             >
-                <ArrowLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+                <ArrowLeft className="h-4 w-4" />
                 Back to Developers
             </button>
 
             {/* Profile Header */}
-            <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
-                    <div className="relative h-16 w-16 sm:h-20 sm:w-20 shrink-0 overflow-hidden rounded-full bg-gradient-to-br from-indigo-500 to-indigo-400">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-5 sm:p-8 shadow-lg relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-brand/10 blur-[80px] rounded-full pointer-events-none" />
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5 sm:gap-8 relative z-10">
+                    <div className="relative h-20 w-20 sm:h-24 sm:w-24 shrink-0 overflow-hidden rounded-full border-4 border-surface shadow-md bg-gradient-to-br from-indigo-500 to-indigo-400">
                         {profile.profile.avatarUrl ? (
                             <Image
                                 alt={profile.profile.name}
@@ -140,22 +148,23 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                         )}
                     </div>
                     <div className="flex-1">
-                        <h1 className="text-xl sm:text-2xl font-semibold text-text-primary">{profile.profile.name}</h1>
-                        <p className="text-xs sm:text-sm text-text-secondary mt-0.5 sm:mt-1">@{profile.profile.githubId}</p>
-                        <div className="flex items-center gap-2 sm:gap-3 mt-2 sm:mt-3">
-                            <span className="inline-flex items-center rounded-full bg-blue-500/10 px-2 sm:px-3 py-0.5 sm:py-1 text-[10px] sm:text-xs font-semibold text-blue-700 dark:text-blue-400">
+                        <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-text-primary mb-1">{profile.profile.name}</h1>
+                        <p className="text-sm sm:text-base font-light text-text-secondary">@{profile.profile.githubId}</p>
+                        <div className="flex items-center gap-3 mt-3 sm:mt-4">
+                            <span className="inline-flex items-center rounded-lg bg-blue-500/10 border border-blue-500/20 px-3 py-1 text-xs font-bold text-blue-700 dark:text-blue-400">
                                 Active
                             </span>
-                            <span className="text-[10px] sm:text-xs text-text-secondary">
+                            <span className="text-xs font-medium text-text-secondary px-3 py-1 bg-surface/50 rounded-lg border border-white/5">
                                 {profile.profile.weeklyActivity}% Weekly Activity
                             </span>
                         </div>
                     </div>
                 </div>
             </Card>
+            </motion.div>
 
             {/* Performance Metrics */}
-            <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-4">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }} className="grid grid-cols-2 gap-3 sm:gap-5 xl:grid-cols-4">
                 <MetricCard
                     label="Total Commits"
                     value={profile.metrics.totalCommits}
@@ -181,22 +190,30 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                     icon={Clock}
                     isTime
                 />
-            </div>
+            </motion.div>
 
-            <div className="grid grid-cols-1 gap-4 sm:gap-6">
-                {/* Main Content - Full Width */}
-                <div className="space-y-4 sm:space-y-6">
+            <div className="grid grid-cols-1 gap-5 sm:gap-6 xl:grid-cols-3">
+                {/* Main Content - Larger width */}
+                <div className="space-y-5 sm:space-y-6 xl:col-span-2">
                     {/* Contribution Activity */}
-                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-5 sm:p-8 shadow-sm">
-                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-4 sm:mb-6">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="relative z-10">
+                        <h2 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-5 sm:mb-6">
                             Contribution Activity
                         </h2>
                         <ContributionHeatmap data={profile.contributionActivity} />
+                        </div>
                     </Card>
+                    </motion.div>
 
                     {/* Recent Activity */}
-                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
+                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.4 }}>
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative overflow-hidden group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="relative z-10">
+                        <h2 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-4 sm:mb-6">
                             Recent Activity
                         </h2>
                         <div className="space-y-4 sm:space-y-5">
@@ -241,14 +258,17 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                                 );
                             })}
                         </div>
+                        </div>
                     </Card>
+                    </motion.div>
                 </div>
 
-                {/* Sidebar - Below main content on all screens */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+                {/* Sidebar */}
+                <div className="space-y-5 sm:space-y-6 xl:col-span-1">
                     {/* Quick Info */}
-                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">Quick Info</h2>
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.5 }}>
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg">
+                        <h2 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-5">Quick Info</h2>
                         <div className="space-y-3 sm:space-y-4">
                             <div>
                                 <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-widest text-text-secondary">
@@ -266,10 +286,12 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                             </div>
                         </div>
                     </Card>
+                    </motion.div>
 
                     {/* Active Repositories */}
-                    <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-4 sm:p-6 shadow-sm">
-                        <h2 className="text-base sm:text-lg font-semibold text-text-primary mb-3 sm:mb-4">
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5, delay: 0.6 }}>
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg">
+                        <h2 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-5">
                             Active Repositories
                         </h2>
                         <div className="space-y-3">
@@ -300,20 +322,21 @@ export default function DeveloperProfileClient({ orgId, developerId }: { orgId: 
                         </div>
 
                         {/* Action Button */}
-                        <div className="mt-4 sm:mt-6">
+                        <div className="mt-6 sm:mt-8">
                             <a
                                 href={`https://github.com/${profile.profile.githubId}`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center justify-center w-full rounded-lg border border-border bg-background px-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium text-text-primary hover:bg-surface transition-colors"
+                                className="flex items-center justify-center w-full rounded-2xl border border-border bg-surface px-5 py-3 text-sm font-bold text-text-primary hover:bg-surface-hover hover:scale-105 active:scale-95 transition-all shadow-md cursor-pointer"
                             >
-                                View GitHub
+                                View on GitHub
                             </a>
                         </div>
                     </Card>
+                    </motion.div>
                 </div>
             </div>
-        </div>
+        </motion.div>
     );
 }
 
@@ -331,11 +354,12 @@ function MetricCard({
     isTime?: boolean;
 }) {
     const isPositive = change.startsWith("+");
-    const changeColor = isPositive ? "text-emerald-600" : "text-rose-600";
+    const changeColor = isPositive ? "text-emerald-500" : "text-rose-500";
 
     return (
-        <Card className="rounded-xl sm:rounded-2xl border border-border bg-background p-3 sm:p-4 shadow-sm">
-            <div className="flex items-start justify-between">
+        <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-4 sm:p-5 shadow-lg relative group transition-all duration-300 hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)]">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl pointer-events-none" />
+            <div className="relative z-10 flex items-start justify-between">
                 <div className="flex-1">
                     <p className="text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-text-secondary">
                         {label}

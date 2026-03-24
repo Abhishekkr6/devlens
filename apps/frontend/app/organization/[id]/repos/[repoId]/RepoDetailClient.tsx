@@ -6,6 +6,7 @@ import Link from "next/link";
 import { api } from "../../../../../lib/api";
 import { Card } from "../../../../../components/Ui/Card";
 import { ArrowLeft, ExternalLink, Settings, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { motion } from "motion/react";
 
 type RepoDetail = {
     repo: {
@@ -162,10 +163,15 @@ export default function RepoDetailClient({
     return (
         <div className="flex flex-col gap-6">
             {/* Header */}
-            <div className="flex flex-col gap-4">
+            <motion.div 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+                className="flex flex-col gap-4"
+            >
                 <button
                     onClick={() => router.back()}
-                    className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary cursor-pointer w-fit"
+                    className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary hover:-translate-x-1 transition-transform cursor-pointer w-fit"
                 >
                     <ArrowLeft className="h-4 w-4" />
                     Back to Repositories
@@ -174,8 +180,8 @@ export default function RepoDetailClient({
                 <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
                         <div>
-                            <div className="flex items-center gap-2 mb-1">
-                                <h1 className="text-2xl sm:text-3xl font-semibold text-text-primary">
+                            <div className="flex items-center gap-3 mb-1">
+                                <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-text-primary">
                                     {data.repo.name}
                                 </h1>
                                 <span className={`inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium ${healthBadge.className}`}>
@@ -200,21 +206,28 @@ export default function RepoDetailClient({
                         </a>
                         <button
                             onClick={() => router.push(`/organization/${orgId}/repos/${repoId}/settings`)}
-                            className="rounded-xl border border-brand bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand/90 cursor-pointer flex items-center gap-2"
+                            className="rounded-2xl border border-brand bg-brand px-5 py-2 text-sm font-bold text-white shadow-lg shadow-brand/25 hover:scale-105 active:scale-95 transition-all cursor-pointer flex items-center gap-2"
                         >
                             Configure
                         </button>
                     </div>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Repository Metrics */}
-            <div>
-                <h2 className="text-lg font-semibold text-text-primary mb-4">Repository Metrics</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+            >
+                <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-brand" /> Repository Metrics
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     {/* Total Commits */}
-                    <Card className="rounded-2xl border border-border bg-background p-5 shadow-sm">
-                        <div className="flex flex-col gap-2">
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg relative overflow-hidden group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="flex flex-col gap-2 relative z-10">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs text-text-secondary uppercase tracking-wide">Total Commits</span>
                                 <span className={`text-xs font-medium flex items-center gap-1 ${data.metrics.totalCommits.change >= 0 ? "text-emerald-600" : "text-red-600"
@@ -234,8 +247,9 @@ export default function RepoDetailClient({
                     </Card>
 
                     {/* Open PRs */}
-                    <Card className="rounded-2xl border border-border bg-background p-5 shadow-sm">
-                        <div className="flex flex-col gap-2">
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg relative overflow-hidden group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="flex flex-col gap-2 relative z-10">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs text-text-secondary uppercase tracking-wide">Open PRs</span>
                                 <span className={`text-xs font-medium flex items-center gap-1 ${data.metrics.openPRs.change <= 0 ? "text-emerald-600" : "text-red-600"
@@ -255,8 +269,9 @@ export default function RepoDetailClient({
                     </Card>
 
                     {/* Contributors */}
-                    <Card className="rounded-2xl border border-border bg-background p-5 shadow-sm">
-                        <div className="flex flex-col gap-2">
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg relative overflow-hidden group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="flex flex-col gap-2 relative z-10">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs text-text-secondary uppercase tracking-wide">Contributors</span>
                                 <span className={`text-xs font-medium flex items-center gap-1 ${data.metrics.contributors.change >= 0 ? "text-emerald-600" : "text-red-600"
@@ -276,8 +291,9 @@ export default function RepoDetailClient({
                     </Card>
 
                     {/* Churn Rate */}
-                    <Card className="rounded-2xl border border-border bg-background p-5 shadow-sm">
-                        <div className="flex flex-col gap-2">
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg relative overflow-hidden group hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="flex flex-col gap-2 relative z-10">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs text-text-secondary uppercase tracking-wide">Churn Rate</span>
                                 <span className={`text-xs font-medium flex items-center gap-1 ${data.metrics.churnRate.change <= 0 ? "text-emerald-600" : "text-red-600"
@@ -296,15 +312,19 @@ export default function RepoDetailClient({
                         </div>
                     </Card>
                 </div>
-            </div>
+            </motion.div>
 
             {/* Top Contributors */}
-            <div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+            >
                 <h2 className="text-lg font-semibold text-text-primary mb-4">Top Contributors</h2>
-                <Card className="rounded-2xl border border-border bg-background shadow-sm overflow-hidden">
+                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl shadow-lg relative overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full">
-                            <thead className="bg-surface border-b border-border">
+                            <thead className="bg-surface/30 border-b border-white/10">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
                                         Name
@@ -317,10 +337,10 @@ export default function RepoDetailClient({
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-border">
+                            <tbody className="divide-y divide-white/10">
                                 {data.topContributors.length > 0 ? (
                                     data.topContributors.map((contributor, idx) => (
-                                        <tr key={contributor.githubId || idx} className="hover:bg-surface/50">
+                                        <tr key={contributor.githubId || idx} className="hover:bg-surface/50 transition-colors">
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-text-primary">
                                                 {contributor.name}
                                             </td>
@@ -343,15 +363,19 @@ export default function RepoDetailClient({
                         </table>
                     </div>
                 </Card>
-            </div>
+            </motion.div>
 
             {/* Recent Pull Requests */}
-            <div>
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+            >
                 <h2 className="text-lg font-semibold text-text-primary mb-4">Recent Pull Requests</h2>
-                <Card className="rounded-2xl border border-border bg-background shadow-sm overflow-hidden">
+                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl shadow-lg relative overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full">
-                            <thead className="bg-surface border-b border-border">
+                            <thead className="bg-surface/30 border-b border-white/10">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-medium text-text-secondary uppercase tracking-wider">
                                         Title
@@ -376,13 +400,13 @@ export default function RepoDetailClient({
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-border">
+                            <tbody className="divide-y divide-white/10">
                                 {data.pullRequests.length > 0 ? (
                                     data.pullRequests.map((pr) => {
                                         const riskBadge = getRiskBadge(pr.risk);
                                         const statusBadge = getStatusBadge(pr.state);
                                         return (
-                                            <tr key={pr.id} className="hover:bg-surface/50">
+                                            <tr key={pr.id} className="hover:bg-surface/50 transition-colors">
                                                 <td className="px-6 py-4 text-sm text-text-primary">
                                                     <div className="flex items-center justify-between gap-2">
                                                         <div className="flex-1 min-w-0">
@@ -445,7 +469,7 @@ export default function RepoDetailClient({
                         </table>
                     </div>
                 </Card>
-            </div>
+            </motion.div>
         </div>
     );
 }
