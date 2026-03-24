@@ -209,7 +209,7 @@ export default function PricingPage() {
                 <div className="flex flex-col items-center justify-center p-6 bg-gradient-to-b from-brand/10 to-transparent rounded-3xl border border-brand/20 shadow-inner group">
                   <div className="bg-white p-3 rounded-2xl shadow-xl shadow-brand/20 relative z-10 transition-transform duration-500 group-hover:scale-105">
                     <QRCodeSVG
-                      value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=1&cu=INR`}
+                      value={`upi://pay?pa=8092710774@airtel&pn=DevLens&am=499&cu=INR`}
                       size={160}
                       level={"H"}
                       includeMargin={false}
@@ -227,7 +227,7 @@ export default function PricingPage() {
                     <div className="flex gap-4 items-start">
                       <div className="flex-shrink-0 w-8 h-8 bg-brand/10 rounded-full flex items-center justify-center text-brand font-bold border border-brand/20 shadow-sm shadow-brand/10">1</div>
                       <p className="text-slate-300 text-sm leading-relaxed mt-1">
-                        Scan the QR code with any UPI app and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹1</strong>
+                        Scan the QR code with any UPI app and pay <strong className="text-white bg-brand/20 px-2 py-0.5 rounded text-sm whitespace-nowrap">Exactly ₹499</strong>
                       </p>
                     </div>
                     
@@ -269,7 +269,7 @@ export default function PricingPage() {
                           </div>
                         </div>
                         <span className="text-sm font-medium text-slate-200 leading-snug">
-                          I confirm I have successfully paid <strong className="text-white">₹1</strong> and the UTR above is correct.
+                          I confirm I have successfully paid <strong className="text-white">₹499</strong> and the UTR above is correct.
                         </span>
                       </label>
                     </div>
