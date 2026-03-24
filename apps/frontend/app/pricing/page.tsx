@@ -67,6 +67,11 @@ export default function PricingPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user) {
+      alert("Please login first to submit your payment request.");
+      window.location.href = "/api/v1/auth/github/login";
+      return;
+    }
     if (!transactionId.trim()) { alert("Please enter your UTR / Transaction ID."); return; }
     if (transactionId.trim().length < 10) { alert("Please enter a valid UTR (minimum 10 characters)."); return; }
     if (!hasPaid) { alert("Please confirm that you have made the payment."); return; }
@@ -178,27 +183,7 @@ export default function PricingPage() {
 
           {/* Payment Section */}
           <div className="bg-surface/30 rounded-2xl p-5 md:p-6 border border-border/50">
-            {!user ? (
-              <div className="text-center py-4">
-                <p className="text-slate-300 font-medium mb-5 text-sm">Create an account to get started.</p>
-                <button
-                  onClick={() => window.location.href = "/api/v1/auth/github/login"}
-                  className="w-full py-3.5 px-4 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-200 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 text-sm md:text-base"
-                >
-                  <Github className="w-5 h-5" /> Login with GitHub
-                </button>
-              </div>
-            ) : user?.plan === "pro" && paymentStatus !== "pending" ? (
-              <div className="text-center py-4">
-                <div className="text-success font-bold text-lg mb-4">🎉 You are on the Pro Plan!</div>
-                <button
-                  onClick={() => window.location.href = "/api/v1/auth/github/login"}
-                  className="w-full py-3.5 px-4 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-200 active:scale-95 transition-all shadow-lg flex items-center justify-center gap-2 text-sm md:text-base"
-                >
-                  <Github className="w-5 h-5" /> Login with GitHub
-                </button>
-              </div>
-            ) : paymentStatus === "pending" ? (
+            {paymentStatus === "pending" ? (
               <div className="text-center bg-warning/10 rounded-xl p-6 border border-warning/20">
                 <div className="w-12 h-12 bg-warning/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-warning/30">
                   <svg className="w-6 h-6 text-warning animate-spin" fill="none" viewBox="0 0 24 24">

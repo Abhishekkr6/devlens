@@ -26,6 +26,17 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  useEffect(() => {
+    if (isLoginModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, [isLoginModalOpen]);
+
   const handleLogin = () => {
     setIsLoginModalOpen(true);
     setMobileMenuOpen(false);
@@ -168,7 +179,7 @@ export function Navbar() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-[#04081c]/80 backdrop-blur-xl p-4"
             onClick={() => setIsLoginModalOpen(false)}
           >
             <motion.div
