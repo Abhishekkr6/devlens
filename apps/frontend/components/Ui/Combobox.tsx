@@ -104,9 +104,9 @@ export function Combobox({
 
             {/* Dropdown */}
             {isOpen && !loading && (
-                <div className="absolute z-[9999] mt-2 w-full rounded-xl border border-slate-700 bg-[#0a0a0a] shadow-2xl animate-in fade-in-0 zoom-in-95">
+                <div className="absolute z-[9999] mt-2 w-full max-h-[300px] flex flex-col rounded-2xl border border-border bg-background shadow-xl backdrop-blur-3xl dark:bg-slate-900/95 animate-in fade-in-0 zoom-in-95">
                     {/* Search Input */}
-                    <div className="p-2 border-b border-slate-800">
+                    <div className="p-2 border-b border-border">
                         <div className="relative">
                             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-secondary" />
                             <input
@@ -115,14 +115,14 @@ export function Combobox({
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 placeholder={searchPlaceholder}
-                                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-slate-700 bg-slate-900 text-white placeholder:text-slate-400 focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
+                                className="w-full pl-9 pr-3 py-2 text-sm rounded-lg border border-border bg-surface text-text-primary placeholder:text-text-secondary focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand/20"
                             />
                         </div>
                     </div>
 
                     {/* Options List */}
                     <div
-                        className="max-h-60 overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-slate-700 scrollbar-track-transparent"
+                        className="overflow-y-auto p-1 scrollbar-thin scrollbar-thumb-border scrollbar-track-transparent flex-1 flex flex-col gap-1"
                         onWheel={(e) => e.stopPropagation()}
                         onTouchMove={(e) => e.stopPropagation()}
                     >
@@ -136,20 +136,24 @@ export function Combobox({
                                     key={option.value}
                                     type="button"
                                     onClick={() => handleSelect(option.value)}
-                                    className={`w-full flex cursor-pointer items-start gap-2 px-3 py-2 text-left rounded-lg hover:bg-slate-800 transition-colors ${value === option.value ? "bg-indigo-500/20" : ""}`}
+                                    className={`w-full flex cursor-pointer items-start gap-2 px-3 py-2 text-left rounded-xl transition-colors ${
+                                        value === option.value
+                                            ? "bg-brand/10 text-brand dark:bg-brand/20 dark:text-indigo-400"
+                                            : "text-text-secondary hover:bg-surface hover:text-text-primary dark:hover:bg-slate-800"
+                                    }`}
                                 >
                                     <div className="flex-1 min-w-0">
-                                        <div className="text-sm font-medium text-slate-200 truncate">
+                                        <div className={`text-sm font-medium truncate ${value === option.value ? "text-brand dark:text-indigo-400" : "text-text-primary"}`}>
                                             {option.label}
                                         </div>
                                         {option.description && (
-                                            <div className="text-xs text-slate-400 truncate mt-0.5">
+                                            <div className={`text-xs truncate mt-0.5 ${value === option.value ? "text-brand/80 dark:text-indigo-400/80" : "text-text-secondary"}`}>
                                                 {option.description}
                                             </div>
                                         )}
                                     </div>
                                     {value === option.value && (
-                                        <Check className="w-4 h-4 text-brand shrink-0 mt-0.5" />
+                                        <Check className="w-4 h-4 shrink-0 mt-0.5" />
                                     )}
                                 </button>
                             ))
