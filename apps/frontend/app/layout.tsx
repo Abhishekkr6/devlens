@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
 import { fontHeading, fontBody, fontLogo } from "./fonts";
 import "./globals.css";
 import AutoCleanup from "../components/Auth/AutoCleanupScript";

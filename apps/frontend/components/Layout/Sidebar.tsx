@@ -25,7 +25,7 @@ export default function Sidebar() {
     <div className="w-64 bg-slate-900/95 backdrop-blur-3xl border-r border-border flex flex-col">
       <div className="px-4 py-4 border-b border-border">
         <div className="flex items-center gap-2">
-          <img src="/logo.jpg" alt="DevLens Logo" className="w-11 h-11" />
+          <img src="/logo.svg" alt="DevLens Logo" className="w-11 h-11" />
           <div>
             <h1 className="text-lg font-bold tracking-tight text-text-primary leading-none">DevLens</h1>
             <p className="text-xs text-text-secondary">Engineering insights</p>

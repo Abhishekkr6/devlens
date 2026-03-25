@@ -76,7 +76,7 @@ export function HeroVisual() {
                         >
                             <div className="w-20 h-20 rounded-2xl bg-brand/10 border border-brand/40 shadow-[0_0_30px_rgba(74,93,255,0.2)] flex items-center justify-center relative">
                                 <div className="absolute inset-0 border-2 border-brand/50 rounded-2xl animate-ping opacity-30" />
-                                <img src="/logo.jpg" className="w-10 h-10 animate-pulse drop-shadow-lg" alt="DevLens" />
+                                <img src="/logo.svg" className="w-10 h-10 animate-pulse drop-shadow-lg" alt="DevLens" />
                             </div>
                             <div className="text-center">
                                 <h3 className="text-lg font-extrabold text-white tracking-tight">DevLens AI Scanning</h3>

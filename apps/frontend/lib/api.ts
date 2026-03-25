@@ -61,7 +61,7 @@ api.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== "undefined") {
         // Don't redirect if already on a public page to prevent infinite loop or bouncing unauthenticated traffic
-        const publicPaths = ["/", "/pricing", "/features", "/how-it-works"];
+        const publicPaths = ["/", "/pricing", "/features", "/how-it-works", "/privacy", "/terms", "/github"];
         if (publicPaths.includes(window.location.pathname)) {
           console.log("[api] 401 on public page, skipping redirect to prevent loop");
           return Promise.reject(error);

@@ -67,7 +67,7 @@ export function Navbar() {
           <div className="relative flex items-center justify-center">
             <div className="hidden md:block absolute inset-0 bg-brand/40 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
             <img
-              src="/logo.jpg"
+              src="/logo.svg"
               alt="DevLens"
               className="relative w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-105"
             />
