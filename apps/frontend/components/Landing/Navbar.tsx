@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { Github, Menu, X } from "lucide-react";
+import { useUserStore } from "../../store/userStore";
 
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -11,6 +12,7 @@ export function Navbar() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { user } = useUserStore();
   const pathname = usePathname();
   const isHome = pathname === "/";
 
@@ -110,13 +112,22 @@ export function Navbar() {
 
         {/* Desktop Login */}
         <div className="hidden md:flex items-center gap-4">
-          <button
-            onClick={handleLogin}
-            className="flex items-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-6 py-2 rounded-full text-sm font-bold transition-transform active:scale-95 shadow-md cursor-pointer"
-          >
-            <Github className="w-4 h-4" />
-            Login
-          </button>
+          {user ? (
+            <Link
+              href="/organization"
+              className="flex items-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-6 py-2 rounded-full text-sm font-bold transition-transform active:scale-95 shadow-md cursor-pointer"
+            >
+              Dashboard
+            </Link>
+          ) : (
+            <button
+              onClick={handleLogin}
+              className="flex items-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-6 py-2 rounded-full text-sm font-bold transition-transform active:scale-95 shadow-md cursor-pointer"
+            >
+              <Github className="w-4 h-4" />
+              Login
+            </button>
+          )}
         </div>
 
         {/* Mobile Menu Toggle */}
@@ -164,13 +175,22 @@ export function Navbar() {
               >
                 How it works
               </Link>
-              <button
-                onClick={handleLogin}
-                className="flex items-center justify-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-4 py-3.5 rounded-xl text-sm font-bold w-full active:scale-[0.98] transition-all shadow-lg mt-2"
-              >
-                <Github className="w-5 h-5" />
-                Login with GitHub
-              </button>
+              {user ? (
+                <Link
+                  href="/organization"
+                  className="flex items-center justify-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-4 py-3.5 rounded-xl text-sm font-bold w-full active:scale-[0.98] transition-all shadow-lg mt-2"
+                >
+                  Dashboard
+                </Link>
+              ) : (
+                <button
+                  onClick={handleLogin}
+                  className="flex items-center justify-center gap-2 bg-text-primary text-background hover:bg-slate-200 px-4 py-3.5 rounded-xl text-sm font-bold w-full active:scale-[0.98] transition-all shadow-lg mt-2"
+                >
+                  <Github className="w-5 h-5" />
+                  Login with GitHub
+                </button>
+              )}
             </div>
           </motion.div>
         )}

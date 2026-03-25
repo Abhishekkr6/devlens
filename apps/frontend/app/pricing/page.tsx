@@ -201,6 +201,21 @@ export default function PricingPage() {
                   Need help? <a href="mailto:support.devlens@gmail.com" className="text-brand hover:underline">support.devlens@gmail.com</a>
                 </p>
               </div>
+            ) : user?.plan === "pro" ? (
+              <div className="flex flex-col items-center justify-center space-y-4 p-8 bg-brand/10 border border-brand/20 rounded-3xl mt-2 text-center shadow-lg">
+                <div className="w-16 h-16 bg-brand/20 rounded-full flex items-center justify-center mb-2 shadow-inner border border-brand/30">
+                  <Sparkles className="w-8 h-8 text-brand" />
+                </div>
+                <h3 className="text-2xl font-bold text-white tracking-tight">You are a PRO User</h3>
+                <p className="text-slate-400 text-sm md:text-base mb-2">Thank you for your purchase! You have full access to DevLens advanced features and unlimited repositories.</p>
+                <button
+                  type="button"
+                  onClick={() => window.location.href = "/organization"}
+                  className="mt-4 px-6 py-3 bg-gradient-to-r from-brand to-violet-600 text-white rounded-xl font-bold hover:opacity-90 transition-all shadow-lg shadow-brand/25 active:scale-95"
+                >
+                  Go to Dashboard
+                </button>
+              </div>
             ) : (
               <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full mt-2">
                 {/* Vertically Stacked Premium Layout */}
