@@ -198,7 +198,7 @@ export default function PricingPage() {
                   <p>Submitted: <span className="text-white">{paymentRecord?.createdAt ? new Date(paymentRecord.createdAt).toLocaleString() : "Just now"}</span></p>
                 </div>
                 <p className="text-xs text-slate-400 mt-4">
-                  Need help? <a href="mailto:support@devlens.com" className="text-brand hover:underline">support@devlens.com</a>
+                  Need help? <a href="mailto:support.devlens@gmail.com" className="text-brand hover:underline">support.devlens@gmail.com</a>
                 </p>
               </div>
             ) : (

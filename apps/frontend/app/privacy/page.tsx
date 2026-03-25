@@ -91,8 +91,8 @@ export default function PrivacyPage() {
           <Section title="5. Contact Information">
             <p className="text-text-secondary leading-relaxed text-sm md:text-base">
               To ask questions or comment about this privacy policy, contact us at:{" "}
-              <a href="mailto:support@DevLens.dev" className="text-brand hover:text-brand/80 underline underline-offset-4 transition-colors">
-                support@DevLens.dev
+              <a href="mailto:support.devlens@gmail.com" className="text-brand hover:text-brand/80 underline underline-offset-4 transition-colors">
+                support.devlens@gmail.com
               </a>
             </p>
           </Section>

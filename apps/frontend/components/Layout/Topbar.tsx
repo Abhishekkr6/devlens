@@ -284,7 +284,7 @@ export default function Topbar() {
               className="flex shrink-0 min-w-0 items-center gap-2 rounded-xl px-2 py-1 transition-colors hover:bg-surface/80"
               aria-label="DevLens home"
             >
-              <img src="/logo.svg" alt="DevLens" className="w-12 h-12" />
+              <img src="/logo.jpg" alt="DevLens" className="w-12 h-12" />
               <div className="min-w-0 text-left hidden lg:block">
                 <p className="truncate text-sm font-semibold text-text-primary">DevLens</p>
                 <p className="hidden text-xs text-text-secondary sm:block">Developer Activity</p>
@@ -627,7 +627,7 @@ export default function Topbar() {
               <div className="flex h-full w-full flex-col gap-6 p-6 overflow-y-auto" id="mobile-navigation">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <img src="/logo.svg" alt="DevLens" className="w-12 h-12" />
+                    <img src="/logo.jpg" alt="DevLens" className="w-12 h-12" />
                     <div className="text-left">
                       <p className="text-sm font-semibold text-text-primary">DevLens</p>
                       <p className="text-xs text-text-secondary">Developer Activity</p>

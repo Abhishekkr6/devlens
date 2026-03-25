@@ -407,7 +407,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 mb-8 md:mb-12">
           <div className="flex items-center gap-2 md:gap-3 group">
-            <img src="/logo.svg" alt="DevLens" className="w-8 h-8 md:w-10 md:h-10 transition-transform" />
+            <img src="/logo.jpg" alt="DevLens" className="w-8 h-8 md:w-10 md:h-10 transition-transform" />
             <span className="font-bold text-xl md:text-2xl text-text-primary" style={{ fontFamily: 'var(--font-logo)' }}>DevLens</span>
           </div>
 
@@ -502,7 +502,7 @@ function VideoDemoSection() {
                                  <motion.div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400" animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} />
                                  <motion.div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400" animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} />
                               </div>
-                              <div className="w-14 h-14 md:w-16 md:h-16 bg-brand/20 border border-brand/30 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(74,93,255,0.2)]"><img src="/logo.svg" className="w-6 h-6 md:w-8 md:h-8"/></div>
+                              <div className="w-14 h-14 md:w-16 md:h-16 bg-brand/20 border border-brand/30 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(74,93,255,0.2)]"><img src="/logo.jpg" className="w-6 h-6 md:w-8 md:h-8"/></div>
                            </div>
                            <h3 className="text-lg md:text-xl font-bold text-white mb-2 tracking-tight">api-service-backend</h3>
                            <p className="text-xs md:text-sm text-emerald-400 font-medium bg-emerald-400/10 inline-block px-4 py-1.5 rounded-full border border-emerald-400/20">Successfully Connected</p>

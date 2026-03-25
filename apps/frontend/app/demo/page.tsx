@@ -211,7 +211,7 @@ function DemoNav() {
         <nav className="fixed top-0 left-0 right-0 z-50 bg-slate-950/80 backdrop-blur-2xl border-b border-white/[0.06] py-3 shadow-[0_4px_30px_rgba(0,0,0,0.3)]">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between">
                 <Link href="/" className="flex items-center gap-1.5 group">
-                    <img src="/logo.svg" alt="DevLens" className="w-10 h-10 group-hover:scale-105 transition-transform" />
+                    <img src="/logo.jpg" alt="DevLens" className="w-10 h-10 group-hover:scale-105 transition-transform" />
                     <span className="text-xl font-extrabold tracking-tight text-white" style={{ fontFamily: "var(--font-logo)" }}>
                         DevLens
                     </span>
