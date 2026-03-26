@@ -13,8 +13,7 @@ import {
   GitCommit,
   Sparkles,
   TrendingUp,
-  Activity,
-  BellRing
+  Activity
 } from "lucide-react";
 import { HeroVisual } from "../components/Landing/HeroVisual";
 import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/CommitTrackingVisual";

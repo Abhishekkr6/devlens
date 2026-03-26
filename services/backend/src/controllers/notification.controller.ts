@@ -1,4 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import logger from "../utils/logger";
+
 import { NotificationModel } from "../models/notification.model";
 
 /**
@@ -21,7 +23,7 @@ export const getNotifications = async (req: any, res: Response) => {
             data: notifications,
         });
     } catch (error) {
-        console.error("GET NOTIFICATIONS ERROR:", error);
+        logger.error({ error: error }, "GET NOTIFICATIONS ERROR:");
         return res.status(500).json({ error: "Failed to fetch notifications" });
     }
 };
@@ -53,7 +55,7 @@ export const markAsRead = async (req: any, res: Response) => {
 
         return res.status(200).json({ success: true, message: "Marked as read" });
     } catch (error) {
-        console.error("MARK READ ERROR:", error);
+        logger.error({ error: error }, "MARK READ ERROR:");
         return res.status(500).json({ error: "Failed to update notification" });
     }
 };

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { motion } from "motion/react";
 import { useUserStore } from "../../store/userStore";
 import { api } from "../../lib/api";
-import { Sparkles, CheckCircle2, Github, Zap, ShieldCheck, Clock } from "lucide-react";
+import { Sparkles, CheckCircle2, ShieldCheck, Clock } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 
 export default function PricingPage() {

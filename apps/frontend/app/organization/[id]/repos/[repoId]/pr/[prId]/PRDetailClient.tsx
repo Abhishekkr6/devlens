@@ -12,7 +12,7 @@ import {
     StatCard
 } from '@/components/ai';
 import { ArrowLeft, GitPullRequest, Loader2, TrendingUp, Code2, AlertCircle, Clock, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+
 import { Card } from '@/components/Ui/Card';
 import { showAIAnalysisToast } from '@/lib/aiToast';
 
@@ -26,7 +26,7 @@ export default function PRDetailClient({
     prId: string;
 }) {
     const router = useRouter();
-    const { analysis, insights, securityAlerts, loading, fetchInsights, fetchSecurityAlerts, checkAIStatus } = useAIStore();
+    const { analysis, securityAlerts, loading, fetchInsights, fetchSecurityAlerts, checkAIStatus } = useAIStore();
     const [showAISection, setShowAISection] = useState(false);
 
     useEffect(() => {

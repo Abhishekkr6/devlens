@@ -2,8 +2,7 @@
 
 import { useState } from 'react';
 import { useAIStore } from '@/store/aiStore';
-import { Sparkles, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { Sparkles } from 'lucide-react';
 
 interface AIAnalysisButtonProps {
     orgId: string;

@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import logger from "../utils/logger";
+
 import { UserModel } from "../models/user.model";
 import { OrgModel } from "../models/org.model";
 import { OrgMemberModel } from "../models/orgMember.model";
@@ -139,7 +141,7 @@ export const deleteAccount = async (req: Request, res: Response) => {
     });
 
   } catch (error) {
-    console.error("DELETE ACCOUNT ERROR:", error);
+    logger.error({ error: error }, "DELETE ACCOUNT ERROR:");
     return res.status(500).json({
       success: false,
       error: { message: "Failed to delete account" }

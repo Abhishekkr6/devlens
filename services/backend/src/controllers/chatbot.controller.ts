@@ -152,7 +152,7 @@ export const clearHistory = async (req: Request, res: Response) => {
     }
 };
 
-export const getChatbotStatus = async (req: Request, res: Response) => {
+export const getChatbotStatus = async (_req: Request, res: Response) => {
     try {
         const chatbotService = getChatbotService();
         const isAvailable = chatbotService.isAvailable();

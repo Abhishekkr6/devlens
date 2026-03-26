@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { Types } from "mongoose";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
-import { AlertModel } from "../models/alert.model";
 import logger from "../utils/logger";
 
 export const getDashboardStats = async (req: Request, res: Response) => {

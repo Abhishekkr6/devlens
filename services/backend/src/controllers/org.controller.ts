@@ -1,4 +1,6 @@
-import { Request, Response } from "express";
+import { Response } from "express";
+import logger from "../utils/logger";
+
 import { Types } from "mongoose";
 import { OrgModel } from "../models/org.model";
 import { UserModel } from "../models/user.model";
@@ -103,7 +105,7 @@ export const createOrg = async (req: any, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("CREATE ORG ERROR:", error);
+    logger.error({ error: error }, "CREATE ORG ERROR:");
     return res.status(500).json({
       success: false,
       error: { message: "Failed to create organization" },
@@ -197,7 +199,7 @@ export const inviteUser = async (req: any, res: Response) => {
     // Removed the part where we push to user.orgIds immediately
 
     // 7️⃣ Create Notification with Metadata
-    const notification = await createNotification({
+    await createNotification({
       recipientId: user._id,
       type: "invite",
       title: "New Organization Invite",
@@ -221,7 +223,7 @@ export const inviteUser = async (req: any, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("INVITE USER ERROR:", error);
+    logger.error({ error: error }, "INVITE USER ERROR:");
     return res.status(500).json({
       success: false,
       error: { message: "Failed to invite user" },
@@ -277,7 +279,7 @@ export const getUserOrgs = async (req: any, res: Response) => {
       data: orgsWithRole,
     });
   } catch (error) {
-    console.error("GET USER ORGS ERROR:", error);
+    logger.error({ error: error }, "GET USER ORGS ERROR:");
     return res.status(500).json({
       success: false,
       error: { message: "Failed to fetch organizations" },
@@ -351,7 +353,7 @@ export const getOrgMembers = async (req: any, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("getOrgMembers error:", error);
+    logger.error({ error: error }, "getOrgMembers error:");
     return res.status(500).json({
       success: false,
       error: { message: "Failed to fetch organization members" },
@@ -515,7 +517,7 @@ export const acceptInvite = async (req: any, res: Response) => {
 
     return res.status(200).json({ success: true, message: "Invite accepted" });
   } catch (error) {
-    console.error("ACCEPT INVITE ERROR:", error);
+    logger.error({ error: error }, "ACCEPT INVITE ERROR:");
     return res.status(500).json({ error: "Failed to accept invite" });
   }
 };
@@ -550,7 +552,7 @@ export const rejectInvite = async (req: any, res: Response) => {
 
     return res.status(200).json({ success: true, message: "Invite rejected" });
   } catch (error) {
-    console.error("REJECT INVITE ERROR:", error);
+    logger.error({ error: error }, "REJECT INVITE ERROR:");
     return res.status(500).json({ error: "Failed to reject invite" });
   }
 };
@@ -610,7 +612,7 @@ export const leaveOrg = async (req: any, res: Response) => {
 
     return res.status(200).json({ success: true, message: "Left organization" });
   } catch (error) {
-    console.error("LEAVE ORG ERROR:", error);
+    logger.error({ error: error }, "LEAVE ORG ERROR:");
     return res.status(500).json({ error: "Failed to leave organization" });
   }
 };
@@ -671,7 +673,7 @@ export const deleteOrg = async (req: any, res: Response) => {
       message: "Organization deleted successfully"
     });
   } catch (error) {
-    console.error("DELETE ORG ERROR:", error);
+    logger.error({ error: error }, "DELETE ORG ERROR:");
     return res.status(500).json({
       success: false,
       error: { message: "Failed to delete organization" }
@@ -726,7 +728,7 @@ export const getUserGithubRepos = async (req: any, res: Response) => {
       data: formattedRepos
     });
   } catch (error: any) {
-    console.error("GET GITHUB REPOS ERROR:", error);
+    logger.error({ error: error }, "GET GITHUB REPOS ERROR:");
     return res.status(500).json({
       success: false,
       error: error.message || "Failed to fetch repositories"

@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CheckCircle2, AlertCircle, Info, X } from "lucide-react";
 import { cn } from "../../lib/utils";
-import { AnimatePresence, motion } from "motion/react";
+import { motion } from "motion/react";
 
 export type ToastType = "success" | "error" | "info";
 

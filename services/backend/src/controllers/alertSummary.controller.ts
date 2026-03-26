@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import logger from "../utils/logger";
+
 import { Types } from "mongoose";
 import { AlertModel } from "../models/alert.model";
 import { UserModel } from "../models/user.model";
@@ -69,7 +71,7 @@ export const acknowledgeAlert = async (req: any, res: Response) => {
 
     return res.json({ success: true, data: alert });
   } catch (error) {
-    console.error("ACKNOWLEDGE ALERT ERROR", error);
+    logger.error({ error: error }, "ACKNOWLEDGE ALERT ERROR");
     return res.status(500).json({ success: false, error: "Failed to acknowledge alert" });
   }
 };

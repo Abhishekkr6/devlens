@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "motion/react";
-import { Github, Webhook, Layers, Cpu, LayoutDashboard, CheckCircle2 } from "lucide-react";
+import { Github, Webhook, Cpu, LayoutDashboard, CheckCircle2 } from "lucide-react";
 
 export function WorkerArchitectureVisual() {
     return (

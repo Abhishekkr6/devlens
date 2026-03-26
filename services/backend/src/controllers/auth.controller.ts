@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import { Types } from "mongoose";
 import {
   exchangeCodeForToken,
   getGithubUser,
@@ -9,17 +8,13 @@ import { UserModel } from "../models/user.model";
 import { OrgModel } from "../models/org.model";
 import { createToken } from "../services/jwt.service";
 import logger from "../utils/logger";
-import { RepoModel } from "../models/repo.model";
-import { CommitModel } from "../models/commit.model";
 import { OrgMemberModel } from "../models/orgMember.model";
-import { PRModel } from "../models/pr.model";
-import { AlertModel } from "../models/alert.model";
 import { encrypt } from "../services/encryption.service";
 
 /**
  * Redirect user to GitHub OAuth page
  */
-export const githubLogin = async (req: Request, res: Response) => {
+export const githubLogin = async (_req: Request, res: Response) => {
   const clientId = process.env.GITHUB_CLIENT_ID;
 
   const frontend = (
@@ -142,7 +137,7 @@ export const githubCallback = async (req: Request, res: Response) => {
 /**
  * Standard logout: clear cookies without deleting account
  */
-export const logout = async (req: Request, res: Response) => {
+export const logout = async (_req: Request, res: Response) => {
   try {
     const isProd = String(process.env.NODE_ENV).toLowerCase() === "production";
     const sameSite = isProd ? "none" : "lax";
@@ -206,8 +201,8 @@ export const logoutAndDelete = async (req: any, res: Response) => {
     const isProd = String(process.env.NODE_ENV).toLowerCase() === "production";
     const sameSite = isProd ? "none" : "lax";
 
-    res.clearCookie("DevLens_token", { path: "/" });
-    res.clearCookie("token", { path: "/" });
+    res.clearCookie("DevLens_token", { path: "/", secure: isProd, sameSite: sameSite as any });
+    res.clearCookie("token", { path: "/", secure: isProd, sameSite: sameSite as any });
 
     return res.json({ success: true, message: "Account deleted (soft)" });
   } catch (error) {

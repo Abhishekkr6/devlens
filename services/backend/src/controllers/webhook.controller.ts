@@ -1,13 +1,11 @@
 import { Request, Response } from "express";
 import { verifyGithubSignature } from "../utils/verifySignature";
-import { UserModel } from "../models/user.model";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
 import { RepoModel } from "../models/repo.model";
 import { AlertModel } from "../models/alert.model";
 import { analyzeCommitModules } from "../services/moduleAnalyzer";
 import logger from "../utils/logger";
-import { getCodeAnalysisService } from "../services/ai/codeAnalysis.service";
 
 /* -------------------------------------------
    WEBHOOK IDEMPOTENCY TRACKING

@@ -1,10 +1,10 @@
-﻿"use client";
+"use client";
 
 import React from "react";
 import Link from "next/link";
 import { Navbar } from "../../components/Landing/Navbar";
 import { Footer } from "../../components/Landing/Footer";
-import { Github, Star, GitFork, ArrowRight, Code2 } from "lucide-react";
+import { Github, ArrowRight, Code2 } from "lucide-react";
 import { Button } from "../../components/Ui/Button";
 
 export default function GitHubPage() {

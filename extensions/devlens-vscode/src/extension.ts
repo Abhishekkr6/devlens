@@ -1,8 +1,8 @@
-﻿import * as vscode from 'vscode';
+import * as vscode from 'vscode';
 import { AuthManager } from './auth/authManager';
 import { ApiClient } from './api/client';
 import { RepoDetector } from './git/repoDetector';
-import { DevLensViewProvider } from './providers/DevLensViewProvider';
+import { DevLensViewProvider } from './providers/TeamPulseViewProvider';
 import { logger } from './utils/logger';
 import { DEFAULT_DASHBOARD_URL } from './utils/constants';
 

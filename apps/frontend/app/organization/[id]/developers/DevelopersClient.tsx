@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
-    ChevronDown,
+
     GitCommit,
     GitPullRequest,
     MessageSquare,
@@ -92,7 +92,7 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
     const [roleFilter, setRoleFilter] = useState<string>("all");
 
     // Convert slug to orgId using userStore
-    const { user } = useUserStore();
+    useUserStore();
 
     useEffect(() => {
         if (!orgId) return;
@@ -142,11 +142,6 @@ export default function DevelopersClient({ orgId }: { orgId: string }) {
         });
     }, [developers, searchTerm, activityFilter, roleFilter]);
 
-    const emptyState = (
-        <Card className="rounded-2xl border border-dashed border-border bg-surface p-6 text-sm text-text-secondary shadow-none">
-            No developers found for this organization. Adjust your filters or try a different search.
-        </Card>
-    );
 
     return (
         <div className="space-y-8 relative z-10">

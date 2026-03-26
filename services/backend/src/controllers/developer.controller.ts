@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import logger from "../utils/logger";
+
 import { Types } from "mongoose";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
@@ -436,7 +438,7 @@ export const getDeveloperProfile = async (req: Request, res: Response) => {
       }
     });
   } catch (err) {
-    console.error("getDeveloperProfile error:", err);
+    logger.error({ error: err }, "getDeveloperProfile error:");
     return res.status(500).json({
       success: false,
       message: "Failed to fetch developer profile"

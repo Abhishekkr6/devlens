@@ -1,7 +1,7 @@
 "use client";
 
 import { SecurityAlert } from '@/lib/aiAPI';
-import { Shield, ShieldAlert, ShieldCheck, CheckCircle2, XCircle } from 'lucide-react';
+import { Shield, ShieldAlert, ShieldCheck, CheckCircle2 } from 'lucide-react';
 import { useAIStore } from '@/store/aiStore';
 import { useState } from 'react';
 import { Card } from '@/components/Ui/Card';

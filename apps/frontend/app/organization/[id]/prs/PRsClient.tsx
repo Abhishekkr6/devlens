@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { ChevronDown, ChevronRight, Search, Sparkles, Info } from "lucide-react";
+import { Search, Sparkles, Info } from "lucide-react";
 import Link from "next/link";
 import { api } from "../../../../lib/api";
 import { useLiveStore } from "../../../../store/liveStore";
@@ -12,7 +12,7 @@ import { Select } from "../../../../components/Ui/Select";
 import { Tooltip } from "../../../../components/Ui/Tooltip";
 import { Popover } from "../../../../components/Ui/Popover";
 import { AIWelcomeBanner } from "../../../../components/Ui/AIWelcomeBanner";
-import { AIStatusBadge } from "../../../../components/Ui/AIStatusBadge";
+
 import { useFirstTimeAIUser } from "../../../../hooks/useFirstTimeAIUser";
 import { motion } from "motion/react";
 
@@ -151,7 +151,7 @@ export default function PRsClient({ orgId }: { orgId: string }) {
     const [selectedPrId, setSelectedPrId] = useState<string | null>(null);
     const lastEvent = useLiveStore((state) => state.lastEvent);
 
-    const { user } = useUserStore();
+    useUserStore();
     const { shouldPulse, markAsSeen } = useFirstTimeAIUser();
 
     useEffect(() => {

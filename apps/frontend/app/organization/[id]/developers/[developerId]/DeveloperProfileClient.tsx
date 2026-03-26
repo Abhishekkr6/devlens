@@ -444,7 +444,7 @@ function ContributionHeatmap({ data }: { data: Array<{ date: string; count: numb
     });
 
     const dayLabels = ['Mon', 'Wed', 'Fri'];
-    const dayIndices = [1, 3, 5]; // Mon, Wed, Fri
+
 
     // Show fewer weeks on mobile to prevent overflow
     const displayWeeks = weeks.slice(-26); // Last 26 weeks for mobile

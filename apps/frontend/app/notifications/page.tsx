@@ -3,7 +3,7 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Card } from "@/components/Ui/Card";
-import { Bell, CheckCircle2, AlertTriangle, Info, UserPlus, X, Filter } from "lucide-react";
+import { Bell, CheckCircle2, AlertTriangle, Info, UserPlus } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { toast } from "sonner";

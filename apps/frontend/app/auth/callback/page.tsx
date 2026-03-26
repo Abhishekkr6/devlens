@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useUserStore } from "../../../store/userStore";
-import { normaliseOrgId } from "../../../lib/utils";
+
 import { motion } from "motion/react";
 import { Loader2, ShieldCheck } from "lucide-react";
 

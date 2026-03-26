@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useAIStore } from '@/store/aiStore';
 import {
@@ -13,14 +13,13 @@ import {
     CheckCircle2,
     Clock
 } from 'lucide-react';
-import Link from 'next/link';
+
 
 export default function AIDashboardPage() {
     const params = useParams();
-    const orgId = params.id as string;
+    params.id; // used for route context
 
-    const { insights, securityAlerts, aiStatus, fetchSecurityAlerts, checkAIStatus } = useAIStore();
-    const [selectedRepo, setSelectedRepo] = useState<string | null>(null);
+    const { securityAlerts, aiStatus, checkAIStatus } = useAIStore();
 
     useEffect(() => {
         checkAIStatus();

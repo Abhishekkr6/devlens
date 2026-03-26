@@ -13,7 +13,7 @@ interface AIQuickPreviewProps {
     };
 }
 
-export function AIQuickPreview({ prId, analysis }: AIQuickPreviewProps) {
+export function AIQuickPreview({ analysis }: AIQuickPreviewProps) {
     const [isVisible, setIsVisible] = useState(false);
 
     if (!analysis) return null;

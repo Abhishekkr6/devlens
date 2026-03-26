@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
+import logger from "../utils/logger";
+
 import { Types } from "mongoose";
 import { CommitModel } from "../models/commit.model";
 import { PRModel } from "../models/pr.model";
-import { RepoModel } from "../models/repo.model";
-
 export const getCommitTimeline = async (req: Request, res: Response) => {
   try {
     const { orgId } = req.params;
@@ -32,7 +32,7 @@ export const getCommitTimeline = async (req: Request, res: Response) => {
 
     return res.json({ success: true, data: timeline });
   } catch (err) {
-    console.error("getCommitTimeline error:", err);
+    logger.error({ error: err }, "getCommitTimeline error:");
     return res.status(500).json({ success: false });
   }
 };
@@ -134,7 +134,7 @@ export const getAllActivities = async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    console.error("getAllActivities error:", err);
+    logger.error({ error: err }, "getAllActivities error:");
     return res.status(500).json({ success: false, message: "Failed to fetch activities" });
   }
 };

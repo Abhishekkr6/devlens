@@ -1,7 +1,7 @@
 "use client";
 
 import { QualityMetrics } from '@/lib/aiAPI';
-import { TrendingUp, TrendingDown, Minus, Code2, AlertCircle, Clock } from 'lucide-react';
+import { Code2, AlertCircle, Clock } from 'lucide-react';
 import { Card } from '@/components/Ui/Card';
 
 interface QualityMetricsCardProps {

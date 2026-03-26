@@ -1,4 +1,4 @@
-﻿import * as vscode from 'vscode';
+import * as vscode from 'vscode';
 import { AuthManager } from '../auth/authManager';
 import { ApiClient } from '../api/client';
 import { RepoDetector } from '../git/repoDetector';
@@ -114,7 +114,6 @@ export class DevLensViewProvider implements vscode.WebviewViewProvider {
 
             // Separate high-risk PRs
             const highRiskPRs = prs.filter((pr) => (pr.riskScore || 0) >= RISK_THRESHOLDS.HIGH);
-            const regularPRs = prs;
 
             this.postMessage({
                 type: 'success',
@@ -122,7 +121,7 @@ export class DevLensViewProvider implements vscode.WebviewViewProvider {
                     repoName: connectedRepo.repoName,
                     repoFullName: connectedRepo.repoFullName,
                     orgName: selectedOrg.name,
-                    prs: regularPRs,
+                    prs,
                     highRiskPRs,
                 },
             });

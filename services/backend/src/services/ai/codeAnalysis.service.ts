@@ -5,7 +5,7 @@ import axios from 'axios';
 import { AnalysisCacheModel } from '../../models/analysisCache.model';
 import mongoose from 'mongoose';
 
-interface CodeAnalysisResult {
+export interface CodeAnalysisResult {
     score: number;
     issues: Array<{
         file: string;

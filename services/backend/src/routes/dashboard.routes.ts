@@ -3,8 +3,6 @@ import { getDashboardStats } from "../controllers/dashboard.controller";
 import { getCommitTimeline, getAllActivities } from "../controllers/activity.controller";
 import { getDevelopers, getDeveloperProfile } from "../controllers/developer.controller";
 import { listPRs } from "../controllers/prList.controller";
-import { getAlertSummary } from "../controllers/alertSummary.controller";
-import { requireOrgAccess } from "../middlewares/authOrg";
 import { authMiddleware } from "../middlewares/auth.middleware";
 import { requireOrgRole } from "../middlewares/requireOrgRole";
 

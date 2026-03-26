@@ -23,7 +23,7 @@ interface AIStore {
     reset: () => void;
 }
 
-export const useAIStore = create<AIStore>((set, get) => ({
+export const useAIStore = create<AIStore>((set) => ({
     // Initial state
     analysis: null,
     insights: [],

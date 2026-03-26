@@ -2,7 +2,7 @@
 
 import { useState, useEffect, use } from "react";
 import Image from "next/image";
-import { useParams, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { api } from "../../../../lib/api";
 import { connectWS, subscribeWS } from "../../../../lib/ws"; // Import WS
 import DashboardLayout from "@/components/Layout/DashboardLayout";
@@ -20,9 +20,6 @@ import {
   Mail,
   Search,
   X,
-  CheckCircle2,
-  AlertCircle,
-  Users,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
@@ -102,7 +99,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
 
   const [members, setMembers] = useState<Member[]>([]);
   const [orgInfo, setOrgInfo] = useState<OrgInfo | null>(null);
-  const [loading, setLoading] = useState(true);
+    const [, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [showInviteForm, setShowInviteForm] = useState(false);
   const [inviteEmail, setInviteEmail] = useState("");
@@ -216,16 +213,7 @@ export default function TeamPage({ params }: { params: Promise<{ id: string }> }
     }
   };
 
-  const handleRoleUpdate = async (userId: string, newRole: string) => {
-    try {
-      await api.patch(`/orgs/${orgId}/members/${userId}`, { role: newRole });
-      setMembers(members.map(m => m.userId === userId ? { ...m, role: newRole as "ADMIN" | "MEMBER" | "VIEWER" } : m));
-      toast.success("Role updated");
-    } catch (err) {
-      console.error("Update role failed", err);
-      toast.error("Failed to update role");
-    }
-  };
+
 
   const filteredMembers = members.filter((member) => {
     // Hide pending members as per user request

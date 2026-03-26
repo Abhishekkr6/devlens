@@ -18,7 +18,7 @@ import { api } from "../../../lib/api";
 import { useLiveStore } from "../../../store/liveStore";
 import { useUserStore } from "../../../store/userStore";
 import { Card } from "../../../components/Ui/Card";
-import { AIStatsWidget } from "../../../components/Ui/AIStatsWidget";
+
 import CommitLineChart from "../../../components/Charts/CommitLineChart";
 import PRRiskBarChart from "../../../components/Charts/PRRiskBarChart";
 

@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api } from "../../../../../lib/api";
 import { Card } from "../../../../../components/Ui/Card";
-import { ArrowLeft, ExternalLink, Settings, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
+import { ArrowLeft, ExternalLink, TrendingUp, TrendingDown, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 
 type RepoDetail = {

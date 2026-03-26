@@ -1,9 +1,8 @@
-﻿import { getGeminiService } from './gemini.service';
+import { getGeminiService } from './gemini.service';
 import logger from '../../utils/logger';
 import { PRModel } from '../../models/pr.model';
 import { CommitModel } from '../../models/commit.model';
 import { RepoModel } from '../../models/repo.model';
-import { UserModel } from '../../models/user.model';
 import { AlertModel } from '../../models/alert.model';
 import mongoose from 'mongoose';
 

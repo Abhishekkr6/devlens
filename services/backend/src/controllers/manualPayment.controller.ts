@@ -53,7 +53,7 @@ export const getUserRequests = async (req: Request, res: Response) => {
   }
 };
 
-export const listPendingRequests = async (req: Request, res: Response) => {
+export const listPendingRequests = async (_req: Request, res: Response) => {
   try {
     const requests = await PaymentRequestModel.find().populate("userId", "name email plan").sort({ createdAt: -1 });
     return res.json({ success: true, data: requests });

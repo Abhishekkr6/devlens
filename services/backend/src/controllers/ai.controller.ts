@@ -358,7 +358,7 @@ export const resolveSecurityAlert = async (req: Request, res: Response) => {
  * Check if AI features are available
  * GET /api/v1/ai/status
  */
-export const getAIStatus = async (req: Request, res: Response) => {
+export const getAIStatus = async (_req: Request, res: Response) => {
     try {
         const codeAnalysisService = getCodeAnalysisService();
         const isAvailable = codeAnalysisService.isAIAvailable();

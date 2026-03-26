@@ -13,7 +13,7 @@ import healthRoutes from "./routes/health.routes";
 const app = express();
 
 // Health check for Render (required to pass deployment health checks)
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
    res.status(200).send("DevLens Backend is running 🚀");
 });
 

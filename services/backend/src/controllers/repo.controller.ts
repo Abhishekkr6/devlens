@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import logger from "../utils/logger";
+
 import { Types } from "mongoose";
 import { RepoModel } from "../models/repo.model";
 import { CommitModel } from "../models/commit.model";
@@ -609,7 +611,7 @@ export const deleteRepo = async (req: Request, res: Response) => {
 
     return res.json({ success: true, message: "Repository deleted successfully" });
   } catch (error) {
-    console.error("DELETE REPO ERROR:", error);
+    logger.error({ error: error }, "DELETE REPO ERROR:");
     return res
       .status(500)
       .json({ success: false, error: "Failed to delete repository" });
@@ -714,7 +716,7 @@ export const updateRepoSettings = async (req: Request, res: Response) => {
       },
     });
   } catch (error) {
-    console.error("UPDATE REPO SETTINGS ERROR:", error);
+    logger.error({ error: error }, "UPDATE REPO SETTINGS ERROR:");
     return res
       .status(500)
       .json({ success: false, error: "Failed to update settings" });

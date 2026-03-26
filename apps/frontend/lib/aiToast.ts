@@ -1,4 +1,3 @@
-import { Sparkles } from "lucide-react";
 
 // Simple toast manager using native browser APIs
 export const showAIToast = (message: string, type: "success" | "info" | "error" = "success") => {

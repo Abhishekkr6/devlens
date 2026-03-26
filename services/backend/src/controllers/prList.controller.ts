@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import logger from "../utils/logger";
+
 import { Types } from "mongoose";
 import { PRModel } from "../models/pr.model";
 
@@ -44,7 +46,7 @@ export const listPRs = async (req: Request, res: Response) => {
       },
     });
   } catch (err) {
-    console.error("listPRs error:", err);
+    logger.error({ error: err }, "listPRs error:");
     return res.status(500).json({ success: false });
   }
 };
