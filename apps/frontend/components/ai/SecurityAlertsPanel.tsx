@@ -41,16 +41,21 @@ export function SecurityAlertsPanel({ alerts }: SecurityAlertsPanelProps) {
 
     if (!alerts || alerts.length === 0) {
         return (
-            <Card className="p-6">
-                <div className="flex items-center gap-3 mb-4">
-                    <Shield className="w-6 h-6 text-green-500" />
-                    <h3 className="text-xl font-semibold text-text-primary">
+            <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative overflow-hidden group hover:border-brand/20 transition-colors duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-green-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                <div className="relative z-10 flex items-center gap-3 mb-4">
+                    <div className="p-2.5 rounded-xl bg-brand/10 border border-brand/20 flex-shrink-0 shadow-inner">
+                        <Shield className="w-6 h-6 text-green-500" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-text-primary">
                         Security Alerts
                     </h3>
                 </div>
-                <div className="text-center py-8">
-                    <ShieldCheck className="w-16 h-16 text-green-500 mx-auto mb-3" />
-                    <p className="text-text-secondary">
+                <div className="relative z-10 text-center py-10">
+                    <div className="p-4 rounded-full bg-surface/80 inline-flex mb-4 border border-white/5">
+                        <ShieldCheck className="w-10 h-10 text-green-500" />
+                    </div>
+                    <p className="text-sm font-light text-text-secondary leading-relaxed">
                         No security alerts found. Great job!
                     </p>
                 </div>
@@ -62,12 +67,16 @@ export function SecurityAlertsPanel({ alerts }: SecurityAlertsPanelProps) {
     const resolvedAlerts = alerts.filter(a => a.status === 'resolved');
 
     return (
-        <Card className="p-6 space-y-6">
+        <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative overflow-hidden group hover:border-brand/20 transition-colors duration-300 space-y-6 sm:space-y-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            
             {/* Header */}
-            <div className="flex items-center justify-between">
+            <div className="relative z-10 flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <Shield className="w-6 h-6 text-brand" />
-                    <h3 className="text-xl font-semibold text-text-primary">
+                    <div className="p-2 sm:p-2.5 rounded-xl bg-brand/10 border border-brand/20 flex-shrink-0 shadow-inner">
+                        <Shield className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
+                    </div>
+                    <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-text-primary">
                         Security Alerts
                     </h3>
                 </div>
@@ -83,11 +92,11 @@ export function SecurityAlertsPanel({ alerts }: SecurityAlertsPanelProps) {
 
             {/* Open Alerts */}
             {openAlerts.length > 0 && (
-                <div className="space-y-3">
-                    <h4 className="text-sm font-medium text-text-secondary">
+                <div className="relative z-10 space-y-4">
+                    <h4 className="text-sm font-bold tracking-tight text-text-primary uppercase">
                         Open Alerts ({openAlerts.length})
                     </h4>
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         {openAlerts.map((alert) => {
                             const SeverityIcon = severityConfig[alert.severity].icon;
 
@@ -95,7 +104,7 @@ export function SecurityAlertsPanel({ alerts }: SecurityAlertsPanelProps) {
                                 <div
                                     key={alert._id}
                                     className={`
-                    border rounded-lg p-4 space-y-3
+                    border rounded-2xl p-5 space-y-4 shadow-sm hover:shadow-md transition-all duration-300
                     ${severityConfig[alert.severity].border}
                     ${severityConfig[alert.severity].bg}
                   `}
@@ -185,22 +194,22 @@ export function SecurityAlertsPanel({ alerts }: SecurityAlertsPanelProps) {
 
             {/* Resolved Alerts (Collapsed) */}
             {resolvedAlerts.length > 0 && (
-                <details className="group">
-                    <summary className="cursor-pointer text-sm font-medium text-text-secondary hover:text-text-primary">
+                <details className="relative z-10 group bg-surface/40 rounded-2xl border border-white/5 p-4 hover:bg-surface/60 transition-colors">
+                    <summary className="cursor-pointer text-sm font-bold tracking-tight text-text-secondary hover:text-text-primary flex items-center outline-none">
                         Resolved Alerts ({resolvedAlerts.length})
                     </summary>
                     <div className="mt-3 space-y-2">
                         {resolvedAlerts.map((alert) => (
                             <div
                                 key={alert._id}
-                                className="border border-green-500/20 bg-green-500/10 rounded-lg p-3"
+                                className="border border-green-500/20 bg-green-500/10 rounded-xl p-4 shadow-sm"
                             >
-                                <div className="flex items-center gap-2">
-                                    <CheckCircle2 className="w-4 h-4 text-green-500" />
-                                    <span className="text-sm text-text-primary font-medium">
+                                <div className="flex items-center gap-3">
+                                    <CheckCircle2 className="w-5 h-5 text-green-500" />
+                                    <span className="text-sm text-text-primary font-bold tracking-tight">
                                         {alert.title}
                                     </span>
-                                    <span className="text-xs text-text-secondary">
+                                    <span className="text-xs font-light text-text-secondary">
                                         ({alert.type})
                                     </span>
                                 </div>

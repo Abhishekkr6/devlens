@@ -52,17 +52,19 @@ export function QualityMetricsCard({ metrics }: QualityMetricsCardProps) {
     };
 
     return (
-        <Card className="p-6 space-y-6">
+        <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 sm:p-8 shadow-lg relative overflow-hidden group hover:border-brand/20 transition-colors duration-300 space-y-6 sm:space-y-8">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            
             {/* Header */}
-            <div className="flex items-center justify-between">
-                <h3 className="text-xl font-semibold text-text-primary">
+            <div className="relative z-10 flex items-center justify-between">
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-text-primary">
                     Code Quality Metrics
                 </h3>
                 <GradeBadge grade={metrics.grade} />
             </div>
 
             {/* Maintainability Index */}
-            <div className="bg-gradient-to-r from-brand/10 to-blue-500/10 rounded-lg p-4">
+            <div className="relative z-10 bg-gradient-to-r from-brand/10 to-blue-500/10 rounded-2xl p-5 border border-white/5 shadow-inner">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-medium text-text-secondary">
                         Maintainability Index
@@ -80,9 +82,9 @@ export function QualityMetricsCard({ metrics }: QualityMetricsCardProps) {
             </div>
 
             {/* Metrics Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="relative z-10 grid grid-cols-2 gap-4">
                 {/* Cyclomatic Complexity */}
-                <div className="bg-surface rounded-lg p-4">
+                <div className="bg-surface/60 rounded-2xl p-5 border border-white/5 shadow-sm hover:bg-surface/80 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                         <Code2 className="w-4 h-4 text-blue-500" />
                         <span className="text-sm font-medium text-text-secondary">
@@ -98,7 +100,7 @@ export function QualityMetricsCard({ metrics }: QualityMetricsCardProps) {
                 </div>
 
                 {/* Lines of Code */}
-                <div className="bg-surface rounded-lg p-4">
+                <div className="bg-surface/60 rounded-2xl p-5 border border-white/5 shadow-sm hover:bg-surface/80 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                         <Code2 className="w-4 h-4 text-green-500" />
                         <span className="text-sm font-medium text-text-secondary">
@@ -114,7 +116,7 @@ export function QualityMetricsCard({ metrics }: QualityMetricsCardProps) {
                 </div>
 
                 {/* Code Smells */}
-                <div className="bg-surface rounded-lg p-4">
+                <div className="bg-surface/60 rounded-2xl p-5 border border-white/5 shadow-sm hover:bg-surface/80 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                         <AlertCircle className="w-4 h-4 text-orange-500" />
                         <span className="text-sm font-medium text-text-secondary">
@@ -130,7 +132,7 @@ export function QualityMetricsCard({ metrics }: QualityMetricsCardProps) {
                 </div>
 
                 {/* Technical Debt */}
-                <div className="bg-surface rounded-lg p-4">
+                <div className="bg-surface/60 rounded-2xl p-5 border border-white/5 shadow-sm hover:bg-surface/80 transition-colors">
                     <div className="flex items-center gap-2 mb-2">
                         <Clock className="w-4 h-4 text-red-500" />
                         <span className="text-sm font-medium text-text-secondary">
@@ -147,8 +149,8 @@ export function QualityMetricsCard({ metrics }: QualityMetricsCardProps) {
             </div>
 
             {/* Halstead Metrics */}
-            <div className="space-y-3">
-                <h4 className="text-sm font-medium text-text-secondary">
+            <div className="relative z-10 space-y-4">
+                <h4 className="text-sm font-bold tracking-tight text-text-primary uppercase">
                     Halstead Metrics
                 </h4>
                 <div className="space-y-3">

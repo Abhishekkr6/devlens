@@ -122,23 +122,24 @@ interface StatCardProps {
 
 export function StatCard({ title, value, icon, trend, color = 'text-brand' }: StatCardProps) {
     return (
-        <Card className="p-2.5 sm:p-3 md:p-4">
-            <div className="flex items-start justify-between gap-2">
+        <Card className="rounded-2xl border border-white/10 bg-surface/50 backdrop-blur-xl p-4 sm:p-5 md:p-6 shadow-lg hover:border-brand/30 hover:shadow-[0_0_20px_rgba(74,93,255,0.1)] transition-all duration-300 relative group overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 flex items-start justify-between gap-2">
                 <div className="flex-1 min-w-0">
-                    <p className="text-[10px] sm:text-xs md:text-sm text-text-secondary mb-0.5 sm:mb-1 truncate">{title}</p>
-                    <p className="text-base sm:text-xl md:text-2xl font-bold text-text-primary truncate">{value}</p>
+                    <p className="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-text-secondary mb-1 sm:mb-2 truncate">{title}</p>
+                    <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold text-text-primary tracking-tight truncate">{value}</p>
                     {trend && (
-                        <div className={`flex items-center gap-1 mt-1 sm:mt-2 ${trend.isPositive ? 'text-green-500' : 'text-red-500'}`}>
+                        <div className={`inline-flex items-center gap-1.5 mt-3 sm:mt-4 rounded-full px-2.5 py-1 text-[10px] sm:text-xs font-bold shadow-sm border ${trend.isPositive ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400' : 'bg-rose-500/10 border-rose-500/20 text-rose-400'}`}>
                             {trend.isPositive ? (
-                                <TrendingUp className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <TrendingUp className="w-3.5 h-3.5" />
                             ) : (
-                                <TrendingDown className="w-3 h-3 sm:w-4 sm:h-4" />
+                                <TrendingDown className="w-3.5 h-3.5" />
                             )}
-                            <span className="text-xs sm:text-sm font-medium">{Math.abs(trend.value)}%</span>
+                            <span>{Math.abs(trend.value)}%</span>
                         </div>
                     )}
                 </div>
-                <div className={`p-1.5 sm:p-2 md:p-3 rounded-lg bg-surface ${color} flex-shrink-0`}>
+                <div className={`flex h-10 w-10 sm:h-12 sm:w-12 items-center justify-center rounded-xl bg-surface border border-white/5 shadow-inner ${color} flex-shrink-0`}>
                     {icon}
                 </div>
             </div>

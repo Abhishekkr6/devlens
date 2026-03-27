@@ -99,24 +99,26 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
     };
 
     return (
-        <Card className="p-4 sm:p-6 space-y-4 sm:space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-                <h3 className="text-lg sm:text-xl font-semibold text-text-primary">
+        <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-5 sm:p-8 shadow-lg relative overflow-hidden group hover:border-brand/20 transition-colors duration-300 space-y-5 sm:space-y-7">
+            <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            
+            <div className="relative z-10 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-5">
+                <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-text-primary">
                     AI Code Review
                 </h3>
                 <ScoreGauge score={review.score} />
             </div>
 
-            <div className="bg-surface rounded-lg p-3 sm:p-4">
-                <p className="text-sm sm:text-base text-text-secondary">{review.summary}</p>
+            <div className="relative z-10 bg-surface/40 rounded-2xl p-4 sm:p-5 border border-white/5 shadow-sm">
+                <p className="text-sm sm:text-base text-text-secondary leading-relaxed font-light">{review.summary}</p>
             </div>
 
             {review.issues && review.issues.length > 0 && (
-                <div className="space-y-3">
-                    <h4 className="text-base sm:text-lg font-medium text-text-primary">
+                <div className="relative z-10 space-y-4">
+                    <h4 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary">
                         Issues Found ({review.issues.length})
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-3">
                         {review.issues.map((issue, index) => {
                             const SeverityIcon = severityConfig[issue.severity].icon;
                             const isExpanded = expandedIssues.has(index);
@@ -125,14 +127,15 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
                                 <div
                                     key={index}
                                     className={`
-                    border rounded-lg overflow-hidden transition-all
+                    border rounded-2xl overflow-hidden transition-all duration-300 shadow-sm
+                    hover:shadow-md
                     ${severityConfig[issue.severity].border}
                     ${severityConfig[issue.severity].bg}
                   `}
                                 >
                                     <button
                                         onClick={() => toggleIssue(index)}
-                                        className="w-full p-4 flex items-start gap-3 hover:bg-surface/50 transition-colors"
+                                        className="w-full p-4 sm:p-5 flex items-start gap-4 hover:bg-surface/60 transition-colors"
                                     >
                                         <SeverityIcon className={`w-5 h-5 mt-0.5 flex-shrink-0 ${severityConfig[issue.severity].color}`} />
                                         <div className="flex-1 text-left">
@@ -159,12 +162,12 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
                                     </button>
 
                                     {isExpanded && (
-                                        <div className="px-4 pb-4 pl-12 border-t border-border pt-3">
-                                            <div className="bg-surface rounded p-3">
-                                                <p className="text-sm font-medium text-text-primary mb-2">
-                                                    💡 Suggestion:
+                                        <div className="px-5 pb-5 pl-14 pt-4 border-t border-border/50">
+                                            <div className="bg-surface/80 rounded-xl p-4 border border-white/5 shadow-inner">
+                                                <p className="text-sm font-bold tracking-tight text-text-primary mb-2 flex items-center gap-2">
+                                                    💡 Suggestion
                                                 </p>
-                                                <p className="text-sm text-text-secondary">
+                                                <p className="text-sm text-text-secondary leading-relaxed font-light">
                                                     {issue.suggestion}
                                                 </p>
                                             </div>
@@ -178,11 +181,11 @@ export function AIReviewCard({ review }: AIReviewCardProps) {
             )}
 
             {review.recommendations && review.recommendations.length > 0 && (
-                <div className="space-y-3">
-                    <h4 className="text-lg font-medium text-text-primary">
+                <div className="relative z-10 space-y-4 pt-2">
+                    <h4 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary">
                         Recommendations
                     </h4>
-                    <ul className="space-y-2">
+                    <ul className="space-y-3">
                         {review.recommendations.map((rec, index) => (
                             <li
                                 key={index}

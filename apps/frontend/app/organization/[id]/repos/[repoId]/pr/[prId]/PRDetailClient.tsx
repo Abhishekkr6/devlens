@@ -11,6 +11,7 @@ import {
     SecurityAlertsPanel,
     StatCard
 } from '@/components/ai';
+import { motion } from 'motion/react';
 import { ArrowLeft, GitPullRequest, Loader2, TrendingUp, Code2, AlertCircle, Clock, Sparkles } from 'lucide-react';
 
 import { Card } from '@/components/Ui/Card';
@@ -54,8 +55,13 @@ export default function PRDetailClient({
     };
 
     return (
-        <div className="flex h-full flex-col gap-6">
-            <header className="space-y-2">
+        <motion.div 
+            initial={{ opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, ease: [0.23, 1, 0.32, 1] }}
+            className="flex h-full flex-col gap-6"
+        >
+            <header className="space-y-4">
                 <button
                     onClick={() => router.back()}
                     className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-text-secondary hover:text-text-primary transition-colors mb-2 cursor-pointer"
@@ -67,16 +73,26 @@ export default function PRDetailClient({
 
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                     <div className="flex items-center gap-2 sm:gap-3">
-                        <div className="p-1.5 sm:p-2 rounded-lg bg-brand/10 flex-shrink-0">
-                            <GitPullRequest className="w-4 h-4 sm:w-6 sm:h-6 text-brand" />
+                        <div className="p-2 sm:p-2.5 rounded-xl bg-brand/10 border border-brand/20 flex-shrink-0 shadow-inner">
+                            <GitPullRequest className="w-5 h-5 sm:w-6 sm:h-6 text-brand" />
                         </div>
                         <div>
-                            <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-text-primary">
+                            <motion.h1 
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.1 }}
+                                className="text-xl sm:text-2xl md:text-3xl font-extrabold tracking-tight text-text-primary"
+                            >
                                 AI Code Analysis
-                            </h1>
-                            <p className="text-xs sm:text-sm text-text-secondary mt-0.5 sm:mt-1">
+                            </motion.h1>
+                            <motion.p 
+                                initial={{ opacity: 0, x: -20 }}
+                                animate={{ opacity: 1, x: 0 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className="text-xs sm:text-sm text-text-secondary mt-0.5 sm:mt-1 font-light"
+                            >
                                 Intelligent code review, quality metrics, and security insights
-                            </p>
+                            </motion.p>
                         </div>
                     </div>
 
@@ -90,12 +106,13 @@ export default function PRDetailClient({
             </header>
 
             {!loading && !analysis && !showAISection && (
-                <Card className="p-8 sm:p-12 border-2 border-dashed border-border/50">
-                    <div className="text-center max-w-md mx-auto">
-                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-brand/10 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                <Card className="rounded-3xl border border-brand/20 bg-surface/50 backdrop-blur-xl p-8 sm:p-12 shadow-lg relative overflow-hidden group hover:border-brand/40 transition-all duration-300">
+                    <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                    <div className="relative z-10 text-center max-w-md mx-auto">
+                        <div className="w-16 h-16 sm:w-20 sm:h-20 bg-brand/10 border border-brand/20 rounded-2xl flex items-center justify-center mx-auto mb-4 sm:mb-6 shadow-[0_0_20px_rgba(74,93,255,0.15)]">
                             <Sparkles className="w-8 h-8 sm:w-10 sm:h-10 text-brand animate-pulse" />
                         </div>
-                        <h3 className="text-lg sm:text-xl font-semibold text-text-primary mb-2 sm:mb-3">
+                        <h3 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-2 sm:mb-3">
                             AI Analysis Available
                         </h3>
                         <p className="text-sm sm:text-base text-text-secondary mb-4 sm:mb-6">
@@ -127,8 +144,8 @@ export default function PRDetailClient({
             )}
 
             {loading && (
-                <Card className="p-8 sm:p-12">
-                    <div className="text-center">
+                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-8 sm:p-12 shadow-lg relative overflow-hidden">
+                    <div className="relative z-10 text-center">
                         <Loader2 className="w-10 h-10 sm:w-12 sm:h-12 animate-spin text-brand mx-auto mb-3 sm:mb-4" />
                         <p className="text-sm sm:text-base text-text-secondary">
                             Analyzing pull request with AI...
@@ -141,7 +158,12 @@ export default function PRDetailClient({
             )}
 
             {!loading && (analysis || showAISection) && (
-                <div className="space-y-6">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: 0.1, ease: [0.23, 1, 0.32, 1] }}
+                    className="space-y-6"
+                >
                     {analysis && (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 md:gap-4">
                             <StatCard
@@ -184,9 +206,11 @@ export default function PRDetailClient({
                             {analysis?.bugProbability ? (
                                 <BugProbabilityGauge bugProbability={analysis.bugProbability} />
                             ) : analysis?.qualityMetrics ? (
-                                <Card className="p-6">
-                                    <div className="text-center py-8">
-                                        <AlertCircle className="w-12 h-12 text-text-secondary/50 mx-auto mb-3" />
+                                <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-6 shadow-lg relative overflow-hidden">
+                                    <div className="relative z-10 text-center py-8">
+                                        <div className="p-4 rounded-full bg-surface/80 inline-flex mb-4 border border-white/5">
+                                            <AlertCircle className="w-10 h-10 text-text-secondary/50" />
+                                        </div>
                                         <p className="text-text-secondary">
                                             Bug probability analysis not available
                                         </p>
@@ -204,16 +228,18 @@ export default function PRDetailClient({
                     )}
 
                     {analysis?.recommendations && analysis.recommendations.length > 0 && (
-                        <Card className="p-4 sm:p-6">
-                            <h3 className="text-lg sm:text-xl font-semibold text-text-primary mb-3 sm:mb-4">
-                                📋 Action Items
-                            </h3>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
-                                {analysis.recommendations.map((rec, index) => (
-                                    <div
-                                        key={index}
-                                        className="flex items-start gap-2 p-2.5 sm:p-3 bg-brand/5 rounded-lg border border-brand/20 hover:bg-brand/10 transition-colors"
-                                    >
+                        <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-4 sm:p-6 shadow-lg relative overflow-hidden group hover:border-brand/20 transition-colors duration-300">
+                            <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                            <div className="relative z-10">
+                                <h3 className="text-lg sm:text-xl font-bold tracking-tight text-text-primary mb-3 sm:mb-4">
+                                    📋 Action Items
+                                </h3>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                                    {analysis.recommendations.map((rec, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-start gap-3 p-3 sm:p-4 bg-surface/40 rounded-2xl border border-white/5 hover:bg-surface/80 hover:border-white/10 transition-colors shadow-sm"
+                                        >
                                         <span className="text-brand font-bold flex-shrink-0 text-sm sm:text-base">
                                             {index + 1}.
                                         </span>
@@ -222,6 +248,7 @@ export default function PRDetailClient({
                                         </span>
                                     </div>
                                 ))}
+                                </div>
                             </div>
                         </Card>
                     )}
@@ -231,21 +258,22 @@ export default function PRDetailClient({
                             Analysis completed in {(analysis.processingTimeMs / 1000).toFixed(2)}s
                         </div>
                     )}
-                </div>
+                </motion.div>
             )
             }
 
             {
                 !loading && !analysis && !showAISection && (
-                    <Card className="p-12">
-                        <div className="max-w-md mx-auto text-center">
-                            <div className="p-4 rounded-full bg-surface inline-flex mb-4">
-                                <GitPullRequest className="w-12 h-12 text-text-secondary" />
+                    <Card className="rounded-3xl border border-white/10 bg-surface/50 backdrop-blur-xl p-12 shadow-lg relative overflow-hidden group hover:border-brand/20 transition-all duration-300">
+                        <div className="absolute inset-0 bg-gradient-to-br from-brand/5 to-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                        <div className="relative z-10 max-w-md mx-auto text-center">
+                            <div className="p-4 rounded-full bg-surface/80 inline-flex mb-4 shadow-sm border border-white/5">
+                                <GitPullRequest className="w-10 h-10 text-text-secondary" />
                             </div>
-                            <h3 className="text-xl font-semibold text-text-primary mb-2">
+                            <h3 className="text-xl font-bold tracking-tight text-text-primary mb-2">
                                 No Analysis Yet
                             </h3>
-                            <p className="text-text-secondary mb-6">
+                            <p className="text-sm font-light text-text-secondary mb-6 leading-relaxed">
                                 Click "Analyze with AI" to get intelligent code review suggestions, quality metrics, and security insights for this pull request.
                             </p>
                             <AIAnalysisButton
@@ -258,6 +286,6 @@ export default function PRDetailClient({
                     </Card>
                 )
             }
-        </div >
+        </motion.div >
     );
 }
