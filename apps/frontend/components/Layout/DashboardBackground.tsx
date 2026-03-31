@@ -13,7 +13,7 @@ export function DashboardBackground() {
   if (!mounted) {
     // Return static version for SSR to prevent hydration mismatch
     return (
-      <div className="fixed inset-0 z-[-10] overflow-hidden pointer-events-none bg-background">
+      <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
          <div className="absolute -top-[20%] -left-[10%] w-[60vw] h-[60vw] rounded-full bg-brand/5 blur-[120px]" />
          <div className="absolute top-[40%] -right-[15%] w-[50vw] h-[50vw] rounded-full bg-purple-500/5 blur-[120px]" />
       </div>
@@ -21,7 +21,7 @@ export function DashboardBackground() {
   }
 
   return (
-    <div className="fixed inset-0 z-[-10] overflow-hidden pointer-events-none bg-background">
+    <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
       {/* 1. Subtle Deep Dot Grid Overlay */}
       <div 
         className="absolute inset-0 opacity-[0.03]"

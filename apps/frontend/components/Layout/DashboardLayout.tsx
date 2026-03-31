@@ -23,7 +23,7 @@ export default function DashboardLayout({
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-background text-text-primary">
+    <div className="relative min-h-screen text-text-primary">
       {/* Animated Matrix/Scanner Background for Dashboard */}
       <DashboardBackground />
       
