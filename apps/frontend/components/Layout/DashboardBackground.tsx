@@ -24,9 +24,9 @@ export function DashboardBackground() {
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
       {/* 1. Subtle Deep Dot Grid Overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.08]"
+        className="absolute inset-0 opacity-[0.16]"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23ffffff'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1.75' fill='%23ffffff'/%3E%3C/svg%3E")`,
           backgroundSize: "32px 32px",
           maskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)",
           WebkitMaskImage: "radial-gradient(ellipse at center, black 40%, transparent 80%)",
