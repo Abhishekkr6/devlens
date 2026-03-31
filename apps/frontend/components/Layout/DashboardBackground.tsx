@@ -24,7 +24,7 @@ export function DashboardBackground() {
     <div className="fixed inset-0 z-0 overflow-hidden pointer-events-none">
       {/* 1. Subtle Deep Dot Grid Overlay */}
       <div 
-        className="absolute inset-0 opacity-[0.03]"
+        className="absolute inset-0 opacity-[0.08]"
         style={{
           backgroundImage: `url("data:image/svg+xml,%3Csvg width='32' height='32' viewBox='0 0 32 32' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='2' cy='2' r='1' fill='%23ffffff'/%3E%3C/svg%3E")`,
           backgroundSize: "32px 32px",
@@ -35,7 +35,7 @@ export function DashboardBackground() {
       
       {/* 2. Aurora Orbs */}
       <motion.div
-        className="absolute w-[60vw] h-[60vw] rounded-full bg-brand/5 blur-[120px] opacity-70"
+        className="absolute w-[60vw] h-[60vw] rounded-full bg-brand/10 blur-[120px] opacity-90"
         style={{ top: '-20%', left: '-10%', willChange: 'transform' }}
         animate={{
           x: [0, 40, -20, 0],
@@ -50,7 +50,7 @@ export function DashboardBackground() {
       />
       
       <motion.div
-        className="absolute w-[50vw] h-[50vw] rounded-full bg-purple-500/5 blur-[120px] opacity-60"
+        className="absolute w-[50vw] h-[50vw] rounded-full bg-purple-500/10 blur-[120px] opacity-80"
         style={{ top: '40%', right: '-15%', willChange: 'transform' }}
         animate={{
            x: [0, -30, 20, 0],
@@ -66,7 +66,7 @@ export function DashboardBackground() {
       />
 
       <motion.div
-        className="absolute w-[40vw] h-[40vw] rounded-full bg-cyan-500/5 blur-[100px] opacity-40"
+        className="absolute w-[40vw] h-[40vw] rounded-full bg-cyan-500/10 blur-[100px] opacity-60"
         style={{ bottom: '-10%', left: '20%', willChange: 'transform' }}
         animate={{
            x: [0, 20, -10, 0],
@@ -84,7 +84,7 @@ export function DashboardBackground() {
       {/* 3. Horizontal Scanner Sweep */}
       {/* Sharp scanning line */}
       <motion.div
-        className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand/30 to-transparent blur-[1px]"
+        className="absolute top-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-brand/80 to-transparent blur-[1px]"
         style={{ willChange: 'transform' }}
         animate={{ translateY: ["-10vh", "110vh"] }}
         transition={{
@@ -96,7 +96,7 @@ export function DashboardBackground() {
       />
       {/* Scanner trail fade */}
       <motion.div
-        className="absolute top-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-transparent to-brand/[0.015] pointer-events-none"
+        className="absolute top-0 left-0 right-0 h-[20vh] bg-gradient-to-b from-transparent to-brand/[0.05] pointer-events-none"
         style={{ willChange: 'transform' }}
         animate={{ translateY: ["-20vh", "110vh"] }}
         transition={{
