@@ -19,6 +19,7 @@ import { HeroVisual } from "../components/Landing/HeroVisual";
 import { CommitTrackingVisual } from "../components/Landing/FeatureVisuals/CommitTrackingVisual";
 import { WorkerArchitectureVisual } from "../components/Landing/FeatureVisuals/WorkerArchitectureVisual";
 import { Navbar } from "../components/Landing/Navbar";
+import { AnimatedBackground } from "../components/Landing/AnimatedBackground";
 
 
 function Hero() {
@@ -32,12 +33,9 @@ function Hero() {
   };
 
   return (
-    <section className="relative pt-32 pb-16 md:pt-48 md:pb-32 overflow-hidden min-h-[85vh] md:min-h-[90vh] flex flex-col justify-center">
-      {/* High-performance glowing background mesh. Static sizes, simple blurs, no mix-blend-screen overkill, no Framer Motion loops! */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full -z-10 pointer-events-none flex justify-center items-start overflow-hidden">
-        <div className="absolute top-[-5%] md:top-[-10%] w-[300px] md:w-[600px] h-[300px] md:h-[600px] bg-brand/20 rounded-full blur-[80px] md:blur-[120px]" />
-        <div className="absolute top-[10%] right-[-5%] md:right-[-10%] w-[250px] md:w-[500px] h-[250px] md:h-[500px] bg-purple-500/15 rounded-full blur-[60px] md:blur-[100px]" />
-      </div>
+    <section className="relative pt-32 pb-16 md:pt-48 md:pb-32 min-h-[85vh] md:min-h-[90vh] flex flex-col justify-center isolate" style={{ overflow: "clip" }}>
+      {/* Premium animated background */}
+      <AnimatedBackground showCards />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid lg:grid-cols-2 gap-10 lg:gap-8 items-center relative z-10 w-full">
         {/* Left Content */}
@@ -172,6 +170,7 @@ function FeatureSection() {
 
   return (
     <section className="py-20 md:py-32 bg-background relative overflow-hidden">
+      <AnimatedBackground />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -329,8 +328,9 @@ function HowItWorks() {
   ];
 
   return (
-    <section className="py-20 md:py-32 bg-surface relative border-y border-border/50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="py-20 md:py-32 bg-surface relative overflow-hidden border-y border-border/50">
+      <AnimatedBackground />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -371,7 +371,8 @@ function CTA() {
 
   return (
     <section className="py-20 md:py-32 bg-background overflow-hidden relative">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(74,93,255,0.1),transparent_60%)]" />
+      <AnimatedBackground />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(74,93,255,0.1),transparent_60%)]" style={{ zIndex: 1 }} />
 
       <motion.div
         initial={{ opacity: 0, scale: 0.98 }}
@@ -405,8 +406,8 @@ function Footer() {
     <footer className="bg-background border-t border-border/50 py-10 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8 mb-8 md:mb-12">
-          <div className="flex items-center gap-2 md:gap-3 group">
-            <img src="/logo.svg" alt="DevLens" className="w-8 h-8 md:w-10 md:h-10 transition-transform" />
+          <div className="flex items-center gap-1.5 md:gap-2 group">
+            <img src="/logo.svg" alt="DevLens" className="w-8 h-8 md:w-9 md:h-9 transition-transform group-hover:scale-105" />
             <span className="font-bold text-xl md:text-2xl text-text-primary" style={{ fontFamily: 'var(--font-logo)' }}>DevLens</span>
           </div>
 
@@ -448,6 +449,7 @@ function VideoDemoSection() {
 
   return (
     <section className="py-20 md:py-32 bg-surface border-y border-border/50 relative overflow-hidden" id="demo">
+      <AnimatedBackground />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-brand/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <motion.div
@@ -502,7 +504,7 @@ function VideoDemoSection() {
                                  <motion.div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400" animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.2 }} />
                                  <motion.div className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-emerald-400" animate={{ scale: [1, 1.5, 1], opacity: [0.5, 1, 0.5] }} transition={{ repeat: Infinity, duration: 1, delay: 0.4 }} />
                               </div>
-                              <div className="w-14 h-14 md:w-16 md:h-16 bg-brand/20 border border-brand/30 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(74,93,255,0.2)]"><img src="/logo.svg" className="w-6 h-6 md:w-8 md:h-8"/></div>
+                              <div className="w-12 h-12 md:w-14 md:h-14 bg-brand/20 border border-brand/30 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(74,93,255,0.2)]"><img src="/logo.svg" className="w-7 h-7 md:w-8 md:h-8"/></div>
                            </div>
                            <h3 className="text-lg md:text-xl font-bold text-white mb-2 tracking-tight">api-service-backend</h3>
                            <p className="text-xs md:text-sm text-emerald-400 font-medium bg-emerald-400/10 inline-block px-4 py-1.5 rounded-full border border-emerald-400/20">Successfully Connected</p>
@@ -609,6 +611,7 @@ function TestimonialSection() {
 
   return (
     <section className="py-20 md:py-32 bg-background relative overflow-hidden">
+      <AnimatedBackground />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}
@@ -653,7 +656,8 @@ function TestimonialSection() {
 
 function CreatorSection() {
   return (
-    <section className="py-16 md:py-24 bg-surface border-y border-border/50">
+    <section className="py-16 md:py-24 bg-surface border-y border-border/50 relative overflow-hidden">
+      <AnimatedBackground />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
@@ -689,6 +693,7 @@ function PricingSection() {
 
   return (
     <section className="py-20 md:py-32 bg-background relative overflow-hidden" id="pricing">
+      <AnimatedBackground />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
         <motion.div
           initial={{ opacity: 0, y: 15 }}

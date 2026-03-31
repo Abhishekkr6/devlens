@@ -57,27 +57,22 @@ export function Navbar() {
 
   return (
     <nav
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${
-        scrolled ? "pt-4 px-4" : "pt-0 px-0"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 flex justify-center ${scrolled ? "pt-4 px-4" : "pt-0 px-0"
+        }`}
     >
       <div
-        className={`flex items-center justify-between mx-auto transition-all duration-500 ease-out ${
-          scrolled
+        className={`flex items-center justify-between mx-auto transition-all duration-500 ease-out ${scrolled
             ? "w-full max-w-5xl bg-background/90 md:bg-background/80 backdrop-blur-lg border border-border/50 rounded-full py-2.5 px-6 shadow-[0_8px_30px_rgba(0,0,0,0.12)]"
             : "w-full max-w-7xl bg-transparent py-4 md:py-6 px-4 sm:px-6 lg:px-8 border-transparent rounded-none"
-        }`}
+          }`}
       >
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="relative flex items-center justify-center">
-            <div className="hidden md:block absolute inset-0 bg-brand/40 blur-md rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
-            <img
-              src="/logo.svg"
-              alt="DevLens"
-              className="relative w-9 h-9 sm:w-10 sm:h-10 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-105"
-            />
-          </div>
+        <Link href="/" className="flex items-center gap-1 group">
+          <img
+            src="/logo.svg"
+            alt="DevLens"
+            className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 transition-transform duration-300 group-hover:scale-105"
+          />
           <span
             className="text-xl sm:text-2xl font-extrabold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-text-primary to-text-primary group-hover:from-brand group-hover:to-purple-400 transition-all duration-300 font-heading"
           >
@@ -151,9 +146,8 @@ export function Navbar() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className={`md:hidden absolute top-full left-0 right-0 shadow-2xl z-[50] bg-surface ${
-              scrolled ? "mt-4 mx-4 rounded-3xl border border-border/50 overflow-hidden" : "border-b border-border"
-            }`}
+            className={`md:hidden absolute top-full left-0 right-0 shadow-2xl z-[50] bg-surface ${scrolled ? "mt-4 mx-4 rounded-3xl border border-border/50 overflow-hidden" : "border-b border-border"
+              }`}
           >
             <div className="relative p-6 flex flex-col gap-5">
               <Link
