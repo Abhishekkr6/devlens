@@ -741,7 +741,7 @@ function PricingSection() {
             <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">Pro Plan</h3>
             <p className="text-slate-400 mb-6 md:mb-8 h-10 md:h-12 text-sm md:text-base">Everything you need to ship high-quality code and scale.</p>
             <div className="mb-8 md:mb-10 font-bold text-5xl md:text-6xl text-white">
-              ₹1 <span className="text-lg md:text-xl text-slate-400 font-medium tracking-normal">/ lifetime</span>
+              ₹499 <span className="text-lg md:text-xl text-slate-400 font-medium tracking-normal">/ lifetime</span>
             </div>
             <ul className="space-y-4 md:space-y-5 mb-8 md:mb-10 flex-1 text-slate-300 text-sm md:text-base">
               <li className="flex items-center gap-3 md:gap-4">{checkIcon("text-brand")} Unlimited repositories</li>

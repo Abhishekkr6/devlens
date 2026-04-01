@@ -8,7 +8,7 @@ import logger from "../utils/logger";
 // Razorpay client will be initialized dynamically inside the route handler
 // to prevent the entire app from crashing if keys are missing from the environment.
 
-const PRO_AMOUNT_PAISE = 100; // ₹1 in paise
+const PRO_AMOUNT_PAISE = 49900; // ₹499 in paise
 
 // ── 1. Create Order ──────────────────────────────────────────────────────────
 export const createOrder = async (req: Request, res: Response) => {

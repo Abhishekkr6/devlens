@@ -4,7 +4,7 @@ export interface IRazorpayOrder extends Document {
   userId: Types.ObjectId;
   razorpayOrderId: string;
   razorpayPaymentId?: string;
-  amount: number; // in paise (100 = ₹1)
+  amount: number; // in paise (49900 = ₹499)
   currency: string;
   status: "created" | "paid" | "failed";
   createdAt: Date;
