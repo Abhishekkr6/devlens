@@ -24,6 +24,9 @@ app.get("/", (_req, res) => {
  */
 app.use("/api/v1/webhooks/github", express.raw({ type: "application/json" }));
 
+// Razorpay webhook — needs raw body for HMAC-SHA256 signature verification
+app.use("/api/v1/payments/webhook", express.raw({ type: "application/json" }));
+
 import webhookRoutes from "./routes/webhook.routes";
 app.use("/api/v1/webhooks", webhookRoutes);
 
@@ -79,7 +82,7 @@ import notificationRoutes from "./routes/notification.routes";
 import aiRoutes from "./routes/ai.routes";
 import aiGuideRoutes from "./routes/aiGuide.routes";
 import chatbotRoutes from "./routes/chatbot.routes";
-import manualPaymentRoutes from "./routes/manualPayment.routes";
+import razorpayRoutes from "./routes/razorpay.routes";
 
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1", healthRoutes);
@@ -92,7 +95,7 @@ app.use("/api/v1/notifications", notificationRoutes);
 app.use("/api/v1/ai", aiRoutes);
 app.use("/api/v1/ai", aiGuideRoutes);
 app.use("/api/v1/chatbot", chatbotRoutes);
-app.use("/api/v1/payments", manualPaymentRoutes);
+app.use("/api/v1/payments", razorpayRoutes);
 
 app.use(errorHandler);
 
