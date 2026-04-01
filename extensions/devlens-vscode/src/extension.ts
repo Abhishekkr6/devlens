@@ -3,6 +3,8 @@ import { AuthManager } from './auth/authManager';
 import { ApiClient } from './api/client';
 import { RepoDetector } from './git/repoDetector';
 import { DevLensViewProvider } from './providers/TeamPulseViewProvider';
+import { DiagnosticsService } from './services/diagnostics';
+import { AnalyzerService } from './services/analyzer';
 import { logger } from './utils/logger';
 import { DEFAULT_DASHBOARD_URL } from './utils/constants';
 
@@ -10,6 +12,8 @@ let authManager: AuthManager;
 let apiClient: ApiClient;
 let repoDetector: RepoDetector;
 let viewProvider: DevLensViewProvider;
+let diagnosticsService: DiagnosticsService;
+let analyzerService: AnalyzerService;
 
 export function activate(context: vscode.ExtensionContext) {
     logger.info('DevLens extension activated');
@@ -49,6 +53,22 @@ export function activate(context: vscode.ExtensionContext) {
             const config = vscode.workspace.getConfiguration('DevLens');
             const dashboardUrl = config.get<string>('dashboardUrl') || DEFAULT_DASHBOARD_URL;
             await vscode.env.openExternal(vscode.Uri.parse(dashboardUrl));
+        })
+    );
+
+    // Initialize Analysis Services
+    diagnosticsService = new DiagnosticsService();
+    analyzerService = new AnalyzerService(apiClient, diagnosticsService, context.extensionUri);
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('DevLens.analyzeFile', async () => {
+            await analyzerService.analyzeCurrentFile();
+        })
+    );
+
+    context.subscriptions.push(
+        vscode.commands.registerCommand('DevLens.analyzeProject', async () => {
+            await analyzerService.analyzeProject();
         })
     );
 

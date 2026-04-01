@@ -72,3 +72,32 @@ export interface RepoDetectionResult {
     repo: string;
     repoFullName: string;
 }
+
+export interface AnalysisRequest {
+    files: { name: string; content: string }[];
+}
+
+export interface RiskIssue {
+    line: number;
+    severity: 'low' | 'medium' | 'high' | 'critical';
+    message: string;
+}
+
+export interface Suggestion {
+    line: number;
+    suggestion: string;
+}
+
+export interface FileAnalysisResult {
+    file: string;
+    riskScore: number;
+    issues: RiskIssue[];
+    suggestions: Suggestion[];
+    insights: string;
+}
+
+export interface ProjectAnalysisResult {
+    overallRiskScore: number;
+    files: FileAnalysisResult[];
+    summary: string;
+}

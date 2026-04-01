@@ -248,7 +248,7 @@ export default function PricingPage() {
               Everything you need to ship high-quality code at scale.
             </p>
             <div className="mb-8 font-bold text-5xl md:text-6xl text-white">
-              ₹499{" "}
+              ₹1{" "}
               <span className="text-lg text-slate-400 font-medium">
                 / lifetime
               </span>
@@ -374,7 +374,7 @@ export default function PricingPage() {
                     ) : (
                       <span className="flex items-center gap-2">
                         <CheckCircle2 className="w-5 h-5" />
-                        Upgrade to Pro — ₹499
+                        Upgrade to Pro — ₹1
                       </span>
                     )}
                   </button>

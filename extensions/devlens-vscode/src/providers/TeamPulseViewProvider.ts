@@ -147,6 +147,12 @@ export class DevLensViewProvider implements vscode.WebviewViewProvider {
             case 'openPR':
                 await this.openPR(message.url);
                 break;
+            case 'analyzeFile':
+                await vscode.commands.executeCommand('DevLens.analyzeFile');
+                break;
+            case 'analyzeProject':
+                await vscode.commands.executeCommand('DevLens.analyzeProject');
+                break;
         }
     }
 
@@ -235,6 +241,12 @@ export class DevLensViewProvider implements vscode.WebviewViewProvider {
       </div>
 
       <div class="section">
+        <h3 class="section-title">Analysis</h3>
+        <button id="analyzeFileBtn" class="primary-button" style="margin-bottom: 8px; width: 100%;">Analyze Current File</button>
+        <button id="analyzeProjectBtn" class="primary-button" style="margin-bottom: 16px; width: 100%;">Analyze Project</button>
+      </div>
+
+      <div class="section">
         <h3 class="section-title">Pull Requests</h3>
         <div id="prs" class="pr-list"></div>
         <div id="noPRs" class="empty-state hidden">
@@ -253,6 +265,7 @@ export class DevLensViewProvider implements vscode.WebviewViewProvider {
         <button id="retryBtn" class="primary-button">Retry</button>
       </div>
     </div>
+  </div>
   </div>
   <script src="${scriptUri}"></script>
 </body>

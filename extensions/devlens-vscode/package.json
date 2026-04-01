@@ -1,9 +1,9 @@
-﻿{
-    "name": "DevLens-vscode",
-    "displayName": "DevLens",
+{
+    "name": "devvlens",
+    "displayName": "Devvlens",
     "description": "Real-time engineering insights for your GitHub repositories",
     "version": "0.1.0",
-    "publisher": "DevLens",
+    "publisher": "devvlens",
     "icon": "media/icon.png",
     "engines": {
         "vscode": "^1.85.0"
@@ -28,7 +28,7 @@
                 {
                     "id": "DevLens",
                     "title": "DevLens",
-                    "icon": "media/icon.svg"
+                    "icon": "media/logo.svg"
                 }
             ]
         },
@@ -58,8 +58,32 @@
             {
                 "command": "DevLens.openDashboard",
                 "title": "DevLens: Open Dashboard"
+            },
+            {
+                "command": "DevLens.analyzeFile",
+                "title": "DevLens: Analyze Current File",
+                "icon": "$(beaker)"
+            },
+            {
+                "command": "DevLens.analyzeProject",
+                "title": "DevLens: Analyze Project"
             }
         ],
+        "menus": {
+            "editor/context": [
+                {
+                    "when": "editorTextFocus",
+                    "command": "DevLens.analyzeFile",
+                    "group": "DevLens"
+                }
+            ],
+            "explorer/context": [
+                {
+                    "command": "DevLens.analyzeProject",
+                    "group": "DevLens"
+                }
+            ]
+        },
         "configuration": {
             "title": "DevLens",
             "properties": {

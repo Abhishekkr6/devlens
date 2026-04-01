@@ -441,6 +441,20 @@
         if (retryBtn) {
             retryBtn.addEventListener('click', handleRefresh);
         }
+
+        // Analysis buttons
+        const analyzeFileBtn = document.getElementById('analyzeFileBtn');
+        if (analyzeFileBtn) {
+            analyzeFileBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'analyzeFile' });
+            });
+        }
+        const analyzeProjectBtn = document.getElementById('analyzeProjectBtn');
+        if (analyzeProjectBtn) {
+            analyzeProjectBtn.addEventListener('click', () => {
+                vscode.postMessage({ type: 'analyzeProject' });
+            });
+        }
     }
 
     // Event handler functions
