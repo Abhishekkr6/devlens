@@ -5,11 +5,8 @@ import { RazorpayOrderModel } from "../models/razorpayOrder.model";
 import { UserModel } from "../models/user.model";
 import logger from "../utils/logger";
 
-// ── Razorpay client (initialised once) ──────────────────────────────────────
-const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "",
-  key_secret: process.env.RAZORPAY_KEY_SECRET || "",
-});
+// Razorpay client will be initialized dynamically inside the route handler
+// to prevent the entire app from crashing if keys are missing from the environment.
 
 const PRO_AMOUNT_PAISE = 49900; // ₹499 in paise
 
@@ -39,6 +36,18 @@ export const createOrder = async (req: Request, res: Response) => {
         plan: "pro",
       },
     };
+
+    const keyId = process.env.RAZORPAY_KEY_ID;
+    const keySecret = process.env.RAZORPAY_KEY_SECRET;
+
+    if (!keyId || !keySecret || keyId.includes("yourActualKeyHere") || keySecret.includes("yourActualSecretHere")) {
+      return res.status(500).json({ success: false, error: "Payment gateway is not configured properly. Missing or invalid API keys in server environment." });
+    }
+
+    const razorpay = new Razorpay({
+      key_id: keyId,
+      key_secret: keySecret,
+    });
 
     const order = await razorpay.orders.create(options);
 
